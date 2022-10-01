@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_transparent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="@dimen/main_350"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/main_30"
+        android:layout_marginRight="@dimen/main_30"
+        android:background="@drawable/bg_main_dialog"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/main_10"
+        android:paddingLeft="@dimen/main_20"
+        android:paddingRight="@dimen/main_20"
+        android:paddingTop="@dimen/main_20">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="正在下载..."
+            android:textSize="@dimen/text_15" />
+
+        <TextView
+            android:id="@+id/tv_dialog_show_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_20"
+            android:text="0%"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/text_13" />
+
+        <ProgressBar
+            android:id="@+id/pb_dialog_down_load"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_10"
+            android:layout_marginBottom="@dimen/main_20"
+            android:layout_marginTop="@dimen/main_10"
+            android:max="100"
+            android:progressDrawable="@drawable/progressbar_color" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_1"
+            android:layout_marginTop="@dimen/main_20"
+            android:background="@color/color_f7f7f7"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_dialog_load_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_44"
+            android:gravity="center"
+            android:text="取消"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/text_15"
+            android:visibility="gone" />
+    </LinearLayout>
+</RelativeLayout>

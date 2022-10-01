@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_transparent">
+
+    <LinearLayout
+        android:layout_width="@dimen/main_270"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_main_dialog"
+        android:gravity="center_horizontal"
+        android:minHeight="@dimen/main_103.5"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_dialog_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/main_15"
+            android:layout_marginLeft="@dimen/main_15"
+            android:layout_marginRight="@dimen/main_15"
+            android:layout_marginTop="@dimen/main_15"
+            android:gravity="center"
+            android:minHeight="@dimen/main_60"
+            android:textColor="@color/color_333333"
+            android:textSize="@dimen/text_18" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_1"
+            android:background="@color/color_f1f1f1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_50"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_dialog_left_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1000"
+                android:gravity="center"
+                android:text="@string/text_cancel"
+                android:textColor="@color/color_666666"
+                android:textSize="@dimen/text_17" />
+
+            <View
+                android:id="@+id/view_main_dialog_btn_middle_line"
+                android:layout_width="@dimen/main_1"
+                android:layout_height="match_parent"
+                android:background="@color/color_f1f1f1" />
+
+            <TextView
+                android:id="@+id/tv_dialog_right_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1000"
+                android:gravity="center"
+                android:text="@string/text_call"
+                android:textColor="@color/color_ff598f"
+                android:textSize="@dimen/text_17" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

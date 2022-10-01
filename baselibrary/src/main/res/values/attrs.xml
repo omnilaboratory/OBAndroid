@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <!--自定义BannerView对应的自定义属性-->
+    <declare-styleable name="BannerView">
+        <!--指示器的点选中时候的颜色-->
+        <attr name="dotIndicatorFocus" format="color|reference" />
+        <!--指示器的点默认时的颜色-->
+        <attr name="dotIndicatorNormal" format="color|reference" />
+        <!--指示器的点之间的间距-->
+        <attr name="dotDistance" format="dimension" />
+        <!--点的指示器的位置（左、中、右）-->
+        <attr name="dotGravity" format="enum">
+            <!--左边-->
+            <enum name="left" value="-1" />
+            <!--中间-->
+            <enum name="center" value="0" />
+            <!--右边-->
+            <enum name="right" value="1" />
+        </attr>
+        <!--&lt;!&ndash;指示器所在的底部布局的颜色&ndash;&gt;-->
+        <!--<attr name="bottomColor" format="color" />-->
+        <!--&lt;!&ndash;文字描述的颜色&ndash;&gt;-->
+        <!--<attr name="bannerDescColor" format="color" />-->
+        <!--&lt;!&ndash;Banner的宽高比，用于根据图片去动态绘制高度&ndash;&gt;-->
+        <!--&lt;!&ndash;宽&ndash;&gt;-->
+        <!--<attr name="widthProportion" format="float" />-->
+        <!--&lt;!&ndash;高&ndash;&gt;-->
+        <!--<attr name="heightProportion" format="float" />-->
+    </declare-styleable>
+
+    <!-- 圆头像 -->
+    <!-- border_outside_color 外部圆圈的颜色 -->
+    <!-- border_inside_color 内部部圆圈的颜色 -->
+    <!-- border_thickness 外圆和内圆的宽度 -->
+    <declare-styleable name="CircleImageView">
+        <attr name="border_thickness" format="dimension" />
+        <attr name="border_inside_color" format="color" />
+        <attr name="border_outside_color" format="color" />
+    </declare-styleable>
+
+    <!--侧滑删除的SwipeMenuLayout-->
+    <declare-styleable name="SwipeMenuLayout">
+        <attr name="swipeEnable" format="boolean" />
+        <attr name="ios" format="boolean" />
+        <attr name="leftSwipe" format="boolean" />
+    </declare-styleable>
+
+    <!--圆形进度条-->
+    <declare-styleable name="RoundProgressBar">
+        <!--圆环的颜色-->
+        <attr name="roundColor" format="color" />
+        <!--圆环进度的颜色-->
+        <attr name="roundProgressColor" format="color" />
+        <!--圆环的宽度-->
+        <attr name="roundWidth" format="dimension" />
+        <!--中间进度百分比的字符串的颜色-->
+        <attr name="middleTextColor" format="color" />
+        <!--中间进度百分比的字符串的字体-->
+        <attr name="middleTextSize" format="dimension" />
+        <!--最大进度-->
+        <attr name="max" format="integer" />
+        <!--是否显示中间的进度-->
+        <attr name="textIsDisplayable" format="boolean" />
+        <!--进度的风格，实心或者空心-->
+        <attr name="style">
+            <enum name="STROKE" value="0" />
+            <enum name="FILL" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <!-- 字母快速检索的右边侧边栏 -->
+    <declare-styleable name="SideIndexBar">
+        <attr name="letterSize" format="dimension" />
+        <attr name="letterColor" format="color" />
+        <attr name="selectLetterColor" format="color" />
+        <attr name="selectBackground" format="color" />
+        <attr name="isBoldface" format="boolean" />
+        <attr name="isLetterCenter" format="boolean" />
+    </declare-styleable>
+
+    <!-- 打分的星星控件 -->
+    <declare-styleable name="CustomRatingBar">
+        <!-- 星星间距 -->
+        <attr name="starDistance" format="dimension" />
+        <!-- 星星大小 -->
+        <attr name="starSize" format="dimension" />
+        <!-- 星星个数 -->
+        <attr name="starCount" format="integer" />
+        <!-- 星星空图 -->
+        <attr name="starEmpty" format="reference" />
+        <!-- 星星满图 -->
+        <attr name="starFill" format="reference" />
+    </declare-styleable>
+
+    <!--圆角图片-->
+    <declare-styleable name="RoundImageView">
+        <attr name="type" format="enum">
+            <enum name="circle" value="1" />
+            <enum name="round" value="2" />
+        </attr>
+        <attr name="radius" format="dimension" />
+    </declare-styleable>
+
+    <!--四个角支持自定义角度的圆角图片-->
+    <declare-styleable name="CornerImageView">
+        <attr name="allRadius" format="dimension" />
+        <attr name="left_top_radius" format="dimension" />
+        <attr name="right_top_radius" format="dimension" />
+        <attr name="right_bottom_radius" format="dimension" />
+        <attr name="left_bottom_radius" format="dimension" />
+    </declare-styleable>
+
+    <!--自定义上下滚动选择日期的选择器-->
+    <declare-styleable name="NumberPicker">
+        <attr name="textColor" format="color" />
+        <attr name="lineColor" format="color" />
+        <attr name="lineSize" format="dimension" />
+        <attr name="textSize" format="float|dimension" />
+        <attr name="startNumber" format="integer" />
+        <attr name="endNumber" format="integer" />
+        <attr name="currentNumber" format="integer" />
+        <attr name="verticalSpacing" format="dimension" />
+        <attr name="flagText" format="string|reference" />
+        <attr name="flagTextSize" format="dimension" />
+        <attr name="flagTextColor" format="color" />
+        <attr name="backgroundColor" format="color" />
+        <attr name="rowNumber" format="integer" />
+    </declare-styleable>
+
+    <!--根据宽度自适应标签数量控件-->
+    <declare-styleable name="CustomLabelLayout">
+        <!--标签之间距离-->
+        <attr name="labelSpace" format="dimension" />
+        <!--标签行距-->
+        <attr name="rowSpace" format="dimension" />
+        <!--子标签布局-->
+        <attr name="childLayout" format="reference" />
+        <!--子标签是否可以点击-->
+        <attr name="childClickable" format="boolean" />
+    </declare-styleable>
+
+    <!--筛选菜单的属性-->
+    <declare-styleable name="FilterMenuView">
+        <!--菜单标题的布局-->
+        <attr name="titleItem" format="reference" />
+    </declare-styleable>
+
+
+    <!--滑动验证的View的属性-->
+    <declare-styleable name="SlideVerifyImageView">
+        <!--滑块的高度-->
+        <attr name="unitHeight" format="dimension" />
+        <!--滑块的宽度-->
+        <attr name="unitWidth" format="dimension" />
+        <!--滑块占图片高度的比例-->
+        <attr name="unitHeightScale" format="integer" />
+        <!--滑块占图片宽度的比例-->
+        <attr name="unitWidthScale" format="integer" />
+        <!--滑块边框的图片资源-->
+        <attr name="unitShadeSrc" format="reference" />
+        <!--阴影部分的图片资源-->
+        <attr name="unitShowSrc" format="reference" />
+        <!--是否需要旋转-->
+        <attr name="needRotate" format="boolean" />
+        <!--验证时的误差值-->
+        <attr name="deviate" format="integer" />
+    </declare-styleable>
+
+    <!--带清除按钮的EditText-->
+    <declare-styleable name="CleanableEditText">
+        <attr name="delIcon" format="reference" />
+        <attr name="delPadding" format="dimension" />
+        <attr name="delAlwaysShow" format="boolean" />
+    </declare-styleable>
+
+    <!--可拖动，放手吸边的View-->
+    <declare-styleable name="AttachButton">
+        <!--是否需要自动吸边-->
+        <attr name="customIsAttach" format="boolean" />
+        <!--是否可拖曳-->
+        <attr name="customIsDrag" format="boolean" />
+    </declare-styleable>
+
+    <!--下拉缩放控件-->
+    <declare-styleable name="PullZoomView">
+        <attr name="pzv_sensitive" format="float" />
+        <attr name="pzv_isZoomEnable" format="boolean" />
+        <attr name="pzv_isParallax" format="boolean" />
+        <attr name="pzv_zoomTime" format="integer" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,67 @@
+<resources>
+
+    <!-- dialog默认主题 -->
+    <style name="dialog_default_theme" parent="@android:style/Theme.Dialog">
+        <!--边框-->
+        <item name="android:windowFrame">@null</item>
+        <!--是否悬浮于Activity之上-->
+        <item name="android:windowIsFloating">true</item>
+        <!--半透明-->
+        <item name="android:windowIsTranslucent">true</item>
+        <!--背景透明-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--模糊-->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!--无标题-->
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <!--背景透明的Dialog样式-->
+    <style name="dialog_translucent_theme" parent="dialog_default_theme">
+        <!--半透明-->
+        <item name="android:windowIsTranslucent">false</item>
+        <!--模糊-->
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+
+    <!--Dialog底部进出动画-->
+    <style name="dialog_from_bottom_anim" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_from_bottom_anim_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_from_bottom_anim_out</item>
+    </style>
+
+    <!--Dialog顶部进出动画-->
+    <style name="dialog_from_top_anim" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_from_top_anim_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_from_top_anim_out</item>
+    </style>
+
+    <!--Dialog的缩放动画-->
+    <style name="dialog_scale_anim" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_from_bottom_anim_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_from_bottom_anim_out</item>
+    </style>
+
+    <!--时间节点控件-->
+    <declare-styleable name="FLowLineView">
+        <!--文字大小-->
+        <attr name="mTextSize" format="dimension" />
+        <!--节点远点直径-->
+        <attr name="mRoundSize" format="dimension" />
+        <!--进行中节点光晕透明度-->
+        <attr name="haloAlpha" format="integer" />
+        <!--光晕宽度-->
+        <attr name="haloWidth" format="dimension" />
+        <!--流程线条高-->
+        <attr name="lineHeight" format="dimension" />
+        <!--已完成节点颜色-->
+        <attr name="doneColor" format="color" />
+        <!--进行中节点颜色-->
+        <attr name="doingColor" format="color" />
+        <!--未开始节点颜色-->
+        <attr name="todongColor" format="color" />
+        <!--显示内容的行间距-->
+        <attr name="rowRpacing" format="dimension" />
+    </declare-styleable>
+</resources>

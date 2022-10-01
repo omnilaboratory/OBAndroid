@@ -1,0 +1,192 @@
+<resources>
+    <string name="app_name">Omni Wallet</string>
+
+    <!-- Unlock页面 -->
+    <string name="pwd">Password</string>
+    <string name="pwd_upper">PASSWORD</string>
+    <string name="pwd_upper_repeat">REPEAT PASSWORD</string>
+    <string name="unlock">Unlock</string>
+    <string name="txt_forget_pwd">If you forget your password,click"</string>
+    <string name="txt_need_help">If you need help,click</string>
+    <string name="here">Here</string>
+    <string name="unlock_description">Set a password to encrypt your wallet!</string>
+    <string name="unlock_uppre">UNLOCK</string>
+    <string name="create_uppre">CREATE</string>
+    <string name="recover_uppre">RECOVER</string>
+    <!-- ForgetPwd页面 -->
+    <string name="forget_pwd">Forget Password</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="unlock_without_password">Unlock without Password</string>
+    <string name="reset_password_unlock">Reset Password &#038; Unlock</string>
+    <string name="confirm_pwd">Confirm Password</string>
+    <string name="verify_seed">Verify Seed</string>
+    <string name="reset_password">Reset Password</string>
+    <!-- create页面 -->
+    <string name="create_new_wallet">Create New Wallet</string>
+    <string name="recover_your_wallet">Recover Your Wallet</string>
+    <string name="important_alert">Your seed is important!</string>
+    <string name="create_step_two_description">If you lose your seed you\'ll have no way to recover your wallet. To make sure that you have properly saved your seed, please retype words:  </string>
+    <string name="create_seed_input_hit">————</string>
+    <string name="create_pass_input_hit">————————————</string>
+    <string name="pass_show_hind">pass show or hind</string>
+    <!-- create wallet页面 -->
+    <string name="create_wallet">Create Wallet</string>
+    <string name="txt_create_wallet_one">Please save these 24 words securely! This will allow you to recover your wallet.</string>
+    <string name="txt_create_wallet_two">Keep this private! If someone gains access to this list they can steal your money.</string>
+    <string name="txt_create_wallet_three">Your seed is important! If you lose your seed you will have no way to recover your wallet. To make sure that you have properly saved your seed, please retype words 01,10, 23 &#038; 12</string>
+    <string name="txt_create_wallet_four">Set a password to encrypt your wallet. This password will be needed to unlock the wallet in the future.</string>
+    <string name="txt_create_wallet_five">Please make sure that your password just use Lower  letter, Upper letter or number.</string>
+    <string name="txt_create_wallet_six">Please make sure your confirm password is the same as your password.</string>
+    <string name="txt_create_wallet_seven">This is for your convenience only and will not be broadcasted on the Lightning Network.</string>
+    <string name="copy">Copy</string>
+    <string name="forward">Forward</string>
+    <string name="start">Start</string>
+    <string name="name">Name</string>
+    <string name="save_seed">Save Seed</string>
+    <string name="retype_seed">Retype Seed</string>
+    <string name="set_password">Set Password</string>
+    <string name="set_name">Set Name</string>
+    <string name="easy">EASY</string>
+    <string name="normal">NORMAL</string>
+    <string name="strong">STRONG</string>
+    <!-- choose backup type页面 -->
+    <string name="choose_backup_type">Choose Backup Type</string>
+    <string name="local">Local</string>
+    <string name="google_drive">Google Drive</string>
+    <string name="drop_box">Drop Box</string>
+    <!-- recover wallet页面 -->
+    <string name="recover_wallet">Recover Wallet</string>
+    <string name="paste">Paste</string>
+    <string name="import_seed">Import Seed</string>
+    <string name="txt_recover_wallet_one">Recovering a wallet, nice. You do not need anyone else, you got yourself :)</string>
+    <!-- choose backup type页面 -->
+    <string name="welcome">Welcome!</string>
+    <string name="deposit_your_wallet">Deposit your wallet</string>
+    <string name="copy_address">Copy Address</string>
+    <!-- another -->
+    <string name="menu">MENU</string>
+    <string name="wallet_manage">Wallet Manage</string>
+    <string name="profile">Profile</string>
+    <string name="preference">Preference</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="lock">Lock</string>
+    <string name="settings">SETTINGS</string>
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="theme">Theme</string>
+    <string name="light">Light</string>
+    <string name="currency">Currency</string>
+    <string name="usd">USD</string>
+    <string name="close">CLOSE</string>
+    <string name="fund_your_wallet">FUND YOUR WALLET</string>
+    <string name="copy_address_big">COPY ADDRESS</string>
+    <string name="share_to">SHARE TO</string>
+    <string name="open_a_channel">OPEN A CHANNEL</string>
+    <string name="open_a_channel_txt">Open channels to other nodes on the network to start using the Lightning Network.</string>
+    <string name="scan_qrcode">Scan QRCode</string>
+    <string name="fill_in_mannually">Fill in mannually</string>
+    <string name="valid_pubkey">Valid Pubkey</string>
+    <string name="back_big">BACK</string>
+    <string name="create">CREATE</string>
+    <string name="amount">Amount</string>
+    <string name="fee">Fee</string>
+    <string name="slow">SLOW</string>
+    <string name="satoshi_per_byte">satoshi per byte</string>
+    <string name="pay_invoice">PAY INVOICE</string>
+    <string name="fill_invoice">Fill invoice</string>
+    <string name="check_pay">Check &#038; Pay</string>
+    <string name="from_node">From Node</string>
+    <string name="to_node">To Node</string>
+    <string name="pay_invoice_txt">Please input the invoice you will pay</string>
+    <string name="omnibolt_11">OmniBOLT 11 Invoice</string>
+    <string name="next_big">NEXT</string>
+    <string name="pay">PAY</string>
+    <string name="cancel">CANCEL</string>
+    <string name="assets">ASSETS</string>
+    <string name="asset">ASSET</string>
+    <string name="amount_big">AMOUNT</string>
+    <string name="value">VALUE</string>
+    <string name="network">NETWORK</string>
+    <string name="channels">CHANNELS</string>
+    <string name="remote_pubkey">Remote Pubkey</string>
+    <string name="local_balance">Local Balance</string>
+    <string name="send">SEND</string>
+    <string name="txt_send_one">search, public address(1m)</string>
+    <string name="txt_send_two">Transfer between my accounts</string>
+    <string name="recents">Recents</string>
+    <string name="asset_one">Asset</string>
+    <string name="estimated">Estimated</string>
+    <string name="gas_fee">Gas fee</string>
+    <string name="likely_in">Likely in &#060;</string>
+    <string name="seconds">seconds</string>
+    <string name="balance_one">Balance</string>
+    <string name="total">Total</string>
+    <string name="confirm">CONFIRM</string>
+    <string name="network_small">Network</string>
+    <string name="pay_invoice_small">Pay Invoice</string>
+    <string name="create_invoice_small">Create Invoice</string>
+    <string name="channel_activities">Channel Activities</string>
+    <string name="to_be_paid">To be paid</string>
+    <string name="send_small">Send</string>
+
+    <!--token list 页面-->
+    <string name="balance">Balance</string>
+
+    <!--backup页面-->
+    <string name="welcome_upper">WELCOME</string>
+    <string name="deposite_upper">DEPOSITE YOUR WALLET</string>
+    <string name="sync_block">Syncing Chain Data:</string>
+    <string name="sync_block_percent">70%</string>
+    <string name="block">Block</string>
+    <string name="block_synced_num">70,000</string>
+    <string name="block_sync_num">7,5000</string>
+    <string name="block_of">of</string>
+    <string name="commit_filter">Commitment Filter</string>
+
+
+    <!--common-->
+    <string name="aets">≈</string>
+    <string name="example_qr_str">bc1q6e5v0ts86thszdau4efgllx9lq0wxkwhquv7sh</string>
+    <string name="copy_upper">COPY</string>
+    <string name="paste_upper">PASTE</string>
+    <string name="copy_address_upper">COPY ADDRESS</string>
+    <string name="start_upper">START</string>
+    <string name="back_upper">BACK</string>
+    <string name="next_upper">NEXT</string>
+    <string name="no_1">01.</string>
+    <string name="no_2">02.</string>
+    <string name="no_3">03.</string>
+    <string name="no_4">04.</string>
+    <string name="no_5">05.</string>
+    <string name="no_6">06.</string>
+    <string name="no_7">07.</string>
+    <string name="no_8">08.</string>
+    <string name="no_9">09.</string>
+    <string name="no_10">10.</string>
+    <string name="no_11">11.</string>
+    <string name="no_12">12.</string>
+    <string name="no_13">13.</string>
+    <string name="no_14">14.</string>
+    <string name="no_15">15.</string>
+    <string name="no_16">16.</string>
+    <string name="no_17">17.</string>
+    <string name="no_18">18.</string>
+    <string name="no_19">19.</string>
+    <string name="no_20">20.</string>
+    <string name="no_21">21.</string>
+    <string name="no_22">22.</string>
+    <string name="no_23">23.</string>
+    <string name="no_24">24.</string>
+
+    <string name="toast_check_seeds_wrong_head">The seed with No. </string>
+    <string name="toast_check_seeds_wrong_end"> you entered is incorrect. Please check it carefully and correct it.</string>
+    <string name="toast_unlock_error"> The password your entered is wrong.Please check your password and retry.</string>
+    <string name="toast_create_copy_success">Your seeds are copied to clipboard,you can paste it to anywhere you fell safe!</string>
+    <string name="toast_create_check_pass_wrong">The password you entered does not meet the specification!</string>
+    <string name="toast_create_check_pass_diff">The passwords you entered twice do not match!</string>
+    <string name="toast_recover_paste_error">The format of the data you pasted is incorrect. Please check it and try again!</string>
+    <string name="toast_paste_empty">No content in the pasteboard!</string>
+
+
+</resources>

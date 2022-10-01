@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">BaseLibrary</string>
+    <!--人民币的符号￥-->
+    <string name="base_rmb">&#165;</string>
+
+    <string name="base_tip_network_not_connected">网络无连接，请检查网络设置</string>
+    <string name="base_text_load_error">加载失败，轻触屏幕重新加载</string>
+    <string name="base_text_no_network">网络连接失败</string>
+    <string name="base_text_reconnect">重新连接</string>
+    <string name="base_text_dialog_btn_cancel">取消</string>
+    <string name="base_text_dialog_btn_confirm">确定</string>
+</resources>

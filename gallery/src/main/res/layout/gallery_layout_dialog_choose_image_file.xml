@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_500"
+        android:background="@color/color_white">
+
+        <com.omni.wallet.baselibrary.view.recyclerView.wrap.WrapRecyclerView
+            android:id="@+id/rv_show_all_pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/main_15" />
+    </RelativeLayout>
+
+</LinearLayout>

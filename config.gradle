@@ -1,0 +1,177 @@
+ext {
+    // app 相关版本控制
+    versions = [
+            applicationId   : "com.omni.wallet",
+            minSdkVersion   : 19,
+            targetSdkVersion: 28,
+            compileVersion  : 28,
+            buildToolVersion: "26.0.2",
+            versionCode     : 1,
+            versionName     : "1.0.0"
+    ]
+    // 依赖相关版本控制
+    depVersion = [
+            // junit
+            junitVersion               : "4.12",
+            // test
+            testRunnerVersion          : "1.0.2",
+            // 自动化测试
+            testEspressoVersion        : "3.0.2",
+            // v7包
+            appCompatVersion           : "27.1.1",
+            // RecyclerView
+            recyclerViewVersion        : "27.1.1",
+            // design包
+            designVersion              : "27.1.1",
+            // cardView
+            cardViewVerison            : "27.1.1",
+            // 新布局
+            constraintVersion          : "1.1.2",
+            // 分包
+            multidexVerison            : "1.0.1",
+            // Gilde
+            glideVersion               : "3.7.0",
+            // 权限管理框架
+            permissionDispatcherVersion: "3.0.1",
+            // 注解处理器
+            permissionAnnotationVersion: "3.0.1",
+            // KLog日志工具类
+            KLogVersion                : "1.1.0",
+            // OKHttp
+            okHttpVersion              : "3.9.0",
+            // OKIO
+            okioVersion                : "1.9.0",
+            // Gson
+            gsonVersion                : "2.8.2",
+            // EventBus
+            eventBusVersion            : "3.1.1",
+            //systemBarTint
+            systembartintVersion       : "1.0.4",
+            // 图片缩放库
+            photoViewVersion           : "1.2.4",
+            imageZoomVersion           : "3.5.0",
+            // Tinker
+            TinkerAnnoVersion          : "1.7.11",
+            TinkerSDKVersion           : "1.1.7",
+            // 内存泄漏检测
+            leakcanaryVersion          : "1.6.3",
+            // butterKnife相关
+            butterKnifeVersion         : "8.8.1",
+            butterKnifeCompileVersion  : "8.8.1",
+            // ARouter
+            arouterApiVersion          : "1.3.1",
+            arouterCompilerVersion     : "1.1.4",
+            // 友盟
+            umengCommonVersion         : "1.5.0",
+            umengAnalyticsVersion      : "7.5.0",
+            umengUtdidVersion          : "1.1.5.3",
+            umengPushVersion           : "4.2.0",
+            // GreenDao
+            greenDaoVersion            : "3.2.0",
+            // greenDao加密库版本
+            greenDaoSqlCipherVersion   : "3.5.2",
+            // 环信相关
+            googleGSMVersion           : "16.0.1",
+            hyphenateVersion           : "3.5.2",
+            // RXJava
+            RXAndroid2Version          : "2.0.1",
+            RXJava2Version             : "2.0.7",
+            // Dagger2
+            Dagger2Version             : "2.21",
+            // RxPermission
+            RxPermissionVersion        : "0.9.3@aar",
+            // 快钱
+            kuaiqianVersion            : "1.3.4",
+            //友盟推送
+            UMPushVersion              : "4.2.0",
+            UMPushUtdidVersion         : "1.1.5.3",
+            // 滚轮控件
+            WheelviewVersion           : "4.0.9",
+            // 时间选择器
+            TimePickerViewVersion      : "4.1.8",
+            // ZXing
+            ZXingVersion               : "3.3.0",
+            // 抖音
+            DouYinVersion              : "0.0.1.3"
+    ]
+    // 依赖
+    deps = [
+            junit                : "junit:junit:${depVersion.junitVersion}",
+            test                 : "com.android.support.test:runner:${depVersion.testRunnerVersion}",
+            testEspresso         : "com.android.support.test.espresso:espresso-core:${depVersion.testEspressoVersion}",
+            appcompat            : "com.android.support:appcompat-v7:${depVersion.appCompatVersion}",
+            supporV4             : "com.android.support:support-v4:${depVersion.appCompatVersion}",
+            constraint           : "com.android.support.constraint:constraint-layout:${depVersion.constraintVersion}",
+            // design包
+            supportDesign        : "com.android.support:design:${depVersion.designVersion}",
+            // 分包
+            multidex             : "com.android.support:multidex:${depVersion.multidexVerison}",
+            // 内存监测
+            debugLeakcanary      : "com.squareup.leakcanary:leakcanary-android:${depVersion.leakcanaryVersion}",
+            releaseLeakcanary    : "com.squareup.leakcanary:leakcanary-android-no-op:${depVersion.leakcanaryVersion}",
+            // Glide
+            glide                : "com.github.bumptech.glide:glide:${depVersion.glideVersion}",
+            // 权限管理框架
+            permissionDispatcher : "com.github.hotchemi:permissionsdispatcher:${depVersion.permissionDispatcherVersion}",
+            permissionAnnotation : "com.github.hotchemi:permissionsdispatcher-processor:${depVersion.permissionAnnotationVersion}",
+            // KLog日志工具类
+            KLog                 : "com.github.zhaokaiqiang.klog:library:${depVersion.KLogVersion}",
+            // OkHttp
+            OkHttp               : "com.squareup.okhttp3:okhttp:${depVersion.okHttpVersion}",
+            // RecyclerView
+            RecyclerView         : "com.android.support:recyclerview-v7:${depVersion.recyclerViewVersion}",
+            // CardView
+            CardView             : "com.android.support:cardview-v7:${depVersion.cardViewVerison}",
+            // Gson的依赖
+            Gson                 : "com.google.code.gson:gson:${depVersion.gsonVersion}",
+            // EventBus 3.0
+            EventBus             : "org.greenrobot:eventbus:${depVersion.eventBusVersion}",
+            // 沉浸式状态栏的第三方库systemBarTint
+            systemBarTint        : "com.readystatesoftware.systembartint:systembartint:${depVersion.systembartintVersion}",
+            // 支持图片缩放的库
+            imageZoom            : "com.commit451:PhotoView:${depVersion.photoViewVersion}",
+            imageZoom1           : "com.davemorrissey.labs:subsampling-scale-image-view:${depVersion.imageZoomVersion}",
+            // design包
+            design               : "com.android.support:design:${depVersion.designVersion}",
+            // butterKnife
+            butterKnife          : "com.jakewharton:butterknife:${depVersion.butterKnifeVersion}",
+            butterKnifeAnnotation: "com.jakewharton:butterknife-compiler:${depVersion.butterKnifeCompileVersion}",
+            // 阿里巴巴ARouter
+            ARouter              : "com.alibaba:arouter-api:${depVersion.arouterApiVersion}",
+            ArouterAnnotation    : "com.alibaba:arouter-compiler:${depVersion.arouterCompilerVersion}",
+            // 友盟APP统计
+            UMengCommon          : "com.umeng.sdk:common:${depVersion.umengCommonVersion}",
+            UMengAnalytics       : "com.umeng.sdk:common:${depVersion.umengAnalyticsVersion}",
+            // 友盟推送
+            UMPushUtdid          : "com.umeng.sdk:utdid:${depVersion.umengUtdidVersion}",
+            UMPush               : "com.umeng.sdk:push:${depVersion.umengPushVersion}",
+            // greenDao
+            GreenDao             : "org.greenrobot:greendao:${depVersion.greenDaoVersion}",
+            // greenDao加密库
+            greenDaoSqlCipher    : "net.zetetic:android-database-sqlcipher:${depVersion.greenDaoSqlCipherVersion}",
+            // 环信相关
+            googleGSM            : "com.google.android.gms:play-services-base:${depVersion.googleGSMVersion}",
+            hyphenate            : "com.hyphenate:hyphenate-sdk:${depVersion.hyphenateVersion}",
+            // RXJava（注：RxJava2 与 RxJava1 不能共存，即依赖不能同时存在）
+            RXAndroid2           : "io.reactivex.rxjava2:rxandroid:${depVersion.RXAndroid2Version}",
+            RXJava2              : "io.reactivex.rxjava2:rxjava:${depVersion.RXJava2Version}",
+            // RxPermission
+            RxPermission         : "com.tbruyelle.rxpermissions2:rxpermissions:${depVersion.RxPermissionVersion}",
+            // Dagger2
+            Dagger2              : "com.google.dagger:dagger:${depVersion.Dagger2Version}",
+            Dagger2Annotation    : "com.google.dagger:dagger-compiler:${depVersion.Dagger2Version}",
+            // 快钱
+            kuaiqian             : "com.tencent.mm.opensdk:wechat-sdk-android-without-mta:${depVersion.kuaiqianVersion}",
+            // 滚轮控件
+            Wheelview            : "com.contrarywind:wheelview:${depVersion.WheelviewVersion}",
+            // 时间选择器
+            TimePickerView       : "com.contrarywind:Android-PickerView:${depVersion.TimePickerViewVersion}",
+            // 微信开放平台
+            WeChatPlatform       : "com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+",
+            // ZXing
+            ZXing                : "com.google.zxing:core:${depVersion.ZXingVersion}",
+            // 抖音
+            DouYin               : "com.bytedance.ies.ugc.aweme:open-sdk:${depVersion.DouYinVersion}"
+    ]
+}
+

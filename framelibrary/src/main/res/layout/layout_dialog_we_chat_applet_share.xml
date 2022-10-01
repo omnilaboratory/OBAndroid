@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_white"
+    android:gravity="center_horizontal"
+    android:minHeight="@dimen/main_190"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/main_25"
+        android:layout_marginLeft="@dimen/main_10"
+        android:layout_marginRight="@dimen/main_10"
+        android:layout_marginTop="@dimen/main_25"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_dialog_share_we_chat_applet_we_chat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/main_10"
+            android:drawableTop="@drawable/icon_share_we_chat"
+            android:gravity="center_horizontal"
+            android:text="微信"
+            android:textColor="@color/color_9b9b9b"
+            android:textSize="@dimen/text_13" />
+
+        <TextView
+            android:id="@+id/tv_dialog_share_we_chat_applet_we_friend"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/main_10"
+            android:drawableTop="@drawable/icon_share_we_friend"
+            android:gravity="center_horizontal"
+            android:text="朋友圈"
+            android:textColor="@color/color_9b9b9b"
+            android:textSize="@dimen/text_13" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_10"
+        android:background="@color/color_e9e9e9" />
+
+    <TextView
+        android:id="@+id/tv_dialog_share_we_chat_applet_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_55"
+        android:gravity="center"
+        android:text="取消"
+        android:textColor="@color/color_9b9b9b"
+        android:textSize="@dimen/text_17" />
+</LinearLayout>

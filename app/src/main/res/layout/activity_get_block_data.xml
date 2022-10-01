@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.GetBlockDataActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/main_80"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/deposit_your_wallet"
+            android:textColor="@color/color_black"
+            android:textSize="@dimen/text_20"
+            android:textStyle="bold"/>
+
+        <ImageView
+            android:layout_width="@dimen/main_150"
+            android:layout_height="@dimen/main_150"
+            android:layout_marginTop="@dimen/main_40"
+            android:src="@mipmap/img_qr_code_exam_black"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_30"
+            android:text="sdasdaddsdsadadasdasdasd"
+            android:textColor="@color/color_333333"
+            android:textSize="@dimen/text_16"/>
+
+        <Button
+            android:id="@+id/btn_copy_address"
+            android:layout_width="@dimen/main_150"
+            android:layout_height="@dimen/main_40"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/main_30"
+            android:background="@drawable/bg_btn_round_blue_4"
+            android:text="@string/copy_address"
+            android:textColor="@color/color_white"/>
+    </LinearLayout>
+</RelativeLayout>

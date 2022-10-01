@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_auth">@color/color_5e8cff</color>
+    <color name="color_un_add">@color/color_c8c8ce</color>
+    <color name="color_wait_auth">@color/color_fc6d7e</color>
+    <color name="color_description_blue">#FF4A92FF</color>
+    <color name="color_todo_grey">#FFCCCCCC</color>
+    <color name="color_black_80">#80000000</color>
+    <color name="color_key">#40000000</color>
+    <color name="color_orange">#FFea9518</color>
+
+</resources>

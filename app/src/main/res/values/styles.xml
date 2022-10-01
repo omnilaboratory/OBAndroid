@@ -1,0 +1,24 @@
+<resources>
+
+    <!-- SplashActivity theme. -->
+    <style name="SplashTheme" parent="AppTheme">
+        <!-- Activity背景 -->
+        <item name="android:windowBackground">@color/color_white</item>
+    </style>
+
+    <!--消息页面使用TabLayout的时候的样式-->
+    <style name="CustomerTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/color_ff598f</item>
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="tabBackground">@color/color_transparent</item>
+        <item name="tabTextColor">@color/color_454545</item>
+        <item name="tabSelectedTextColor">@color/color_333333</item>
+        <item name="tabTextAppearance">@style/MyCustomTabTextAppearance</item>
+    </style>
+
+    <style name="MyCustomTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">@dimen/text_15</item>
+        <!--该属性是是否阻止渲染Tab的图标-->
+        <!--<item name="textAllCaps">true</item>-->
+    </style>
+</resources>

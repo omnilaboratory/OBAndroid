@@ -1,0 +1,49 @@
+apply plugin: 'com.android.library'
+// butterKnife必须（哪里使用放哪里）
+apply plugin: 'com.jakewharton.butterknife'
+android {
+    def versions = rootProject.ext.versions
+    compileSdkVersion versions.compileVersion
+    buildToolsVersion versions.buildToolVersion
+    defaultConfig {
+        minSdkVersion versions.minSdkVersion
+        targetSdkVersion versions.targetSdkVersion
+        versionCode versions.versionCode
+        versionName versions.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        // 阿里巴巴ARouter
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.getName()]
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    //设置了resourcePrefix值后，所有的资源名必须以指定的字符串做前缀，否则会报错。
+    //但是resourcePrefix这个值只能限定xml里面的资源，并不能限定图片资源，所有图片资源仍然需要手动去修改资源名。
+    resourcePrefix "gallery_"
+}
+
+dependencies {
+    def dependencies = rootProject.ext.deps
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':baselibrary')
+    implementation project(':framelibrary')
+    implementation project(':resource')
+    // ARouter
+    annotationProcessor dependencies.ArouterAnnotation
+    // butterKnife
+    compile dependencies.butterKnife
+    // butterKnife注解处理器
+    annotationProcessor dependencies.butterKnifeAnnotation
+//    // 权限管理框架
+//    annotationProcessor dependencies.permissionAnnotation
+}
+

@@ -1,0 +1,26 @@
+buildscript {
+    //注意:加上这句,Config中关于Gradle的统一设置才能生效
+    apply from: "config.gradle"
+    repositories {
+        maven { url = "http://maven.aliyun.com/nexus/content/groups/public/" }
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        // ButterKnife
+        classpath 'com.jakewharton:butterknife-gradle-plugin:8.4.0'
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url = "http://maven.aliyun.com/nexus/content/groups/public/" }
+        google()
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/color_transparent">
+
+    <RelativeLayout
+        android:layout_width="@dimen/main_160"
+        android:layout_height="@dimen/main_120"
+        android:background="@drawable/bg_dialog_waiting">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <com.omni.wallet.baselibrary.utils.RoundProgressBar
+                android:id="@+id/rpb_dialog_uploading"
+                android:layout_width="@dimen/main_50"
+                android:layout_height="@dimen/main_50"
+                app:middleTextColor="@color/color_white"
+                app:middleTextSize="@dimen/text_13"
+                app:roundColor="@color/color_black"
+                app:roundProgressColor="@color/color_f2f2f2"
+                app:roundWidth="@dimen/main_5"
+                app:textIsDisplayable="true" />
+
+            <TextView
+                android:id="@+id/tv_dialog_waiting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_10"
+                android:gravity="center"
+                android:text="@string/text_dialog_uploading"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/text_14" />
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

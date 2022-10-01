@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/staff_tv_select_image_camera"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_54"
+        android:layout_marginLeft="@dimen/main_10"
+        android:layout_marginRight="@dimen/main_10"
+        android:background="@drawable/gallery_shape_dialog_top"
+        android:gravity="center"
+        android:text="@string/gallery_choose_image_dialog_item_camera"
+        android:textColor="@color/color_ff1b4b"
+        android:textSize="@dimen/text_20"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_1"
+        android:layout_marginLeft="@dimen/main_10"
+        android:layout_marginRight="@dimen/main_10"
+        android:background="@color/color_dedede"/>
+
+    <TextView
+        android:id="@+id/staff_tv_select_image_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_54"
+        android:layout_marginLeft="@dimen/main_10"
+        android:layout_marginRight="@dimen/main_10"
+        android:background="@drawable/gallery_shape_dialog_bottom"
+        android:gravity="center"
+        android:text="@string/gallery_choose_image_dialog_item_gallery"
+        android:textColor="@color/color_ff1b4b"
+        android:textSize="@dimen/text_20"/>
+
+    <TextView
+        android:id="@+id/staff_tv_select_image_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_54"
+        android:layout_marginBottom="@dimen/main_10"
+        android:layout_marginLeft="@dimen/main_10"
+        android:layout_marginRight="@dimen/main_10"
+        android:layout_marginTop="@dimen/main_10"
+        android:background="@drawable/gallery_shape_dialog_cancel"
+        android:gravity="center"
+        android:text="@string/gallery_choose_image_dialog_item_cancel"
+        android:textColor="@color/color_ff1b4b"
+        android:textSize="@dimen/text_20"/>
+</LinearLayout>

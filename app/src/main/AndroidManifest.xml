@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="com.omni.wallet"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:name=".base.AppApplication"
+        android:allowBackup="false"
+        android:configChanges="orientation"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:screenOrientation="portrait"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:replace="android:label,android:icon,android:theme">
+        <activity
+            android:name=".ui.activity.SplashActivity"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <!-- 注意：这里必须新建一个Intent-filter,如果直接写在launcher打开的filter中则会app图标消失（因为category被覆盖为DEAFAULT） -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <!-- 便于JS能够唤醒 -->
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <!-- url唤醒App的Scheme和host -->
+                <data
+                    android:host="com.omni.wallet"
+                    android:scheme="content"/>
+            </intent-filter>
+        </activity>
+        <!-- Unlock页面 -->
+        <activity
+            android:name=".ui.activity.UnlockActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- ForgetPwd页面 -->
+        <activity
+            android:name=".ui.activity.ForgetPwdActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- ForgetPwdNext页面 -->
+        <activity
+            android:name=".ui.activity.ForgetPwdNextActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- Create页面 -->
+        <activity
+            android:name=".ui.activity.CreateActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- CreateWalletStepOne页面 -->
+        <activity
+            android:name=".ui.activity.createwallet.CreateWalletStepOneActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- CreateWalletStepTwo页面 -->
+        <activity
+            android:name=".ui.activity.createwallet.CreateWalletStepTwoActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- CreateWalletStepThree页面 -->
+        <activity
+            android:name=".ui.activity.createwallet.CreateWalletStepThreeActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- CreateWalletStepFour页面 -->
+        <activity
+            android:name=".ui.activity.createwallet.CreateWalletStepFourActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- ChooseBackupType页面 -->
+        <activity
+            android:name=".ui.activity.ChooseBackupTypeActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- RecoverWalletStepOne页面 -->
+        <activity
+            android:name=".ui.activity.recoverwallet.RecoverWalletStepOneActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- RecoverWalletStepTwo页面 -->
+        <activity
+            android:name=".ui.activity.recoverwallet.RecoverWalletStepTwoActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- RecoverWalletStepThree页面 -->
+        <activity
+            android:name=".ui.activity.recoverwallet.RecoverWalletStepThreeActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- GetBlockData页面 -->
+        <activity
+            android:name=".ui.activity.GetBlockDataActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- AccountLightning页面 -->
+        <activity
+            android:name=".ui.activity.AccountLightningActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- Channels页面 -->
+        <activity
+            android:name=".ui.activity.ChannelsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- backupBlock页面 -->
+        <activity
+            android:name=".ui.activity.backup.BackupBlockProcessActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- BalanceDetail页面 -->
+        <activity
+            android:name=".ui.activity.BalanceDetailActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+    </application>
+
+</manifest>

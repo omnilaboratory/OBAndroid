@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <com.omni.wallet.baselibrary.view.datePicker.NumberPicker
+        android:id="@+id/year_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/main_10"
+        android:layout_marginRight="@dimen/main_5"
+        android:paddingBottom="@dimen/main_15"
+        android:paddingLeft="@dimen/main_5"
+        android:paddingRight="@dimen/main_5"
+        android:paddingTop="@dimen/main_15"
+        app:currentNumber="1970"
+        app:endNumber="2100"
+        app:flagText="年"
+        app:rowNumber="3"
+        app:startNumber="2000"
+        app:textSize="20sp"
+        app:verticalSpacing="30dp" />
+
+    <com.omni.wallet.baselibrary.view.datePicker.NumberPicker
+        android:id="@+id/month_picker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/main_5"
+        android:layout_marginRight="@dimen/main_5"
+        android:layout_weight="1"
+        android:padding="16dp"
+        app:currentNumber="1"
+        app:endNumber="12"
+        app:flagText="月"
+        app:rowNumber="3"
+        app:startNumber="1"
+        app:textSize="20sp"
+        app:verticalSpacing="30dp" />
+
+    <com.omni.wallet.baselibrary.view.datePicker.NumberPicker
+        android:id="@+id/day_picker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/main_5"
+        android:layout_marginRight="@dimen/main_5"
+        android:layout_weight="1"
+        android:padding="16dp"
+        app:currentNumber="1"
+        app:endNumber="31"
+        app:flagText="日"
+        app:rowNumber="3"
+        app:startNumber="1"
+        app:textSize="20sp"
+        app:verticalSpacing="30dp" />
+
+    <com.omni.wallet.baselibrary.view.datePicker.NumberPicker
+        android:id="@+id/hour_picker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/main_5"
+        android:layout_marginRight="@dimen/main_5"
+        android:layout_weight="1"
+        android:padding="16dp"
+        app:currentNumber="1"
+        app:endNumber="24"
+        app:flagText="时"
+        app:rowNumber="3"
+        app:startNumber="0"
+        app:textSize="20sp"
+        app:verticalSpacing="30dp" />
+
+    <com.omni.wallet.baselibrary.view.datePicker.NumberPicker
+        android:id="@+id/minute_picker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/main_5"
+        android:layout_marginRight="@dimen/main_10"
+        android:layout_weight="1"
+        android:padding="16dp"
+        app:currentNumber="1"
+        app:endNumber="59"
+        app:flagText="分"
+        app:rowNumber="3"
+        app:startNumber="0"
+        app:textSize="20sp"
+        app:verticalSpacing="30dp" />
+
+</LinearLayout>

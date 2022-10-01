@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">鑫房链物业</string>
+
+    <!--错误码相关-->
+    <string name="error_code_no_network">网络无连接，请检查网络设置</string>
+    <string name="error_code_common">请求超时，请稍候再试</string>
+    <!--错误码提示-->
+    <string name="error_code_01">手机号不能为空，请重新输入</string>
+    <string name="error_code_1003">用户未登录</string>
+    <string name="error_code_1005">用户不存在</string>
+
+    <!--公用的-->
+    <string name="text_delete">删除</string>
+    <string name="text_confirm">确定</string>
+    <string name="text_confirm1">确认</string>
+    <string name="text_cancel">取消</string>
+    <string name="text_call">呼叫</string>
+    <string name="text_more">更多</string>
+    <string name="text_look_more">查看更多</string>
+    <string name="text_arrow_up">↑</string>
+    <string name="text_arrow_down">↓</string>
+    <string name="text_all_country">全国</string>
+    <string name="text_page_no_data_reload">重新加载</string>
+    <string name="text_page_no_data_desc">暂未获取到拍品信息~</string>
+    <string name="text_params_error">参数错误</string>
+    <string name="text_get">获取</string>
+    <string name="text_good">好的</string>
+    <string name="text_modify">修改</string>
+    <string name="text_submit">提交</string>
+    <string name="text_details">详情</string>
+    <string name="text_expand_more">展开更多</string>
+    <string name="text_in_the_end">已经到底了</string>
+    <string name="text_complete">完成</string>
+    <string name="text_digits_num_code">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890</string>
+    <string name="text_digits_ID_card">xX1234567890</string>
+    <string name="text_digits_num">1234567890</string>
+    <string name="text_tips_sms_send_success">短信发送成功，请注意查收</string>
+    <string name="text_i_know">我知道了</string>
+    <string name="text_commit">提交</string>
+    <string name="text_commit_success">提交成功</string>
+    <string name="text_save">保存</string>
+    <string name="text_login">登录</string>
+    <string name="text_register">注册</string>
+    <string name="text_next">下一步</string>
+    <string name="text_reset">重置</string>
+
+    <!--通用的Dialog-->
+    <string name="text_dialog_uploading">正在上传&#8230;</string>
+    <string name="text_dialog_waiting">正在加载&#8230;</string>
+    <string name="text_dialog_doing">正在处理&#8230;</string>
+
+    <!--上拉加载下拉刷新-->
+    <string name="text_load_more">上拉加载更多</string>
+    <string name="text_load_pull">下拉即可刷新</string>
+    <string name="text_load_release">释放即可刷新</string>
+    <string name="text_refreshing">正在刷新&#8230;</string>
+    <string name="text_refresh_done">刷新完成</string>
+    <string name="text_loading">正在加载&#8230;</string>
+    <string name="text_load_done">加载完成</string>
+    <string name="text_load_no_data">没有更多了~</string>
+    <string name="text_load_in_the_end">已经到底了</string>
+
+    <!--//============================分割线==============================//-->
+</resources>

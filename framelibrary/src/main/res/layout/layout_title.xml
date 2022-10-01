@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_title_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_white"
+    android:orientation="vertical">
+
+    <!--这个是隐藏的布局，然后通过动态的设置高度达到效果-->
+    <!--设置一定的颜色，状态栏字体好多白色的，避免全透明的时候看不到状态栏文字-->
+    <View
+        android:id="@+id/view_top_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/main_1"
+        android:background="@color/color_transparent"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/layout_title"
+        style="@style/title_bar_style">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            style="@style/back_view" />
+
+
+        <TextView
+            android:id="@+id/tv_left_title"
+            style="@style/title_text_style"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/main_10"
+            android:layout_toRightOf="@id/iv_back"
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            style="@style/title_text_style"
+            android:layout_centerInParent="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:maxWidth="@dimen/main_168"
+            android:visibility="gone" />
+
+        <RadioGroup
+            android:id="@+id/rg_middle_tab"
+            android:layout_width="@dimen/main_150"
+            android:layout_height="@dimen/main_29"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/rl_right"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:minWidth="@dimen/main_45" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/bottom_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_0.5"
+        android:background="@color/color_dedede" />
+</LinearLayout>

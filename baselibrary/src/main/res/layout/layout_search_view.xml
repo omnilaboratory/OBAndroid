@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/et_search_view_content"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/main_30"
+        android:layout_marginBottom="@dimen/main_10"
+        android:layout_marginLeft="@dimen/main_15"
+        android:layout_marginRight="@dimen/main_15"
+        android:layout_marginTop="@dimen/main_10"
+        android:layout_weight="1000"
+        android:background="@drawable/bg_search_view"
+        android:drawableLeft="@drawable/icon_search"
+        android:drawablePadding="@dimen/main_10"
+        android:gravity="center_vertical"
+        android:hint="搜索"
+        android:paddingLeft="@dimen/main_10"
+        android:textColor="@color/color_333333"
+        android:textColorHint="@color/color_9f9f9f"
+        android:textSize="@dimen/text_12" />
+</LinearLayout>

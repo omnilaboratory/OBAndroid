@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_white"
+    android:orientation="vertical">
+
+    <com.omni.wallet.baselibrary.view.SlideVerifyImageView
+        android:id="@+id/view_slide"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_225"
+        android:src="@drawable/bg_slide_image"
+        app:needRotate="true"
+        app:unitHeight="80dp"
+        app:unitShadeSrc="@drawable/shape_verify_image_shade"
+        app:unitShowSrc="@drawable/shape_verify_image_show"
+        app:unitWidth="80dp" />
+
+    <SeekBar
+        android:id="@+id/sb_dy"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_30"
+        android:layout_marginTop="@dimen/main_20"
+        android:max="100" />
+</LinearLayout>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_transparent">
+
+    <LinearLayout
+        android:layout_width="@dimen/main_270"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_web_dialog"
+        android:minHeight="@dimen/main_103.5"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_dialog_content"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_59.5"
+            android:gravity="center"
+            android:textColor="@color/color_black"
+            android:textSize="@dimen/text_19" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_1"
+            android:background="@color/color_e0e0e0" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_44"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_dialog_cancel_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1000"
+                android:gravity="center"
+                android:text="@string/base_text_dialog_btn_cancel"
+                android:textColor="@color/color_157efb"
+                android:textSize="@dimen/text_17" />
+
+            <View
+                android:layout_width="@dimen/main_1"
+                android:layout_height="match_parent"
+                android:background="@color/color_e0e0e0" />
+
+            <TextView
+                android:id="@+id/tv_dialog_confirm_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1000"
+                android:gravity="center"
+                android:text="@string/base_text_dialog_btn_confirm"
+                android:textColor="@color/color_157efb"
+                android:textSize="@dimen/text_17" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

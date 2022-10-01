@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="@dimen/main_300"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/bg_main_dialog"
+        android:minHeight="@dimen/main_180"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_dialog_image_verify"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_40"
+            android:layout_marginLeft="@dimen/main_45"
+            android:layout_marginRight="@dimen/main_45"
+            android:layout_marginTop="@dimen/main_15"
+            android:scaleType="fitXY"
+            android:src="@drawable/bg_dialog_verify_image_iv" />
+
+        <EditText
+            android:id="@+id/et_dialog_image_verify"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_40"
+            android:layout_marginLeft="@dimen/main_45"
+            android:layout_marginRight="@dimen/main_45"
+            android:layout_marginTop="@dimen/main_10"
+            android:background="@drawable/bg_dialog_verify_et"
+            android:digits="@string/text_digits_num_code"
+            android:hint="请输入验证信息"
+            android:paddingLeft="@dimen/main_5"
+            android:paddingRight="@dimen/main_5"
+            android:textColor="@color/color_333333"
+            android:textColorHint="@color/color_666666"
+            android:textSize="@dimen/text_15" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_1"
+            android:layout_marginLeft="@dimen/main_20"
+            android:layout_marginRight="@dimen/main_20"
+            android:layout_marginTop="@dimen/main_25"
+            android:background="@color/color_f1f1f1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_50"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_dialog_image_verify_cancel_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1000"
+                android:gravity="center"
+                android:text="@string/text_cancel"
+                android:textColor="@color/color_666666"
+                android:textSize="@dimen/text_17" />
+
+            <View
+                android:layout_width="@dimen/main_1"
+                android:layout_height="match_parent"
+                android:background="@color/color_f1f1f1" />
+
+            <TextView
+                android:id="@+id/tv_dialog_image_verify_confirm_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1000"
+                android:gravity="center"
+                android:text="@string/text_confirm"
+                android:textColor="@color/color_1977da"
+                android:textSize="@dimen/text_17" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

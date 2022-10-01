@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- 代表设备的根目录-->
+    <root-path
+        name="root"
+        path="" />
+    <!--代表： Context.getFilesDir()-->
+    <files-path
+        name="file"
+        path="apk" />
+    <!--代表: Environment.getExternalStorageDirectory()-->
+    <external-path
+        name="files_root"
+        path="Android/data/com.omni.property/" />
+    <external-path
+        name="external_storage_root"
+        path="." />
+</paths>

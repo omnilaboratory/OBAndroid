@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--解决安卓P及其以上版本OkHttp3的明文网络请求被拒绝的问题-->
+    <!--搭配清单文件中Application节点的配置android:networkSecurityConfig="@xml/network_security_config"-->
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

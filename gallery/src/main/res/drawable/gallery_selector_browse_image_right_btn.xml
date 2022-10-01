@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName">
+    <item android:drawable="@drawable/gallery_shape_right_btn_default" android:state_enabled="true" />
+    <item android:drawable="@drawable/gallery_shape_right_btn_disable" android:state_enabled="false" />
+    <item android:drawable="@drawable/gallery_shape_right_btn_default" />
+
+</selector>

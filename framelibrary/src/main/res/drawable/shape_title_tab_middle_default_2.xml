@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 边框颜色值 -->
+    <item>
+        <shape>
+            <solid android:color="@color/color_f13a3a" />
+        </shape>
+    </item><!-- 主体背景颜色值 --><!-- 此处定义只有上下两边有边框 高度为1像素-->
+    <item
+        android:bottom="@dimen/main_1"
+        android:left="@dimen/main_1_"
+        android:right="@dimen/main_1_"
+        android:top="@dimen/main_1">
+        <shape>
+            <!--边框里面背景颜色 白色-->
+            <solid android:color="@color/color_white" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+
+android {
+    def versions = rootProject.ext.versions
+    compileSdkVersion versions.compileVersion
+    buildToolsVersion versions.buildToolVersion
+    defaultConfig {
+        minSdkVersion versions.minSdkVersion
+        targetSdkVersion versions.targetSdkVersion
+        versionCode versions.versionCode
+        versionName versions.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            //选择要添加的对应cpu类型的.so库。
+            abiFilters 'armeabi-v7a'
+//          'armeabi' , 'x86' , 'armeabi-v7a', 'armeabi-v8a', 'x86_64', 'mips', 'mips64'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    // 友盟调试相关
+    signingConfigs {
+//        debug {
+//            storeFile file('debug.keystore')
+//            storePassword "android"
+//            keyAlias "androiddebugkey"
+//            keyPassword "android"
+//        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    //设置了resourcePrefix值后，所有的资源名必须以指定的字符串做前缀，否则会报错。
+    //但是resourcePrefix这个值只能限定xml里面的资源，并不能限定图片资源，所有图片资源仍然需要手动去修改资源名。
+    // resourcePrefix "st_"
+}
+
+dependencies {
+    def dependencies = rootProject.ext.deps
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':baselibrary')
+    compile project(':resource')
+    // 快钱
+    compile dependencies.kuaiqian
+    // 微信开放平台
+    compile dependencies.WeChatPlatform
+    // ZXing
+    compile dependencies.ZXing
+}

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activity.ChannelsActivity">
+
+    <View
+        android:id="@+id/view_top"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+    <!--标题栏-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_45"
+        android:background="@color/color_white">
+
+        <ImageView
+            android:layout_width="@dimen/main_36"
+            android:layout_height="@dimen/main_36"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/main_20"
+            android:src="@mipmap/icon_lightning_logo"/>
+
+        <RelativeLayout
+            android:layout_width="@dimen/main_32"
+            android:layout_height="@dimen/main_32"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/main_25">
+
+            <ImageView
+                android:id="@+id/iv_menu"
+                android:layout_width="@dimen/main_24"
+                android:layout_height="@dimen/main_24"
+                android:layout_centerInParent="true"
+                android:src="@mipmap/icon_menu_black"/>
+
+            <ImageView
+                android:id="@+id/iv_green_point"
+                android:layout_width="@dimen/main_12"
+                android:layout_height="@dimen/main_12"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/bg_btn_round_06d78f_25"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/main_10"
+        android:layout_marginTop="@dimen/main_20"
+        android:background="@mipmap/img_channels_bg"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_20"
+            android:layout_marginRight="@dimen/main_35"
+            android:layout_marginTop="@dimen/main_20">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="My account 1"
+                        android:textColor="@color/color_black"
+                        android:textSize="@dimen/text_18"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_6"
+                        android:text="01234e*****bg453123"
+                        android:textColor="@color/color_A6_transparent"
+                        android:textSize="@dimen/text_16"/>
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/iv_copy"
+                    android:layout_width="@dimen/main_24"
+                    android:layout_height="@dimen/main_24"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/main_15"
+                    android:src="@mipmap/icon_copy_black"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_close"
+                android:layout_width="@dimen/main_24"
+                android:layout_height="@dimen/main_24"
+                android:layout_alignParentRight="true"
+                android:src="@mipmap/icon_close_x_black"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_1"
+            android:layout_marginLeft="@dimen/main_5"
+            android:layout_marginRight="@dimen/main_19"
+            android:layout_marginTop="@dimen/main_10"
+            android:background="@color/color_80p_transparent"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_18"
+            android:layout_marginRight="@dimen/main_35"
+            android:layout_marginTop="@dimen/main_17">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:letterSpacing="0.25"
+                android:text="@string/channels"
+                android:textColor="@color/color_4A92FF"
+                android:textSize="@dimen/text_18"/>
+
+            <ImageView
+                android:id="@+id/iv_fund"
+                android:layout_width="@dimen/main_32"
+                android:layout_height="@dimen/main_32"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/main_42"
+                android:src="@mipmap/icon_fund_gray_one"/>
+
+            <ImageView
+                android:id="@+id/iv_wallet"
+                android:layout_width="@dimen/main_24"
+                android:layout_height="@dimen/main_24"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/icon_wallet_black"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_15"
+            android:layout_marginRight="@dimen/main_40"
+            android:layout_marginTop="@dimen/main_15">
+
+            <RelativeLayout
+                android:layout_width="@dimen/main_225"
+                android:layout_height="@dimen/main_32"
+                android:background="@drawable/bg_black_rectangle_round_5">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/main_2"
+                    android:layout_marginRight="@dimen/main_45"
+                    android:background="@null"
+                    android:singleLine="true"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/text_16"/>
+
+                <ImageView
+                    android:id="@+id/iv_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/main_20"
+                    android:src="@mipmap/icon_search_black"/>
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/iv_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/icon_filter_black"/>
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_channels_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_22"
+            android:layout_marginRight="@dimen/main_35"
+            android:layout_marginTop="@dimen/main_15"/>
+    </LinearLayout>
+</LinearLayout>

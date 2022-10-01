@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.ChooseBackupTypeActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="@dimen/main_25"
+        android:layout_marginRight="@dimen/main_25"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/layout_local"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_local"
+                    android:layout_width="@dimen/main_50"
+                    android:layout_height="@dimen/main_50"
+                    android:src="@mipmap/icon_local"/>
+
+                <TextView
+                    android:id="@+id/tv_local"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/main_10"
+                    android:text="@string/local"
+                    android:textColor="@color/color_2d33c2"
+                    android:textSize="@dimen/text_15"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_google_drive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_google_drive"
+                    android:layout_width="@dimen/main_50"
+                    android:layout_height="@dimen/main_50"
+                    android:src="@mipmap/icon_google_gray"/>
+
+                <TextView
+                    android:id="@+id/tv_google_drive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/main_10"
+                    android:text="@string/google_drive"
+                    android:textColor="@color/color_7f7f7f"
+                    android:textSize="@dimen/text_15"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_drop_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_drop_box"
+                    android:layout_width="@dimen/main_50"
+                    android:layout_height="@dimen/main_50"
+                    android:src="@mipmap/icon_drop_box_gray"/>
+
+                <TextView
+                    android:id="@+id/tv_drop_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/main_10"
+                    android:text="@string/drop_box"
+                    android:textColor="@color/color_7f7f7f"
+                    android:textSize="@dimen/text_15"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="@dimen/main_150"
+            android:layout_height="@dimen/main_40"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/main_60"
+            android:background="@drawable/bg_btn_round_blue_4"
+            android:text="@string/next"
+            android:textColor="@color/color_white"/>
+    </LinearLayout>
+</RelativeLayout>

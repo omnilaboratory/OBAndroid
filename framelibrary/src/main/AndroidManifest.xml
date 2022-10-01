@@ -1,0 +1,54 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.omni.wallet.framelibrary">
+    <!--联网权限-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 读取手机联网状态 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!--读取Wifi状态-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!--拨打电话-->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!--读取手机状态-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!--外部存储-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--DownloadManager下载时不显示Notification-->
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+    <!--&lt;!&ndash;检测应用安装、替换、卸载&ndash;&gt;-->
+    <!--&lt;!&ndash;允许程序开机自动运行&ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
+    <!--相机权限-->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!--&lt;!&ndash;屏幕旋转&ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />-->
+    <!--获取设备唯一ID需要蓝牙权限-->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <!--未知来源应用安装的权限-->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+
+    <application android:theme="@style/AppTheme">
+        <!--兼容安卓7.0安装APK报错/调用照相机报错-->
+        <!--主要原因是7.0对于安全以及6.0之后动态申请权限的考虑，这个Provider是用来指定一些路径的-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.omni.wallet.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+        <!--日志上传服务-->
+        <service
+            android:name="com.omni.wallet.framelibrary.service.LogService"
+            android:process=":log" />
+
+    </application>
+</manifest>

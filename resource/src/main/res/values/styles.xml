@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 设置按钮样式为默认样式，否则按钮变形 -->
+        <item name="android:buttonStyle">@android:style/Widget.Button</item>
+        <!-- Customize your theme here. -->
+        <!-- 全局Activity背景 -->
+        <item name="android:windowBackground">@color/color_white</item>
+        <!--&lt;!&ndash;Appbar背景色&ndash;&gt;-->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--&lt;!&ndash;状态栏颜色&ndash;&gt;-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--&lt;!&ndash;控制各个控件被选中时的颜色&ndash;&gt;-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+        <!--&lt;!&ndash;&ndash;&gt;-->
+        <!--<item name="android:listDivider">@drawable/shape_divider_recycler_view_default</item>-->
+    </style>
+
+    <!-- SplashActivity theme. 代码设置了，暂时未用到-->
+    <style name="SplashActivityTheme" parent="AppTheme">
+        <!-- Activity背景 -->
+        <item name="android:windowBackground">@color/color_f7650f</item>
+        <!--无标题-->
+        <item name="android:windowNoTitle">true</item>
+        <!--无ActionBar-->
+        <item name="android:windowActionBar">false</item>
+        <!--全屏即无通知栏-->
+        <item name="android:windowFullscreen">true</item>
+        <!--是否有遮盖-->
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!--全屏的样式-->
+    <style name="fullScreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <!--状态栏样式-->
+    <style name="title_bar_style">
+        <item name="android:paddingLeft">0.0dip</item>
+        <item name="android:paddingRight">0.0dip</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/main_45</item>
+        <item name="android:background">@color/color_transparent</item>
+    </style>
+
+    <!--详情页Dialog的动画-->
+    <style name="dialog_details_anim">
+        <item name="android:windowEnterAnimation">@anim/anim_details_dialog_in</item>
+        <item name="android:windowExitAnimation">@anim/anim_details_dialog_out</item>
+    </style>
+
+    <!--标题栏文字样式-->
+    <style name="title_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/main_18</item>
+        <item name="android:textColor">@color/color_333333</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!--标题栏按钮样式-->
+    <style name="title_bar_button">
+        <item name="android:textSize">@dimen/main_15</item>
+        <item name="android:textColor">@color/color_666666</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@null</item>
+        <item name="android:paddingLeft">@dimen/main_5</item>
+        <item name="android:paddingRight">@dimen/main_5</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">0.0dip</item>
+        <item name="android:layout_marginRight">@dimen/main_15</item>
+    </style>
+
+    <!--标题栏返回按钮的样式-->
+    <style name="back_view" parent="@style/title_bar_button">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">@dimen/main_44</item>
+        <item name="android:layout_height">@dimen/main_45</item>
+        <item name="android:src">@drawable/icon_title_back_black</item>
+        <item name="android:paddingLeft">@dimen/main_10</item>
+        <item name="android:paddingRight">@dimen/main_10</item>
+        <item name="android:paddingTop">@dimen/main_10</item>
+        <item name="android:paddingBottom">@dimen/main_10</item>
+        <item name="android:layout_marginLeft">0.0dip</item>
+        <item name="android:layout_marginRight">0.0dip</item>
+        <item name="android:text">@null</item>
+        <item name="android:drawableLeft">@null</item>
+    </style>
+
+    <!--标题栏中间TabView的样式-->
+    <style name="title_tab_view">
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/color_title_tab_text</item>
+        <item name="android:textSize">@dimen/text_15</item>
+    </style>
+
+    <!--主页底部RadioButton的样式-->
+    <style name="main_page_bottom_radio">
+        <item name="android:layout_width">0.0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:drawablePadding">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/color_main_page_icon_text</item>
+        <item name="android:textSize">@dimen/text_11</item>
+    </style>
+
+    <!--全透明的Activity-->
+    <style name="TransparentActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!--EditText的默认样式-->
+    <style name="BaseEditText">
+        <!--无背景-->
+        <item name="android:background">@null</item>
+        <!--光标颜色-->
+        <item name="android:textCursorDrawable">@drawable/bg_et_cursor_drawable</item>
+    </style>
+
+    <!--PopupWindow的进出动画，弹出收起，缩放动画-->
+    <style name="pop_anim_top_in_out_style" mce_bogus="1" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/anim_from_top_in</item>
+        <item name="android:windowExitAnimation">@anim/anim_from_top_out</item>
+    </style>
+
+    <style name="ScrollBarRecyclerView">
+        <item name="android:scrollbarThumbVertical">@color/color_f7650f</item>
+        <item name="android:scrollbarSize">@dimen/main_5</item>
+        <!--该属性决定列表滑动到顶端或者尾端之后是否出现弧形光晕-->
+        <!--<item name="android:overScrollMode">never</item>-->
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:scrollbarStyle">insideOverlay</item>
+    </style>
+
+    <!--灰色分割线d8-->
+    <style name="gray_line_d8">
+        <item name="android:background">@color/color_d8d8d8</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/main_0.5</item>
+        <item name="android:layout_marginLeft">@dimen/main_19</item>
+        <item name="android:layout_marginRight">@dimen/main_19</item>
+    </style>
+    <!--灰色分割线d9-->
+    <style name="gray_line_d9">
+        <item name="android:background">@color/color_d9d9d9</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/main_0.5</item>
+        <item name="android:layout_marginLeft">@dimen/main_21</item>
+        <item name="android:layout_marginRight">@dimen/main_21</item>
+    </style>
+    <!--灰色分割线ea-->
+    <style name="gray_line_ea" parent="gray_line_d8">
+        <item name="android:background">@color/color_eaeaea</item>
+    </style>
+    <!--灰色分割线e6-->
+    <style name="gray_line_e6" parent="gray_line_d9">
+        <item name="android:background">@color/color_e6e6ec</item>
+    </style>
+    <!--筛选框PopupWindow的进出动画-->
+    <style name="filter_pop_anim_style" mce_bogus="1" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/anim_alpha_in</item>
+        <item name="android:windowExitAnimation">@anim/anim_alpha_out</item>
+    </style>
+</resources>

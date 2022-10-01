@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--%p是指的相对于父布局-->
+    <translate
+        android:duration="500"
+        android:fromYDelta="-100%p" />
+</set>

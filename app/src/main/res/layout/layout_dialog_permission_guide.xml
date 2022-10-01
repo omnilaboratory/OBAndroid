@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_transparent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/main_40"
+        android:layout_marginRight="@dimen/main_40"
+        android:background="@drawable/bg_main_dialog"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_dialog_permission_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_15"
+            android:layout_marginRight="@dimen/main_15"
+            android:layout_marginTop="@dimen/main_20"
+            android:gravity="center"
+            android:text="该APP需要您授予读写手机存储的权限，请到“设置->应用”或者“设置->权限管理”授予存储权限"
+            android:textColor="@color/color_333333"
+            android:textSize="@dimen/text_16" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_1"
+            android:layout_marginTop="@dimen/main_20"
+            android:background="@color/color_f7f7f7" />
+
+        <TextView
+            android:id="@+id/tv_dialog_permission_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_48"
+            android:gravity="center"
+            android:text="确定"
+            android:textColor="@color/color_black"
+            android:textSize="@dimen/main_18" />
+    </LinearLayout>
+</LinearLayout>

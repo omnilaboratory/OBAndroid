@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="radius_owner_manager_item">@dimen/main_4</dimen>
+    <dimen name="owner_manager_item_stroke">@dimen/main_1</dimen>
+</resources>

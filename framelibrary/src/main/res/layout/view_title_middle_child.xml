@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?><!--这里不能有外层父布局，由于inflate之后需要做类型强转-->
+<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/title_tab_view"
+    android:checked="false" />

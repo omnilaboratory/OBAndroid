@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_25">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_7"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/main_16"
+                    android:layout_height="@dimen/main_16"
+                    android:src="@drawable/bg_btn_round_009b19_25"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_12"
+                    android:text="Alice"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/text_20"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="@dimen/main_142"
+                android:layout_height="@dimen/main_23"
+                android:layout_marginTop="@dimen/main_10"
+                android:background="@drawable/bg_black_rectangle_full_0"
+                android:gravity="center"
+                android:text="@string/remote_pubkey"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/text_16"/>
+
+            <TextView
+                android:layout_width="@dimen/main_142"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_10"
+                android:text="02e56dkghiygijuy7698ygu9u09u9.xcs985"
+                android:textColor="@color/color_99_transparent"
+                android:textSize="@dimen/text_16"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/main_24"
+                    android:layout_height="@dimen/main_24"
+                    android:src="@mipmap/icon_usdt_logo_small"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_20"
+                    android:text="BTC"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/text_18"/>
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/main_48"
+                android:layout_height="@dimen/main_48"
+                android:layout_gravity="right"
+                android:layout_marginTop="@dimen/main_5"
+                android:src="@mipmap/icon_qr_code_default"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_15">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/local_balance"
+            android:textColor="@color/color_A6_transparent"
+            android:textSize="@dimen/text_16"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="15,000.0000 USDT"
+            android:textColor="@color/color_06d78f"
+            android:textSize="@dimen/text_16"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_5">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_10"
+                android:text="="
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/text_20"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_5"
+                android:text="15,055.0000 USD"
+                android:textColor="@color/color_A6_transparent"
+                android:textSize="@dimen/text_16"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_1"
+        android:layout_marginLeft="@dimen/main_20"
+        android:layout_marginRight="@dimen/main_25"
+        android:layout_marginTop="@dimen/main_15"
+        android:background="@color/color_80p_transparent"/>
+</LinearLayout>

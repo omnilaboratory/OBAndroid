@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.omni.wallet.baselibrary.view.HackyViewPager
+        android:id="@+id/staff_vp_browse_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_50_transparent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/gallery_recycler_browse_image_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/main_5"
+            android:layout_marginTop="@dimen/main_5" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_0.5"
+            android:background="@color/color_white" />
+
+        <RelativeLayout
+            android:id="@+id/gallery_layout_select_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_40">
+
+            <CheckBox
+                android:id="@+id/gallery_cb_select_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/main_10"
+                android:button="@drawable/gallery_selector_check_box"
+                android:checked="false"
+                android:padding="@dimen/main_10"
+                android:text="选择"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/text_15" />
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/layout_dialog_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/main_25"
+        android:layout_marginRight="@dimen/main_25"
+        android:background="@drawable/bg_update_dialog"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/main_15"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_dialog_update_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="发现新版本"
+                android:textColor="@color/color_333333"
+                android:textSize="@dimen/text_18" />
+
+            <TextView
+                android:id="@+id/tv_dialog_update_title_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_3"
+                android:textColor="@color/color_333333"
+                android:textSize="@dimen/text_17" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/main_20"
+            android:layout_marginRight="@dimen/main_20"
+            android:layout_marginTop="@dimen/main_10"
+            android:layout_weight="1000">
+
+            <TextView
+                android:id="@+id/tv_dialog_update_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.2"
+                android:minHeight="@dimen/main_105"
+                android:textColor="@color/color_333333"
+                android:textSize="@dimen/text_14" />
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/tv_dialog_update_force_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/main_20"
+            android:layout_marginTop="@dimen/main_25"
+            android:background="@drawable/bg_dialog_update_btn"
+            android:gravity="center"
+            android:text="立即体验"
+            android:textColor="@color/color_white"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/view_dialog_update_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_1"
+            android:layout_marginTop="@dimen/main_35"
+            android:background="@color/color_d8d8d8" />
+
+        <LinearLayout
+            android:id="@+id/layout_dialog_update_not_force"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_55"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_dialog_update_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1000"
+                android:gravity="center"
+                android:text="暂不更新"
+                android:textColor="@color/color_9b9b9b"
+                android:textSize="@dimen/text_16" />
+
+            <View
+                android:id="@+id/line_dialog_btn"
+                android:layout_width="@dimen/main_1"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/main_15"
+                android:layout_marginTop="@dimen/main_15"
+                android:background="@color/color_d8d8d8" />
+
+            <TextView
+                android:id="@+id/tv_dialog_update_confirm"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1000"
+                android:gravity="center"
+                android:text="立即体验"
+                android:textColor="@color/color_f7650f"
+                android:textSize="@dimen/text_16" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>

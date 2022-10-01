@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--common-->
+    <color name="color_black">#000000</color>
+    <color name="color_white">#FFFFFF</color>
+    <color name="color_95white">#F3FFFFFF</color>
+    <color name="color_green">#FF00ff00</color>
+    <color name="color_red">#FF0000</color>
+    <color name="color_half_transparent">#7F000000</color>
+    <color name="color_transparent">#00FFFFFF</color>
+    <color name="color_5_transparent">#0C000000</color>
+    <color name="color_10_transparent">#16000000</color>
+    <color name="color_15_transparent">#21000000</color>
+    <color name="color_20_transparent">#33000000</color>
+    <color name="color_25_transparent">#3F000000</color>
+    <color name="color_30_transparent">#4C000000</color>
+    <color name="color_35_transparent">#59000000</color>
+    <color name="color_40_transparent">#66000000</color>
+    <color name="color_45_transparent">#72000000</color>
+    <color name="color_50_transparent">#7F000000</color>
+    <color name="color_55_transparent">#8C000000</color>
+    <color name="color_60_transparent">#99000000</color>
+    <color name="color_65_transparent">#A5000000</color>
+    <color name="color_70_transparent">#B2000000</color>
+    <color name="color_75_transparent">#BF000000</color>
+    <color name="color_80_transparent">#CC000000</color>
+    <color name="color_85_transparent">#D8000000</color>
+    <color name="color_90_transparent">#E5000000</color>
+    <color name="color_95_transparent">#F2000000</color>
+
+    <!---->
+    <color name="color_333333">#ff333333</color>
+    <color name="color_99000000">#99000000</color>
+    <color name="color_0a001d">#ff0a001d</color>
+    <color name="color_e1e1e1">#ffe1e1e1</color>
+    <color name="color_1793fd">#ff1793fd</color>
+    <color name="color_4373f7">#ff4373f7</color>
+    <color name="color_999999">#ff999999</color>
+    <color name="color_e0e0e0">#ffe0e0e0</color>
+    <color name="color_157efb">#ff157efb</color>
+    <color name="color_f7f7f7">#fff7f7f7</color>
+    <color name="color_252b4f_80">#CC252b4f</color>
+    <color name="color_ff9f00">#ffff9f00</color>
+    <color name="color_fff0cc">#fffff0cc</color>
+
+</resources>

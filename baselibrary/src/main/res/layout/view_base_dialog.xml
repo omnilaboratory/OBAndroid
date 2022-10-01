@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:padding="@dimen/main_20">
+
+        <EditText
+            android:id="@+id/base_et"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_50"
+            android:textSize="@dimen/text_18" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/base_et"
+            android:layout_marginTop="@dimen/main_20"
+            android:orientation="horizontal"
+            android:padding="@dimen/main_20">
+
+            <Button
+                android:id="@+id/base_btn1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/main_10"
+                android:layout_weight="1000"
+                android:text="按钮1" />
+
+            <Button
+                android:id="@+id/base_btn2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_10"
+                android:layout_weight="1000"
+                android:text="按钮2" />
+
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>
