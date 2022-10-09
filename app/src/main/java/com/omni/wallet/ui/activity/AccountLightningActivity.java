@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
@@ -21,7 +22,9 @@ import com.omni.wallet.popupwindow.send.SendStepOnePopupWindow;
 import com.omni.wallet.utils.CopyUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -35,9 +38,14 @@ public class AccountLightningActivity extends AppBaseActivity {
     View mTopView;
     @BindView(R.id.iv_menu)
     ImageView mMenuIv;
-    @BindView(R.id.recycler_assets_list)
-    public RecyclerView mRecyclerView;// 资产列表的RecyclerView
-    private List<String> mData = new ArrayList<>();
+    @BindView(R.id.recycler_assets_list_block)
+    public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock
+    @BindView(R.id.recycler_assets_list_lightning)
+    public RecyclerView mRecyclerViewLightning;// 资产列表的RecyclerViewLighting
+    @BindView(R.id.tv_account_value)
+    public TextView accountValue;//资产列表所有的资产价值总和
+    private List<Map> blockData = new ArrayList<>();
+    private List<Map> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
 
     MenuPopupWindow mMenuPopupWindow;
@@ -62,19 +70,61 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-        initRecyclerView();
+        initBlockAssets();
+        initLightningAssets();
+        initRecyclerViewBlock(blockData);
+        initRecyclerViewLighting(lightningData);
     }
 
-    private void initRecyclerView() {
+    //    测试用方法生成block assets 数据
+    private void initBlockAssets(){
+        Map a = new HashMap<String,String>();
+        a.put("tokenImageSource",R.mipmap.icon_usdt_logo_small);
+        a.put("networkImageSource",R.mipmap.icon_network_link_black);
+        a.put("amount",10000.0000f);
+        a.put("value",70000.0000f);
+        Map b = new HashMap<String,String>();
+        b.put("tokenImageSource",R.mipmap.icon_btc_logo_small);
+        b.put("networkImageSource",R.mipmap.icon_network_link_black);
+        b.put("amount",10000.0000f);
+        b.put("value",70000.0000f);
+        blockData.add(a);
+        blockData.add(b);
+        blockData.add(a);
+        blockData.add(b);
+    }
+    //    测试用方法生成block assets 数据
+    private void initLightningAssets(){
+        Map a = new HashMap<String,String>();
+        a.put("tokenImageSource",R.mipmap.icon_usdt_logo_small);
+        a.put("networkImageSource",R.mipmap.icon_network_vector);
+        a.put("amount",10000.0000f);
+        a.put("value",70000.0000f);
+        Map b = new HashMap<String,String>();
+        b.put("tokenImageSource",R.mipmap.icon_btc_logo_small);
+        b.put("networkImageSource",R.mipmap.icon_network_vector);
+        b.put("amount",10000.0000f);
+        b.put("value",70000.0000f);
+        lightningData.add(a);
+        lightningData.add(b);
+        lightningData.add(a);
+        lightningData.add(b);
+    }
+
+    private void initRecyclerViewBlock(List data) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        for (int i = 0; i < 5; i++) {
-            String str = new String();
-            mData.add(str);
-        }
-        mAdapter = new MyAdapter(mContext, mData, R.layout.layout_item_assets_list);
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerViewBlock.setLayoutManager(new LinearLayoutManager(mContext));
+        mAdapter = new MyAdapter(mContext, data, R.layout.layout_item_assets_list);
+        mRecyclerViewBlock.setAdapter(mAdapter);
+    }
+
+    private void initRecyclerViewLighting(List data) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerViewLightning.setLayoutManager(new LinearLayoutManager(mContext));
+        mAdapter = new MyAdapter(mContext, data, R.layout.layout_item_assets_list);
+        mRecyclerViewLightning.setAdapter(mAdapter);
     }
 
     @Override
@@ -85,17 +135,23 @@ public class AccountLightningActivity extends AppBaseActivity {
     /**
      * 资产列表适配器
      */
-    private class MyAdapter extends CommonRecyclerAdapter<String> {
+    private class MyAdapter extends CommonRecyclerAdapter<Map> {
 
-        public MyAdapter(Context context, List<String> data, int layoutId) {
+        public MyAdapter(Context context, List<Map> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, final int position, final String item) {
-            if (position == 0 || position == 1 || position == 2) {
-                holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_btc_logo_small);
-                holder.setImageResource(R.id.iv_asset_net, R.mipmap.icon_network_link_black);
+        public void convert(ViewHolder holder, final int position, final Map item) {
+            Integer tokenImageSourceId = Integer.parseInt(item.get("tokenImageSource").toString());
+            Integer networkImageSource = Integer.parseInt(item.get("networkImageSource").toString());
+            String assetsAmount = item.get("amount").toString();
+            String assetsValue = item.get("value").toString();
+            holder.setImageResource(R.id.iv_asset_logo, tokenImageSourceId);
+            holder.setImageResource(R.id.iv_asset_net, networkImageSource);
+            holder.setText(R.id.tv_asset_amount,assetsAmount);
+            holder.setText(R.id.tv_asset_value,assetsValue);
+            if(networkImageSource == R.mipmap.icon_network_link_black ){
                 holder.setOnItemClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -104,9 +160,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                         switchActivity(BalanceDetailActivity.class, bundle);
                     }
                 });
-            } else {
-                holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_usdt_logo_small);
-                holder.setImageResource(R.id.iv_asset_net, R.mipmap.icon_network_vector);
+            }else{
                 holder.setOnItemClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -156,13 +210,6 @@ public class AccountLightningActivity extends AppBaseActivity {
         mSendStepOnePopupWindow.show(mParentLayout);
     }
 
-    /**
-     * 点击扫二维码按钮
-     */
-    @OnClick(R.id.iv_scan)
-    public void clickScan() {
-
-    }
 
     /**
      * 点击Search按钮
