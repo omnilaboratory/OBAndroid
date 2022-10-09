@@ -96,6 +96,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="My account 1"
+                            android:textStyle="bold"
                             android:textColor="@color/color_black"
                             android:textSize="@dimen/text_18"/>
 
@@ -128,11 +129,11 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/main_1"
+                android:layout_height="@dimen/main_2"
                 android:layout_marginLeft="@dimen/main_20"
                 android:layout_marginRight="@dimen/main_20"
                 android:layout_marginTop="@dimen/main_10"
-                android:background="@color/color_80p_transparent"/>
+                android:background="@color/color_7bp_transparent"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -238,7 +239,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="="
+                            android:text="@string/aets"
                             android:textColor="@color/color_A6_transparent"
                             android:textSize="@dimen/text_16"/>
 
@@ -410,6 +411,7 @@
             android:layout_marginTop="@dimen/main_55"
             android:text="@string/channel_activities"
             android:textColor="@color/color_black"
+            android:textStyle="bold"
             android:textSize="@dimen/text_18"/>
     </RelativeLayout>
 
@@ -434,20 +436,22 @@
                 android:layout_gravity="bottom"
                 android:text="@string/to_be_paid"
                 android:textColor="@color/color_black"
-                android:textSize="@dimen/text_18"/>
+                android:textStyle="bold"
+                android:textSize="@dimen/text_18"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/main_24"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_15"
                 android:background="@drawable/bg_btn_round_ff0000_25"
                 android:gravity="center"
                 android:minWidth="@dimen/main_24"
-                android:paddingLeft="@dimen/main_5"
-                android:paddingRight="@dimen/main_5"
+                android:minHeight="@dimen/main_24"
                 android:text="5"
                 android:textColor="@color/color_white"
-                android:textSize="@dimen/text_20"/>
+                android:textSize="@dimen/text_16"
+                android:textStyle="bold" />
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>
