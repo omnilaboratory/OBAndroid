@@ -72,11 +72,6 @@
             android:name=".ui.activity.createwallet.CreateWalletStepThreeActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
-        <!-- CreateWalletStepFour页面 -->
-        <activity
-            android:name=".ui.activity.createwallet.CreateWalletStepFourActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
         <!-- ChooseBackupType页面 -->
         <activity
             android:name=".ui.activity.ChooseBackupTypeActivity"
@@ -90,11 +85,6 @@
         <!-- RecoverWalletStepTwo页面 -->
         <activity
             android:name=".ui.activity.recoverwallet.RecoverWalletStepTwoActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
-        <!-- RecoverWalletStepThree页面 -->
-        <activity
-            android:name=".ui.activity.recoverwallet.RecoverWalletStepThreeActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- GetBlockData页面 -->

@@ -18,6 +18,7 @@ import com.omni.wallet.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.popupwindow.FundPopupWindow;
 import com.omni.wallet.popupwindow.MenuPopupWindow;
 import com.omni.wallet.popupwindow.send.SendStepOnePopupWindow;
+import com.omni.wallet.utils.CopyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,11 +120,21 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
-     * 点击Copy按钮
+     * 汉：点击copy图标复制地址
+     * En：Click copy icon button,duplicate user`s wallet address to clipboard
+     * author:Tong ChangHui
+     * E-mail:tch081092@gmail.com
+     * date:2022-10-08
      */
     @OnClick(R.id.iv_copy)
     public void clickCopy() {
-
+        //接收需要复制到粘贴板的地址
+        //Get the address which will copy to clipboard
+        String toCopyAddress = "01234e*****bg453123";
+        //接收需要复制成功的提示语
+        //Get the notice when you copy success
+        String toastString = getResources().getString(R.string.toast_copy_address);
+        CopyUtil.SelfCopy(AccountLightningActivity.this,toCopyAddress,toastString);
     }
 
 

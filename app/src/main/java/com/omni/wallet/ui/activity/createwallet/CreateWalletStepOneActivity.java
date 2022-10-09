@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.NumberFormatter;
 
 
@@ -109,20 +110,18 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
 
 
     /**
-     * 点击Copy
+     * 汉：点击copy图标复制地址
+     * En：Click copy icon button,duplicate user`s wallet address to clipboard
+     * author:Tong ChangHui
+     * E-mail:tch081092@gmail.com
+     * date:2022-10-08
      */
     @OnClick(R.id.btn_copy)
     public void clickCopy() {
-        ClipboardManager cm =(ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData mClipData = ClipData.newPlainText("text", seedsString);
-        cm.setPrimaryClip(mClipData);
-        if(!mClipData.toString().isEmpty()){
-            String toastString = getResources().getString(R.string.toast_create_copy_success);
-            Toast copySuccessToast = Toast.makeText(CreateWalletStepOneActivity.this,toastString,Toast.LENGTH_LONG);
-            copySuccessToast.setGravity(Gravity.TOP,0,30);
-            copySuccessToast.show();
-        }
-
+        //接收需要复制成功的提示语
+        //Get the notice when you copy success
+        String toastString = getResources().getString(R.string.toast_create_copy_success);
+        CopyUtil.SelfCopy(CreateWalletStepOneActivity.this,seedsString,toastString);
     }
 
     /**

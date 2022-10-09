@@ -154,30 +154,6 @@
     <string name="start_upper">START</string>
     <string name="back_upper">BACK</string>
     <string name="next_upper">NEXT</string>
-    <string name="no_1">01.</string>
-    <string name="no_2">02.</string>
-    <string name="no_3">03.</string>
-    <string name="no_4">04.</string>
-    <string name="no_5">05.</string>
-    <string name="no_6">06.</string>
-    <string name="no_7">07.</string>
-    <string name="no_8">08.</string>
-    <string name="no_9">09.</string>
-    <string name="no_10">10.</string>
-    <string name="no_11">11.</string>
-    <string name="no_12">12.</string>
-    <string name="no_13">13.</string>
-    <string name="no_14">14.</string>
-    <string name="no_15">15.</string>
-    <string name="no_16">16.</string>
-    <string name="no_17">17.</string>
-    <string name="no_18">18.</string>
-    <string name="no_19">19.</string>
-    <string name="no_20">20.</string>
-    <string name="no_21">21.</string>
-    <string name="no_22">22.</string>
-    <string name="no_23">23.</string>
-    <string name="no_24">24.</string>
 
     <string name="toast_check_seeds_wrong_head">The seed with No. </string>
     <string name="toast_check_seeds_wrong_end"> you entered is incorrect. Please check it carefully and correct it.</string>
@@ -187,6 +163,6 @@
     <string name="toast_create_check_pass_diff">The passwords you entered twice do not match!</string>
     <string name="toast_recover_paste_error">The format of the data you pasted is incorrect. Please check it and try again!</string>
     <string name="toast_paste_empty">No content in the pasteboard!</string>
-
+    <string name="toast_copy_address"> Already copy the address to clipboard!</string>
 
 </resources>

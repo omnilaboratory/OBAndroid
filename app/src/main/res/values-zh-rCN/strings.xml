@@ -154,30 +154,6 @@
     <string name="start_upper">开始</string>
     <string name="back_upper">后退</string>
     <string name="next_upper">下一步</string>
-    <string name="no_1">01.</string>
-    <string name="no_2">02.</string>
-    <string name="no_3">03.</string>
-    <string name="no_4">04.</string>
-    <string name="no_5">05.</string>
-    <string name="no_6">06.</string>
-    <string name="no_7">07.</string>
-    <string name="no_8">08.</string>
-    <string name="no_9">09.</string>
-    <string name="no_10">10.</string>
-    <string name="no_11">11.</string>
-    <string name="no_12">12.</string>
-    <string name="no_13">13.</string>
-    <string name="no_14">14.</string>
-    <string name="no_15">15.</string>
-    <string name="no_16">16.</string>
-    <string name="no_17">17.</string>
-    <string name="no_18">18.</string>
-    <string name="no_19">19.</string>
-    <string name="no_20">20.</string>
-    <string name="no_21">21.</string>
-    <string name="no_22">22.</string>
-    <string name="no_23">23.</string>
-    <string name="no_24">24.</string>
 
     <string name="toast_check_seeds_wrong_head">您输入的序号为</string>
     <string name="toast_check_seeds_wrong_end">的seed有误，请仔细检查后修正。</string>
@@ -187,4 +163,5 @@
     <string name="toast_create_check_pass_diff">您两次输入的密码不相匹配！</string>
     <string name="toast_recover_paste_error">您粘贴的数据格式不正确，请核对后重试！</string>
     <string name="toast_paste_empty">粘贴板中无内容！</string>
+    <string name="toast_copy_address"> 已经将地址复制到粘贴板！</string>
 </resources>

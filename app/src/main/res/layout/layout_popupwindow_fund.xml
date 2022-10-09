@@ -48,6 +48,7 @@
             android:layout_marginTop="@dimen/main_15">
 
             <LinearLayout
+                android:id="@+id/iv_copy_address_fund"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"

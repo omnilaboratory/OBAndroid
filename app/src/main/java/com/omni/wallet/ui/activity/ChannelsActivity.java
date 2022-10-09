@@ -11,6 +11,7 @@ import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.utils.CopyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,5 +100,25 @@ public class ChannelsActivity extends AppBaseActivity {
     @OnClick(R.id.iv_wallet)
     public void clickWallet() {
 
+    }
+
+    /**
+     * 点击copy图标按钮
+     * click copy icon btn
+     * @description
+     * 中文：点击按钮复制当前address到粘贴板
+     * EN：Click copy button,duplicate address to clipboard
+     * @author Tong ChangHui
+     * @Email tch081092@gmail.com
+     */
+    @OnClick(R.id.iv_copy)
+    public void copyAddress(){
+        //接收需要复制到粘贴板的地址
+        //Get the address which will copy to clipboard
+        String toCopyAddress = "01234e*****bg453123";
+        //接收需要复制成功的提示语
+        //Get the notice when you copy success
+        String toastString = getResources().getString(R.string.toast_copy_address);
+        CopyUtil.SelfCopy(ChannelsActivity.this,toCopyAddress,toastString);
     }
 }
