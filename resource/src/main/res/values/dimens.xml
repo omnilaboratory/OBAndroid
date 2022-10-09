@@ -3,6 +3,7 @@
     <dimen name="main_50_">-50dp</dimen>
 
     <dimen name="main_0.2">0.2dp</dimen>
+    <dimen name="main_0_4">0.4dp</dimen>
     <dimen name="main_0.5">0.5dp</dimen>
     <dimen name="main_1">1.0dp</dimen>
     <dimen name="main_1.5">1.5dp</dimen>
