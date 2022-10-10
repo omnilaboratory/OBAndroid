@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -26,16 +27,15 @@
                 android:letterSpacing="0.25"
                 android:text="@string/send"
                 android:textColor="@color/color_black"
-                android:textSize="@dimen/text_18"
-                />
+                android:textSize="@dimen/text_18" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/main_32"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/main_20"
-                android:layout_marginRight="@dimen/main_20"
-                android:layout_marginTop="@dimen/main_25">
+                android:layout_marginTop="@dimen/main_25"
+                android:layout_marginRight="@dimen/main_20">
 
                 <EditText
                     android:layout_width="@dimen/main_238"
@@ -49,7 +49,7 @@
                     android:singleLine="true"
                     android:textColor="@color/color_99_transparent"
                     android:textColorHint="@color/color_99_transparent"
-                    android:textSize="@dimen/text_16"/>
+                    android:textSize="@dimen/text_16" />
 
                 <ImageView
                     android:id="@+id/iv_scan"
@@ -57,7 +57,7 @@
                     android:layout_height="@dimen/main_32"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@mipmap/icon_scan_gray"/>
+                    android:src="@mipmap/icon_scan_gray" />
             </RelativeLayout>
 
             <TextView
@@ -71,7 +71,7 @@
                 android:paddingRight="@dimen/main_7"
                 android:text="@string/txt_send_two"
                 android:textColor="@color/color_4A92FF"
-                android:textSize="@dimen/text_16"/>
+                android:textSize="@dimen/text_16" />
 
             <View
                 android:layout_width="match_parent"
@@ -87,14 +87,14 @@
                 android:text="@string/recents"
                 android:textColor="@color/color_99_transparent"
                 android:textSize="@dimen/text_16"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_45"
-                android:layout_marginRight="@dimen/main_20"
                 android:layout_marginTop="@dimen/main_10"
+                android:layout_marginRight="@dimen/main_20"
                 android:orientation="vertical">
 
                 <TextView
@@ -104,7 +104,7 @@
                     android:singleLine="true"
                     android:text="1mn8382odjd.........34gy7"
                     android:textColor="@color/color_99_transparent"
-                    android:textSize="@dimen/text_16"/>
+                    android:textSize="@dimen/text_16" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -114,7 +114,7 @@
                     android:singleLine="true"
                     android:text="2nm8382odjd.........dfe689"
                     android:textColor="@color/color_99_transparent"
-                    android:textSize="@dimen/text_16"/>
+                    android:textSize="@dimen/text_16" />
             </LinearLayout>
 
             <View
@@ -127,7 +127,7 @@
                 android:id="@+id/recycler_send_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="45dp"/>
+                android:paddingBottom="45dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -141,7 +141,7 @@
             <ImageView
                 android:layout_width="@dimen/main_56"
                 android:layout_height="@dimen/main_56"
-                android:src="@mipmap/icon_close_x_white"/>
+                android:src="@mipmap/icon_close_x_white" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -149,7 +149,7 @@
                 android:letterSpacing="0.25"
                 android:text="@string/cancel"
                 android:textColor="@color/color_white"
-                android:textSize="@dimen/text_18"/>
+                android:textSize="@dimen/text_18" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
