@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
@@ -15,6 +17,9 @@ public class SendStepTwoPopupWindow {
     private BasePopWindow mBasePopWindow;
     SendStepOnePopupWindow mSendStepOnePopupWindow;
     SendStepThreePopupWindow mSendStepThreePopupWindow;
+
+    Double assetBalance = 500.00d;
+    String toAddress = "1mn8382odjddwedqw323f3d32343f23fweg65er4345yge43t4534gy7";
 
     public SendStepTwoPopupWindow(Context context) {
         this.mContext = context;
@@ -29,6 +34,35 @@ public class SendStepTwoPopupWindow {
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(Gravity.CENTER);
+
+            /**
+             * @描述: 初始化页面初始数据包括：address、balance、default send amount
+             * @Description: The initial data of the initialization page includes address, balance, and default send amount
+             * @author: Tong ChangHui
+             * @E-mail: tch081092@gmail.com
+             */
+
+            TextView toAddressView = rootView.findViewById(R.id.tv_to_address);
+            toAddressView.setText(toAddress);
+            TextView assetsBalanceView = rootView.findViewById(R.id.tv_asset_balance);
+            assetsBalanceView.setText(assetBalance.toString());
+
+            /**
+             * @描述: 增加MAX按钮的点击事件，点击将balance的值填入amount输入框中
+             * @Description: Add the click event of MAX button, click to fill the balance value into the amount input box
+             * @author: Tong ChangHui
+             * @E-mail: tch081092@gmail.com
+             */
+
+            final EditText amountInputView = rootView.findViewById(R.id.etv_send_amount);
+            TextView maxBtnView = rootView.findViewById(R.id.tv_btn_set_amount_max);
+            maxBtnView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    amountInputView.setText(assetBalance.toString());
+                }
+            });
+
             // 点击back
             rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
                 @Override

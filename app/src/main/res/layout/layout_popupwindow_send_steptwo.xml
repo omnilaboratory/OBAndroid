@@ -68,6 +68,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tv_to_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/main_10"
@@ -161,6 +162,7 @@
                                 android:textSize="@dimen/text_14"/>
 
                             <TextView
+                                android:id="@+id/tv_asset_balance"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="500.00"
@@ -192,6 +194,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_btn_set_amount_max"
                         android:layout_width="@dimen/main_56"
                         android:layout_height="@dimen/main_20"
                         android:layout_marginTop="@dimen/main_10"
@@ -209,20 +212,25 @@
                     android:layout_centerVertical="true"
                     android:background="@drawable/bg_black_rectangle_round_0_thin"
                     android:gravity="center_vertical"
+
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <EditText
+                        android:id="@+id/etv_send_amount"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/main_55"
-                        android:text="100.00"
+                        android:layout_marginLeft="@dimen/main_10"
+                        android:layout_weight="1"
+                        android:text="0.00"
                         android:textColor="@color/color_99_transparent"
+                        android:background="@null"
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
+                        android:layout_margin="@dimen/main_10"
                         android:text="USDT"
                         android:textColor="@color/color_99_transparent"
                         android:textSize="@dimen/text_16"/>
@@ -354,7 +362,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="~"
+                        android:text="@string/aets"
                         android:textColor="@color/color_80p_transparent"
                         android:textSize="@dimen/text_16"/>
 
