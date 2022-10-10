@@ -20,6 +20,7 @@ public class SendStepTwoPopupWindow {
 
     Double assetBalance = 500.00d;
     String toAddress = "1mn8382odjddwedqw323f3d32343f23fweg65er4345yge43t4534gy7";
+    String toFriendName = "to_friend_name";
 
     public SendStepTwoPopupWindow(Context context) {
         this.mContext = context;
@@ -36,8 +37,8 @@ public class SendStepTwoPopupWindow {
             mBasePopWindow.setAnimationStyle(Gravity.CENTER);
 
             /**
-             * @描述: 初始化页面初始数据包括：address、balance、default send amount
-             * @Description: The initial data of the initialization page includes address, balance, and default send amount
+             * @描述: 初始化页面初始数据包括：friendName,address、balance、default send amount
+             * @Description: The initial data of the initialization page includes friend name, address, balance, and default send amount
              * @author: Tong ChangHui
              * @E-mail: tch081092@gmail.com
              */
@@ -46,6 +47,8 @@ public class SendStepTwoPopupWindow {
             toAddressView.setText(toAddress);
             TextView assetsBalanceView = rootView.findViewById(R.id.tv_asset_balance);
             assetsBalanceView.setText(assetBalance.toString());
+            TextView toFriendNameView = rootView.findViewById(R.id.tv_to_friend_name);
+            toFriendNameView.setText(toFriendName);
 
             /**
              * @描述: 增加MAX按钮的点击事件，点击将balance的值填入amount输入框中
