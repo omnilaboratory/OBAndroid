@@ -17,7 +17,7 @@ public class SendStepThreePopupWindow {
     private Context mContext;
     private BasePopWindow mBasePopWindow;
     SendStepTwoPopupWindow mSendStepTwoPopupWindow;
-    // 初始化数据（Initial data）
+    // 初始数据（Initial data）
     String sendFriendName = "Alpha";
     String sendAddress = "1mn8382odjddwedqw323f3d32343f23fweg65er4345yge43t4534gy7";
     String type = "USDT";
