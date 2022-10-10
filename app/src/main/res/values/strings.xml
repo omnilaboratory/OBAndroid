@@ -67,6 +67,7 @@
     <!-- another -->
     <string name="menu">MENU</string>
     <string name="wallet_manage">Wallet Manage</string>
+    <string name="channel_manage">Channel Manage</string>
     <string name="profile">Profile</string>
     <string name="preference">Preference</string>
     <string name="disconnect">Disconnect</string>
@@ -129,6 +130,19 @@
     <string name="channel_activities">Channel Activities</string>
     <string name="to_be_paid">To be paid</string>
     <string name="send_small">Send</string>
+    <string name="create_invoice">CREATE INVOICE</string>
+    <string name="my_node_id">My node ID</string>
+    <string name="hours">Hours</string>
+    <string name="expiration">Expiration</string>
+    <string name="timestamp">timestamp</string>
+    <string name="omnibolt_11_invoice">OMNIBOLT 11 INVOICE</string>
+    <string name="failed">Failed</string>
+    <string name="invoice_created">Invoice Created</string>
+    <string name="mainnet">mainnet</string>
+    <string name="omnilayer_mainnet">Omnilayer Mainnet</string>
+    <string name="regtest">Regtest</string>
+    <string name="error_code">Error Code: </string>
+    <string name="try_again">TRY AGAIN</string>
 
     <!--token list 页面-->
     <string name="balance">Balance</string>

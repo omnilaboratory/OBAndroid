@@ -18,6 +18,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.popupwindow.FundPopupWindow;
 import com.omni.wallet.popupwindow.MenuPopupWindow;
+import com.omni.wallet.popupwindow.ScanErrorPopupWindow;
 import com.omni.wallet.popupwindow.send.SendStepOnePopupWindow;
 import com.omni.wallet.utils.CopyUtil;
 
@@ -52,6 +53,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     FundPopupWindow mFundPopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     SendStepOnePopupWindow mSendStepOnePopupWindow;
+    ScanErrorPopupWindow mScanErrorPopupWindow;
 
     @Override
     protected View getStatusBarTopView() {
@@ -191,7 +193,6 @@ public class AccountLightningActivity extends AppBaseActivity {
         CopyUtil.SelfCopy(AccountLightningActivity.this,toCopyAddress,toastString);
     }
 
-
     /**
      * 点击Fund按钮
      */
@@ -210,7 +211,6 @@ public class AccountLightningActivity extends AppBaseActivity {
         mSendStepOnePopupWindow.show(mParentLayout);
     }
 
-
     /**
      * 点击Search按钮
      */
@@ -227,13 +227,21 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     }
 
-
     /**
      * 点击channel List按钮
      */
     @OnClick(R.id.iv_channel_list)
     public void clickChannelList() {
         switchActivity(ChannelsActivity.class);
+    }
+
+    /**
+     * 点击右上角扫码按钮
+     */
+    @OnClick(R.id.iv_scan)
+    public void clickScan() {
+        mScanErrorPopupWindow = new ScanErrorPopupWindow(mContext);
+        mScanErrorPopupWindow.show(mParentLayout);
     }
 
     /**

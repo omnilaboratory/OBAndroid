@@ -332,7 +332,7 @@
                 android:letterSpacing="0.25"
                 android:text="@string/cancel"
                 android:textColor="@color/color_white"
-                android:textSize="@dimen/text_18"/>
+                android:textSize="@dimen/text_16"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

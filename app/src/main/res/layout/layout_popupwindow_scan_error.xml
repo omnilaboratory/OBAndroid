@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_D1123A50">
+
+    <LinearLayout
+        android:id="@+id/layout_son"
+        android:layout_width="@dimen/main_320"
+        android:layout_height="@dimen/main_360"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_white_rectangle_round_25"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/main_36"
+            android:layout_height="@dimen/main_36"
+            android:layout_marginTop="@dimen/main_35"
+            android:src="@mipmap/icon_failed_red"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_40"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/error_code"
+                android:textColor="@color/color_99_transparent"
+                android:textSize="@dimen/text_24"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="0000212"
+                android:textColor="@color/color_99_transparent"
+                android:textSize="@dimen/text_24"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_50"
+            android:layout_marginRight="@dimen/main_50"
+            android:layout_marginTop="@dimen/main_20"
+            android:gravity="center"
+            android:text="error info, error info, error info, error info"
+            android:textColor="@color/color_99_transparent"
+            android:textSize="@dimen/text_24"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_40"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/main_36"
+                android:layout_height="@dimen/main_36"
+                android:src="@mipmap/icon_scan_green_thin"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_16"
+                android:letterSpacing="0.25"
+                android:text="@string/try_again"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/text_16"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_son"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/main_31"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/main_56"
+            android:layout_height="@dimen/main_56"
+            android:src="@mipmap/icon_close_x_white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_15"
+            android:letterSpacing="0.25"
+            android:text="@string/close"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/text_16"/>
+    </LinearLayout>
+</RelativeLayout>

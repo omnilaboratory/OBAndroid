@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_D1123A50">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="@dimen/main_320"
+            android:layout_height="@dimen/main_540">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_white_rectangle_round_20"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/main_25"
+                    android:letterSpacing="0.25"
+                    android:text="@string/omnibolt_11_invoice"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/text_18"
+                    />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/main_30"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_24"
+                        android:layout_height="@dimen/main_24"
+                        android:src="@mipmap/icon_failed_red"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_7"
+                        android:text="@string/failed"
+                        android:textColor="@color/color_4A92FF"
+                        android:textSize="@dimen/text_16"/>
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_60"
+                    android:layout_marginRight="@dimen/main_60"
+                    android:layout_marginTop="@dimen/main_11">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/asset_one"
+                        android:textColor="@color/color_99_transparent"
+                        android:textSize="@dimen/text_16"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/main_20"
+                            android:layout_height="@dimen/main_20"
+                            android:src="@mipmap/icon_usdt_logo_small"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/main_15"
+                            android:text="USDT"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_16"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_60"
+                    android:layout_marginRight="@dimen/main_60"
+                    android:layout_marginTop="@dimen/main_15">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/amount"
+                        android:textColor="@color/color_F2630D"
+                        android:textSize="@dimen/text_16"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="100.00"
+                            android:textColor="@color/color_F2630D"
+                            android:textSize="@dimen/text_16"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/main_5"
+                            android:text="USDT"
+                            android:textColor="@color/color_F2630D"
+                            android:textSize="@dimen/text_16"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_60"
+                    android:layout_marginRight="@dimen/main_60"
+                    android:layout_marginTop="@dimen/main_10">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/expiration"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_16"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/timestamp"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_16"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="100"
+                            android:textColor="@color/color_80p_transparent"
+                            android:textSize="@dimen/text_16"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/main_5"
+                            android:gravity="center"
+                            android:text="@string/hours"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_16"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/main_0.2"
+                    android:layout_marginTop="@dimen/main_7"
+                    android:background="@color/color_black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_55"
+                    android:layout_marginRight="@dimen/main_55"
+                    android:layout_marginTop="@dimen/main_35"
+                    android:gravity="center"
+                    android:text="Can not create invoice for 100 USDT, the remote balance does not has sufficient fund to transfer."
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/text_16"/>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/main_40"
+                android:layout_marginLeft="@dimen/main_50"
+                android:layout_marginRight="@dimen/main_30">
+
+                <LinearLayout
+                    android:id="@+id/layout_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_36"
+                        android:layout_height="@dimen/main_36"
+                        android:src="@mipmap/icon_arrow_left_green"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_7"
+                        android:letterSpacing="0.25"
+                        android:text="@string/back_big"
+                        android:textColor="@color/color_black"
+                        android:textSize="@dimen/text_16"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_share_to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_36"
+                        android:layout_height="@dimen/main_36"
+                        android:src="@mipmap/icon_forward_green"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_7"
+                        android:letterSpacing="0.25"
+                        android:text="@string/share_to"
+                        android:textColor="@color/color_black"
+                        android:textSize="@dimen/text_16"/>
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_31"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/main_56"
+                android:layout_height="@dimen/main_56"
+                android:src="@mipmap/icon_close_x_white"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.25"
+                android:text="@string/close"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/text_16"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

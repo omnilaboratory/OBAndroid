@@ -79,7 +79,7 @@
                 <ImageView
                     android:layout_width="@dimen/main_36"
                     android:layout_height="@dimen/main_36"
-                    android:src="@mipmap/icon_arrow_up_right_green"/>
+                    android:src="@mipmap/icon_forward_green"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -94,7 +94,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/layout_cancel"
+        android:id="@+id/layout_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_son"
@@ -112,8 +112,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:letterSpacing="0.25"
-            android:text="@string/cancel"
+            android:text="@string/close"
             android:textColor="@color/color_white"
-            android:textSize="@dimen/text_18"/>
+            android:textSize="@dimen/text_16"/>
     </LinearLayout>
 </RelativeLayout>
