@@ -44,6 +44,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@mipmap/icon_network_vector"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_6"
+                    android:text="@string/mainnet"
+                    android:textColor="@color/color_A6_transparent"
+                    android:textSize="@dimen/text_24"/>
             </LinearLayout>
 
             <RelativeLayout
@@ -96,9 +104,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="My account 1"
-                            android:textStyle="bold"
                             android:textColor="@color/color_black"
-                            android:textSize="@dimen/text_18"/>
+                            android:textSize="@dimen/text_18"
+                            android:textStyle="bold"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -411,8 +419,8 @@
             android:layout_marginTop="@dimen/main_55"
             android:text="@string/channel_activities"
             android:textColor="@color/color_black"
-            android:textStyle="bold"
-            android:textSize="@dimen/text_18"/>
+            android:textSize="@dimen/text_18"
+            android:textStyle="bold"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -436,8 +444,8 @@
                 android:layout_gravity="bottom"
                 android:text="@string/to_be_paid"
                 android:textColor="@color/color_black"
-                android:textStyle="bold"
                 android:textSize="@dimen/text_18"
+                android:textStyle="bold"
                 />
 
             <TextView
@@ -446,12 +454,12 @@
                 android:layout_marginLeft="@dimen/main_15"
                 android:background="@drawable/bg_btn_round_ff0000_25"
                 android:gravity="center"
-                android:minWidth="@dimen/main_24"
                 android:minHeight="@dimen/main_24"
+                android:minWidth="@dimen/main_24"
                 android:text="5"
                 android:textColor="@color/color_white"
                 android:textSize="@dimen/text_16"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

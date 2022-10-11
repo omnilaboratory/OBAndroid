@@ -1,11 +1,13 @@
 package com.omni.wallet.popupwindow;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.ui.activity.ChannelsActivity;
 
 /**
  * Menu的弹窗
@@ -43,6 +45,14 @@ public class MenuPopupWindow {
                 @Override
                 public void onClick(View v) {
                     mMenuPopWindow.dismiss();
+                }
+            });
+            rootView.findViewById(R.id.layout_channel_manage).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mMenuPopWindow.dismiss();
+                    Intent intent = new Intent(mContext, ChannelsActivity.class);
+                    mContext.startActivity(intent);
                 }
             });
             if (mMenuPopWindow.isShowing()) {

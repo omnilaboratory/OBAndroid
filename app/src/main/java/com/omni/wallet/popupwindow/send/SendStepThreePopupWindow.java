@@ -53,7 +53,7 @@ public class SendStepThreePopupWindow {
 
             TextView friendNameView = rootView.findViewById(R.id.tv_send_friend_name);
             friendNameView.setText(sendFriendName);
-            TextView friendAddressView = rootView.findViewById(R.id.tv_send_friend_name);
+            TextView friendAddressView = rootView.findViewById(R.id.tv_send_address);
             friendAddressView.setText(sendAddress);
             ImageView tokenImage =  rootView.findViewById(R.id.iv_send_token_image);
             tokenImage.setImageDrawable(mContext.getResources().getDrawable(GetResourceUtil.getTokenImageId(mContext,type)));

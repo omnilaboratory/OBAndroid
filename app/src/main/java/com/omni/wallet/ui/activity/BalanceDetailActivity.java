@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
 import com.omni.wallet.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
 import com.omni.wallet.popupwindow.send.SendStepOnePopupWindow;
 import com.omni.wallet.utils.CopyUtil;
@@ -31,13 +32,14 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @BindView(R.id.layout_network_lightning)
     RelativeLayout mLightningNetworkLayout;
     @BindView(R.id.layout_network_link)
-    RelativeLayout mLinkgNetworkLayout;
+    RelativeLayout mLinkNetworkLayout;
 
     public static final String KEY_NETWORK = "networkKey";
     String network;
 
     PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow;
     SendStepOnePopupWindow mSendStepOnePopupWindow;
+    CreateInvoiceStepOnePopupWindow mCreateInvoiceStepOnePopupWindow;
 
     @Override
     protected void getBundleData(Bundle bundle) {
@@ -65,12 +67,12 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mNetworkIv.setImageResource(R.mipmap.icon_network_vector);
             mNetworkTv.setText("USDT lightning network");
             mLightningNetworkLayout.setVisibility(View.VISIBLE);
-            mLinkgNetworkLayout.setVisibility(View.GONE);
+            mLinkNetworkLayout.setVisibility(View.GONE);
         } else if (network.equals("link")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_link_black);
             mNetworkTv.setText("Omnilayer Mainnet");
             mLightningNetworkLayout.setVisibility(View.GONE);
-            mLinkgNetworkLayout.setVisibility(View.VISIBLE);
+            mLinkNetworkLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -138,7 +140,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @OnClick(R.id.layout_create_invoice)
     public void clickCreateInvoice() {
-
+        mCreateInvoiceStepOnePopupWindow = new CreateInvoiceStepOnePopupWindow(mContext);
+        mCreateInvoiceStepOnePopupWindow.show(mParentLayout);
     }
 
     /**

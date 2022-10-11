@@ -6,11 +6,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.utils.CopyUtil;
 
 import java.util.ArrayList;
@@ -22,12 +24,15 @@ import butterknife.OnClick;
 public class ChannelsActivity extends AppBaseActivity {
     private static final String TAG = ChannelsActivity.class.getSimpleName();
 
+    @BindView(R.id.layout_parent)
+    LinearLayout mParentLayout;
     @BindView(R.id.view_top)
     View mTopView;
     @BindView(R.id.recycler_channels_list)
     public RecyclerView mRecyclerView;// 通道列表的RecyclerView
     private List<String> mData = new ArrayList<>();
     private MyAdapter mAdapter;
+    CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
 
     @Override
     protected View getStatusBarTopView() {
@@ -89,17 +94,10 @@ public class ChannelsActivity extends AppBaseActivity {
         finish();
     }
 
-    @OnClick(R.id.iv_fund)
-    public void clickFund() {
-
-    }
-
-    /**
-     * 点击钱包按钮
-     */
-    @OnClick(R.id.iv_wallet)
-    public void clickWallet() {
-
+    @OnClick(R.id.iv_create_channel)
+    public void clickcCreateChannel() {
+        mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+        mCreateChannelStepOnePopupWindow.show(mParentLayout);
     }
 
     /**
