@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--登录页面顶部标题的View-->
     <declare-styleable name="LoginTitleView">
         <!--标题-->
         <attr name="titleStr" format="string" />
         <!--是否显示返回按钮-->
         <attr name="showBack" format="boolean" />
     </declare-styleable>
-    <!--业主信息输入的View-->
     <declare-styleable name="OwnerInfoInputView">
         <!--标题-->
         <attr name="itemTitle" format="string" />
@@ -22,11 +20,15 @@
             <enum name="name" value="3" />
         </attr>
     </declare-styleable>
-    <!--业主信息选择的View-->
     <declare-styleable name="OwnerInfoSelectView">
         <!--标题-->
         <attr name="ownerInfoSelectViewTitle" format="string" />
         <!--提示-->
         <attr name="ownerInfoSelectViewHint" format="string" />
+    </declare-styleable>
+    <!--底部弹出布局-->
+    <declare-styleable name="BottomSlideLayout">
+        <attr name="defaultHeight" format="dimension"></attr>
+        <attr name="realHeight" format="dimension"></attr>
     </declare-styleable>
 </resources>

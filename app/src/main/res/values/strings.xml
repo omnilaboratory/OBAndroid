@@ -143,6 +143,18 @@
     <string name="regtest">Regtest</string>
     <string name="error_code">Error Code: </string>
     <string name="try_again">TRY AGAIN</string>
+    <string name="channel_detail">CHANNEL DETAIL</string>
+    <string name="remote">Remote</string>
+    <string name="pubkey">Pubkey</string>
+    <string name="capacity">Capacity</string>
+    <string name="remote_balance">Remote Balance</string>
+    <string name="funding_transaction">Funding Transaction</string>
+    <string name="number_of_updates">Number of Updates</string>
+    <string name="time_lock">Time Lock</string>
+    <string name="activity">Activity</string>
+    <string name="total_sent">Total Sent</string>
+    <string name="total_received">Total Received</string>
+    <string name="close_channel">CLOSE CHANNEL</string>
 
     <!--token list 页面-->
     <string name="balance">Balance</string>

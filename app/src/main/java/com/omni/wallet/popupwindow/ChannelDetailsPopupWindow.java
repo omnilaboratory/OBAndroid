@@ -1,4 +1,4 @@
-package com.omni.wallet.popupwindow.createinvoice;
+package com.omni.wallet.popupwindow;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -10,55 +10,49 @@ import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 
 /**
- * 汉: 创建发票的步骤一弹窗
- * En: CreateInvoiceStepOnePopupWindow
+ * 汉: 通道详情的弹窗
+ * En: ChannelDetailsPopupWindow
  * author: guoyalei
- * date: 2022/10/9
+ * date: 2022/10/11
  */
-public class CreateInvoiceStepOnePopupWindow {
-    private static final String TAG = CreateInvoiceStepOnePopupWindow.class.getSimpleName();
+public class ChannelDetailsPopupWindow {
+    private static final String TAG = ChannelDetailsPopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
-    CreateInvoiceFailedPopupWindow mCreateInvoiceFailedPopupWindow;
-    CreateInvoiceSuccessPopupWindow mCreateInvoiceSuccessPopupWindow;
 
-    public CreateInvoiceStepOnePopupWindow(Context context) {
+    public ChannelDetailsPopupWindow(Context context) {
         this.mContext = context;
     }
 
     public void show(final View view) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
-            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_invoice_stepone);
+            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_channel_details);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(Gravity.CENTER);
             // 设置进度条
             ProgressBar mProgressBar = rootView.findViewById(R.id.progressbar);
-            float barValue = (float) ((double) 100 / (double) 600);
+            float barValue = (float) ((double) 100 / (double) 700);
             mProgressBar.setProgress((int) (barValue * 100f));
-            // 点击back
-            rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
+            // 点击create按钮
+            rootView.findViewById(R.id.layout_create).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
                 }
             });
-            // 点击next
-            rootView.findViewById(R.id.layout_next).setOnClickListener(new View.OnClickListener() {
+            // 点击closeChannel按钮
+            rootView.findViewById(R.id.layout_close_channel).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
-//                    mCreateInvoiceFailedPopupWindow = new CreateInvoiceFailedPopupWindow(mContext);
-//                    mCreateInvoiceFailedPopupWindow.show(view);
-                    mCreateInvoiceSuccessPopupWindow = new CreateInvoiceSuccessPopupWindow(mContext);
-                    mCreateInvoiceSuccessPopupWindow.show(view);
                 }
             });
-            // 点击底部cancel
-            rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
+            // 点击底部close
+            rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
