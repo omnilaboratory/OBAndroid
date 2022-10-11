@@ -7,11 +7,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.listItems.Channel;
 import com.omni.wallet.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.utils.CopyUtil;
 
@@ -23,6 +26,7 @@ import butterknife.OnClick;
 
 public class ChannelsActivity extends AppBaseActivity {
     private static final String TAG = ChannelsActivity.class.getSimpleName();
+    List<Channel> channelData = new ArrayList<Channel>();
 
     @BindView(R.id.layout_parent)
     LinearLayout mParentLayout;
@@ -62,27 +66,78 @@ public class ChannelsActivity extends AppBaseActivity {
             String str = new String();
             mData.add(str);
         }
-        mAdapter = new MyAdapter(mContext, mData, R.layout.layout_item_channels_list);
+        mAdapter = new MyAdapter(mContext, channelData, R.layout.layout_item_channels_list);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     protected void initData() {
+        getItemData();
+    }
 
+    private void getItemData(){
+        Channel a = new Channel(1,"McDonald","USDT","03felksw.............xwqwcs985",100.00,600.00);
+        Channel b = new Channel(2,"Bob","BTC","03felksw.............xwqwcs985",0.5,1.566);
+        Channel c = new Channel(0,"Carol","USDT","03felksw.............xwqwcs985",500.00,300.00);
+        channelData.add(a);
+        channelData.add(b);
+        channelData.add(c);
+        channelData.add(a);
+        channelData.add(b);
+        channelData.add(c);
     }
 
     /**
      * 资产列表适配器
      */
-    private class MyAdapter extends CommonRecyclerAdapter<String> {
+    private class MyAdapter extends CommonRecyclerAdapter<Channel> {
 
-        public MyAdapter(Context context, List<String> data, int layoutId) {
+        public MyAdapter(Context context, List<Channel> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, final int position, final String item) {
+        public void convert(ViewHolder holder, final int position, final Channel item) {
+            double percent =  item.getLocalAmount()/item.getTotalAmount()*100;
+            ProgressBar progressBar =  holder.getView(R.id.pv_amount_percent);
+            progressBar.setProgress((int)Math.round(percent));
 
+            holder.setText(R.id.tv_node_name,item.getChannelName());
+            holder.setText(R.id.tv_token_type,item.getTokenType());
+            holder.setText(R.id.tv_pubkey_value,item.getPubkey());
+            holder.setText(R.id.tv_local_amount,""+ item.getLocalAmount());
+            holder.setText(R.id.tv_remote_amount,""+ item.getRemoteAmount());
+
+            switch (item.getState()){
+                default:
+                    holder.setImageResource(R.id.iv_channel_state,R.drawable.bg_state_green);
+                    break;
+                case 0:
+                    holder.setImageResource(R.id.iv_channel_state,R.drawable.bg_state_grey);
+                    break;
+                case 1:
+                    holder.setImageResource(R.id.iv_channel_state,R.drawable.bg_state_green);
+                    break;
+                case 2:
+                    holder.setImageResource(R.id.iv_channel_state,R.drawable.bg_state_red);
+                    break;
+            }
+
+            switch (item.getTokenType()){
+                default:
+                    holder.setImageResource(R.id.im_token_type,R.mipmap.icon_usdt_logo);
+                    break;
+                case "USDT":
+                    holder.setImageResource(R.id.im_token_type,R.mipmap.icon_usdt_logo);
+                    break;
+                case "BTC":
+                    holder.setImageResource(R.id.im_token_type,R.mipmap.icon_btc_logo_small);
+                    break;
+            }
+
+            if(position == channelData.size()-1){
+                holder.getView(R.id.v_deliver).setVisibility(View.GONE);
+            }
         }
     }
 

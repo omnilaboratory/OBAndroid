@@ -9,6 +9,7 @@
     <!--消息页面使用TabLayout的时候的样式-->
     <style name="CustomerTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabIndicatorColor">@color/color_ff598f</item>
+        color_ff598f
         <item name="tabIndicatorHeight">0dp</item>
         <item name="tabBackground">@color/color_transparent</item>
         <item name="tabTextColor">@color/color_454545</item>

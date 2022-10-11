@@ -163,6 +163,7 @@
             android:layout_marginLeft="@dimen/main_15"
             android:layout_marginRight="@dimen/main_40"
             android:layout_marginTop="@dimen/main_15"
+            android:layout_marginBottom="@dimen/main_40"
             >
 
             <LinearLayout

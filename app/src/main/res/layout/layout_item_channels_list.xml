@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginBottom="@dimen/main_20">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <RelativeLayout
+            <ImageView
                 android:id="@+id/iv_channel_state"
                 android:layout_width="@dimen/main_16"
                 android:layout_height="@dimen/main_16"
@@ -193,26 +195,37 @@
             </RelativeLayout>
         </LinearLayout>
 
-        <RelativeLayout
+        <ProgressBar
+            android:id="@+id/pv_amount_percent"
             android:layout_width="match_parent"
             android:layout_height="10dp"
-            android:background="@drawable/bg_blue_percent_rectangle_round"
-            android:layout_marginTop="@dimen/main_5">
-            <RelativeLayout
-                android:id="@+id/rv_local_rectangle"
-                android:layout_width="100dp"
-                android:layout_height="10dp"
-                android:background="@drawable/bg_green_percent_rectangle_round">
-            </RelativeLayout>
-        </RelativeLayout>
+            android:max="100"
+            android:progress="50"
+            android:secondaryProgress="100"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:progressDrawable="@drawable/self_progressbar_horizontal"/>
+
+        <!--<RelativeLayout-->
+            <!--android:id="@+id/rv_progress_content"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="10dp"-->
+            <!--android:background="@drawable/bg_blue_percent_rectangle_round"-->
+            <!--android:layout_marginTop="@dimen/main_5">-->
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/rv_local_rectangle"-->
+                <!--android:layout_width="100dp"-->
+                <!--android:layout_height="10dp"-->
+                <!--android:background="@drawable/bg_green_percent_rectangle_round">-->
+            <!--</RelativeLayout>-->
+        <!--</RelativeLayout>-->
     </LinearLayout>
 
     <View
+        android:id="@+id/v_deliver"
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_1"
         android:layout_marginLeft="@dimen/main_40"
         android:layout_marginRight="@dimen/main_40"
         android:layout_marginTop="@dimen/main_20"
-        android:layout_marginBottom="@dimen/main_20"
         android:background="@color/color_80p_transparent"/>
 </LinearLayout>
