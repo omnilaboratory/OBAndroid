@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/main_57"
-            android:text="@string/mainnet"
+            android:text="Lightning"
             android:textColor="@color/color_A6_transparent"
             android:textSize="@dimen/text_24"/>
 
@@ -157,23 +157,29 @@
                 android:src="@mipmap/icon_fund_gray_one"/>
         </RelativeLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_15"
             android:layout_marginRight="@dimen/main_40"
-            android:layout_marginTop="@dimen/main_15">
+            android:layout_marginTop="@dimen/main_15"
+            >
 
-            <RelativeLayout
-                android:layout_width="@dimen/main_225"
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="@dimen/main_32"
-                android:background="@drawable/bg_black_rectangle_round_5">
+                android:background="@drawable/bg_black_rectangle_round_5"
+                android:layout_marginRight="20dp"
+                android:orientation="horizontal"
+                >
 
                 <EditText
-                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/main_2"
-                    android:layout_marginRight="@dimen/main_45"
+                    android:layout_marginRight="@dimen/main_10"
                     android:background="@null"
                     android:singleLine="true"
                     android:textColor="@color/color_black"
@@ -185,18 +191,18 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/main_20"
-                    android:src="@mipmap/icon_search_black"/>
-            </RelativeLayout>
+                    android:layout_marginRight="@dimen/main_10"
+                    android:src="@mipmap/icon_search_black"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
 
             <ImageView
+                android:layout_gravity="center"
                 android:id="@+id/iv_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
                 android:src="@mipmap/icon_filter_black"/>
-        </RelativeLayout>
+        </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_channels_list"

@@ -80,15 +80,16 @@ public class SendStepOnePopupWindow {
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(Gravity.CENTER);
+
             friendGroupsData();
             // send list RecyclerView
             RecyclerView mRecyclerView = rootView.findViewById(R.id.recycler_send_list);
             LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-
+            mRecyclerView.setLayoutManager(layoutManager);
             mAdapter = new MyAdapter(mContext, friendGroups, R.layout.layout_item_send_list);
             mRecyclerView.setAdapter(mAdapter);
+
             // 点击底部cancel
             rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -99,7 +100,7 @@ public class SendStepOnePopupWindow {
             if (mBasePopWindow.isShowing()) {
                 return;
             }
-            mBasePopWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+            mBasePopWindow.showAtLocation(mView, Gravity.CENTER, 0, 0);
         }
     }
 
@@ -124,9 +125,13 @@ public class SendStepOnePopupWindow {
                 String friendName = friendListInGroup.get(i).getFriendName();
                 String address = friendListInGroup.get(i).getAddress();
 
+                RelativeLayout friendItemContain = new RelativeLayout(mContext);
+                RelativeLayout.LayoutParams friendItemContainParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+                friendItemContain.setLayoutParams(friendItemContainParams);
+
                 LinearLayout friendItemContent = new LinearLayout(mContext);
                 LinearLayout.LayoutParams friendItemContentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                friendItemContent.setPadding(0,10,0,10);
+                friendItemContent.setPadding(0,20,0,20);
                 friendItemContent.setOrientation(LinearLayout.HORIZONTAL);
                 friendItemContent.setLayoutParams(friendItemContentParams);
 
@@ -150,6 +155,7 @@ public class SendStepOnePopupWindow {
 
                 friendItemContent.addView(friendNameView);
                 friendItemContent.addView(friendAddressView);
+                friendItemContain.addView(friendItemContent);
                 friendItemContent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -158,7 +164,7 @@ public class SendStepOnePopupWindow {
                         mSendStepTwoPopupWindow.show(mView);
                     }
                 });
-                ListContentView.addView(friendItemContent);
+                ListContentView.addView(friendItemContain);
             }
         }
     }
