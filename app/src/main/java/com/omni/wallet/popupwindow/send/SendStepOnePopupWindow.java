@@ -116,6 +116,7 @@ public class SendStepOnePopupWindow {
         @Override
         public void convert(ViewHolder holder, final int position, final FriendGroup item) {
             holder.setText(R.id.tv_group_name,item.getGroupName());
+            holder.getView(R.id.v_deliver).setVisibility(View.INVISIBLE);
 
             LinearLayout ListContentView = holder.getView(R.id.lv_friend_item_list);
 

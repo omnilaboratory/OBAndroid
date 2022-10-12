@@ -5,10 +5,11 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
     <View
+        android:id="@+id/v_deliver"
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_0.2"
         android:layout_marginTop="@dimen/main_15"
-        android:background="@color/color_black"></View>
+        android:background="@color/color_black"/>
 
     <TextView
         android:id="@+id/tv_group_name"
