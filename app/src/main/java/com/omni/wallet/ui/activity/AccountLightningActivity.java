@@ -41,13 +41,12 @@ public class AccountLightningActivity extends AppBaseActivity {
     ImageView mMenuIv;
     @BindView(R.id.recycler_assets_list_block)
     public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock
-    @BindView(R.id.recycler_assets_list_lightning)
-    public RecyclerView mRecyclerViewLightning;// 资产列表的RecyclerViewLighting
     @BindView(R.id.tv_account_value)
     public TextView accountValue;//资产列表所有的资产价值总和
     private List<Map> blockData = new ArrayList<>();
     private List<Map> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
+    private List<Map> allData = new ArrayList<>();
 
     MenuPopupWindow mMenuPopupWindow;
     FundPopupWindow mFundPopupWindow;
@@ -72,10 +71,8 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-        initBlockAssets();
-        initLightningAssets();
-        initRecyclerViewBlock(blockData);
-        initRecyclerViewLighting(lightningData);
+        initAllData();
+        initRecyclerView(allData);
     }
 
     //    测试用方法生成block assets 数据
@@ -97,23 +94,31 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
     //    测试用方法生成block assets 数据
     private void initLightningAssets(){
-        Map a = new HashMap<String,String>();
-        a.put("tokenImageSource",R.mipmap.icon_usdt_logo_small);
-        a.put("networkImageSource",R.mipmap.icon_network_vector);
-        a.put("amount",10000.0000f);
-        a.put("value",70000.0000f);
-        Map b = new HashMap<String,String>();
-        b.put("tokenImageSource",R.mipmap.icon_btc_logo_small);
-        b.put("networkImageSource",R.mipmap.icon_network_vector);
-        b.put("amount",10000.0000f);
-        b.put("value",70000.0000f);
-        lightningData.add(a);
-        lightningData.add(b);
-        lightningData.add(a);
-        lightningData.add(b);
+        Map c = new HashMap<String,String>();
+        c.put("tokenImageSource",R.mipmap.icon_usdt_logo_small);
+        c.put("networkImageSource",R.mipmap.icon_network_vector);
+        c.put("amount",10000.0000f);
+        c.put("value",70000.0000f);
+        Map d = new HashMap<String,String>();
+        d.put("tokenImageSource",R.mipmap.icon_btc_logo_small);
+        d.put("networkImageSource",R.mipmap.icon_network_vector);
+        d.put("amount",10000.0000f);
+        d.put("value",70000.0000f);
+        lightningData.add(c);
+        lightningData.add(d);
+        lightningData.add(c);
+        lightningData.add(d);
     }
 
-    private void initRecyclerViewBlock(List data) {
+    private void initAllData(){
+        initBlockAssets();
+        initLightningAssets();
+        allData.addAll(blockData);
+        allData.addAll(lightningData);
+
+    }
+
+    private void initRecyclerView(List data) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerViewBlock.setLayoutManager(new LinearLayoutManager(mContext));
@@ -121,13 +126,6 @@ public class AccountLightningActivity extends AppBaseActivity {
         mRecyclerViewBlock.setAdapter(mAdapter);
     }
 
-    private void initRecyclerViewLighting(List data) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerViewLightning.setLayoutManager(new LinearLayoutManager(mContext));
-        mAdapter = new MyAdapter(mContext, data, R.layout.layout_item_assets_list);
-        mRecyclerViewLightning.setAdapter(mAdapter);
-    }
 
     @Override
     protected void initData() {
@@ -143,8 +141,16 @@ public class AccountLightningActivity extends AppBaseActivity {
             super(context, data, layoutId);
         }
 
+
+
         @Override
         public void convert(ViewHolder holder, final int position, final Map item) {
+            if(position == blockData.size()-1){
+                LinearLayout lvContent = holder.getView(R.id.lv_item_content);
+                lvContent.setPadding(0,0,0,100);
+            }
+
+
             Integer tokenImageSourceId = Integer.parseInt(item.get("tokenImageSource").toString());
             Integer networkImageSource = Integer.parseInt(item.get("networkImageSource").toString());
             String assetsAmount = item.get("amount").toString();
@@ -172,6 +178,8 @@ public class AccountLightningActivity extends AppBaseActivity {
                     }
                 });
             }
+
+
         }
     }
 

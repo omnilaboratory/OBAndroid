@@ -316,16 +316,6 @@
                     android:layout_marginRight="@dimen/main_40"
                     android:layout_marginTop="@dimen/main_10"
                     android:layout_weight="1"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_assets_list_lightning"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="@dimen/main_40"
-                    android:layout_marginLeft="@dimen/main_10"
-                    android:layout_marginRight="@dimen/main_40"
-                    android:layout_marginTop="@dimen/main_10"
-                    android:layout_weight="1"/>
             </LinearLayout>
 
             <LinearLayout
