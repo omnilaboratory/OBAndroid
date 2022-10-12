@@ -155,6 +155,13 @@
     <string name="total_sent">Total Sent</string>
     <string name="total_received">Total Received</string>
     <string name="close_channel">CLOSE CHANNEL</string>
+    <string name="transactions">TRANSACTIONS</string>
+    <string name="io">I / O</string>
+    <string name="date">DATE</string>
+    <string name="status">STATUS</string>
+    <string name="sent">SENT</string>
+    <string name="failed_big">FAILED</string>
+    <string name="received">RECEIVED</string>
 
     <!--token list 页面-->
     <string name="balance">Balance</string>

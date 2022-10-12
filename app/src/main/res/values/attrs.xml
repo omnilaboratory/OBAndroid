@@ -6,29 +6,4 @@
         <!--是否显示返回按钮-->
         <attr name="showBack" format="boolean" />
     </declare-styleable>
-    <declare-styleable name="OwnerInfoInputView">
-        <!--标题-->
-        <attr name="itemTitle" format="string" />
-        <!--提示-->
-        <attr name="itemHint" format="string" />
-        <!--最大输入长度-->
-        <attr name="contentMaxLength" format="integer" />
-        <!--内容类型-->
-        <attr name="contentType" format="enum">
-            <enum name="phone" value="1" />
-            <enum name="IDCard" value="2" />
-            <enum name="name" value="3" />
-        </attr>
-    </declare-styleable>
-    <declare-styleable name="OwnerInfoSelectView">
-        <!--标题-->
-        <attr name="ownerInfoSelectViewTitle" format="string" />
-        <!--提示-->
-        <attr name="ownerInfoSelectViewHint" format="string" />
-    </declare-styleable>
-    <!--底部弹出布局-->
-    <declare-styleable name="BottomSlideLayout">
-        <attr name="defaultHeight" format="dimension"></attr>
-        <attr name="realHeight" format="dimension"></attr>
-    </declare-styleable>
 </resources>

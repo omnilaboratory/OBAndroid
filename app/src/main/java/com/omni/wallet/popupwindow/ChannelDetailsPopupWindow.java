@@ -20,6 +20,7 @@ public class ChannelDetailsPopupWindow {
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
+    CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
 
     public ChannelDetailsPopupWindow(Context context) {
         this.mContext = context;
@@ -42,6 +43,8 @@ public class ChannelDetailsPopupWindow {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
+                    mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+                    mCreateChannelStepOnePopupWindow.show(view);
                 }
             });
             // 点击closeChannel按钮
