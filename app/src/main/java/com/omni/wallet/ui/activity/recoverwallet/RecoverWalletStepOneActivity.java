@@ -5,7 +5,10 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.view.ActionMode;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.template.DisablePasteEditText;
 import com.omni.wallet.utils.CheckRules;
 import com.omni.wallet.utils.NumberFormatter;
 
@@ -56,21 +60,25 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
             RelativeLayout.LayoutParams rowContentParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             rowContentParams.setMargins(0, 0, 0, 5);
             rowContent.setLayoutParams(rowContentParams);
+            rowContent.setLongClickable(false);
 
             LinearLayout rowInner = new LinearLayout(this);
             LinearLayout.LayoutParams rowInnerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
             rowInner.setOrientation(LinearLayout.HORIZONTAL);
             rowInner.setLayoutParams(rowInnerParams);
+            rowInner.setLongClickable(false);
             for (int cell = 1; cell <= 3; cell++) {
                 String noNum = NumberFormatter.formatNo(2, (row - 1) * 3 + cell) + ".";
                 RelativeLayout cellContent = new RelativeLayout(this);
                 LinearLayout.LayoutParams cellContentParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
                 cellContent.setLayoutParams(cellContentParams);
+                cellContent.setLongClickable(false);
 
                 LinearLayout cellInner = new LinearLayout(this);
                 LinearLayout.LayoutParams cellInnerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 cellInner.setOrientation(LinearLayout.HORIZONTAL);
                 cellInner.setLayoutParams(cellInnerParams);
+                cellInner.setLongClickable(false);
 
                 TextView noText = new TextView(this);
                 RelativeLayout.LayoutParams noTextParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -79,7 +87,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
                 noText.setText(noNum);
                 noText.setLayoutParams(noTextParams);
 
-                EditText cellEditText = new EditText(this);
+                EditText cellEditText = new DisablePasteEditText(this);
                 LinearLayout.LayoutParams cellEditTextParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
                 cellEditText.setBackground(null);
                 cellEditText.setHint(getResources().getString(R.string.create_seed_input_hit));

@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.template.DisablePasteEditText;
 import com.omni.wallet.utils.NumberFormatter;
 
 import java.util.ArrayList;
@@ -87,12 +89,13 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
                 noText.setText(noNum);
                 noText.setLayoutParams(noTextParams);
 
-                EditText cellEditText = new EditText(this);
+                EditText cellEditText = new DisablePasteEditText(this);
                 LinearLayout.LayoutParams cellEditTextParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
                 cellEditText.setBackground(null);
                 cellEditText.setHint(getResources().getString(R.string.create_seed_input_hit));
                 cellEditText.setTextSize(16.0f);
                 cellEditText.setTextColor(getResources().getColor(R.color.color_black));
+                cellEditText.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
                 cellEditText.setLayoutParams(cellEditTextParams);
 
                 cellInner.addView(noText);
