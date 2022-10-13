@@ -32,6 +32,9 @@
     <string name="pass_show_hind">pass show or hind</string>
     <!-- create wallet页面 -->
     <string name="create_wallet">Create Wallet</string>
+    <string name="create_step_one_notify_one">Please save these 24 words private and securely!</string>
+    <string name="create_step_one_desc_one">1.This will allow you to recover your wallet.</string>
+    <string name="create_step_one_desc_two">2.If someone gains access to this list they can steal your money.</string>
     <string name="txt_create_wallet_one">Please save these 24 words securely! This will allow you to recover your wallet.</string>
     <string name="txt_create_wallet_two">Keep this private! If someone gains access to this list they can steal your money.</string>
     <string name="txt_create_wallet_three">Your seed is important! If you lose your seed you will have no way to recover your wallet. To make sure that you have properly saved your seed, please retype words 01,10, 23 &#038; 12</string>

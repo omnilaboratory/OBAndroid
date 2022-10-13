@@ -21,7 +21,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
 
             <TextView
                 android:id="@+id/textView3"
@@ -30,7 +31,7 @@
 
                 android:layout_marginTop="13dp"
                 android:gravity="center_vertical"
-                android:text="Please save these 24 words private and securely!"
+                android:text="@string/create_step_one_notify_one"
                 android:textColor="#FF4A92FF"
                 android:textSize="18sp" />
 
@@ -38,10 +39,9 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_marginTop="13dp"
                 android:gravity="center_vertical"
-                android:text="1.This will allow you to recover your wallet."
+                android:text="@string/create_step_one_desc_one"
                 android:textColor="#FF4A92FF"
                 android:textSize="18sp" />
 
@@ -49,10 +49,9 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_marginTop="5dp"
                 android:gravity="center_vertical"
-                android:text="2.If someone gains access to this list they can steal your money."
+                android:text="@string/create_step_one_desc_two"
                 android:textColor="#FF4A92FF"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -65,14 +64,11 @@
         android:background="@drawable/bg_create_content_green"
         android:elevation="10dp"
         android:padding="10dp">
-
         <LinearLayout
             android:id="@+id/seed_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-        </LinearLayout>
+            android:orientation="vertical"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -89,7 +85,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -101,7 +98,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
                         android:id="@+id/imageView"
@@ -131,7 +129,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
                         android:id="@+id/imageView2"
@@ -160,7 +159,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    tools:ignore="UseCompoundDrawables">
 
                     <ImageView
                         android:id="@+id/imageView1"

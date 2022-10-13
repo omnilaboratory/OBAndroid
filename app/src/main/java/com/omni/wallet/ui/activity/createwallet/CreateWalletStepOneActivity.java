@@ -64,21 +64,21 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
             rowContent.setId(rowNum);
 
             LinearLayout rowInnerContent = new LinearLayout(this);
-            LinearLayout.LayoutParams rowInnerContetnParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams rowInnerContentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             rowInnerContent.setOrientation(LinearLayout.HORIZONTAL);
-            rowInnerContetnParams.setMargins(0, 0, 0, 60);
+            rowInnerContent.setPadding(0,0,0,40);
             rowInnerContent.setBaselineAligned(false);
-            rowInnerContent.setLayoutParams(rowInnerContetnParams);
+            rowInnerContent.setLayoutParams(rowInnerContentParams);
             rowInnerContent.setId(rowNum);
 
             for (int itemNum = 1; itemNum <= 3; itemNum++) {
                 int noNum = (rowNum - 1) * 3 + itemNum;
 
                 LinearLayout itemInnerContent = new LinearLayout(this);
-                LinearLayout.LayoutParams itemInnerContetnParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+                LinearLayout.LayoutParams itemInnerContentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
                 itemInnerContent.setOrientation(LinearLayout.HORIZONTAL);
                 itemInnerContent.setBaselineAligned(false);
-                itemInnerContent.setLayoutParams(itemInnerContetnParams);
+                itemInnerContent.setLayoutParams(itemInnerContentParams);
                 itemInnerContent.setId(noNum);
 
                 TextView itemNoWidget = new TextView(this);
