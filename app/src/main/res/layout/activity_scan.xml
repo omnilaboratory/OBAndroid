@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <SurfaceView
+        android:id="@+id/surface_view_scan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.omni.wallet.thirdsupport.zxing.ViewfinderView
+        android:id="@+id/view_scan_finder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:labelText=""
+        app:labelTextColor="@color/color_white"
+        app:labelTextSize="@dimen/text_12"/>
+    <!--位置在代码中设置-->
+
+    <LinearLayout
+        android:id="@+id/layout_take_picture_light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/icon_take_picture_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_20"
+            android:src="@mipmap/icon_take_picture_light_off"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_5"
+            android:text="轻触照亮"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/text_12"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view_scan_page_top"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+
+    <LinearLayout
+        android:id="@+id/layout_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/main_60"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/main_56"
+            android:layout_height="@dimen/main_56"
+            android:src="@mipmap/icon_close_x_white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_10"
+            android:letterSpacing="0.25"
+            android:text="@string/cancel"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/text_18"/>
+    </LinearLayout>
+</RelativeLayout>

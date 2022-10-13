@@ -13,12 +13,13 @@ import android.widget.TextView;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.popupwindow.FundPopupWindow;
 import com.omni.wallet.popupwindow.MenuPopupWindow;
-import com.omni.wallet.popupwindow.ScanErrorPopupWindow;
 import com.omni.wallet.popupwindow.send.SendStepOnePopupWindow;
 import com.omni.wallet.utils.CopyUtil;
 
@@ -52,7 +53,6 @@ public class AccountLightningActivity extends AppBaseActivity {
     FundPopupWindow mFundPopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     SendStepOnePopupWindow mSendStepOnePopupWindow;
-    ScanErrorPopupWindow mScanErrorPopupWindow;
 
     @Override
     protected View getStatusBarTopView() {
@@ -248,8 +248,22 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @OnClick(R.id.iv_scan)
     public void clickScan() {
-        mScanErrorPopupWindow = new ScanErrorPopupWindow(mContext);
-        mScanErrorPopupWindow.show(mParentLayout);
+        PermissionUtils.launchCamera(this, new PermissionUtils.PermissionCallback() {
+            @Override
+            public void onRequestPermissionSuccess() {
+                switchActivity(ScanActivity.class);
+            }
+
+            @Override
+            public void onRequestPermissionFailure(List<String> permissions) {
+                LogUtils.e(TAG, "扫码页面摄像头权限拒绝");
+            }
+
+            @Override
+            public void onRequestPermissionFailureWithAskNeverAgain(List<String> permissions) {
+                LogUtils.e(TAG, "扫码页面摄像头权限拒绝并且勾选不再提示");
+            }
+        });
     }
 
     /**

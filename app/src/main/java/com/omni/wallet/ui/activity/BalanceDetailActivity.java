@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
@@ -156,6 +158,28 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
     }
 
+    /**
+     * 点击扫描按钮
+     */
+    @OnClick(R.id.iv_scan)
+    public void clickScan() {
+        PermissionUtils.launchCamera(this, new PermissionUtils.PermissionCallback() {
+            @Override
+            public void onRequestPermissionSuccess() {
+                switchActivity(ScanActivity.class);
+            }
+
+            @Override
+            public void onRequestPermissionFailure(List<String> permissions) {
+                LogUtils.e(TAG, "扫码页面摄像头权限拒绝");
+            }
+
+            @Override
+            public void onRequestPermissionFailureWithAskNeverAgain(List<String> permissions) {
+                LogUtils.e(TAG, "扫码页面摄像头权限拒绝并且勾选不再提示");
+            }
+        });
+    }
 
     /**
      * 点击channel List按钮
@@ -217,6 +241,15 @@ public class BalanceDetailActivity extends AppBaseActivity {
         mChannelActivitiesLayout.setVisibility(View.GONE);
         mChannelActivitiesLayout.startAnimation(animation);
     }
+
+    /**
+     * 点击To be paid文本
+     */
+    @OnClick(R.id.layout_to_be_paid)
+    public void clickToBePaid() {
+
+    }
+
 
     @Override
     protected void onDestroy() {
