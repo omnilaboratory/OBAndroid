@@ -75,7 +75,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
                 TextView noText = new TextView(this);
                 RelativeLayout.LayoutParams noTextParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 noText.setTextColor(getResources().getColor(R.color.color_white));
-                noText.setTextSize(20.0f);
+                noText.setTextSize(16.0f);
                 noText.setText(noNum);
                 noText.setLayoutParams(noTextParams);
 
@@ -83,7 +83,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
                 LinearLayout.LayoutParams cellEditTextParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
                 cellEditText.setBackground(null);
                 cellEditText.setHint(getResources().getString(R.string.create_seed_input_hit));
-                cellEditText.setTextSize(20.0f);
+                cellEditText.setTextSize(16.0f);
                 cellEditText.setTextColor(getResources().getColor(R.color.color_black));
                 cellEditText.setLayoutParams(cellEditTextParams);
 
