@@ -17,6 +17,7 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.popupwindow.AccountManagePopupWindow;
 import com.omni.wallet.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.popupwindow.FundPopupWindow;
 import com.omni.wallet.popupwindow.MenuPopupWindow;
@@ -51,6 +52,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     MenuPopupWindow mMenuPopupWindow;
     FundPopupWindow mFundPopupWindow;
+    AccountManagePopupWindow mAccountManagePopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     SendStepOnePopupWindow mSendStepOnePopupWindow;
 
@@ -201,6 +203,12 @@ public class AccountLightningActivity extends AppBaseActivity {
         CopyUtil.SelfCopy(AccountLightningActivity.this,toCopyAddress,toastString);
     }
 
+    @OnClick(R.id.iv_account_manage)
+    public void clickAccount(){
+        mAccountManagePopupWindow = new AccountManagePopupWindow(mContext);
+        mAccountManagePopupWindow.show(mParentLayout);
+    }
+
     /**
      * 点击Fund按钮
      */
@@ -298,6 +306,9 @@ public class AccountLightningActivity extends AppBaseActivity {
         }
         if (mSendStepOnePopupWindow != null) {
             mSendStepOnePopupWindow.release();
+        }
+        if (mAccountManagePopupWindow != null){
+            mAccountManagePopupWindow.release();
         }
     }
 }

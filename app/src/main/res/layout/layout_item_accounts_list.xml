@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/main_20"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:id="@+id/lv_avatar_content"
+                android:layout_width="@dimen/main_24"
+                android:layout_height="@dimen/main_24"
+                android:gravity="center"
+                android:layout_marginRight="@dimen/main_20"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+
+                >
+                <ImageView
+                    android:id="@+id/iv_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tv_avatar_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_conner_24_black"
+                    android:text="A"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:textColor="@color/color_white"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/tv_account_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home"
+                android:textSize="@dimen/text_16"
+                android:textColor="@color/color_99000000"
+                android:textStyle="bold"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/main_44"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/main_10">
+            <TextView
+                android:id="@+id/tv_account_address"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="1mn8382odjd.........34gy7"
+                />
+            <TextView
+                android:id="@+id/tv_account_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_10"
+                android:text="1.6"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_5"
+                android:text="BTC"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

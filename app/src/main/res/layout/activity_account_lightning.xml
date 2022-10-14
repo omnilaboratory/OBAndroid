@@ -168,6 +168,7 @@
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/iv_account_manage"
                     android:layout_width="@dimen/main_18"
                     android:layout_height="@dimen/main_18"
                     android:layout_alignParentRight="true"
