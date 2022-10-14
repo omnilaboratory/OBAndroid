@@ -36,7 +36,7 @@ public class CreateInvoiceSuccessPopupWindow {
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
-            mBasePopWindow.setAnimationStyle(Gravity.CENTER);
+            mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
             shareLayout = rootView.findViewById(R.id.layout_share);
             rootView.findViewById(R.id.layout_parent).setOnClickListener(new View.OnClickListener() {
                 @Override

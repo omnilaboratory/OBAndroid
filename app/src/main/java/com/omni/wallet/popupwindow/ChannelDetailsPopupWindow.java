@@ -33,7 +33,7 @@ public class ChannelDetailsPopupWindow {
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
-            mBasePopWindow.setAnimationStyle(Gravity.CENTER);
+            mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
             // 设置进度条
             ProgressBar mProgressBar = rootView.findViewById(R.id.progressbar);
             float barValue = (float) ((double) 100 / (double) 700);

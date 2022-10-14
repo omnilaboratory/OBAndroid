@@ -22,4 +22,8 @@
         <!--该属性是是否阻止渲染Tab的图标-->
         <!--<item name="textAllCaps">true</item>-->
     </style>
+    <style name="popup_anim_style" parent="android:Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/popup_show_anim</item>
+        <item name="android:windowExitAnimation">@anim/popup_hide_anim</item>
+    </style>
 </resources>

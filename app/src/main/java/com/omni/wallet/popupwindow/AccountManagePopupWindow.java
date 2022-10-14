@@ -6,20 +6,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.listItems.Account;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +74,7 @@ public class AccountManagePopupWindow {
             View rootView = accountBasePopWindow.setContentView(R.layout.layout_popupwindow_account_manage);
             accountBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             accountBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
-            accountBasePopWindow.setAnimationStyle(Gravity.CENTER);
+            accountBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
             /**
              * @description: Click close button then close popup window
              * @描述: 点击 close 按钮关闭弹窗

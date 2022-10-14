@@ -34,7 +34,7 @@ public class SendStepTwoPopupWindow {
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
-            mBasePopWindow.setAnimationStyle(Gravity.CENTER);
+            mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
             /**
              * @描述: 初始化页面初始数据包括：friendName,address、balance、default send amount

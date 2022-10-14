@@ -32,7 +32,7 @@ public class CreateInvoiceFailedPopupWindow {
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
-            mBasePopWindow.setAnimationStyle(Gravity.CENTER);
+            mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
             // 点击back
             rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
                 @Override

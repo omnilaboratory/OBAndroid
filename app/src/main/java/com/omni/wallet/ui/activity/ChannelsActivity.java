@@ -6,16 +6,20 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.listItems.Channel;
 import com.omni.wallet.popupwindow.ChannelDetailsPopupWindow;
 import com.omni.wallet.popupwindow.CreateChannelStepOnePopupWindow;
+import com.omni.wallet.popupwindow.MenuPopupWindow;
 import com.omni.wallet.utils.CopyUtil;
 
 import java.util.ArrayList;
@@ -31,10 +35,14 @@ public class ChannelsActivity extends AppBaseActivity {
     LinearLayout mParentLayout;
     @BindView(R.id.view_top)
     View mTopView;
+    @BindView(R.id.iv_menu)
+    ImageView mMenuIv;
     @BindView(R.id.recycler_channels_list)
     public RecyclerView mRecyclerView;// 通道列表的RecyclerView
     private List<Channel> channelData = new ArrayList<Channel>();
     private MyAdapter mAdapter;
+
+    MenuPopupWindow mMenuPopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     ChannelDetailsPopupWindow mChannelDetailsPopupWindow;
 
@@ -144,6 +152,38 @@ public class ChannelsActivity extends AppBaseActivity {
     }
 
     /**
+     * 点击右上角扫码按钮
+     */
+    @OnClick(R.id.iv_scan)
+    public void clickScan() {
+        PermissionUtils.launchCamera(this, new PermissionUtils.PermissionCallback() {
+            @Override
+            public void onRequestPermissionSuccess() {
+                switchActivity(ScanActivity.class);
+            }
+
+            @Override
+            public void onRequestPermissionFailure(List<String> permissions) {
+                LogUtils.e(TAG, "扫码页面摄像头权限拒绝");
+            }
+
+            @Override
+            public void onRequestPermissionFailureWithAskNeverAgain(List<String> permissions) {
+                LogUtils.e(TAG, "扫码页面摄像头权限拒绝并且勾选不再提示");
+            }
+        });
+    }
+
+    /**
+     * 点击右上角菜单按钮
+     */
+    @OnClick(R.id.iv_menu)
+    public void clickMemu() {
+        mMenuPopupWindow = new MenuPopupWindow(mContext);
+        mMenuPopupWindow.show(mMenuIv);
+    }
+
+    /**
      * 点击右上角关闭按钮
      */
     @OnClick(R.id.iv_close)
@@ -175,5 +215,19 @@ public class ChannelsActivity extends AppBaseActivity {
         //Get the notice when you copy success
         String toastString = getResources().getString(R.string.toast_copy_address);
         CopyUtil.SelfCopy(ChannelsActivity.this, toCopyAddress, toastString);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mMenuPopupWindow != null) {
+            mMenuPopupWindow.release();
+        }
+        if (mCreateChannelStepOnePopupWindow != null) {
+            mCreateChannelStepOnePopupWindow.release();
+        }
+        if (mChannelDetailsPopupWindow != null) {
+            mChannelDetailsPopupWindow.release();
+        }
     }
 }

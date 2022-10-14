@@ -16,12 +16,12 @@
     <!--标题栏-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/main_45"
+        android:layout_height="@dimen/main_48"
         android:background="@color/color_white">
 
         <ImageView
-            android:layout_width="@dimen/main_36"
-            android:layout_height="@dimen/main_36"
+            android:layout_width="@dimen/main_30"
+            android:layout_height="@dimen/main_30"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/main_20"
             android:src="@mipmap/icon_lightning_logo"/>
@@ -30,14 +30,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/main_57"
-            android:text="Lightning"
+            android:layout_marginLeft="@dimen/main_52"
+            android:text="@string/mainnet"
             android:textColor="@color/color_A6_transparent"
             android:textSize="@dimen/text_24"/>
 
         <ImageView
-            android:layout_width="@dimen/main_24"
-            android:layout_height="@dimen/main_24"
+            android:id="@+id/iv_scan"
+            android:layout_width="@dimen/main_18"
+            android:layout_height="@dimen/main_18"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/main_70"
@@ -52,8 +53,8 @@
 
             <ImageView
                 android:id="@+id/iv_menu"
-                android:layout_width="@dimen/main_24"
-                android:layout_height="@dimen/main_24"
+                android:layout_width="@dimen/main_18"
+                android:layout_height="@dimen/main_18"
                 android:layout_centerInParent="true"
                 android:src="@mipmap/icon_menu_black"/>
 

@@ -22,7 +22,7 @@
         <RelativeLayout
             android:id="@+id/layout_title"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/main_45"
+            android:layout_height="@dimen/main_48"
             android:background="@color/color_white">
 
             <LinearLayout
@@ -41,14 +41,14 @@
 
                 <ImageView
                     android:id="@+id/iv_network"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/main_24"
+                    android:layout_height="@dimen/main_24"
                     android:src="@mipmap/icon_network_vector"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_6"
+                    android:layout_marginLeft="@dimen/main_4"
                     android:text="@string/mainnet"
                     android:textColor="@color/color_A6_transparent"
                     android:textSize="@dimen/text_24"/>

@@ -32,7 +32,7 @@ public class FundPopupWindow {
             mFundPopupWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mFundPopupWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mFundPopupWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
-            mFundPopupWindow.setAnimationStyle(Gravity.CENTER);
+            mFundPopupWindow.setAnimationStyle(R.style.popup_anim_style);
             rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
