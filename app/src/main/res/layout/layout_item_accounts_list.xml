@@ -65,7 +65,9 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:text="1mn8382odjd.........34gy7"
+                android:ellipsize="middle"
                 />
             <TextView
                 android:id="@+id/tv_account_value"
