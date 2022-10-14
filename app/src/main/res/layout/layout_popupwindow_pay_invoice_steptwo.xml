@@ -204,7 +204,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_10"
-                            android:text="="
+                            android:text="@string/aets"
                             android:textColor="@color/color_white"
                             android:textSize="@dimen/text_20"/>
 
@@ -244,7 +244,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_10"
-                            android:text="="
+                            android:text="@string/aets"
                             android:textColor="@color/color_white"
                             android:textSize="@dimen/text_20"/>
 
