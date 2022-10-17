@@ -23,8 +23,7 @@ OBAndroid is an [OmniBOLT](https://github.com/omnilaboratory/obd) Lightning wall
 
 - [ ] DEX in wallet
 - [ ] Marketplace
-- [ ] Trading histroy
-- [ ] Daily(weekly, monthly) report
+- [ ] Trading histroy 
 
 ## System Requirements
 
@@ -34,7 +33,8 @@ OBAndroid is an [OmniBOLT](https://github.com/omnilaboratory/obd) Lightning wall
 
 Full OBAndroid functionality depends on running a certain version of obd on mobile devices. View the table below to ensure that you run the correct version of obd with the relevant OBAndroid release. The bundled version will always come with the correct, compatible versioning. To connect to remote obd nodes, you should check the compatibility dependency below. 
 
-The currently supported invoice format is [OmniBOLT 7](https://github.com/omnilaboratory/OmniBOLT-spec/blob/master/OmniBOLT-07-Hierarchical-Deterministic-(HD)-wallet.md#invoice-encoding)
+The currently supported invoice format is [OmniBOLT 7](https://github.com/omnilaboratory/OmniBOLT-spec/blob/master/OmniBOLT-07-Hierarchical-Deterministic-(HD)-wallet.md#invoice-encoding). Paying btc/satoshi to a BOLT 11 invoice will cause the payment to fail.  
+
 
 | OBWallet		|	obd				  |	 
 | -------- 	  |	----------- |	 
