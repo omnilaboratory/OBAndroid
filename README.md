@@ -1,7 +1,7 @@
 # OBAndroid
 
 
-OBAndroid is an OmniBOLT Lightning wallet for android devices. It provides a platform for simple, instantaneous Bitcoin/Omnilayer asset payments. OBAndroid is now in developer beta, and will be in public beta in Nov/Dec 2022, available on Android only.  
+OBAndroid is an [OmniBOLT](https://github.com/omnilaboratory/obd) Lightning wallet for android devices. It provides a platform for simple, instantaneous Bitcoin/Omnilayer asset payments. OBAndroid is now in developer beta, and will be in public beta in Nov/Dec 2022, available on Android only.  
 
 <p align="center">
   <img width="500" alt="obwallet screenshots" src="https://github.com/omnilaboratory/obd/blob/master/docs/prototype/obwalletscreenshots.png">
@@ -32,9 +32,9 @@ OBAndroid is an OmniBOLT Lightning wallet for android devices. It provides a pla
 
 ## Compatibility
 
-Full OBAndroid functionality depends on running a certain version of obd on mobile devices. View the table below to ensure that you run the correct version of obd with the relevant OBAndroid release. The bundled version will always come with the correct, compatible versioning. To connect to remote obd nodes, you should check the compatbility dependency below. 
+Full OBAndroid functionality depends on running a certain version of obd on mobile devices. View the table below to ensure that you run the correct version of obd with the relevant OBAndroid release. The bundled version will always come with the correct, compatible versioning. To connect to remote obd nodes, you should check the compatibility dependency below. 
 
-Currently supported invoice format is [OmniBOLT 7](https://github.com/omnilaboratory/OmniBOLT-spec/blob/master/OmniBOLT-07-Hierarchical-Deterministic-(HD)-wallet.md#invoice-encoding)
+The currently supported invoice format is [OmniBOLT 7](https://github.com/omnilaboratory/OmniBOLT-spec/blob/master/OmniBOLT-07-Hierarchical-Deterministic-(HD)-wallet.md#invoice-encoding)
 
 | OBWallet		|	obd				  |	 
 | -------- 	  |	----------- |	 
