@@ -1,8 +1,7 @@
 # OBAndroid
 
 
-OBAndroid is a OmniBOLT Lightning wallet for android devices. It provides a platform for simple, instantaneous bitcoin/omnilayer assets payments.
-OBAndroid will be in a public beta in Nov, 2022, available on Android only.
+OBAndroid is an OmniBOLT Lightning wallet for android devices. It provides a platform for simple, instantaneous Bitcoin/Omnilayer asset payments. OBAndroid will be in public beta in Nov 2022, available on Android only.  
 
 <p align="center">
   <img width="750" alt="obwallet screenshots" src="https://github.com/omnilaboratory/obd/blob/master/docs/prototype/obwalletscreenshots.png">
