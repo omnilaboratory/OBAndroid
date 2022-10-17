@@ -9,9 +9,9 @@ OBAndroid is an OmniBOLT Lightning wallet for android devices. It provides a pla
 
 ## Features
 
-- [x] obd-lnd on Android and cloud  
+- [x] obd-lnd on Android and cloud
 - [x] Mainnet, regtest
-- [x] Bitcoin/Omnilayer wallet(layer 1): store, pay, receive, backup, restore  
+- [x] Bitcoin/Omnilayer wallet(layer 1): store, pay, receive, backup, restore
 - [x] Bitcoin lightning payment(layer 2)  
 - [x] Omnilayer assets lightning payment(layer 2), e.g. OMNI, USDT, etc  
 - [x] Manage local and remote nodes
