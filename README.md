@@ -34,7 +34,7 @@ OBAndroid is an OmniBOLT Lightning wallet for android devices. It provides a pla
 
 Full OBAndroid functionality depends on running a certain version of obd on mobile devices. View the table below to ensure that you run the correct version of obd with the relevant OBAndroid release. The bundled version will always come with the correct, compatible versioning. To connect to remote obd nodes, you should check the compatbility dependency below. 
 
-Currently supported invoice is [OmniBOLT 7](https://github.com/omnilaboratory/OmniBOLT-spec/blob/master/OmniBOLT-07-Hierarchical-Deterministic-(HD)-wallet.md#invoice-encoding)
+Currently supported invoice format is [OmniBOLT 7](https://github.com/omnilaboratory/OmniBOLT-spec/blob/master/OmniBOLT-07-Hierarchical-Deterministic-(HD)-wallet.md#invoice-encoding)
 
 | OBWallet		|	obd				  |	 
 | -------- 	  |	----------- |	 
