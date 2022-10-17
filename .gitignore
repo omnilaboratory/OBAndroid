@@ -9,8 +9,6 @@
 .externalNativeBuild
 /.gradle/
 /.idea/
-/gradlew
-/gradlew.bat
 /gradle.properties
 /gradle/
 /captures/
