@@ -133,43 +133,17 @@
             android:layout_marginTop="@dimen/main_10"
             android:background="@color/color_80p_transparent"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/main_18"
-            android:layout_marginRight="@dimen/main_35"
-            android:layout_marginTop="@dimen/main_17">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:letterSpacing="0.25"
-                android:text="@string/channels"
-                android:textColor="@color/color_4A92FF"
-                android:textSize="@dimen/text_18"/>
-
-            <ImageView
-                android:id="@+id/iv_create_channel"
-                android:layout_width="@dimen/main_32"
-                android:layout_height="@dimen/main_32"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:src="@mipmap/icon_fund_gray_one"/>
-        </RelativeLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/main_40"
             android:layout_marginLeft="@dimen/main_15"
             android:layout_marginRight="@dimen/main_40"
-            android:layout_marginTop="@dimen/main_15">
+            android:layout_marginTop="@dimen/main_20">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="@dimen/main_32"
-                android:layout_marginRight="21.5dp"
+                android:layout_marginRight="@dimen/main_11.5"
                 android:layout_weight="1"
                 android:background="@drawable/bg_black_rectangle_round_5"
                 android:orientation="horizontal">
@@ -181,9 +155,12 @@
                     android:layout_marginRight="@dimen/main_10"
                     android:layout_weight="1"
                     android:background="@null"
+                    android:hint="@string/channels_space"
+                    android:paddingLeft="@dimen/main_10"
                     android:singleLine="true"
                     android:textColor="@color/color_black"
-                    android:textSize="@dimen/text_16"/>
+                    android:textColorHint="@color/color_4A92FF"
+                    android:textSize="@dimen/text_18"/>
 
                 <ImageView
                     android:id="@+id/iv_search"
@@ -192,7 +169,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
-                    android:layout_marginRight="@dimen/main_20"
+                    android:layout_marginRight="@dimen/main_10"
                     android:src="@mipmap/icon_search_black"/>
             </LinearLayout>
 
@@ -202,6 +179,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@mipmap/icon_filter_black"/>
+
+            <ImageView
+                android:id="@+id/iv_create_channel"
+                android:layout_width="@dimen/main_32"
+                android:layout_height="@dimen/main_32"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/main_13"
+                android:src="@mipmap/icon_fund_gray_one"/>
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
@@ -210,6 +195,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_22"
             android:layout_marginRight="@dimen/main_35"
-            android:layout_marginTop="@dimen/main_15"/>
+            android:layout_marginTop="@dimen/main_25"/>
     </LinearLayout>
 </LinearLayout>

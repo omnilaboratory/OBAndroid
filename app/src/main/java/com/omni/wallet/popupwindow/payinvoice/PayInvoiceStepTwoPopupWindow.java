@@ -17,7 +17,8 @@ public class PayInvoiceStepTwoPopupWindow {
     private Context mContext;
     private BasePopWindow mBasePopWindow;
     PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow;
-    PayInvoiceStepThreePopupWindow mPayInvoiceStepThreePopupWindow;
+    PayInvoiceSuccessPopupWindow mPayInvoiceSuccessPopupWindow;
+    PayInvoiceFailedPopupWindow mPayInvoiceFailedPopupWindow;
 
     public PayInvoiceStepTwoPopupWindow(Context context) {
         this.mContext = context;
@@ -46,8 +47,10 @@ public class PayInvoiceStepTwoPopupWindow {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
-                    mPayInvoiceStepThreePopupWindow = new PayInvoiceStepThreePopupWindow(mContext);
-                    mPayInvoiceStepThreePopupWindow.show(view);
+                    mPayInvoiceSuccessPopupWindow = new PayInvoiceSuccessPopupWindow(mContext);
+                    mPayInvoiceSuccessPopupWindow.show(view);
+//                    mPayInvoiceFailedPopupWindow = new PayInvoiceFailedPopupWindow(mContext);
+//                    mPayInvoiceFailedPopupWindow.show(view);
                 }
             });
             // 点击底部cancel

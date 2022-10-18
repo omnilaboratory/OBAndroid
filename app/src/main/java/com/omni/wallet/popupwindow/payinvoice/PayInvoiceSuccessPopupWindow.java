@@ -11,13 +11,13 @@ import com.omni.wallet.baselibrary.view.BasePopWindow;
 /**
  * PayInvoiceStepThree的弹窗
  */
-public class PayInvoiceStepThreePopupWindow {
-    private static final String TAG = PayInvoiceStepThreePopupWindow.class.getSimpleName();
+public class PayInvoiceSuccessPopupWindow {
+    private static final String TAG = PayInvoiceSuccessPopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
 
-    public PayInvoiceStepThreePopupWindow(Context context) {
+    public PayInvoiceSuccessPopupWindow(Context context) {
         this.mContext = context;
     }
 

@@ -1,38 +1,42 @@
-package com.omni.wallet.popupwindow.createinvoice;
+package com.omni.wallet.popupwindow;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.ui.activity.ScanActivity;
+
+import java.util.List;
 
 /**
- * 汉: 创建发票成功的弹窗
- * En: CreateInvoiceFailedPopupWindow
+ * 汉: 连接节点失败的弹窗
+ * En: ConnectNodeFailedPopupWindow
  * author: guoyalei
- * date: 2022/10/10
+ * date: 2022/10/18
  */
-public class CreateInvoiceSuccessPopupWindow {
-    private static final String TAG = CreateInvoiceSuccessPopupWindow.class.getSimpleName();
+public class ConnectNodeFailedPopupWindow {
+    private static final String TAG = ConnectNodeFailedPopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
-    CreateInvoiceStepOnePopupWindow mCreateInvoiceStepOnePopupWindow;
-    LinearLayout parentLayout;
     RelativeLayout shareLayout;
 
-    public CreateInvoiceSuccessPopupWindow(Context context) {
+    public ConnectNodeFailedPopupWindow(Context context) {
         this.mContext = context;
     }
 
     public void show(final View view) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
-            final View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_invoice_success);
+            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_connect_node_failed);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
@@ -44,13 +48,28 @@ public class CreateInvoiceSuccessPopupWindow {
                     shareLayout.setVisibility(View.GONE);
                 }
             });
-            // 点击back
-            rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
+            // 点击try again
+            rootView.findViewById(R.id.layout_try_again).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mBasePopWindow.dismiss();
-                    mCreateInvoiceStepOnePopupWindow = new CreateInvoiceStepOnePopupWindow(mContext);
-                    mCreateInvoiceStepOnePopupWindow.show(view);
+                    PermissionUtils.launchCamera((Activity) mContext, new PermissionUtils.PermissionCallback() {
+                        @Override
+                        public void onRequestPermissionSuccess() {
+                            mBasePopWindow.dismiss();
+                            Intent intent = new Intent(mContext, ScanActivity.class);
+                            mContext.startActivity(intent);
+                        }
+
+                        @Override
+                        public void onRequestPermissionFailure(List<String> permissions) {
+                            LogUtils.e(TAG, "扫码页面摄像头权限拒绝");
+                        }
+
+                        @Override
+                        public void onRequestPermissionFailureWithAskNeverAgain(List<String> permissions) {
+                            LogUtils.e(TAG, "扫码页面摄像头权限拒绝并且勾选不再提示");
+                        }
+                    });
                 }
             });
             // 点击share to

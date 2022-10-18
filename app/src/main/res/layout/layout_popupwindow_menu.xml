@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:id="@+id/layout_son"
-        android:layout_width="@dimen/main_250"
+        android:layout_width="@dimen/main_260"
         android:layout_height="@dimen/main_550"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/main_10"
