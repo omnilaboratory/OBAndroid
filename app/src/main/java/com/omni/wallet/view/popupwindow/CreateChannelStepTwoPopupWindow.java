@@ -1,45 +1,40 @@
-package com.omni.wallet.popupwindow;
+package com.omni.wallet.view.popupwindow;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.ui.activity.ChannelsActivity;
 
 /**
- * 汉: 通道详情的弹窗
- * En: ChannelDetailsPopupWindow
- * author: guoyalei
- * date: 2022/10/11
+ * CreateChannelStepTwo的弹窗
  */
-public class ChannelDetailsPopupWindow {
-    private static final String TAG = ChannelDetailsPopupWindow.class.getSimpleName();
+public class CreateChannelStepTwoPopupWindow {
+    private static final String TAG = CreateChannelStepTwoPopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
 
-    public ChannelDetailsPopupWindow(Context context) {
+    public CreateChannelStepTwoPopupWindow(Context context) {
         this.mContext = context;
     }
+
 
     public void show(final View view) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
-            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_channel_details);
+            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_channel_steptwo);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
-            // 设置进度条
-            ProgressBar mProgressBar = rootView.findViewById(R.id.progressbar);
-            float barValue = (float) ((double) 100 / (double) 700);
-            mProgressBar.setProgress((int) (barValue * 100f));
-            // 点击create按钮
-            rootView.findViewById(R.id.layout_create).setOnClickListener(new View.OnClickListener() {
+            // 点击back
+            rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
@@ -47,15 +42,17 @@ public class ChannelDetailsPopupWindow {
                     mCreateChannelStepOnePopupWindow.show(view);
                 }
             });
-            // 点击closeChannel按钮
-            rootView.findViewById(R.id.layout_close_channel).setOnClickListener(new View.OnClickListener() {
+            // 点击create
+            rootView.findViewById(R.id.layout_create).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
+                    Intent intent = new Intent(mContext, ChannelsActivity.class);
+                    mContext.startActivity(intent);
                 }
             });
-            // 点击底部close
-            rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
+            // 点击cancel
+            rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();

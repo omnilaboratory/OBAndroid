@@ -1,4 +1,4 @@
-package com.omni.wallet.popupwindow;
+package com.omni.wallet.view.popupwindow;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
@@ -17,39 +16,30 @@ import com.omni.wallet.ui.activity.ScanActivity;
 import java.util.List;
 
 /**
- * 汉: 连接节点失败的弹窗
- * En: ConnectNodeFailedPopupWindow
- * author: guoyalei
- * date: 2022/10/18
+ * CreateChannelStepOne的弹窗
  */
-public class ConnectNodeFailedPopupWindow {
-    private static final String TAG = ConnectNodeFailedPopupWindow.class.getSimpleName();
+public class CreateChannelStepOnePopupWindow {
+    private static final String TAG = CreateChannelStepOnePopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
-    RelativeLayout shareLayout;
+    CreateChannelStepTwoPopupWindow mCreateChannelStepTwoPopupWindow;
 
-    public ConnectNodeFailedPopupWindow(Context context) {
+    public CreateChannelStepOnePopupWindow(Context context) {
         this.mContext = context;
     }
+
 
     public void show(final View view) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
-            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_connect_node_failed);
+            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_channel_stepone);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
-            shareLayout = rootView.findViewById(R.id.layout_share);
-            rootView.findViewById(R.id.layout_parent).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    shareLayout.setVisibility(View.GONE);
-                }
-            });
-            // 点击try again
-            rootView.findViewById(R.id.layout_try_again).setOnClickListener(new View.OnClickListener() {
+            // 点击scan qrcode
+            rootView.findViewById(R.id.layout_scan_qrcode).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     PermissionUtils.launchCamera((Activity) mContext, new PermissionUtils.PermissionCallback() {
@@ -72,30 +62,16 @@ public class ConnectNodeFailedPopupWindow {
                     });
                 }
             });
-            // 点击share to
-            rootView.findViewById(R.id.layout_share_to).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    shareLayout.setVisibility(View.VISIBLE);
-                }
-            });
-            // 点击facebook
-            rootView.findViewById(R.id.iv_facebook_share).setOnClickListener(new View.OnClickListener() {
+            // 点击fill in
+            rootView.findViewById(R.id.layout_fill_in).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
-                    shareLayout.setVisibility(View.GONE);
+                    mCreateChannelStepTwoPopupWindow = new CreateChannelStepTwoPopupWindow(mContext);
+                    mCreateChannelStepTwoPopupWindow.show(view);
                 }
             });
-            // 点击twitter
-            rootView.findViewById(R.id.iv_twitter_share).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mBasePopWindow.dismiss();
-                    shareLayout.setVisibility(View.GONE);
-                }
-            });
-            // 点击底部close
+            // 点击底部cancel
             rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

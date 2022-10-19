@@ -1,4 +1,4 @@
-package com.omni.wallet.popupwindow;
+package com.omni.wallet.view.popupwindow;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,30 +16,39 @@ import com.omni.wallet.ui.activity.ScanActivity;
 import java.util.List;
 
 /**
- * CreateChannelStepOne的弹窗
+ * 汉: 扫码错误的弹窗
+ * En: ScanErrorPopupWindow
+ * author: guoyalei
+ * date: 2022/10/10
  */
-public class CreateChannelStepOnePopupWindow {
-    private static final String TAG = CreateChannelStepOnePopupWindow.class.getSimpleName();
+public class ScanErrorPopupWindow {
+    private static final String TAG = ScanErrorPopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
-    CreateChannelStepTwoPopupWindow mCreateChannelStepTwoPopupWindow;
 
-    public CreateChannelStepOnePopupWindow(Context context) {
+    public ScanErrorPopupWindow(Context context) {
         this.mContext = context;
     }
 
 
-    public void show(final View view) {
+    public void show(View view) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
-            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_channel_stepone);
+            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_scan_error);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
-            // 点击scan qrcode
-            rootView.findViewById(R.id.layout_scan_qrcode).setOnClickListener(new View.OnClickListener() {
+            rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mBasePopWindow.dismiss();
+                }
+            });
+
+            // 点击Try Again
+            rootView.findViewById(R.id.layout_scan).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     PermissionUtils.launchCamera((Activity) mContext, new PermissionUtils.PermissionCallback() {
@@ -62,22 +71,16 @@ public class CreateChannelStepOnePopupWindow {
                     });
                 }
             });
-            // 点击fill in
-            rootView.findViewById(R.id.layout_fill_in).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mBasePopWindow.dismiss();
-                    mCreateChannelStepTwoPopupWindow = new CreateChannelStepTwoPopupWindow(mContext);
-                    mCreateChannelStepTwoPopupWindow.show(view);
-                }
-            });
-            // 点击底部cancel
-            rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
+            // 点击底部close
+            rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
                 }
             });
+            if (mBasePopWindow.isShowing()) {
+                return;
+            }
             if (mBasePopWindow.isShowing()) {
                 return;
             }

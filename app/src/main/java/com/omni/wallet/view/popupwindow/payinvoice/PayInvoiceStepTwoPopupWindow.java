@@ -1,5 +1,4 @@
-package com.omni.wallet.popupwindow.payinvoice;
-
+package com.omni.wallet.view.popupwindow.payinvoice;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -10,16 +9,18 @@ import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 
 /**
- * PayInvoiceStepOne的弹窗
+ * PayInvoiceStepTwo的弹窗
  */
-public class PayInvoiceStepOnePopupWindow {
-    private static final String TAG = PayInvoiceStepOnePopupWindow.class.getSimpleName();
+public class PayInvoiceStepTwoPopupWindow {
+    private static final String TAG = PayInvoiceStepTwoPopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
-    PayInvoiceStepTwoPopupWindow mPayInvoiceStepTwoPopupWindow;
+    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow;
+    PayInvoiceSuccessPopupWindow mPayInvoiceSuccessPopupWindow;
+    PayInvoiceFailedPopupWindow mPayInvoiceFailedPopupWindow;
 
-    public PayInvoiceStepOnePopupWindow(Context context) {
+    public PayInvoiceStepTwoPopupWindow(Context context) {
         this.mContext = context;
     }
 
@@ -27,7 +28,7 @@ public class PayInvoiceStepOnePopupWindow {
     public void show(final View view) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
-            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_pay_invoice_stepone);
+            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_pay_invoice_steptwo);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
@@ -37,15 +38,19 @@ public class PayInvoiceStepOnePopupWindow {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
+                    mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
+                    mPayInvoiceStepOnePopupWindow.show(view);
                 }
             });
-            // 点击next
-            rootView.findViewById(R.id.layout_next).setOnClickListener(new View.OnClickListener() {
+            // 点击pay
+            rootView.findViewById(R.id.layout_pay).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
-                    mPayInvoiceStepTwoPopupWindow = new PayInvoiceStepTwoPopupWindow(mContext);
-                    mPayInvoiceStepTwoPopupWindow.show(view);
+                    mPayInvoiceSuccessPopupWindow = new PayInvoiceSuccessPopupWindow(mContext);
+                    mPayInvoiceSuccessPopupWindow.show(view);
+//                    mPayInvoiceFailedPopupWindow = new PayInvoiceFailedPopupWindow(mContext);
+//                    mPayInvoiceFailedPopupWindow.show(view);
                 }
             });
             // 点击底部cancel

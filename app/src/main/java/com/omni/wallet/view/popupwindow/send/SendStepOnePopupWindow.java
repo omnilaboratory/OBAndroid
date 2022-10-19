@@ -1,4 +1,4 @@
-package com.omni.wallet.popupwindow.send;
+package com.omni.wallet.view.popupwindow.send;
 
 import android.app.Activity;
 import android.content.Context;

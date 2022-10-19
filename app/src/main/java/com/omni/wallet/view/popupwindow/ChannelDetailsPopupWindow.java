@@ -1,56 +1,61 @@
-package com.omni.wallet.popupwindow.createinvoice;
+package com.omni.wallet.view.popupwindow;
 
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 
 /**
- * 汉:创建发票失败的弹窗
- * En:CreateInvoiceFailedPopupWindow
+ * 汉: 通道详情的弹窗
+ * En: ChannelDetailsPopupWindow
  * author: guoyalei
- * date: 2022/10/10
+ * date: 2022/10/11
  */
-public class CreateInvoiceFailedPopupWindow {
-    private static final String TAG = CreateInvoiceFailedPopupWindow.class.getSimpleName();
+public class ChannelDetailsPopupWindow {
+    private static final String TAG = ChannelDetailsPopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
-    CreateInvoiceStepOnePopupWindow mCreateInvoiceStepOnePopupWindow;
+    CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
 
-    public CreateInvoiceFailedPopupWindow(Context context) {
+    public ChannelDetailsPopupWindow(Context context) {
         this.mContext = context;
     }
 
     public void show(final View view) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
-            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_invoice_failed);
+            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_channel_details);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
-            // 点击back
-            rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
+            // 设置进度条
+            ProgressBar mProgressBar = rootView.findViewById(R.id.progressbar);
+            float barValue = (float) ((double) 100 / (double) 700);
+            mProgressBar.setProgress((int) (barValue * 100f));
+            // 点击create按钮
+            rootView.findViewById(R.id.layout_create).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
-                    mCreateInvoiceStepOnePopupWindow = new CreateInvoiceStepOnePopupWindow(mContext);
-                    mCreateInvoiceStepOnePopupWindow.show(view);
+                    mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+                    mCreateChannelStepOnePopupWindow.show(view);
                 }
             });
-            // 点击share to
-            rootView.findViewById(R.id.layout_share_to).setOnClickListener(new View.OnClickListener() {
+            // 点击closeChannel按钮
+            rootView.findViewById(R.id.layout_close_channel).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
                 }
             });
             // 点击底部close
-            rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
+            rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();

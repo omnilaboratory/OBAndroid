@@ -1,4 +1,4 @@
-package com.omni.wallet.popupwindow.send;
+package com.omni.wallet.view.popupwindow.send;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.utils.GetResourceUtil;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 public class SendStepThreePopupWindow {
     private static final String TAG = SendStepThreePopupWindow.class.getSimpleName();
@@ -17,6 +18,8 @@ public class SendStepThreePopupWindow {
     private Context mContext;
     private BasePopWindow mBasePopWindow;
     SendStepTwoPopupWindow mSendStepTwoPopupWindow;
+    LoadingDialog mLoadingDialog;
+
     // 初始数据（Initial data）
     String sendFriendName = "Alpha";
     String sendAddress = "1mn8382odjddwedqw323f3d32343f23fweg65er4345yge43t4534gy7";
@@ -26,8 +29,6 @@ public class SendStepThreePopupWindow {
     Double gasFeeAmount = 100.00d;
     Double gasFeeValue = 5.06d;
     Double totalValue = 715.29d;
-
-
 
 
     public SendStepThreePopupWindow(Context context) {
@@ -55,8 +56,8 @@ public class SendStepThreePopupWindow {
             friendNameView.setText(sendFriendName);
             TextView friendAddressView = rootView.findViewById(R.id.tv_send_address);
             friendAddressView.setText(sendAddress);
-            ImageView tokenImage =  rootView.findViewById(R.id.iv_send_token_image);
-            tokenImage.setImageDrawable(mContext.getResources().getDrawable(GetResourceUtil.getTokenImageId(mContext,type)));
+            ImageView tokenImage = rootView.findViewById(R.id.iv_send_token_image);
+            tokenImage.setImageDrawable(mContext.getResources().getDrawable(GetResourceUtil.getTokenImageId(mContext, type)));
             TextView tokenTypeView = rootView.findViewById(R.id.tv_send_token_type);
             tokenTypeView.setText(type);
             TextView tokenTypeView2 = rootView.findViewById(R.id.tv_send_token_type_2);
@@ -86,7 +87,10 @@ public class SendStepThreePopupWindow {
             rootView.findViewById(R.id.layout_confirm).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    mLoadingDialog = new LoadingDialog(mContext);
+                    mLoadingDialog.show();
                     mBasePopWindow.dismiss();
+                    mLoadingDialog.dismiss();
                 }
             });
             // 点击底部cancel

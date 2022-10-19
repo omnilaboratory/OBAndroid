@@ -1,4 +1,4 @@
-package com.omni.wallet.popupwindow;
+package com.omni.wallet.view.popupwindow;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;

@@ -1,26 +1,25 @@
-package com.omni.wallet.popupwindow;
+package com.omni.wallet.view.popupwindow.payinvoice;
+
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.ui.activity.ChannelsActivity;
 
 /**
- * CreateChannelStepTwo的弹窗
+ * PayInvoiceStepOne的弹窗
  */
-public class CreateChannelStepTwoPopupWindow {
-    private static final String TAG = CreateChannelStepTwoPopupWindow.class.getSimpleName();
+public class PayInvoiceStepOnePopupWindow {
+    private static final String TAG = PayInvoiceStepOnePopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
-    CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
+    PayInvoiceStepTwoPopupWindow mPayInvoiceStepTwoPopupWindow;
 
-    public CreateChannelStepTwoPopupWindow(Context context) {
+    public PayInvoiceStepOnePopupWindow(Context context) {
         this.mContext = context;
     }
 
@@ -28,7 +27,7 @@ public class CreateChannelStepTwoPopupWindow {
     public void show(final View view) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
-            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_channel_steptwo);
+            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_pay_invoice_stepone);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
@@ -38,20 +37,18 @@ public class CreateChannelStepTwoPopupWindow {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
-                    mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-                    mCreateChannelStepOnePopupWindow.show(view);
                 }
             });
-            // 点击create
-            rootView.findViewById(R.id.layout_create).setOnClickListener(new View.OnClickListener() {
+            // 点击next
+            rootView.findViewById(R.id.layout_next).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
-                    Intent intent = new Intent(mContext, ChannelsActivity.class);
-                    mContext.startActivity(intent);
+                    mPayInvoiceStepTwoPopupWindow = new PayInvoiceStepTwoPopupWindow(mContext);
+                    mPayInvoiceStepTwoPopupWindow.show(view);
                 }
             });
-            // 点击cancel
+            // 点击底部cancel
             rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

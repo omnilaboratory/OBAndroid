@@ -1,4 +1,4 @@
-package com.omni.wallet.popupwindow.payinvoice;
+package com.omni.wallet.view.popupwindow.payinvoice;
 
 import android.content.Context;
 import android.view.Gravity;
