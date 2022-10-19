@@ -17,12 +17,12 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
-import com.omni.wallet.popupwindow.AccountManagePopupWindow;
-import com.omni.wallet.popupwindow.CreateChannelStepOnePopupWindow;
-import com.omni.wallet.popupwindow.FundPopupWindow;
-import com.omni.wallet.popupwindow.MenuPopupWindow;
-import com.omni.wallet.popupwindow.SelectNodePopupWindow;
-import com.omni.wallet.popupwindow.send.SendStepOnePopupWindow;
+import com.omni.wallet.view.popupwindow.AccountManagePopupWindow;
+import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
+import com.omni.wallet.view.popupwindow.FundPopupWindow;
+import com.omni.wallet.view.popupwindow.MenuPopupWindow;
+import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
+import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
 import com.omni.wallet.utils.CopyUtil;
 
 import java.util.ArrayList;

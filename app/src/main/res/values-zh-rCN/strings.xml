@@ -104,7 +104,7 @@
     <string name="from_node">From Node</string>
     <string name="to_node">To Node</string>
     <string name="pay_invoice_txt">Please input the invoice you will pay</string>
-    <string name="omnibolt_11">OmniBOLT 11 Invoice</string>
+    <string name="omnibolt_11">OmniBOLT 7 Invoice</string>
     <string name="next_big">NEXT</string>
     <string name="pay">PAY</string>
     <string name="cancel">CANCEL</string>
@@ -114,6 +114,7 @@
     <string name="value">VALUE</string>
     <string name="network">NETWORK</string>
     <string name="channels">CHANNELS</string>
+    <string name="channels_space">C H A N N E L S</string>
     <string name="remote_pubkey">Remote Pubkey</string>
     <string name="local_balance">Local Balance</string>
     <string name="send">SEND</string>
@@ -139,7 +140,7 @@
     <string name="hours">Hours</string>
     <string name="expiration">Expiration</string>
     <string name="timestamp">timestamp</string>
-    <string name="omnibolt_11_invoice">OMNIBOLT 11 INVOICE</string>
+    <string name="omnibolt_11_invoice">OMNIBOLT 7 INVOICE</string>
     <string name="failed">Failed</string>
     <string name="invoice_created">Invoice Created</string>
     <string name="mainnet">mainnet</string>
@@ -166,6 +167,12 @@
     <string name="sent">SENT</string>
     <string name="failed_big">FAILED</string>
     <string name="received">RECEIVED</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="connect_node">CONNECT NODE</string>
+    <string name="domain">Domain</string>
+    <string name="ip">IP</string>
+    <string name="timestamp_big">Timestamp</string>
 
     <!--token list 页面-->
     <string name="balance">余额</string>
