@@ -172,6 +172,10 @@
     <string name="domain">Domain</string>
     <string name="ip">IP</string>
     <string name="timestamp_big">Timestamp</string>
+    <string name="explorer">EXPLORER</string>
+    <string name="status_first_upper">Status</string>
+    <string name="nonce">Nonce</string>
+    <string name="txid">Tx ID</string>
 
     <!--token list 页面-->
     <string name="balance">Balance</string>

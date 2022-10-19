@@ -18,10 +18,11 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
-import com.omni.wallet.utils.CopyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow;
     SendStepOnePopupWindow mSendStepOnePopupWindow;
     CreateInvoiceStepOnePopupWindow mCreateInvoiceStepOnePopupWindow;
+    TransactionsDetailsPopupWindow mTransactionsDetailsPopupWindow;
 
     @Override
     protected void getBundleData(Bundle bundle) {
@@ -118,7 +120,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final int position, final String item) {
-
+             holder.setOnItemClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     mTransactionsDetailsPopupWindow = new TransactionsDetailsPopupWindow(mContext);
+                     mTransactionsDetailsPopupWindow.show(mParentLayout);
+                 }
+             });
         }
     }
 

@@ -75,7 +75,7 @@ public class PayInvoiceFailedPopupWindow {
                 }
             });
             // 点击底部close
-            rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
+            rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();

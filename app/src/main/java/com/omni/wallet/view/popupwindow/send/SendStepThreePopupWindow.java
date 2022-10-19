@@ -18,6 +18,7 @@ public class SendStepThreePopupWindow {
     private Context mContext;
     private BasePopWindow mBasePopWindow;
     SendStepTwoPopupWindow mSendStepTwoPopupWindow;
+    SendFailedPopupWindow mSendFailedPopupWindow;
     LoadingDialog mLoadingDialog;
 
     // 初始数据（Initial data）
@@ -91,6 +92,8 @@ public class SendStepThreePopupWindow {
                     mLoadingDialog.show();
                     mBasePopWindow.dismiss();
                     mLoadingDialog.dismiss();
+                    mSendFailedPopupWindow = new SendFailedPopupWindow(mContext);
+                    mSendFailedPopupWindow.show(view);
                 }
             });
             // 点击底部cancel
