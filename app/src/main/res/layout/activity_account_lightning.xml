@@ -18,22 +18,30 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_48"
         android:background="@color/color_white">
-
-        <ImageView
-            android:layout_width="@dimen/main_30"
-            android:layout_height="@dimen/main_30"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/main_20"
-            android:src="@mipmap/icon_lightning_logo"/>
-
-        <TextView
+        <LinearLayout
+            android:id="@+id/lv_network_title_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/main_52"
-            android:text="@string/mainnet"
-            android:textColor="@color/color_A6_transparent"
-            android:textSize="@dimen/text_24"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="@dimen/main_20">
+
+            <ImageView
+                android:layout_width="@dimen/main_30"
+                android:layout_height="@dimen/main_30"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/icon_lightning_logo"/>
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_10"
+                android:text="@string/mainnet"
+                android:textColor="@color/color_A6_transparent"
+                android:textSize="@dimen/text_24"
+                android:gravity="center"/>
+
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/iv_scan"

@@ -20,6 +20,7 @@ import com.omni.wallet.listItems.Channel;
 import com.omni.wallet.popupwindow.ChannelDetailsPopupWindow;
 import com.omni.wallet.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.popupwindow.MenuPopupWindow;
+import com.omni.wallet.popupwindow.SelectNodePopupWindow;
 import com.omni.wallet.utils.CopyUtil;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class ChannelsActivity extends AppBaseActivity {
     MenuPopupWindow mMenuPopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     ChannelDetailsPopupWindow mChannelDetailsPopupWindow;
+    SelectNodePopupWindow mSelectNodePopupWindow;
 
     @Override
     protected View getStatusBarTopView() {
@@ -216,7 +218,11 @@ public class ChannelsActivity extends AppBaseActivity {
         String toastString = getResources().getString(R.string.toast_copy_address);
         CopyUtil.SelfCopy(ChannelsActivity.this, toCopyAddress, toastString);
     }
-
+    @OnClick(R.id.lv_network_title_content)
+    public void clickSelectNode(){
+        mSelectNodePopupWindow = new SelectNodePopupWindow(mContext);
+        mSelectNodePopupWindow.show(mParentLayout);
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

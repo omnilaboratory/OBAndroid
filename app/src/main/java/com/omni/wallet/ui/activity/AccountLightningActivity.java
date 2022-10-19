@@ -21,6 +21,7 @@ import com.omni.wallet.popupwindow.AccountManagePopupWindow;
 import com.omni.wallet.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.popupwindow.FundPopupWindow;
 import com.omni.wallet.popupwindow.MenuPopupWindow;
+import com.omni.wallet.popupwindow.SelectNodePopupWindow;
 import com.omni.wallet.popupwindow.send.SendStepOnePopupWindow;
 import com.omni.wallet.utils.CopyUtil;
 
@@ -55,6 +56,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     AccountManagePopupWindow mAccountManagePopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     SendStepOnePopupWindow mSendStepOnePopupWindow;
+    SelectNodePopupWindow mSelectNodePopupWindow;
 
     @Override
     protected View getStatusBarTopView() {
@@ -203,6 +205,12 @@ public class AccountLightningActivity extends AppBaseActivity {
         CopyUtil.SelfCopy(AccountLightningActivity.this,toCopyAddress,toastString);
     }
 
+    @OnClick(R.id.lv_network_title_content)
+    public void clickSelectNode(){
+        mSelectNodePopupWindow = new SelectNodePopupWindow(mContext);
+        mSelectNodePopupWindow.show(mParentLayout);
+    }
+
     @OnClick(R.id.iv_account_manage)
     public void clickAccount(){
         mAccountManagePopupWindow = new AccountManagePopupWindow(mContext);
@@ -309,6 +317,9 @@ public class AccountLightningActivity extends AppBaseActivity {
         }
         if (mAccountManagePopupWindow != null){
             mAccountManagePopupWindow.release();
+        }
+        if(mSelectNodePopupWindow != null){
+            mSelectNodePopupWindow.release();
         }
     }
 }
