@@ -26,13 +26,13 @@ public abstract class BaseWebViewActivity extends AppBaseActivity {
     protected String mUrl;
     protected String mTitle;
     protected JavaScriptInterface mInterfaceObject;
-    private boolean mChangeTitle = true;// 标题是否随网页变化
+    private boolean mChangeTitle = true;// 标题是否随网页变化(Whether the title changes with the page)
 
     // Url
     public static final String KEY_PAGE_URL = "showUrlKey";
-    // 标题文字
+    // 标题文字(Title Text)
     public static final String KEY_PAGE_TITLE = "pageTitleKey";
-    // 标题是否随网页变化
+    // 标题是否随网页变化(Whether the title changes with the page)
     public static final String KEY_CHANGE_TITLE = "changeTitleKey";
 
     @Override
@@ -74,7 +74,7 @@ public abstract class BaseWebViewActivity extends AppBaseActivity {
         if (getWebViewId() != 0) {
             mWebView = findViewById(getWebViewId());
         }
-        // 设置JS调用原生方法的接口
+        // 设置JS调用原生方法的接口(Set the interface for JS to call native methods)
         mInterfaceObject = getJavaScriptInterface();
         if (mWebView != null) {
             mWebView.addJavascriptInterface(mInterfaceObject, Constants.H5_JS_ELEMENT);
@@ -113,13 +113,17 @@ public abstract class BaseWebViewActivity extends AppBaseActivity {
     }
 
     /**
-     * WebView的回调
+     * @描述： WebView的回调
+     * @desc: Callback of WebView
      */
     private class MyWebViewCallback extends DefaultWebViewCallback {
 
         @Override
         public void onWebViewPageFinish(WebView webView) {
-            // 设置标题
+            /**
+             * @描述： 设置标题
+             * @desc: set title
+             */
             if (changeTitle() && mTitleView != null) {
                 String title = webView.getTitle();
                 mTitleView.setTitleText(title);
@@ -143,15 +147,24 @@ public abstract class BaseWebViewActivity extends AppBaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 释放WebView
+        /**
+         * @描述： 释放WebView
+         * @desc: Release WebView
+         */
         if (mWebView != null) {
             mWebView.releaseWebView();
         }
-        // 释放Js接口里边的相关资源
+        /**
+         * @描述： 释放Js接口里边的相关资源
+         * @desc: Release relevant resources in the Js interface
+         */
         if (mInterfaceObject != null) {
             mInterfaceObject.release();
         }
-        // 资源释放
+        /**
+         * @描述： 资源释放
+         * @desc: Resource release
+         */
         release();
     }
 

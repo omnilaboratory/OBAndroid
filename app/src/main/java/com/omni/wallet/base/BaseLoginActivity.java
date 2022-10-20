@@ -22,20 +22,40 @@ import java.util.List;
 
 public abstract class BaseLoginActivity extends AppBaseActivity {
     private static final String TAG = BaseLoginActivity.class.getSimpleName();
-
-    // 登录工具类
+    /**
+     * @描述： 登录工具类
+     * @desc: Login Tool Class
+     */
     private LoginUtils mLoginUtils;
-    // 携带的Bundle
+    /**
+     * @描述： 携带的Bundle
+     * @desc: Bundle carried
+     */
     protected Bundle mBundle;
-    // 控制按钮是否可用的文本变动监听
+    /**
+     * @描述： 控制按钮是否可用的文本变动监听
+     * @desc: Control whether the button is available for text change monitoring
+     */
     protected MultiEditTextWatcher mMultiTextWatcher;
-    // 跳转或者需要关闭的页面的Class
+    /**
+     * @描述： 跳转或者需要关闭的页面的Class
+     * @desc: Class of the page to jump or close
+     */
     protected String mPageClass;
-    // 登录成功之后是否关闭页面
+    /**
+     * @描述： 登录成功之后是否关闭页面
+     * @desc: Whether to close the page after successful login
+     */
     protected boolean mClosePage;
-    // 登录成功之后是不是仅仅关闭登录界面
+    /**
+     * @描述： 登录成功之后是不是仅仅关闭登录界面
+     * @desc: Whether to just close the login interface after successful login
+     */
     protected boolean mJustCloseLoginPage = false;
-    // 需要关闭的页面的Class集合
+    /**
+     * @描述： 需要关闭的页面的Class集合
+     * @desc: Class collection of pages to be closed
+     */
     protected List<String> mPageClassList;
 
     @Override
@@ -54,7 +74,8 @@ public abstract class BaseLoginActivity extends AppBaseActivity {
     }
 
     /**
-     * 登录
+     * @描述： 登录
+     * @desc: Login
      */
     protected void login(String account, String password) {
         mLoginUtils.login(mContext, account, password, new DefaultLoginCallback() {
@@ -71,9 +92,9 @@ public abstract class BaseLoginActivity extends AppBaseActivity {
             }
         });
     }
-
     /**
-     * 登录成功统一处理
+     * @描述： 登录成功统一处理
+     * @desc: Unified processing after successful login
      */
     protected void onSuccessLogin() {
         // 根据Class 跳转
@@ -92,14 +113,19 @@ public abstract class BaseLoginActivity extends AppBaseActivity {
             }
             return;
         }
-        // 判断页面关闭方式
+        /**
+         * @描述： 登录成功统一处理
+         * @desc: Judge the page closing mode
+         */
         if (mJustCloseLoginPage) {
             finish();
         } else if (StringUtils.isEmpty(User.getInstance().getFirstLogin(mContext))) {
             Bundle bundle = new Bundle();
         } else {
-            // 否则直接去主页
-            // 是否需要关闭传递的某些个页面
+            /**
+             * @描述： 否则直接去主页,是否需要关闭传递的某些个页面
+             * @desc: Otherwise, go directly to the home page. Do you want to close some pages that are passed
+             */
             if (mClosePage) {
                 if (mPageClassList != null && mPageClassList.size() > 0) {
                     for (String clazz : mPageClassList) {
