@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,6 +23,8 @@ import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.listItems.Friend;
 import com.omni.wallet.listItems.FriendGroup;
 import com.omni.wallet.ui.activity.ScanActivity;
+import com.omni.wallet.utils.GetResourceUtil;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +42,25 @@ public class SendStepOnePopupWindow {
     SendStepTwoPopupWindow mSendStepTwoPopupWindow;
     View mView;
     private List<FriendGroup> friendGroups  = new ArrayList<FriendGroup>();
+    LoadingDialog mLoadingDialog;
+
+    // 初始数据（Initial data）
+    String sendFriendName = "Alpha";
+    String sendAddress = "1mn8382odjddwedqw323f3d32343f23fweg65er4345yge43t4534gy7";
+    String type = "USDT";
+    Double sendAmount = 100.00d;
+    Double sendValue = 710.23d;
+    Double gasFeeAmount = 100.00d;
+    Double gasFeeValue = 5.06d;
+    Double totalValue = 715.29d;
+
+    Double assetBalance = 500.00d;
+    String toAddress = "1mn8382odjddwedqw323f3d32343f23fweg65er4345yge43t4534gy7";
+    String toFriendName = "to_friend_name";
+
+    public void voidinitStepTwoData(View rootView){
+
+    }
 
     public SendStepOnePopupWindow(Context context) {
         this.mContext = context;
@@ -75,11 +98,12 @@ public class SendStepOnePopupWindow {
     }
 
 
+
     public void show(final View view) {
         if (mBasePopWindow == null) {
             mView = view;
             mBasePopWindow = new BasePopWindow(mContext);
-            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_send_stepone);
+            final View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_send_stepone);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
@@ -118,6 +142,93 @@ public class SendStepOnePopupWindow {
                     });
                 }
             });
+
+            TextView toAddressView = rootView.findViewById(R.id.tv_to_address);
+            toAddressView.setText(toAddress);
+            TextView assetsBalanceView = rootView.findViewById(R.id.tv_asset_balance);
+            assetsBalanceView.setText(assetBalance.toString());
+            TextView toFriendNameView = rootView.findViewById(R.id.tv_to_friend_name);
+            toFriendNameView.setText(toFriendName);
+
+            /**
+             * @描述: 增加MAX按钮的点击事件，点击将balance的值填入amount输入框中
+             * @Description: Add the click event of MAX button, click to fill the balance value into the amount input box
+             * @author: Tong ChangHui
+             * @E-mail: tch081092@gmail.com
+             */
+
+            final EditText amountInputView = rootView.findViewById(R.id.etv_send_amount);
+            TextView maxBtnView = rootView.findViewById(R.id.tv_btn_set_amount_max);
+            maxBtnView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    amountInputView.setText(assetBalance.toString());
+                }
+            });
+
+            // 点击back
+            rootView.findViewById(R.id.layout_back_to_one).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    rootView.findViewById(R.id.lv_step_one_content).setVisibility(View.VISIBLE);
+                    rootView.findViewById(R.id.lv_step_two_content).setVisibility(View.GONE);
+                }
+            });
+            // 点击next
+            rootView.findViewById(R.id.layout_next).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    rootView.findViewById(R.id.lv_step_two_content).setVisibility(View.GONE);
+                    rootView.findViewById(R.id.lv_step_three_content).setVisibility(View.VISIBLE);
+                }
+            });
+
+            /**
+             * @描述: 初始化页面初始数据包括：friendName、address、send amount、send value、gas fee、fee value、total used value
+             * @Description: The initial data of the initialization page includes friend name, address, send value, gas fee, fee value, total used value
+             * @author: Tong ChangHui
+             * @E-mail: tch081092@gmail.com
+             */
+
+            TextView friendNameView = rootView.findViewById(R.id.tv_send_friend_name);
+            friendNameView.setText(sendFriendName);
+            TextView friendAddressView = rootView.findViewById(R.id.tv_send_address);
+            friendAddressView.setText(sendAddress);
+            ImageView tokenImage = rootView.findViewById(R.id.iv_send_token_image);
+            tokenImage.setImageDrawable(mContext.getResources().getDrawable(GetResourceUtil.getTokenImageId(mContext, type)));
+            TextView tokenTypeView = rootView.findViewById(R.id.tv_send_token_type);
+            tokenTypeView.setText(type);
+            TextView tokenTypeView2 = rootView.findViewById(R.id.tv_send_token_type_2);
+            tokenTypeView2.setText(type);
+            TextView sendAmountView = rootView.findViewById(R.id.tv_send_amount);
+            sendAmountView.setText(sendAmount.toString());
+            TextView sendAmountValueView = rootView.findViewById(R.id.tv_send_amount_value);
+            sendAmountValueView.setText(sendValue.toString());
+            TextView feeAmountView = rootView.findViewById(R.id.tv_send_gas_fee_amount);
+            feeAmountView.setText(gasFeeAmount.toString());
+            TextView feeAmountValueView = rootView.findViewById(R.id.tv_send_gas_fee_amount_value);
+            feeAmountValueView.setText(gasFeeValue.toString());
+            TextView sendUsedValueView = rootView.findViewById(R.id.tv_send_used_value);
+            sendUsedValueView.setText(totalValue.toString());
+
+            // 点击back
+            rootView.findViewById(R.id.layout_back_to_two).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    rootView.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
+                    rootView.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                }
+            });
+            // 点击confirm
+            rootView.findViewById(R.id.layout_confirm).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    rootView.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
+                    rootView.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                }
+            });
+
+
             // 点击底部cancel
             rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -188,9 +299,8 @@ public class SendStepOnePopupWindow {
                 friendItemContent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mBasePopWindow.dismiss();
-                        mSendStepTwoPopupWindow = new SendStepTwoPopupWindow(mContext);
-                        mSendStepTwoPopupWindow.show(mView);
+                        mBasePopWindow.getContentView().findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
+                        mBasePopWindow.getContentView().findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
                     }
                 });
                 ListContentView.addView(friendItemContain);
