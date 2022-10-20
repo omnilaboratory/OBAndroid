@@ -34,14 +34,20 @@ public class PayInvoiceStepOnePopupWindow {
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
-            // 点击back
+            /**
+             * @备注： 点击back关闭pay invoice 窗口
+             * @description: Close pay invoice popup window when click back
+             */
             rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
                 }
             });
-            // 点击next
+            /**
+             * @备注： 点击next显示invoice step two
+             * @description: Show pay invoice step two when click next
+             */
             rootView.findViewById(R.id.layout_next_to_two).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -49,7 +55,10 @@ public class PayInvoiceStepOnePopupWindow {
                     rootView.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.GONE);
                 }
             });
-            // 点击back
+            /**
+             * @备注： 点击back显示invoice step one
+             * @description: Show pay invoice step one when click next
+             */
             rootView.findViewById(R.id.layout_back_to_one).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -57,7 +66,10 @@ public class PayInvoiceStepOnePopupWindow {
                     rootView.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.VISIBLE);
                 }
             });
-            // 点击pay
+            /**
+             * @备注： 点击pay执行支付操作，根据支付结果跳转到succeed或者failed步骤
+             * @description: Click pay to execute the payment operation, and jump to the successful or failed step according to the payment result
+             */
             rootView.findViewById(R.id.layout_pay).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -76,7 +88,10 @@ public class PayInvoiceStepOnePopupWindow {
                     shareLayout.setVisibility(View.GONE);
                 }
             });
-            // 点击back
+            /**
+             * @备注： 点击back后退到第二步
+             * @description: Click back button,back to step two
+             */
             rootView.findViewById(R.id.layout_back_to_two).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -86,7 +101,10 @@ public class PayInvoiceStepOnePopupWindow {
                     rootView.findViewById(R.id.layout_close).setVisibility(View.GONE);
                 }
             });
-            // 点击share to
+            /**
+             * @备注： 点击share to，显示可分享的选项
+             * @description: Click share to button,then show the layout for select options
+             */
             rootView.findViewById(R.id.layout_share_to).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -94,7 +112,10 @@ public class PayInvoiceStepOnePopupWindow {
                     shareLayout.setVisibility(View.VISIBLE);
                 }
             });
-            // 点击facebook
+            /**
+             * @备注： 点击face book 图标
+             * @description: Click face book icon
+             */
             rootView.findViewById(R.id.iv_facebook_share).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -102,7 +123,10 @@ public class PayInvoiceStepOnePopupWindow {
                     shareLayout.setVisibility(View.GONE);
                 }
             });
-            // 点击twitter
+            /**
+             * @备注： 点击twitter 图标
+             * @description: Click twitter icon
+             */
             rootView.findViewById(R.id.iv_twitter_share).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -110,7 +134,10 @@ public class PayInvoiceStepOnePopupWindow {
                     shareLayout.setVisibility(View.GONE);
                 }
             });
-            // 点击底部cancel
+            /**
+             * @备注： 点击cancel 按钮
+             * @description: Click cancel button
+             */
             rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -118,7 +145,10 @@ public class PayInvoiceStepOnePopupWindow {
                 }
             });
 
-            // 点击底部close
+            /**
+             * @备注： close 按钮
+             * @description: Click close button
+             */
             rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

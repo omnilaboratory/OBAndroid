@@ -24,7 +24,6 @@ import com.omni.wallet.listItems.Friend;
 import com.omni.wallet.listItems.FriendGroup;
 import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.utils.GetResourceUtil;
-import com.omni.wallet.view.dialog.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,10 +38,8 @@ public class SendStepOnePopupWindow {
     private BasePopWindow mBasePopWindow;
     private List<String> mData = new ArrayList<>();
     private MyAdapter mAdapter;
-    SendStepTwoPopupWindow mSendStepTwoPopupWindow;
     View mView;
-    private List<FriendGroup> friendGroups  = new ArrayList<FriendGroup>();
-    LoadingDialog mLoadingDialog;
+    private List<FriendGroup> friendGroups  = new ArrayList<>();
 
     // 初始数据（Initial data）
     String sendFriendName = "Alpha";
@@ -58,15 +55,15 @@ public class SendStepOnePopupWindow {
     String toAddress = "1mn8382odjddwedqw323f3d32343f23fweg65er4345yge43t4534gy7";
     String toFriendName = "to_friend_name";
 
-    public void voidinitStepTwoData(View rootView){
-
-    }
 
     public SendStepOnePopupWindow(Context context) {
         this.mContext = context;
     }
 
-//    测试使用数据
+    /**
+     * @描述： 测试使用数据
+     * @description: data for test
+     */
     public void friendGroupsData(){
         Friend alice = new Friend("Alice","1mn8382odjd.........34gy7");
         Friend abbe = new Friend("Abbe","2nm8382odjd.........dfe689");
@@ -106,11 +103,13 @@ public class SendStepOnePopupWindow {
             final View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_send_stepone);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
-//            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
             friendGroupsData();
-            // send list RecyclerView
+            /**
+             * @description:  RecyclerView for send list
+             * @描述： send list 的 RecyclerView
+              */
             RecyclerView mRecyclerView = rootView.findViewById(R.id.recycler_send_list);
             LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -118,7 +117,10 @@ public class SendStepOnePopupWindow {
             mAdapter = new MyAdapter(mContext, friendGroups, R.layout.layout_item_send_list);
             mRecyclerView.setAdapter(mAdapter);
 
-            // 点击scan
+            /**
+             * @description:  click scan icon
+             * @描述： 点击scan
+             */
             rootView.findViewById(R.id.iv_scan).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -166,7 +168,10 @@ public class SendStepOnePopupWindow {
                 }
             });
 
-            // 点击back
+            /**
+             * @desc: Click back button then back to step one
+             * @描述： 点击back显示step one
+             */
             rootView.findViewById(R.id.layout_back_to_one).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -174,7 +179,10 @@ public class SendStepOnePopupWindow {
                     rootView.findViewById(R.id.lv_step_two_content).setVisibility(View.GONE);
                 }
             });
-            // 点击next
+            /**
+             * @desc: Click next button then forward to step three
+             * @描述： 点击next跳转到step three
+             */
             rootView.findViewById(R.id.layout_next).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -211,7 +219,10 @@ public class SendStepOnePopupWindow {
             TextView sendUsedValueView = rootView.findViewById(R.id.tv_send_used_value);
             sendUsedValueView.setText(totalValue.toString());
 
-            // 点击back
+            /**
+             * @desc: Click back button then back to step two
+             * @描述： 点击back显示step two
+             */
             rootView.findViewById(R.id.layout_back_to_two).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -219,7 +230,10 @@ public class SendStepOnePopupWindow {
                     rootView.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
                 }
             });
-            // 点击confirm
+            /**
+             * @desc: Click confirm button then forward to succeed or failed step
+             * @描述： 点击 confirm button 显示成功或者失败的页面
+             */
             rootView.findViewById(R.id.layout_confirm).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -229,7 +243,10 @@ public class SendStepOnePopupWindow {
             });
 
 
-            // 点击底部cancel
+            /**
+             * @备注： 点击cancel 按钮
+             * @description: Click cancel button
+             */
             rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -244,7 +261,8 @@ public class SendStepOnePopupWindow {
     }
 
     /**
-     * send list列表适配器
+     * @描述： send list列表适配器
+     * @desc: Adapter for send list
      */
     private class MyAdapter extends CommonRecyclerAdapter<FriendGroup> {
 
