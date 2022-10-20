@@ -994,11 +994,10 @@
             </RelativeLayout>
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/lv_step_failed_content"
             android:layout_width="@dimen/main_320"
             android:layout_height="@dimen/main_540"
-            android:orientation="vertical"
             android:visibility="gone">
 
             <LinearLayout
@@ -1315,7 +1314,7 @@
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>
             </RelativeLayout>
-        </LinearLayout>
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/layout_cancel"
