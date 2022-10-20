@@ -176,6 +176,13 @@
     <string name="status_first_upper">Status</string>
     <string name="nonce">Nonce</string>
     <string name="txid">Tx ID</string>
+    <string name="pending_invoices">PENDING INVOICES</string>
+    <string name="receiver">RECEIVER</string>
+    <string name="delete">DELETE</string>
+    <string name="no">NO</string>
+    <string name="activities">ACTIVITIES</string>
+    <string name="can_send">Can Send</string>
+    <string name="can_receive">Can Receive</string>
 
     <!--token list 页面-->
     <string name="balance">Balance</string>

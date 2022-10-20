@@ -80,41 +80,42 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     //    测试用方法生成block assets 数据
-    private void initBlockAssets(){
-        Map a = new HashMap<String,String>();
-        a.put("tokenImageSource",R.mipmap.icon_usdt_logo_small);
-        a.put("networkImageSource",R.mipmap.icon_network_link_black);
-        a.put("amount",10000.0000f);
-        a.put("value",70000.0000f);
-        Map b = new HashMap<String,String>();
-        b.put("tokenImageSource",R.mipmap.icon_btc_logo_small);
-        b.put("networkImageSource",R.mipmap.icon_network_link_black);
-        b.put("amount",10000.0000f);
-        b.put("value",70000.0000f);
+    private void initBlockAssets() {
+        Map a = new HashMap<String, String>();
+        a.put("tokenImageSource", R.mipmap.icon_usdt_logo_small);
+        a.put("networkImageSource", R.mipmap.icon_network_link_black);
+        a.put("amount", 10000.0000f);
+        a.put("value", 70000.0000f);
+        Map b = new HashMap<String, String>();
+        b.put("tokenImageSource", R.mipmap.icon_btc_logo_small);
+        b.put("networkImageSource", R.mipmap.icon_network_link_black);
+        b.put("amount", 10000.0000f);
+        b.put("value", 70000.0000f);
         blockData.add(a);
         blockData.add(b);
         blockData.add(a);
         blockData.add(b);
     }
+
     //    测试用方法生成block assets 数据
-    private void initLightningAssets(){
-        Map c = new HashMap<String,String>();
-        c.put("tokenImageSource",R.mipmap.icon_usdt_logo_small);
-        c.put("networkImageSource",R.mipmap.icon_network_vector);
-        c.put("amount",10000.0000f);
-        c.put("value",70000.0000f);
-        Map d = new HashMap<String,String>();
-        d.put("tokenImageSource",R.mipmap.icon_btc_logo_small);
-        d.put("networkImageSource",R.mipmap.icon_network_vector);
-        d.put("amount",10000.0000f);
-        d.put("value",70000.0000f);
+    private void initLightningAssets() {
+        Map c = new HashMap<String, String>();
+        c.put("tokenImageSource", R.mipmap.icon_usdt_logo_small);
+        c.put("networkImageSource", R.mipmap.icon_network_vector);
+        c.put("amount", 10000.0000f);
+        c.put("value", 70000.0000f);
+        Map d = new HashMap<String, String>();
+        d.put("tokenImageSource", R.mipmap.icon_btc_logo_small);
+        d.put("networkImageSource", R.mipmap.icon_network_vector);
+        d.put("amount", 10000.0000f);
+        d.put("value", 70000.0000f);
         lightningData.add(c);
         lightningData.add(d);
         lightningData.add(c);
         lightningData.add(d);
     }
 
-    private void initAllData(){
+    private void initAllData() {
         initBlockAssets();
         initLightningAssets();
         allData.addAll(blockData);
@@ -146,12 +147,11 @@ public class AccountLightningActivity extends AppBaseActivity {
         }
 
 
-
         @Override
         public void convert(ViewHolder holder, final int position, final Map item) {
-            if(position == blockData.size()-1){
+            if (position == blockData.size() - 1) {
                 LinearLayout lvContent = holder.getView(R.id.lv_item_content);
-                lvContent.setPadding(0,0,0,100);
+                lvContent.setPadding(0, 0, 0, 100);
             }
 
 
@@ -161,9 +161,9 @@ public class AccountLightningActivity extends AppBaseActivity {
             String assetsValue = item.get("value").toString();
             holder.setImageResource(R.id.iv_asset_logo, tokenImageSourceId);
             holder.setImageResource(R.id.iv_asset_net, networkImageSource);
-            holder.setText(R.id.tv_asset_amount,assetsAmount);
-            holder.setText(R.id.tv_asset_value,assetsValue);
-            if(networkImageSource == R.mipmap.icon_network_link_black ){
+            holder.setText(R.id.tv_asset_amount, assetsAmount);
+            holder.setText(R.id.tv_asset_value, assetsValue);
+            if (networkImageSource == R.mipmap.icon_network_link_black) {
                 holder.setOnItemClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -172,7 +172,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                         switchActivity(BalanceDetailActivity.class, bundle);
                     }
                 });
-            }else{
+            } else {
                 holder.setOnItemClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -202,17 +202,17 @@ public class AccountLightningActivity extends AppBaseActivity {
         //接收需要复制成功的提示语
         //Get the notice when you copy success
         String toastString = getResources().getString(R.string.toast_copy_address);
-        CopyUtil.SelfCopy(AccountLightningActivity.this,toCopyAddress,toastString);
+        CopyUtil.SelfCopy(AccountLightningActivity.this, toCopyAddress, toastString);
     }
 
     @OnClick(R.id.lv_network_title_content)
-    public void clickSelectNode(){
+    public void clickSelectNode() {
         mSelectNodePopupWindow = new SelectNodePopupWindow(mContext);
         mSelectNodePopupWindow.show(mParentLayout);
     }
 
     @OnClick(R.id.iv_account_manage)
-    public void clickAccount(){
+    public void clickAccount() {
         mAccountManagePopupWindow = new AccountManagePopupWindow(mContext);
         mAccountManagePopupWindow.show(mParentLayout);
     }
@@ -240,7 +240,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @OnClick(R.id.iv_search)
     public void clickSearch() {
-
+        switchActivity(SearchActivity.class);
     }
 
     /**
@@ -292,7 +292,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
-     * 点击底部create channel按钮
+     * Click create channel
      */
     @OnClick(R.id.layout_create_channel)
     public void clickCreateChannel() {
@@ -315,10 +315,10 @@ public class AccountLightningActivity extends AppBaseActivity {
         if (mSendStepOnePopupWindow != null) {
             mSendStepOnePopupWindow.release();
         }
-        if (mAccountManagePopupWindow != null){
+        if (mAccountManagePopupWindow != null) {
             mAccountManagePopupWindow.release();
         }
-        if(mSelectNodePopupWindow != null){
+        if (mSelectNodePopupWindow != null) {
             mSelectNodePopupWindow.release();
         }
     }

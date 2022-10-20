@@ -117,6 +117,11 @@
             android:name=".ui.activity.ScanActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
+        <!-- Search页面 -->
+        <activity
+            android:name=".ui.activity.SearchActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
