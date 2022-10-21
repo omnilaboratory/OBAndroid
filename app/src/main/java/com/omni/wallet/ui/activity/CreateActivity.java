@@ -33,6 +33,7 @@ public class CreateActivity extends AppBaseActivity {
     }
 
     /**
+     * click new wallet option
      * 点击Create New Wallet
      */
     @OnClick(R.id.layout_create_new_wallet)
@@ -41,6 +42,7 @@ public class CreateActivity extends AppBaseActivity {
     }
 
     /**
+     * click recover your wallet option
      * 点击Recover Your Wallet
      */
     @OnClick(R.id.layout_recover_your_wallet)

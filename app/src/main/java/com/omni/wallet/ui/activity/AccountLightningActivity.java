@@ -43,9 +43,9 @@ public class AccountLightningActivity extends AppBaseActivity {
     @BindView(R.id.iv_menu)
     ImageView mMenuIv;
     @BindView(R.id.recycler_assets_list_block)
-    public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock
+    public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock(The Recycler View Block for Assets List)
     @BindView(R.id.tv_account_value)
-    public TextView accountValue;//资产列表所有的资产价值总和
+    public TextView accountValue;//资产列表所有的资产价值总和 (The Sum Value of all Assets in the List)
     private List<Map> blockData = new ArrayList<>();
     private List<Map> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
@@ -79,7 +79,10 @@ public class AccountLightningActivity extends AppBaseActivity {
         initRecyclerView(allData);
     }
 
-    //    测试用方法生成block assets 数据
+    /**
+     * 测试用方法生成block assets 数据
+     * Test data for block assets
+     */
     private void initBlockAssets() {
         Map a = new HashMap<String, String>();
         a.put("tokenImageSource", R.mipmap.icon_usdt_logo_small);
@@ -97,7 +100,10 @@ public class AccountLightningActivity extends AppBaseActivity {
         blockData.add(b);
     }
 
-    //    测试用方法生成block assets 数据
+    /**
+     * 测试用方法生成 Lightning assets 数据
+     * Test data for Lightning assets
+     */
     private void initLightningAssets() {
         Map c = new HashMap<String, String>();
         c.put("tokenImageSource", R.mipmap.icon_usdt_logo_small);
@@ -139,6 +145,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     /**
      * 资产列表适配器
+     * The adapter for assets list
      */
     private class MyAdapter extends CommonRecyclerAdapter<Map> {
 
@@ -218,6 +225,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
+     * click Fund button
      * 点击Fund按钮
      */
     @OnClick(R.id.iv_fund)
@@ -227,6 +235,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
+     * click send button
      * 点击send按钮
      */
     @OnClick(R.id.iv_send)
@@ -236,6 +245,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
+     * click search button
      * 点击Search按钮
      */
     @OnClick(R.id.iv_search)
@@ -244,6 +254,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
+     * click filter button
      * 点击Filter按钮
      */
     @OnClick(R.id.iv_filter)
@@ -260,6 +271,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
+     * click scan button at the top-right in page
      * 点击右上角扫码按钮
      */
     @OnClick(R.id.iv_scan)
@@ -283,6 +295,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
+     * click top-right menu button
      * 点击右上角菜单按钮
      */
     @OnClick(R.id.iv_menu)
@@ -293,6 +306,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     /**
      * Click create channel
+     * 点击创建通道
      */
     @OnClick(R.id.layout_create_channel)
     public void clickCreateChannel() {

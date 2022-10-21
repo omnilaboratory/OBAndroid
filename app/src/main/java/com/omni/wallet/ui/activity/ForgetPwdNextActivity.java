@@ -51,6 +51,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
     }
 
     /**
+     * click the eye icon of password input
      * 点击眼睛上
      */
     @OnClick(R.id.layout_pwd_eye)
@@ -69,6 +70,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
     }
 
     /**
+     * click the eye icon of password repeat input
      * 点击眼睛下
      */
     @OnClick(R.id.layout_confirm_pwd_eye)
@@ -87,6 +89,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
     }
 
     /**
+     * click unlock without password button
      * 点击Unlock without Password
      */
     @OnClick(R.id.btn_unlock_without_password)
@@ -95,6 +98,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
     }
 
     /**
+     * click Reset Password & Unlock button
      * 点击Reset Password & Unlock
      */
     @OnClick(R.id.btn_reset_password_unlock)

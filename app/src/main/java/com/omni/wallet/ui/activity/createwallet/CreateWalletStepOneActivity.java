@@ -1,16 +1,12 @@
 package com.omni.wallet.ui.activity.createwallet;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
@@ -48,8 +44,8 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
             seedsString = seedsString + seedArray[idx]+ " ";
         }
         /**
-         * 使用SharedPreferences 对象，在生成seeds时候将
-         * seeds备份到本地文件
+         * 使用SharedPreferences 对象，在生成seeds时候将seeds备份到本地文件
+         * Use SharedPreferences Class to back up seeds to local file,when create seeds.
          */
         SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
         SharedPreferences.Editor editor = secretData.edit();
@@ -126,6 +122,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
 
     /**
      * 点击Back
+     * click back button
      */
     @OnClick(R.id.btn_back)
     public void clickBack() {
@@ -134,6 +131,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
 
     /**
      * 点击Forward
+     * click forward button
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {

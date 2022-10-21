@@ -61,8 +61,8 @@ public class UnlockActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         /**
-         * 获取本地pass,用于后续判断输入的密码是否正确。
-         * 获取本地seed，判断是否显示bottom_btn_group,如果有则隐藏如果没有则显示，为方便测试暂时隐藏.
+         * 获取本地pass,用于后续判断输入的密码是否正确。获取本地seed，判断是否显示bottom_btn_group,如果有则隐藏如果没有则显示，为方便测试暂时隐藏.
+         *Obtain the local pass to determine whether the password entered is correct. Get the local seed and determine whether to display bottom_ btn_ Group. If there is, it will be hidden. If not, it will be displayed. It is temporarily hidden for the convenience of testing
          */
         SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
         localPass = secretData.getString("password","");
@@ -75,6 +75,7 @@ public class UnlockActivity extends AppBaseActivity {
     }
 
     /**
+     * click eye icon
      * 点击眼睛
      */
     @OnClick(R.id.pass_switch)
@@ -82,17 +83,18 @@ public class UnlockActivity extends AppBaseActivity {
         if (mCanClick) {
             mCanClick = false;
             mPwdEyeIv.setImageResource(R.mipmap.icon_eye_open);
-            //显示密码
+            //显示密码(show password)
             mPwdEdit.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
         } else {
             mCanClick = true;
             mPwdEyeIv.setImageResource(R.mipmap.icon_eye_close);
-            //隐藏密码
+            //隐藏密码(hide password)
             mPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
         }
     }
 
     /**
+     * click unlock button
      * 点击Unlock
      */
     @OnClick(R.id.btn_unlock)
@@ -110,6 +112,7 @@ public class UnlockActivity extends AppBaseActivity {
     }
 
     /**
+     * click create button
      * 点击Create
      */
     @OnClick(R.id.btn_create)
@@ -118,6 +121,7 @@ public class UnlockActivity extends AppBaseActivity {
     }
 
     /**
+     * click recover button
      * 点击Recover
      */
     @OnClick(R.id.btn_recover)

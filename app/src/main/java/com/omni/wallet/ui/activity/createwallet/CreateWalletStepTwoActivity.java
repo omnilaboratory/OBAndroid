@@ -50,6 +50,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
     protected void initData() {
         /**
          * 从xml文件中读取seeds
+         * Get seeds form xml file
          */
         SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
         String seedsString = secretData.getString("seeds", "none");
@@ -57,6 +58,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
         /**
          * 动态渲染24个输入框
+         * Dynamically render 24 input boxes
          */
         LinearLayout editListContent = findViewById(R.id.edit_text_Content);
 
@@ -115,6 +117,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     /**
      * 点击Back
+     * click back button
      */
     @OnClick(R.id.btn_back)
     public void clickBack() {
@@ -123,6 +126,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     /**
      * 点击Forward
+     * click forward button
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
@@ -155,6 +159,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     /**
      *测试专用，点击test_enter所在view将自动填写所有seed，为了方便测试，完成后删除下方代码
+     * Code for test,when click test enter view while auto-fill all seed.Before public apk delete follow code.
      */
     @OnClick(R.id.description_text_test)
     public void clickForEnterSeeds(){

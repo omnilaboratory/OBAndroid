@@ -114,6 +114,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * initialize the list of activity
      * 初始化交易列表
      */
     private void initTransactionsData() {
@@ -129,6 +130,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * initialize the list of to paid list
      * 初始化未支付列表
      */
     private void initPendingInvoicesData() {
@@ -144,6 +146,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * the adapter of activity list
      * 交易列表适配器
      */
     private class TransactionsAdapter extends CommonRecyclerAdapter<String> {
@@ -165,6 +168,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * the adapter of to be paid list
      * 未支付列表适配器
      */
     private class PendingInvoicesAdapter extends CommonRecyclerAdapter<String> {
@@ -192,6 +196,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click back button
      * 点击Back按钮
      */
     @OnClick(R.id.layout_back)
@@ -220,6 +225,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click more button
      * 点击More按钮
      */
     @OnClick(R.id.layout_more)
@@ -228,6 +234,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click scan button
      * 点击扫描按钮
      */
     @OnClick(R.id.iv_scan)
@@ -251,6 +258,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click channel list button
      * 点击channel List按钮
      */
     @OnClick(R.id.iv_channel_list)
@@ -259,6 +267,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click pay invoice button
      * 点击Pay invoice按钮
      */
     @OnClick(R.id.layout_pay_invoice)
@@ -268,6 +277,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click create invoice button
      * 点击Create invoice按钮
      */
     @OnClick(R.id.layout_create_invoice)
@@ -277,6 +287,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click send button
      * 点击Send按钮
      */
     @OnClick(R.id.layout_send_invoice)
@@ -286,6 +297,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click channel activities text
      * 点击ChannelActivities文本
      */
     @OnClick(R.id.layout_root_channel_activities)
@@ -305,6 +317,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click close button in  channel activities model
      * 点击ChannelActivities Close按钮
      */
     @OnClick(R.id.iv_close_channel_activities)
@@ -324,6 +337,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click to be paid text
      * 点击To be paid文本
      */
     @OnClick(R.id.layout_root_to_be_paid)
@@ -357,6 +371,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click close button in to be paid model
      * 点击ToBePaid Close按钮
      */
     @OnClick(R.id.iv_close_to_be_paid)

@@ -20,14 +20,21 @@ import com.omni.wallet.utils.AppVersionUtils;
 import java.util.List;
 
 /**
+ * The page for initial
  * 启动页
  */
 public class SplashActivity extends AppBaseActivity {
     private static final String TAG = SplashActivity.class.getSimpleName();
     private static Handler handler = new Handler();
-    // 权限拒绝的对话框
+    /**
+     * refuse access dialog
+     * 权限拒绝的对话框
+     */
     private AlertDialog mDeniedDialog;
-    // 权限指引的对话框
+    /**
+     * guidance  access dialog
+     * 权限指引的对话框
+     */
     private AlertDialog mGuideDialog;
 
     @Override
@@ -47,36 +54,48 @@ public class SplashActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
-        // 检查版本号，更新各个状态
+        /**
+         * check version code to update all states
+         * 检查版本号，更新各个状态
+         */
         AppVersionUtils.checkVersion(mContext);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        // 初始化的时候检查外部存储权限，如果不授予不进APP
+        /**
+         * check access to read local file,if did not have the accession ,then quit from app
+         * 初始化的时候检查外部存储权限，如果不授予不进APP
+         */
         requestPermission();
     }
 
     /**
+     * ask for permission
      * 请求权限
      */
     private void requestPermission() {
         PermissionUtils.requestPermission(this, new PermissionUtils.PermissionCallback() {
                     @Override
                     public void onRequestPermissionSuccess() {
-                        // 权限框消失
+                        /**
+                         * close permission dialog
+                         * 权限框消失
+                         */
                         if (mDeniedDialog != null && mDeniedDialog.isShowing()) {
                             mDeniedDialog.dismiss();
                         }
                         if (mGuideDialog != null && mGuideDialog.isShowing()) {
                             mGuideDialog.dismiss();
                         }
-                        // 延时3秒跳转主页
+                        /**
+                         * To home page after 3s
+                         * 延时3秒跳转主页
+                         */
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                // 延时之后跳转下一个页面
                                 turnToNextPage();
                             }
                         }, Constants.SPLASH_SLEEP_TIME);
@@ -114,6 +133,7 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     /**
+     * To next page
      * 跳转下一页
      */
     private void turnToNextPage() {
@@ -125,6 +145,7 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     /**
+     * When be refused by permission, show ask for permission dialog.
      * 权限被拒绝，显示权限描述对话框
      */
     private void showDeniedDialog(String desc) {
@@ -136,7 +157,10 @@ public class SplashActivity extends AppBaseActivity {
                     .fullWidth()
                     .setCanceledOnTouchOutside(false)
                     .create();
-            // 点击取消
+            /**
+             * click cancel
+             * 点击取消
+             */
             mDeniedDialog.setOnClickListener(R.id.tv_dialog_permission_cancel, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -144,7 +168,10 @@ public class SplashActivity extends AppBaseActivity {
                     finish();
                 }
             });
-            // 点击授权
+            /**
+             * click allow
+             * 点击授权
+             */
             mDeniedDialog.setOnClickListener(R.id.tv_dialog_permission_confirm, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -159,6 +186,7 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     /**
+     * show the dialog about guidance ask for permission
      * 显示权限指引对话框
      */
     private void showPermissionGuideDialog(String desc) {
@@ -170,7 +198,10 @@ public class SplashActivity extends AppBaseActivity {
                     .fullWidth()
                     .setCanceledOnTouchOutside(false)
                     .create();
-            // 点击确定
+            /**
+             * click confirm
+             * 点击确定
+             */
             mGuideDialog.setOnClickListener(R.id.tv_dialog_permission_confirm, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -186,7 +217,7 @@ public class SplashActivity extends AppBaseActivity {
 
     @Override
     public void onBackPressed() {
-        // 屏蔽返回键
+
     }
 
     @Override

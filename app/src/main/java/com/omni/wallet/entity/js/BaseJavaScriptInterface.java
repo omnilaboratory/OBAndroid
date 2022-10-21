@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 
 /**
  * JS交互的父类
+ * Parent Class of activity class
  * Created by fa on 2018/9/10.
  */
 

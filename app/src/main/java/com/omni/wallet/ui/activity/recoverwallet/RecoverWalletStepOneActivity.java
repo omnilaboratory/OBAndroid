@@ -51,6 +51,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
     protected void initData() {
         /**
          * 动态渲染24个输入框
+         * Dynamically render 24 input boxes
          */
         LinearLayout editListContent = findViewById(R.id.edit_text_Content);
 
@@ -112,6 +113,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
 
     /**
      * 点击Paste
+     * click paste button
      */
     @OnClick(R.id.btn_paste)
     public void clickPaste() {
@@ -145,6 +147,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
 
     /**
      * 点击Back
+     * click back button
      */
     @OnClick(R.id.btn_back)
     public void clickBack() {
@@ -153,6 +156,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
 
     /**
      * 点击Forward
+     * click forward button
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {

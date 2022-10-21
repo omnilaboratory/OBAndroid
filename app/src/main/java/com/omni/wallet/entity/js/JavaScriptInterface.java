@@ -12,6 +12,7 @@ import com.omni.wallet.thirdsupport.umeng.share.common.Target;
 
 /**
  * JS与安卓交互接口
+ * Imp of JS and Android
  * author: fa
  * date: 2018/2/24 12:03.
  */

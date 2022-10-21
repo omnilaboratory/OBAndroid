@@ -35,6 +35,7 @@ public class ForgetPwdActivity extends AppBaseActivity {
     }
 
     /**
+     * click back button
      * 点击back
      */
     @OnClick(R.id.btn_back)
@@ -43,6 +44,7 @@ public class ForgetPwdActivity extends AppBaseActivity {
     }
 
     /**
+     * click next button
      * 点击next
      */
     @OnClick(R.id.btn_next)

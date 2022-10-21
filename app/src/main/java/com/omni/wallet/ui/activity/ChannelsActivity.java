@@ -94,6 +94,7 @@ public class ChannelsActivity extends AppBaseActivity {
     }
 
     /**
+     * The adapter of assets list
      * 资产列表适配器
      */
     private class MyAdapter extends CommonRecyclerAdapter<Channel> {
@@ -154,6 +155,7 @@ public class ChannelsActivity extends AppBaseActivity {
     }
 
     /**
+     * click scan button at top-right in page
      * 点击右上角扫码按钮
      */
     @OnClick(R.id.iv_scan)
@@ -177,6 +179,7 @@ public class ChannelsActivity extends AppBaseActivity {
     }
 
     /**
+     * click the menu button at top-right in page
      * 点击右上角菜单按钮
      */
     @OnClick(R.id.iv_menu)
@@ -186,6 +189,7 @@ public class ChannelsActivity extends AppBaseActivity {
     }
 
     /**
+     * click the close button at top-right in page
      * 点击右上角关闭按钮
      */
     @OnClick(R.id.iv_close)

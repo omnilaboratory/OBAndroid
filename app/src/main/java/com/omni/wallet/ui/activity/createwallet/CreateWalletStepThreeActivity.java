@@ -60,6 +60,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
 
     /**
      * passwordInput 值变更
+     * When password Input value changed
      */
 
     @OnTextChanged(R.id.password_input)
@@ -134,6 +135,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
 
     /**
      * passwordInputRepeat 值变更
+     * when password Repeat value changed
      */
     @OnTextChanged(R.id.password_input_repeat)
     public void passwordRepeatChangeCheck(){
@@ -158,6 +160,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
 
     /**
      * 点击眼睛上
+     * click eye icon button show
      */
     @OnClick(R.id.pass_switch)
     public void clickPwdEye() {
@@ -176,6 +179,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
 
     /**
      * 点击眼睛下
+     * click eye icon button hind
      */
     @OnClick(R.id.pass_switch_repeat)
     public void clickConfirmPwdEye() {
@@ -194,6 +198,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
 
     /**
      * 点击Back
+     * click back button
      */
     @OnClick(R.id.btn_back)
     public void clickBack() {
@@ -202,6 +207,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
 
     /**
      * 点击Forward
+     * click forward button
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
@@ -213,8 +219,8 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             String md5String = Md5Util.getMD5Str(password);
             System.out.println(md5String);
             /**
-             * 使用SharedPreferences 对象，在生成密码md5字符串时候将
-             * 密码的md5字符串备份到本地文件
+             * 使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
+             * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
              */
             SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
             SharedPreferences.Editor editor = secretData.edit();

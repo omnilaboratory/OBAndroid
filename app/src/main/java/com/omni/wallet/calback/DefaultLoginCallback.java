@@ -7,6 +7,7 @@ import com.omni.wallet.framelibrary.utils.LoginUtils;
 
 /**
  * 默认的登录回调
+ * Login default callback
  * Created by fa on 2019/9/18.
  */
 

@@ -75,6 +75,7 @@ public class SearchActivity extends AppBaseActivity {
     }
 
     /**
+     * initialize channel activity list
      * 初始化通道交易列表
      */
     private void initChannelsData() {
@@ -90,6 +91,7 @@ public class SearchActivity extends AppBaseActivity {
     }
 
     /**
+     * initialize activity list
      * 初始化交易列表
      */
     private void initTransactionsData() {
@@ -105,6 +107,7 @@ public class SearchActivity extends AppBaseActivity {
     }
 
     /**
+     * The adapter of channel activity list
      * 通道交易列表适配器
      */
     private class ChannelsAdapter extends CommonRecyclerAdapter<String> {
@@ -120,6 +123,7 @@ public class SearchActivity extends AppBaseActivity {
     }
 
     /**
+     * The adapter of activity list
      * 交易列表适配器
      */
     private class TransactionsAdapter extends CommonRecyclerAdapter<String> {
@@ -142,6 +146,7 @@ public class SearchActivity extends AppBaseActivity {
 
     /**
      * Click Back
+     * 点击back按钮
      */
     @OnClick(R.id.layout_back)
     public void clickBack() {
@@ -150,6 +155,7 @@ public class SearchActivity extends AppBaseActivity {
 
     /**
      * Click CHANNELS
+     * 点击channel文本
      */
     @OnClick(R.id.tv_channels)
     public void clickChannelsTv() {
@@ -163,6 +169,7 @@ public class SearchActivity extends AppBaseActivity {
 
     /**
      * Click ACTIVITIES
+     * 点击activities文本
      */
     @OnClick(R.id.tv_activities)
     public void clickActivitiesTv() {

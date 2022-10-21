@@ -71,9 +71,13 @@ public class ScanActivity extends AppBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // 展示之前重置闪关灯的按钮的样式
+        /**
+         * Reset light button style before show page
+         * 展示之前重置闪关灯的按钮的样式
+         */
+
         updateFlashIvSow();
-        //
+
         mCaptureHelper.onResume();
     }
 
@@ -84,6 +88,7 @@ public class ScanActivity extends AppBaseActivity {
     }
 
     /**
+     * click the cancel button at bottom
      * 点击底部CANCEL
      */
     @OnClick(R.id.layout_cancel)
@@ -92,6 +97,7 @@ public class ScanActivity extends AppBaseActivity {
     }
 
     /**
+     * click the light button for turn on or turn off the light
      * 点击打开关闭闪光灯
      */
     @OnClick(R.id.layout_take_picture_light)
@@ -103,6 +109,7 @@ public class ScanActivity extends AppBaseActivity {
     }
 
     /**
+     * light driver
      * 闪光灯
      */
     protected void flashChange() {
@@ -115,6 +122,7 @@ public class ScanActivity extends AppBaseActivity {
     }
 
     /**
+     * reset the button style for light
      * 更新闪光灯的按钮样式
      */
     private void updateFlashIvSow() {
@@ -129,6 +137,7 @@ public class ScanActivity extends AppBaseActivity {
     }
 
     /**
+     * the callback function for scan qrcode
      * 扫码回调
      */
     private class MyCaptureCallback implements OnCaptureCallback {

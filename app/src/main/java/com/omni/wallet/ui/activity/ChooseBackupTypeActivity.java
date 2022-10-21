@@ -52,6 +52,7 @@ public class ChooseBackupTypeActivity extends AppBaseActivity {
     }
 
     /**
+     * click local button
      * 点击Local
      */
     @OnClick(R.id.layout_local)
@@ -65,6 +66,7 @@ public class ChooseBackupTypeActivity extends AppBaseActivity {
     }
 
     /**
+     * click google drive button
      * 点击Google Drive
      */
     @OnClick(R.id.layout_google_drive)
@@ -78,6 +80,7 @@ public class ChooseBackupTypeActivity extends AppBaseActivity {
     }
 
     /**
+     * click drop box button
      * 点击Drop Box
      */
     @OnClick(R.id.layout_drop_box)
@@ -91,6 +94,7 @@ public class ChooseBackupTypeActivity extends AppBaseActivity {
     }
 
     /**
+     * click next button
      * 点击Next
      */
     @OnClick(R.id.btn_next)
