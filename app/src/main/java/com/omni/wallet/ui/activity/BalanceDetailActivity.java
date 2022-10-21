@@ -18,6 +18,7 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
@@ -45,12 +46,22 @@ public class BalanceDetailActivity extends AppBaseActivity {
     RelativeLayout mLightningNetworkLayout;
     @BindView(R.id.layout_network_link)
     RelativeLayout mLinkNetworkLayout;
+    @BindView(R.id.layout_root_channel_activities)
+    RelativeLayout mRootChannelActivitiesLayout;
     @BindView(R.id.layout_channel_activities)
     RelativeLayout mChannelActivitiesLayout;
     @BindView(R.id.recycler_transactions_list)
     RecyclerView mTransactionsListRecyclerView;
-    private List<String> mData = new ArrayList<>();
-    private MyAdapter mAdapter;
+    @BindView(R.id.layout_root_to_be_paid)
+    RelativeLayout mRootToBePaidLayout;
+    @BindView(R.id.layout_to_be_paid)
+    RelativeLayout mToBePaidLayout;
+    @BindView(R.id.recycler_pending_invoices_list)
+    RecyclerView mPendingInvoicesListRecyclerView;
+    private List<String> mTransactionsData = new ArrayList<>();
+    private TransactionsAdapter mTransactionsAdapter;
+    private List<String> mPendingInvoicesData = new ArrayList<>();
+    private PendingInvoicesAdapter mPendingInvoicesAdapter;
 
     public static final String KEY_NETWORK = "networkKey";
     String network;
@@ -97,36 +108,86 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        initTransactionsData();
+        initPendingInvoicesData();
+
+    }
+
+    /**
+     * 初始化交易列表
+     */
+    private void initTransactionsData() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mTransactionsListRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new MyAdapter(mContext, mData, R.layout.layout_item_transactions_list);
+        mTransactionsAdapter = new TransactionsAdapter(mContext, mTransactionsData, R.layout.layout_item_transactions_list);
         for (int i = 0; i < 10; i++) {
             String str = new String();
-            mData.add(str);
+            mTransactionsData.add(str);
         }
-        mTransactionsListRecyclerView.setAdapter(mAdapter);
+        mTransactionsListRecyclerView.setAdapter(mTransactionsAdapter);
     }
 
+    /**
+     * 初始化未支付列表
+     */
+    private void initPendingInvoicesData() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mPendingInvoicesListRecyclerView.setLayoutManager(layoutManager);
+        mPendingInvoicesAdapter = new PendingInvoicesAdapter(mContext, mPendingInvoicesData, R.layout.layout_item_pending_invoices_list);
+        for (int i = 0; i < 10; i++) {
+            String str = new String();
+            mPendingInvoicesData.add(str);
+        }
+        mPendingInvoicesListRecyclerView.setAdapter(mPendingInvoicesAdapter);
+    }
 
     /**
      * 交易列表适配器
      */
-    private class MyAdapter extends CommonRecyclerAdapter<String> {
+    private class TransactionsAdapter extends CommonRecyclerAdapter<String> {
 
-        public MyAdapter(Context context, List<String> data, int layoutId) {
+        public TransactionsAdapter(Context context, List<String> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
         public void convert(ViewHolder holder, final int position, final String item) {
-             holder.setOnItemClickListener(new View.OnClickListener() {
-                 @Override
-                 public void onClick(View v) {
-                     mTransactionsDetailsPopupWindow = new TransactionsDetailsPopupWindow(mContext);
-                     mTransactionsDetailsPopupWindow.show(mParentLayout);
-                 }
-             });
+            holder.setOnItemClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mTransactionsDetailsPopupWindow = new TransactionsDetailsPopupWindow(mContext);
+                    mTransactionsDetailsPopupWindow.show(mParentLayout);
+                }
+            });
+        }
+    }
+
+    /**
+     * 未支付列表适配器
+     */
+    private class PendingInvoicesAdapter extends CommonRecyclerAdapter<String> {
+
+        public PendingInvoicesAdapter(Context context, List<String> data, int layoutId) {
+            super(context, data, layoutId);
+        }
+
+        @Override
+        public void convert(ViewHolder holder, final int position, final String item) {
+            final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_pending_invoices_list_swipe_menu);
+            // 取消收藏
+            holder.getView(R.id.tv_delete).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    menuLayout.quickClose();
+                    mPendingInvoicesData.remove(position);
+                    mPendingInvoicesAdapter.notifyRemoveItem(position);
+                    if (mPendingInvoicesData.size() == 0) {
+                        mPendingInvoicesAdapter.notifyDataSetChanged();
+                    }
+                }
+            });
         }
     }
 
@@ -229,35 +290,96 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @OnClick(R.id.layout_root_channel_activities)
     public void clickChannelActivities() {
-        TranslateAnimation animation = new TranslateAnimation(
+//        TranslateAnimation animation = new TranslateAnimation(
+//                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0,
+//                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 1);
+//        animation.setDuration(300l);//设置动画的过渡时间
+        mRootChannelActivitiesLayout.setVisibility(View.GONE);
+//        mRootChannelActivitiesLayout.startAnimation(animation);
+        TranslateAnimation animation1 = new TranslateAnimation(
                 TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0,
                 TranslateAnimation.RELATIVE_TO_SELF, 1, TranslateAnimation.RELATIVE_TO_SELF, 0);
-        animation.setDuration(300l);//设置动画的过渡时间
+        animation1.setDuration(300l);//设置动画的过渡时间
         mChannelActivitiesLayout.setVisibility(View.VISIBLE);
-        mChannelActivitiesLayout.startAnimation(animation);
+        mChannelActivitiesLayout.startAnimation(animation1);
     }
 
     /**
-     * 点击Close按钮
+     * 点击ChannelActivities Close按钮
      */
-    @OnClick(R.id.iv_close)
-    public void clickCloseIv() {
+    @OnClick(R.id.iv_close_channel_activities)
+    public void clickCloseChannelActivitiesIv() {
         TranslateAnimation animation = new TranslateAnimation(
                 TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0,
                 TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 1);
         animation.setDuration(300l);//设置动画的过渡时间
         mChannelActivitiesLayout.setVisibility(View.GONE);
         mChannelActivitiesLayout.startAnimation(animation);
+//        TranslateAnimation animation1 = new TranslateAnimation(
+//                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0,
+//                TranslateAnimation.RELATIVE_TO_SELF, 1, TranslateAnimation.RELATIVE_TO_SELF, 0);
+//        animation1.setDuration(300l);//设置动画的过渡时间
+        mRootChannelActivitiesLayout.setVisibility(View.VISIBLE);
+//        mRootChannelActivitiesLayout.startAnimation(animation1);
     }
 
     /**
      * 点击To be paid文本
      */
-    @OnClick(R.id.layout_to_be_paid)
+    @OnClick(R.id.layout_root_to_be_paid)
     public void clickToBePaid() {
-
+//        TranslateAnimation animation = new TranslateAnimation(
+//                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0,
+//                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 1);
+//        animation.setDuration(300l);//设置动画的过渡时间
+        mRootChannelActivitiesLayout.setVisibility(View.GONE);
+//        mRootChannelActivitiesLayout.startAnimation(animation);
+        if (mChannelActivitiesLayout.isShown()) {
+            TranslateAnimation animation1 = new TranslateAnimation(
+                    TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0,
+                    TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 1);
+            animation1.setDuration(300l);//设置动画的过渡时间
+            mChannelActivitiesLayout.setVisibility(View.GONE);
+            mChannelActivitiesLayout.startAnimation(animation1);
+        }
+//        TranslateAnimation animation2 = new TranslateAnimation(
+//                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0,
+//                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 1);
+//        animation2.setDuration(300l);//设置动画的过渡时间
+        mRootToBePaidLayout.setVisibility(View.GONE);
+//        mRootToBePaidLayout.startAnimation(animation2);
+        TranslateAnimation animation3 = new TranslateAnimation(
+                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0,
+                TranslateAnimation.RELATIVE_TO_SELF, 1, TranslateAnimation.RELATIVE_TO_SELF, 0);
+        animation3.setDuration(300l);//设置动画的过渡时间
+        mToBePaidLayout.setVisibility(View.VISIBLE);
+        mToBePaidLayout.startAnimation(animation3);
     }
 
+    /**
+     * 点击ToBePaid Close按钮
+     */
+    @OnClick(R.id.iv_close_to_be_paid)
+    public void clickCloseToBePaidIv() {
+        TranslateAnimation animation = new TranslateAnimation(
+                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0,
+                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 1);
+        animation.setDuration(300l);//设置动画的过渡时间
+        mToBePaidLayout.setVisibility(View.GONE);
+        mToBePaidLayout.startAnimation(animation);
+//        TranslateAnimation animation1 = new TranslateAnimation(
+//                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0,
+//                TranslateAnimation.RELATIVE_TO_SELF, 1, TranslateAnimation.RELATIVE_TO_SELF, 0);
+//        animation1.setDuration(300l);//设置动画的过渡时间
+        mRootChannelActivitiesLayout.setVisibility(View.VISIBLE);
+//        mRootChannelActivitiesLayout.startAnimation(animation1);
+//        TranslateAnimation animation2 = new TranslateAnimation(
+//                TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0,
+//                TranslateAnimation.RELATIVE_TO_SELF, 1, TranslateAnimation.RELATIVE_TO_SELF, 0);
+//        animation2.setDuration(300l);//设置动画的过渡时间
+        mRootToBePaidLayout.setVisibility(View.VISIBLE);
+//        mRootToBePaidLayout.startAnimation(animation2);
+    }
 
     @Override
     protected void onDestroy() {
