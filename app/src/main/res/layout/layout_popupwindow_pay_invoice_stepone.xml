@@ -1081,8 +1081,6 @@
                 </RelativeLayout>
             </LinearLayout>
 
-
-
             <RelativeLayout
                 android:id="@+id/layout_share"
                 android:layout_width="wrap_content"
