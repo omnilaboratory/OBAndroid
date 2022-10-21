@@ -11,6 +11,7 @@ import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.ui.activity.ChannelsActivity;
 import com.omni.wallet.ui.activity.ScanActivity;
 
 import java.util.List;
@@ -33,12 +34,15 @@ public class CreateChannelStepOnePopupWindow {
     public void show(final View view) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
-            View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_channel_stepone);
+            final View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_channel_stepone);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
-            // 点击scan qrcode
+            /**
+             * @描述： 扫描二维码
+             * @desc: scan qrcode
+             */
             rootView.findViewById(R.id.layout_scan_qrcode).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -62,16 +66,45 @@ public class CreateChannelStepOnePopupWindow {
                     });
                 }
             });
-            // 点击fill in
+            /**
+             * @描述： 手动填写
+             * @desc: fill in
+             */
             rootView.findViewById(R.id.layout_fill_in).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mBasePopWindow.dismiss();
-                    mCreateChannelStepTwoPopupWindow = new CreateChannelStepTwoPopupWindow(mContext);
-                    mCreateChannelStepTwoPopupWindow.show(view);
+                    rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
+                    rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
                 }
             });
-            // 点击底部cancel
+            /**
+             * @描述： 点击back
+             * @desc: click back button
+             */
+            rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.VISIBLE);
+                    rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.GONE);
+                }
+            });
+            /**
+             * @描述： 点击create
+             * @desc: click create button
+             */
+            rootView.findViewById(R.id.layout_create).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mBasePopWindow.dismiss();
+                    Intent intent = new Intent(mContext, ChannelsActivity.class);
+                    mContext.startActivity(intent);
+                }
+            });
+
+            /**
+             * @描述： 点击 cancel
+             * @desc: click cancel button
+             */
             rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
