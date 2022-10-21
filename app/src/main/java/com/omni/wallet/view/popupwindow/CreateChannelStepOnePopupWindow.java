@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
@@ -24,7 +25,8 @@ public class CreateChannelStepOnePopupWindow {
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
-    CreateChannelStepTwoPopupWindow mCreateChannelStepTwoPopupWindow;
+    Button speedButton;
+    SelectSpeedPopupWindow mSelectSpeedPopupWindow;
 
     public CreateChannelStepOnePopupWindow(Context context) {
         this.mContext = context;
@@ -39,6 +41,31 @@ public class CreateChannelStepOnePopupWindow {
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
+
+            speedButton = rootView.findViewById(R.id.btn_speed);
+            speedButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSelectSpeedPopupWindow = new SelectSpeedPopupWindow(mContext);
+                    mSelectSpeedPopupWindow.setOnItemClickCallback(new SelectSpeedPopupWindow.ItemCleckListener() {
+                        @Override
+                        public void onItemClick(View view) {
+                            switch (view.getId()) {
+                                case R.id.tv_slow:
+                                    speedButton.setText(R.string.slow);
+                                    break;
+                                case R.id.tv_medium:
+                                    speedButton.setText(R.string.medium);
+                                    break;
+                                case R.id.tv_fast:
+                                    speedButton.setText(R.string.fast);
+                                    break;
+                            }
+                        }
+                    });
+                    mSelectSpeedPopupWindow.show(v);
+                }
+            });
             /**
              * @描述： 扫描二维码
              * @desc: scan qrcode

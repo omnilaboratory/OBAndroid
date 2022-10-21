@@ -208,9 +208,9 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:padding="@dimen/main_3"
                         android:layout_width="@dimen/main_36"
                         android:layout_height="@dimen/main_36"
+                        android:padding="@dimen/main_3"
                         android:src="@mipmap/icon_scan_green"/>
 
                     <TextView
@@ -425,6 +425,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:orientation="horizontal">
 
                     <TextView
@@ -435,7 +436,8 @@
                         android:textSize="@dimen/text_16"/>
 
                     <Button
-                        android:layout_width="@dimen/main_75"
+                        android:id="@+id/btn_speed"
+                        android:layout_width="@dimen/main_80"
                         android:layout_height="@dimen/main_26"
                         android:layout_marginLeft="@dimen/main_10"
                         android:background="@drawable/bg_black_rectangle_round_0"
@@ -452,6 +454,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/main_10"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">

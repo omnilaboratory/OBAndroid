@@ -4,11 +4,13 @@ import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
 
 /**
  * 汉: 创建发票的步骤一弹窗
@@ -22,6 +24,8 @@ public class CreateInvoiceStepOnePopupWindow {
     private Context mContext;
     private BasePopWindow mBasePopWindow;
     RelativeLayout shareLayout;
+    Button timeButton;
+    SelectTimePopupWindow mSelectTimePopupWindow;
 
     public CreateInvoiceStepOnePopupWindow(Context context) {
         this.mContext = context;
@@ -35,6 +39,32 @@ public class CreateInvoiceStepOnePopupWindow {
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
+
+            timeButton = rootView.findViewById(R.id.btn_time);
+            timeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSelectTimePopupWindow = new SelectTimePopupWindow(mContext);
+                    mSelectTimePopupWindow.setOnItemClickCallback(new SelectTimePopupWindow.ItemCleckListener() {
+                        @Override
+                        public void onItemClick(View view) {
+                            switch (view.getId()) {
+                                case R.id.tv_minutes:
+                                    timeButton.setText(R.string.minutes);
+                                    break;
+                                case R.id.tv_hours:
+                                    timeButton.setText(R.string.hours);
+                                    break;
+                                case R.id.tv_days:
+                                    timeButton.setText(R.string.day);
+                                    break;
+                            }
+                        }
+                    });
+                    mSelectTimePopupWindow.show(v);
+                }
+            });
+
             /**
              * @描述： 设置进度条
              * @desc: set progress bar

@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
@@ -24,6 +26,8 @@ import com.omni.wallet.listItems.Friend;
 import com.omni.wallet.listItems.FriendGroup;
 import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.utils.GetResourceUtil;
+import com.omni.wallet.view.popupwindow.SelectAssetPopupWindow;
+import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +43,7 @@ public class SendStepOnePopupWindow {
     private List<String> mData = new ArrayList<>();
     private MyAdapter mAdapter;
     View mView;
-    private List<FriendGroup> friendGroups  = new ArrayList<>();
+    private List<FriendGroup> friendGroups = new ArrayList<>();
 
     // 初始数据（Initial data）
     String sendFriendName = "Alpha";
@@ -54,7 +58,10 @@ public class SendStepOnePopupWindow {
     Double assetBalance = 500.00d;
     String toAddress = "1mn8382odjddwedqw323f3d32343f23fweg65er4345yge43t4534gy7";
     String toFriendName = "to_friend_name";
-
+    Button speedButton;
+    LinearLayout assetLayout;
+    SelectSpeedPopupWindow mSelectSpeedPopupWindow;
+    SelectAssetPopupWindow mSelectAssetPopupWindow;
 
     public SendStepOnePopupWindow(Context context) {
         this.mContext = context;
@@ -64,17 +71,17 @@ public class SendStepOnePopupWindow {
      * @描述： 测试使用数据
      * @description: data for test
      */
-    public void friendGroupsData(){
-        Friend alice = new Friend("Alice","1mn8382odjd.........34gy7");
-        Friend abbe = new Friend("Abbe","2nm8382odjd.........dfe689");
+    public void friendGroupsData() {
+        Friend alice = new Friend("Alice", "1mn8382odjd.........34gy7");
+        Friend abbe = new Friend("Abbe", "2nm8382odjd.........dfe689");
         List<Friend> groupA = new ArrayList<Friend>();
         groupA.add(alice);
         groupA.add(abbe);
-        FriendGroup friendGroupA =  new FriendGroup("A",groupA);
+        FriendGroup friendGroupA = new FriendGroup("A", groupA);
 
-        Friend bob = new Friend("Bob","1mn8382odjd.........34gy7");
-        Friend bill = new Friend("Bill","2nm8382odjd.........dfe689");
-        Friend boss = new Friend("Boss","2nm8382odjd.........dfe689");
+        Friend bob = new Friend("Bob", "1mn8382odjd.........34gy7");
+        Friend bill = new Friend("Bill", "2nm8382odjd.........dfe689");
+        Friend boss = new Friend("Boss", "2nm8382odjd.........dfe689");
         List<Friend> groupB = new ArrayList<Friend>();
         groupB.add(bob);
         groupB.add(bill);
@@ -82,18 +89,17 @@ public class SendStepOnePopupWindow {
         groupB.add(bob);
         groupB.add(bill);
         groupB.add(boss);
-        FriendGroup friendGroupB =  new FriendGroup("B",groupB);
+        FriendGroup friendGroupB = new FriendGroup("B", groupB);
 
-        Friend charli = new Friend("Charli","1mn8382odjd.........34gy7");
+        Friend charli = new Friend("Charli", "1mn8382odjd.........34gy7");
         List<Friend> groupC = new ArrayList<Friend>();
         groupC.add(charli);
-        FriendGroup friendGroupC =  new FriendGroup("C",groupC);
+        FriendGroup friendGroupC = new FriendGroup("C", groupC);
 
         friendGroups.add(friendGroupA);
         friendGroups.add(friendGroupB);
         friendGroups.add(friendGroupC);
     }
-
 
 
     public void show(final View view) {
@@ -107,9 +113,9 @@ public class SendStepOnePopupWindow {
 
             friendGroupsData();
             /**
-             * @description:  RecyclerView for send list
+             * @description: RecyclerView for send list
              * @描述： send list 的 RecyclerView
-              */
+             */
             RecyclerView mRecyclerView = rootView.findViewById(R.id.recycler_send_list);
             LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -118,7 +124,7 @@ public class SendStepOnePopupWindow {
             mRecyclerView.setAdapter(mAdapter);
 
             /**
-             * @description:  click scan icon
+             * @description: click scan icon
              * @描述： 点击scan
              */
             rootView.findViewById(R.id.iv_scan).setOnClickListener(new View.OnClickListener() {
@@ -151,6 +157,44 @@ public class SendStepOnePopupWindow {
             assetsBalanceView.setText(assetBalance.toString());
             TextView toFriendNameView = rootView.findViewById(R.id.tv_to_friend_name);
             toFriendNameView.setText(toFriendName);
+            assetLayout = rootView.findViewById(R.id.layout_asset);
+            assetLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSelectAssetPopupWindow = new SelectAssetPopupWindow(mContext);
+                    mSelectAssetPopupWindow.setOnItemClickCallback(new SelectAssetPopupWindow.ItemCleckListener() {
+                        @Override
+                        public void onItemClick(View view, String item) {
+                            ToastUtils.showToast(mContext, "Asset");
+                        }
+                    });
+                    mSelectAssetPopupWindow.show(v);
+                }
+            });
+            speedButton = rootView.findViewById(R.id.btn_speed);
+            speedButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSelectSpeedPopupWindow = new SelectSpeedPopupWindow(mContext);
+                    mSelectSpeedPopupWindow.setOnItemClickCallback(new SelectSpeedPopupWindow.ItemCleckListener() {
+                        @Override
+                        public void onItemClick(View view) {
+                            switch (view.getId()) {
+                                case R.id.tv_slow:
+                                    speedButton.setText(R.string.slow);
+                                    break;
+                                case R.id.tv_medium:
+                                    speedButton.setText(R.string.medium);
+                                    break;
+                                case R.id.tv_fast:
+                                    speedButton.setText(R.string.fast);
+                                    break;
+                            }
+                        }
+                    });
+                    mSelectSpeedPopupWindow.show(v);
+                }
+            });
 
             /**
              * @描述: 增加MAX按钮的点击事件，点击将balance的值填入amount输入框中
@@ -272,29 +316,29 @@ public class SendStepOnePopupWindow {
 
         @Override
         public void convert(ViewHolder holder, final int position, final FriendGroup item) {
-            holder.setText(R.id.tv_group_name,item.getGroupName());
+            holder.setText(R.id.tv_group_name, item.getGroupName());
             holder.getView(R.id.v_deliver).setVisibility(View.INVISIBLE);
 
             LinearLayout ListContentView = holder.getView(R.id.lv_friend_item_list);
 
             List<Friend> friendListInGroup = item.getGroupFriend();
 
-            for (int i = 0 ; i<friendListInGroup.size();i++){
+            for (int i = 0; i < friendListInGroup.size(); i++) {
                 String friendName = friendListInGroup.get(i).getFriendName();
                 String address = friendListInGroup.get(i).getAddress();
 
                 RelativeLayout friendItemContain = new RelativeLayout(mContext);
-                RelativeLayout.LayoutParams friendItemContainParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams friendItemContainParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 friendItemContain.setLayoutParams(friendItemContainParams);
 
                 LinearLayout friendItemContent = new LinearLayout(mContext);
-                LinearLayout.LayoutParams friendItemContentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                friendItemContent.setPadding(0,20,0,20);
+                LinearLayout.LayoutParams friendItemContentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                friendItemContent.setPadding(0, 20, 0, 20);
                 friendItemContent.setOrientation(LinearLayout.HORIZONTAL);
                 friendItemContent.setLayoutParams(friendItemContentParams);
 
                 TextView friendNameView = new TextView(mContext);
-                LinearLayout.LayoutParams friendNameViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams friendNameViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 friendNameView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
                 friendNameView.setGravity(Gravity.CENTER);
                 friendNameView.setTextSize(16);
@@ -303,7 +347,7 @@ public class SendStepOnePopupWindow {
                 friendNameView.setLayoutParams(friendNameViewParams);
 
                 TextView friendAddressView = new TextView(mContext);
-                LinearLayout.LayoutParams friendAddressViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,1.0f);
+                LinearLayout.LayoutParams friendAddressViewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
                 friendAddressView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                 friendAddressView.setGravity(Gravity.CENTER);
                 friendAddressView.setTextSize(16);
