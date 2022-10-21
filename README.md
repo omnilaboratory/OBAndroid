@@ -10,7 +10,7 @@ OBAndroid is an [OmniBOLT](https://github.com/omnilaboratory/obd) Lightning wall
 ## Features
 
 - [x] obd-lnd on Android and cloud
-- [x] Mainnet, regtest
+- [x] Mainnet, testnet, regtest
 - [x] Bitcoin/Omnilayer wallet(layer 1): store, pay, receive, backup, restore
 - [x] Bitcoin lightning payment(layer 2)  
 - [x] Omnilayer assets lightning payment(layer 2), e.g. OMNI, USDT, etc  
