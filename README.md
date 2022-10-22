@@ -40,4 +40,8 @@ The currently supported invoice format is [OmniBOLT 7](https://github.com/omnila
 | -------- 	  |	----------- |	 
 | v0.1-alpha	|	to be added	|	 
  
+## Get Help
+If you encounter any issues please report the issue in this [repo](https://github.com/omnilaboratory/OBAndroid/issues) or on [discord](http://discord.gg/2QYqzSMZuy) with screenshots and how to reproduce the bug/error.
 
+## License
+This project is open source under the MIT license, which means you have full access to the source code and can modify it to fit your own needs. See LICENSE for more information.
