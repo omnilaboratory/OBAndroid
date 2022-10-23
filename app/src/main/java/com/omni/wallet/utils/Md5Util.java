@@ -16,7 +16,7 @@ public class Md5Util {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        //16是表示转换为16进制数
+        //16是表示转换为16进制数(When radix is 16 that mean use Hexadecimal )
         String md5Str = new BigInteger(1, digest).toString(16);
         return md5Str;
     }

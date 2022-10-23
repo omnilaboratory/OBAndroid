@@ -10,6 +10,7 @@ import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.ui.activity.ChannelsActivity;
 
 /**
+ * popup window for Menu
  * Menu的弹窗
  */
 public class MenuPopupWindow {

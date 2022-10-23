@@ -34,10 +34,12 @@ public class ChannelDetailsPopupWindow {
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
+            // set progress bar
             // 设置进度条
             ProgressBar mProgressBar = rootView.findViewById(R.id.progressbar);
             float barValue = (float) ((double) 100 / (double) 700);
             mProgressBar.setProgress((int) (barValue * 100f));
+            //click create button
             // 点击create按钮
             rootView.findViewById(R.id.layout_create).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -47,6 +49,7 @@ public class ChannelDetailsPopupWindow {
                     mCreateChannelStepOnePopupWindow.show(view);
                 }
             });
+            //click close channel button
             // 点击closeChannel按钮
             rootView.findViewById(R.id.layout_close_channel).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -54,6 +57,7 @@ public class ChannelDetailsPopupWindow {
                     mBasePopWindow.dismiss();
                 }
             });
+            //click close button at bottom
             // 点击底部close
             rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
                 @Override

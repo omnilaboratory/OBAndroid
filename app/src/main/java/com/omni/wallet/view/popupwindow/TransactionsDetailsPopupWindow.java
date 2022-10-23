@@ -32,6 +32,7 @@ public class TransactionsDetailsPopupWindow {
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
+            // click explorer button
             // 点击explorer
             rootView.findViewById(R.id.layout_explorer).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -39,6 +40,7 @@ public class TransactionsDetailsPopupWindow {
                     mBasePopWindow.dismiss();
                 }
             });
+            // click close button at bottom
             // 点击底部close
             rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
                 @Override

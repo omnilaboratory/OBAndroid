@@ -118,12 +118,14 @@ public class SelectNodePopupWindow {
 
             for (int i = 0; i < nodeListInGroup.size(); i++){
                 Node singleNodeItem =  nodeListInGroup.get(i);
+                // node content
                 // node内容容器
                 LinearLayout nodeItemView = new LinearLayout(selectNodeContext);
                 LinearLayout.LayoutParams nodeItemParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
                 nodeItemParams.setMargins(0,20,0,0);
                 nodeItemView.setOrientation(LinearLayout.VERTICAL);
                 nodeItemView.setLayoutParams(nodeItemParams);
+                // set node name
                 // 设定node名称
                 String nodeName = singleNodeItem.getNodeName();
                 TextView nodeNameView = new TextView(selectNodeContext);
@@ -134,16 +136,19 @@ public class SelectNodePopupWindow {
                 nodeNameView.setLayoutParams(nodeNameParams);
 
                 nodeItemView.addView(nodeNameView);
+                // set node information content
                 // 设定node信息容器
                 LinearLayout infoContentView = new LinearLayout(selectNodeContext);
                 LinearLayout.LayoutParams infoContentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
                 infoContentView.setOrientation(LinearLayout.HORIZONTAL);
                 infoContentView.setGravity(Gravity.CENTER);
                 infoContentView.setLayoutParams(infoContentParams);
+                // set token picture content
                 // 设定Token图片容器
                 RelativeLayout tokenContentView = new RelativeLayout(selectNodeContext);
                 RelativeLayout.LayoutParams tokenContentParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
                 tokenContentView.setLayoutParams(tokenContentParams);
+                // create picture
                 // 生成图片内容
                 List<String> tokenList = singleNodeItem.getTokenList();
                 for (int j =0;j<tokenList.size();j++){
@@ -157,7 +162,7 @@ public class SelectNodePopupWindow {
                     tokenContentView.addView(tokenImageView);
                 }
                 infoContentView.addView(tokenContentView);
-
+                // Sum of values content
                 // valueSum 容器
                 LinearLayout valueSumContentView = new LinearLayout(selectNodeContext);
                 LinearLayout.LayoutParams valueSumContentParams = new LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT,1);

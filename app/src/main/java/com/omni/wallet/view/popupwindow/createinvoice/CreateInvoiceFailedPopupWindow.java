@@ -34,6 +34,7 @@ public class CreateInvoiceFailedPopupWindow {
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
             // 点击back
+            // click back button
             rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -43,6 +44,7 @@ public class CreateInvoiceFailedPopupWindow {
                 }
             });
             // 点击share to
+            // click share to button
             rootView.findViewById(R.id.layout_share_to).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -50,6 +52,7 @@ public class CreateInvoiceFailedPopupWindow {
                 }
             });
             // 点击底部close
+            // click close button at bottom
             rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -72,6 +72,7 @@ public class ConnectNodeFailedPopupWindow {
                     });
                 }
             });
+            // click share to button
             // 点击share to
             rootView.findViewById(R.id.layout_share_to).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -79,6 +80,7 @@ public class ConnectNodeFailedPopupWindow {
                     shareLayout.setVisibility(View.VISIBLE);
                 }
             });
+            //click face book icon button
             // 点击facebook
             rootView.findViewById(R.id.iv_facebook_share).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -87,6 +89,7 @@ public class ConnectNodeFailedPopupWindow {
                     shareLayout.setVisibility(View.GONE);
                 }
             });
+            // click twitter icon button
             // 点击twitter
             rootView.findViewById(R.id.iv_twitter_share).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -95,6 +98,7 @@ public class ConnectNodeFailedPopupWindow {
                     shareLayout.setVisibility(View.GONE);
                 }
             });
+            // click close button at bottom
             // 点击底部close
             rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override

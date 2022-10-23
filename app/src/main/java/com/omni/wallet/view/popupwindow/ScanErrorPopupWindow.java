@@ -46,7 +46,7 @@ public class ScanErrorPopupWindow {
                     mBasePopWindow.dismiss();
                 }
             });
-
+            // click try again button
             // 点击Try Again
             rootView.findViewById(R.id.layout_scan).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -71,6 +71,7 @@ public class ScanErrorPopupWindow {
                     });
                 }
             });
+            // click close button at bottom
             // 点击底部close
             rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
                 @Override

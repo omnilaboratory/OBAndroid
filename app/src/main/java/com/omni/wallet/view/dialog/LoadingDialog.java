@@ -25,6 +25,7 @@ public class LoadingDialog {
     }
 
     /**
+     * show the dialog
      * 展示
      */
     public void show() {
@@ -40,7 +41,7 @@ public class LoadingDialog {
         if (!mAlertDialog.isShowing()) {
             mAlertDialog.show();
         }
-        // 旋转动画
+        // 旋转动画(rotate animate)
         waitingIcon.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         mRotationAnimator = ObjectAnimator.ofFloat(waitingIcon, "rotation", 0, 359f);
         mRotationAnimator.setInterpolator(new LinearInterpolator());

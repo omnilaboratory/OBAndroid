@@ -42,11 +42,12 @@ public class FundPopupWindow {
             rootView.findViewById(R.id.iv_copy_address_fund).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // get address which will copy to clipboard
                     //接收需要复制到粘贴板的地址
                     //Get the address which will copy to clipboard
                     String toCopyAddress = "01234e*****bg453123";
                     System.out.println(toCopyAddress);
-
+                    // copy the address to clipboard
                     //将地址复制到粘贴板
                     //Copy the address to clipboard
                     ClipboardManager cm =(ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
