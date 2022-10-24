@@ -26,6 +26,7 @@ import com.omni.wallet.listItems.Friend;
 import com.omni.wallet.listItems.FriendGroup;
 import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.utils.GetResourceUtil;
+import com.omni.wallet.view.dialog.SendSuccessDialog;
 import com.omni.wallet.view.popupwindow.SelectAssetPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
 
@@ -62,6 +63,7 @@ public class SendStepOnePopupWindow {
     LinearLayout assetLayout;
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetPopupWindow mSelectAssetPopupWindow;
+    SendSuccessDialog mSendSuccessDialog;
 
     public SendStepOnePopupWindow(Context context) {
         this.mContext = context;
@@ -283,6 +285,9 @@ public class SendStepOnePopupWindow {
                 public void onClick(View v) {
                     rootView.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
                     rootView.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                    mBasePopWindow.dismiss();
+                    mSendSuccessDialog = new SendSuccessDialog(mContext);
+                    mSendSuccessDialog.show();
                 }
             });
 

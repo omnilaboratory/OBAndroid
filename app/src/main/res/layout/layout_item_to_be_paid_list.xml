@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout
-    android:id="@+id/layout_pending_invoices_list_swipe_menu"
+    android:id="@+id/layout_to_be_paid_list_swipe_menu"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -67,7 +67,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_delete"
+        android:id="@+id/tv_to_be_paid_delete"
         android:layout_width="@dimen/main_115"
         android:layout_height="@dimen/main_48"
         android:background="@color/color_E51414"

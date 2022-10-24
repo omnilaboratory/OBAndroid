@@ -182,12 +182,14 @@
     <string name="delete">DELETE</string>
     <string name="no">NO</string>
     <string name="activities">ACTIVITIES</string>
-    <string name="can_send">Can Send:</string>
-    <string name="can_receive">Can Receive:</string>
+    <string name="can_send">Can Send</string>
+    <string name="can_receive">Can Receive</string>
     <string name="medium">MEDIUM</string>
     <string name="fast">FAST</string>
     <string name="minutes">Minutes</string>
     <string name="day">Days</string>
+    <string name="my_invoices">My Invoices</string>
+    <string name="sender">SENDER</string>
 
     <!--token list 页面-->
     <string name="balance">余额</string>

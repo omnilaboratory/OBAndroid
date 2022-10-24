@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/main_64"
+    android:layout_marginLeft="@dimen/main_40"
+    android:layout_marginRight="@dimen/main_40"
+    android:background="@mipmap/img_rectangle_white_small_bg">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/main_36"
+            android:layout_height="@dimen/main_36"
+            android:src="@mipmap/icon_failed_red"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_30"
+            android:letterSpacing="0.05"
+            android:text="Tx Failed"
+            android:textColor="@color/color_99_transparent"
+            android:textSize="@dimen/text_24"/>
+    </LinearLayout>
+</RelativeLayout>

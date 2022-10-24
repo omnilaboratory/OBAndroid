@@ -136,7 +136,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_20"
                         android:layout_marginRight="@dimen/main_20"
-                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginTop="@dimen/main_15"
                         android:orientation="vertical">
 
                         <LinearLayout
@@ -156,7 +156,8 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text=": "
+                                android:layout_marginRight="@dimen/main_5"
+                                android:text=":"
                                 android:textColor="@color/color_A6_transparent"
                                 android:textSize="@dimen/text_16"/>
 
@@ -164,7 +165,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="700"
-                                android:textColor="@color/color_06d78f"
+                                android:textColor="@color/color_A6_transparent"
                                 android:textSize="@dimen/text_16"/>
                         </LinearLayout>
 
@@ -173,7 +174,7 @@
                             style="?android:attr/progressBarStyleHorizontal"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/main_10"
-                            android:layout_marginTop="@dimen/main_10"
+                            android:layout_marginTop="@dimen/main_5"
                             android:progressDrawable="@drawable/channel_balance_progress_bar"/>
                     </LinearLayout>
 
@@ -188,18 +189,33 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:text="@string/local_balance"
+                            android:text="@string/can_send"
                             android:textColor="@color/color_A6_transparent"
                             android:textSize="@dimen/text_16"/>
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:text="100 USDT"
-                            android:textColor="@color/color_99_transparent"
-                            android:textSize="@dimen/text_16"/>
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="@dimen/main_5"
+                                android:text="100"
+                                android:textColor="@color/color_9906d78f"
+                                android:textSize="@dimen/text_16"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="USDT"
+                                android:textColor="@color/color_99_transparent"
+                                android:textSize="@dimen/text_16"/>
+                        </LinearLayout>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -213,18 +229,33 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:text="@string/remote_balance"
+                            android:text="@string/can_receive"
                             android:textColor="@color/color_A6_transparent"
                             android:textSize="@dimen/text_16"/>
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:text="600 USDT"
-                            android:textColor="@color/color_99_transparent"
-                            android:textSize="@dimen/text_16"/>
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="@dimen/main_5"
+                                android:text="600"
+                                android:textColor="@color/color_994C49F4"
+                                android:textSize="@dimen/text_16"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="USDT"
+                                android:textColor="@color/color_99_transparent"
+                                android:textSize="@dimen/text_16"/>
+                        </LinearLayout>
                     </RelativeLayout>
 
                     <LinearLayout
@@ -255,15 +286,15 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_20"
                         android:layout_marginRight="@dimen/main_20"
-                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginTop="@dimen/main_8"
                         android:background="@drawable/bg_black_rectangle_round_0_thin">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/main_15"
+                            android:layout_marginBottom="@dimen/main_5"
                             android:layout_marginRight="@dimen/main_5"
-                            android:layout_marginTop="@dimen/main_15"
+                            android:layout_marginTop="@dimen/main_5"
                             android:text="e21asdasasacad9axcia9sca09csdwdeqwdwcddedwdcsdvcsdvsdvsdvsdvcasca"
                             android:textColor="@color/color_black"
                             android:textSize="@dimen/text_16"/>

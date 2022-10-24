@@ -92,16 +92,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_29"
+                android:layout_marginLeft="@dimen/main_28"
                 android:layout_marginTop="@dimen/main_20"
                 android:text="@string/from_node"
                 android:textColor="@color/color_80p_transparent"
                 android:textSize="@dimen/text_16"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_29"
+                android:layout_marginLeft="@dimen/main_28"
+                android:layout_marginRight="@dimen/main_30"
                 android:layout_marginTop="@dimen/main_5"
                 android:orientation="horizontal">
 
@@ -115,17 +116,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_40"
+                    android:layout_alignParentRight="true"
                     android:text="Alice"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
-            </LinearLayout>
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_29"
-                android:layout_marginTop="@dimen/main_20"
+                android:layout_marginLeft="@dimen/main_28"
+                android:layout_marginTop="@dimen/main_25"
                 android:text="@string/omnibolt_11"
                 android:textColor="@color/color_80p_transparent"
                 android:textSize="@dimen/text_16"/>
@@ -217,8 +218,7 @@
                 android:letterSpacing="0.25"
                 android:text="@string/pay_invoice"
                 android:textColor="@color/color_black"
-                android:textSize="@dimen/text_18"
-                />
+                android:textSize="@dimen/text_18"/>
 
             <View
                 android:layout_width="match_parent"
@@ -280,16 +280,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_29"
+                android:layout_marginLeft="@dimen/main_28"
                 android:layout_marginTop="@dimen/main_20"
                 android:text="@string/from_node"
                 android:textColor="@color/color_80p_transparent"
                 android:textSize="@dimen/text_16"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_29"
+                android:layout_marginLeft="@dimen/main_28"
+                android:layout_marginRight="@dimen/main_28"
                 android:layout_marginTop="@dimen/main_5"
                 android:orientation="horizontal">
 
@@ -303,25 +304,26 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_40"
+                    android:layout_alignParentRight="true"
                     android:text="Alice"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
-            </LinearLayout>
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_29"
+                android:layout_marginLeft="@dimen/main_28"
                 android:layout_marginTop="@dimen/main_17"
                 android:text="@string/to_node"
                 android:textColor="@color/color_80p_transparent"
                 android:textSize="@dimen/text_16"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_29"
+                android:layout_marginLeft="@dimen/main_28"
+                android:layout_marginRight="@dimen/main_28"
                 android:layout_marginTop="@dimen/main_5"
                 android:orientation="horizontal">
 
@@ -335,15 +337,15 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_40"
+                    android:layout_alignParentRight="true"
                     android:text="Bob"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
-            </LinearLayout>
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/main_114"
+                android:layout_height="@dimen/main_110"
                 android:layout_marginTop="@dimen/main_20"
                 android:background="@color/color_06d78f"
                 android:orientation="vertical">
@@ -589,10 +591,11 @@
                 android:textColor="@color/color_80p_transparent"
                 android:textSize="@dimen/text_16"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_29"
+                android:layout_marginRight="@dimen/main_29"
                 android:layout_marginTop="@dimen/main_5"
                 android:orientation="horizontal">
 
@@ -606,11 +609,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_40"
+                    android:layout_alignParentRight="true"
                     android:text="Alice"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
-            </LinearLayout>
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -621,10 +624,11 @@
                 android:textColor="@color/color_80p_transparent"
                 android:textSize="@dimen/text_16"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_29"
+                android:layout_marginRight="@dimen/main_29"
                 android:layout_marginTop="@dimen/main_5"
                 android:orientation="horizontal">
 
@@ -638,11 +642,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_40"
+                    android:layout_alignParentRight="true"
                     android:text="Bob"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
-            </LinearLayout>
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -746,16 +750,25 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="@dimen/main_100"
-                android:layout_height="@dimen/main_100"
+                android:layout_width="@dimen/main_80"
+                android:layout_height="@dimen/main_80"
                 android:layout_gravity="center_horizontal"
-                android:background="@mipmap/icon_green_round">
+                android:layout_marginTop="@dimen/main_10"
+                android:background="@mipmap/icon_green_round_out">
 
-                <ImageView
-                    android:layout_width="@dimen/main_36"
-                    android:layout_height="@dimen/main_25"
+                <RelativeLayout
+                    android:layout_width="@dimen/main_72"
+                    android:layout_height="@dimen/main_72"
                     android:layout_centerInParent="true"
-                    android:src="@mipmap/icon_tick_green"/>
+                    android:layout_gravity="center_horizontal"
+                    android:background="@mipmap/icon_green_round">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_36"
+                        android:layout_height="@dimen/main_22"
+                        android:layout_centerInParent="true"
+                        android:src="@mipmap/icon_tick_green"/>
+                </RelativeLayout>
             </RelativeLayout>
         </LinearLayout>
 
@@ -765,11 +778,12 @@
             android:layout_height="@dimen/main_540"
             android:background="@drawable/bg_white_rectangle_round_20"
             android:visibility="gone">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -1006,6 +1020,7 @@
                     android:text="1、can not find path to pay"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -1016,6 +1031,7 @@
                     android:text="2、payment path broken"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -1026,60 +1042,61 @@
                     android:text="3、Receiver is offline"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/main_20"
-                    android:layout_marginLeft="@dimen/main_60"
-                    android:layout_marginRight="@dimen/main_60">
-
-                    <LinearLayout
-                        android:id="@+id/layout_back_to_two"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="@dimen/main_36"
-                            android:layout_height="@dimen/main_36"
-                            android:src="@mipmap/icon_arrow_left_green"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_5"
-                            android:letterSpacing="0.25"
-                            android:text="@string/back_big"
-                            android:textColor="@color/color_black"
-                            android:textSize="@dimen/text_16"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_share_to"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="@dimen/main_36"
-                            android:layout_height="@dimen/main_36"
-                            android:src="@mipmap/icon_forward_green"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_7"
-                            android:letterSpacing="0.25"
-                            android:text="@string/share_to"
-                            android:textColor="@color/color_black"
-                            android:textSize="@dimen/text_16"/>
-                    </LinearLayout>
-                </RelativeLayout>
             </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/main_40"
+                android:layout_marginLeft="@dimen/main_50"
+                android:layout_marginRight="@dimen/main_30">
+
+                <LinearLayout
+                    android:id="@+id/layout_back_to_two"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_36"
+                        android:layout_height="@dimen/main_36"
+                        android:src="@mipmap/icon_arrow_left_green"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_5"
+                        android:letterSpacing="0.25"
+                        android:text="@string/back_big"
+                        android:textColor="@color/color_black"
+                        android:textSize="@dimen/text_16"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_share_to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_36"
+                        android:layout_height="@dimen/main_36"
+                        android:src="@mipmap/icon_forward_green"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_7"
+                        android:letterSpacing="0.25"
+                        android:text="@string/share_to"
+                        android:textColor="@color/color_black"
+                        android:textSize="@dimen/text_16"/>
+                </LinearLayout>
+            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/layout_share"

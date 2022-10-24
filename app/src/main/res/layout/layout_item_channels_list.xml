@@ -196,6 +196,7 @@
         </LinearLayout>
 
         <ProgressBar
+            android:layout_marginTop="@dimen/main_10"
             android:id="@+id/pv_amount_percent"
             android:layout_width="match_parent"
             android:layout_height="10dp"
@@ -226,6 +227,6 @@
         android:layout_height="@dimen/main_1"
         android:layout_marginLeft="@dimen/main_40"
         android:layout_marginRight="@dimen/main_40"
-        android:layout_marginTop="@dimen/main_20"
+        android:layout_marginTop="@dimen/main_15"
         android:background="@color/color_80p_transparent"/>
 </LinearLayout>

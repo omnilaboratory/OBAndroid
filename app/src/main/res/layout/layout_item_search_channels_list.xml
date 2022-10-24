@@ -61,8 +61,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/main_5"
                 android:text="@string/can_send"
+                android:textColor="@color/color_A6_transparent"
+                android:textSize="@dimen/text_16"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/main_5"
+                android:text=":"
                 android:textColor="@color/color_A6_transparent"
                 android:textSize="@dimen/text_16"/>
 
@@ -86,8 +93,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/main_5"
                 android:text="@string/can_receive"
+                android:textColor="@color/color_A6_transparent"
+                android:textSize="@dimen/text_16"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/main_5"
+                android:text=":"
                 android:textColor="@color/color_A6_transparent"
                 android:textSize="@dimen/text_16"/>
 
