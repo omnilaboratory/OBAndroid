@@ -93,6 +93,11 @@ public class UnlockActivity extends AppBaseActivity {
         }
     }
 
+    @OnClick(R.id.tv_pass_text)
+    public void clickToForgetPassword(){
+        switchActivity(ForgetPwdActivity.class);
+    }
+
     /**
      * click unlock button
      * 点击Unlock

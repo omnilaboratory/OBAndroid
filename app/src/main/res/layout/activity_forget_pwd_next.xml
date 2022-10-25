@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,167 +8,335 @@
     android:orientation="vertical"
     tools:context=".ui.activity.ForgetPwdNextActivity">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/main_25"
-        android:layout_marginTop="@dimen/main_25"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="@dimen/main_20"
-            android:layout_height="@dimen/main_20"
-            android:src="@mipmap/icon_round_green"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/main_5"
-            android:text="@string/verify_seed"
-            android:textColor="@color/color_70b603"
-            android:textSize="@dimen/text_15"/>
-
-        <View
-            android:layout_width="@dimen/main_20"
-            android:layout_height="@dimen/main_2"
-            android:layout_marginLeft="@dimen/main_10"
-            android:background="@drawable/bg_green_to_orange"></View>
-
-        <ImageView
-            android:layout_width="@dimen/main_20"
-            android:layout_height="@dimen/main_20"
-            android:layout_marginLeft="@dimen/main_10"
-            android:src="@mipmap/icon_round_orange"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/main_5"
-            android:text="@string/reset_password"
-            android:textColor="@color/color_f59a23"
-            android:textSize="@dimen/text_15"/>
-
-    </LinearLayout>
-
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/logo_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/main_20"
-        android:layout_marginRight="@dimen/main_20"
-        android:layout_marginTop="@dimen/main_30"
-        android:orientation="vertical">
+        android:gravity="center"
+        android:layout_marginTop="60dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pwd"
-            android:textColor="@color/color_black"
-            android:textSize="@dimen/text_18"
-            android:textStyle="bold"/>
+        <ImageView
+            android:contentDescription="@string/menu"
+            android:id="@+id/logo_image"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            app:srcCompat="@mipmap/icon_logo"
+            />
+    </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/main_10"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/edit_pwd"
-                android:layout_width="@dimen/main_250"
-                android:layout_height="@dimen/main_40"
-                android:background="@drawable/bg_black_rectangle_round_0"
-                android:digits="@string/text_digits_num_code"
-                android:inputType="textPassword"
-                android:maxLength="16"
-                android:textColor="@color/color_333333"
-                android:textSize="@dimen/main_15"/>
-
-            <RelativeLayout
-                android:id="@+id/layout_pwd_eye"
-                android:layout_width="@dimen/main_40"
-                android:layout_height="@dimen/main_40"
-                android:background="@drawable/bg_black_rectangle_round_0">
-
-                <ImageView
-                    android:id="@+id/iv_pwd_eye"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:src="@mipmap/icon_eye_close"/>
-            </RelativeLayout>
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/descriptionContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/main_20"
-        android:layout_marginRight="@dimen/main_20"
-        android:layout_marginTop="@dimen/main_20"
-        android:orientation="vertical">
+        android:gravity="center"
+        android:layout_marginTop="20dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/description"
+            android:layout_width="295dp"
             android:layout_height="wrap_content"
-            android:text="@string/confirm_pwd"
-            android:textColor="@color/color_black"
-            android:textSize="@dimen/text_18"
-            android:textStyle="bold"/>
+            android:text="@string/unlock_description"
+            android:textSize="18sp"
+            android:textColor="@color/color_description_blue"
+            android:letterSpacing="0.3"
+            android:textAlignment="center" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/form_unlock_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center_horizontal"
+        android:elevation="10dp"
+        android:background="@drawable/bg_white_conner">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/form_unlock_contain"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/main_10"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/edit_confirm_pwd"
-                android:layout_width="@dimen/main_250"
-                android:layout_height="@dimen/main_40"
-                android:background="@drawable/bg_black_rectangle_round_0"
-                android:digits="@string/text_digits_num_code"
-                android:inputType="textPassword"
-                android:maxLength="16"
-                android:textColor="@color/color_333333"
-                android:textSize="@dimen/main_15"/>
-
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            >
             <RelativeLayout
-                android:id="@+id/layout_confirm_pwd_eye"
-                android:layout_width="@dimen/main_40"
-                android:layout_height="@dimen/main_40"
-                android:background="@drawable/bg_black_rectangle_round_0">
-
-                <ImageView
-                    android:id="@+id/iv_confirm_pwd_eye"
+                android:id="@+id/form_unlock_title_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                >
+                <LinearLayout
+                    android:id="@+id/form_unlock_title_contain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:src="@mipmap/icon_eye_close"/>
+                    android:orientation="horizontal"
+                    android:layout_marginTop="67dp"
+                    >
+
+                    <TextView
+                        android:id="@+id/password_title_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pwd_upper"
+                        android:textAllCaps="false"
+                        android:textSize="18sp"
+                        android:letterSpacing="0.1"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="@color/color_key"/>
+
+                    <ImageView
+                        android:id="@+id/form_unlock_info"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:srcCompat="@mipmap/icon_info_green" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/password_input_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+                    <EditText
+                        android:id="@+id/password_input"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:hint="@string/create_pass_input_hit"
+                        android:background="@null"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="18sp"
+                        android:letterSpacing="0.05"
+                        android:textColor="@color/color_description_blue"
+                        android:textColorHint="@color/color_description_blue"
+                        android:textAlignment="center"/>
+                    <ImageView
+                        android:contentDescription="@string/pass_show_hind"
+                        android:id="@+id/pass_switch"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:srcCompat="@mipmap/icon_eye_open"
+                        android:layout_marginEnd="20dp"
+                        />
+                    <ImageView
+                        android:id="@+id/pass_input_check"
+                        android:visibility="invisible"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        app:srcCompat="@mipmap/icon_wrong_red"
+                        />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/pass_strong_state_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="10dp">
+                <LinearLayout
+                    android:id="@+id/pass_strong_state_contain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    >
+                    <RelativeLayout
+                        android:id="@+id/pass_strong_state_easy"
+                        android:layout_width="75dp"
+                        android:layout_height="4dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@color/color_todo_grey"
+                        />
+                    <RelativeLayout
+                        android:id="@+id/pass_strong_state_normal"
+                        android:layout_width="75dp"
+                        android:layout_height="4dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@color/color_todo_grey"
+                        />
+                    <RelativeLayout
+                        android:id="@+id/pass_strong_state_strong"
+                        android:layout_width="75dp"
+                        android:layout_height="4dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@color/color_todo_grey"
+                        />
+                    <RelativeLayout
+                        android:id="@+id/pass_strong_state_text_contain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp">
+                        <TextView
+                            android:width="60dp"
+                            android:visibility="invisible"
+                            android:id="@+id/pass_strong_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/easy"
+                            android:textColor="@color/color_red"
+                            android:textStyle="bold"/>
+                    </RelativeLayout>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/form_unlock_repeat_title_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                >
+                <LinearLayout
+                    android:id="@+id/form_unlock_repeat_title_contain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    >
+
+                    <TextView
+                        android:id="@+id/password_repeat_title_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pwd_upper_repeat"
+                        android:textAllCaps="false"
+                        android:textSize="18sp"
+                        android:letterSpacing="0.1"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="@color/color_key"
+                        android:textAlignment="center"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/password_input_repeat_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="60dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+                    <EditText
+                        android:id="@+id/password_input_repeat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:hint="@string/create_pass_input_hit"
+                        android:background="@null"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="18sp"
+                        android:letterSpacing="0.05"
+                        android:textColor="@color/color_description_blue"
+                        android:textColorHint="@color/color_description_blue"
+                        android:textAlignment="center"/>
+                    <ImageView
+                        android:contentDescription="@string/pass_show_hind"
+                        android:id="@+id/pass_switch_repeat"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:srcCompat="@mipmap/icon_eye_open"
+                        android:layout_marginEnd="20dp"
+                        />
+                    <ImageView
+                        android:id="@+id/pass_input_check_repeat"
+                        android:visibility="invisible"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        app:srcCompat="@mipmap/icon_wrong_red"
+                        />
+                </LinearLayout>
+            </RelativeLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        >
+
+        <LinearLayout
+            android:baselineAligned="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:id="@+id/btn_back">
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        app:srcCompat="@mipmap/arrow_left" />
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/back_upper"
+                        android:textColor="@color/color_black"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:id="@+id/btn_forward">
+
+                    <ImageView
+                        android:id="@+id/imageView1"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        app:srcCompat="@mipmap/arrow_right" />
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/start_upper"
+                        android:textColor="@color/color_black"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
             </RelativeLayout>
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
-    <Button
-        android:id="@+id/btn_unlock_without_password"
-        android:layout_width="@dimen/main_190"
-        android:layout_height="@dimen/main_40"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/main_30"
-        android:background="@drawable/bg_btn_round_blue_4"
-        android:text="@string/unlock_without_password"
-        android:textColor="@color/color_white"/>
-
-    <Button
-        android:id="@+id/btn_reset_password_unlock"
-        android:layout_width="@dimen/main_190"
-        android:layout_height="@dimen/main_40"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/main_30"
-        android:background="@drawable/bg_btn_round_blue_4"
-        android:text="@string/reset_password_unlock"
-        android:textColor="@color/color_white"/>
 </LinearLayout>

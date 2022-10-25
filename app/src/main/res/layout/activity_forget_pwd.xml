@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,76 +8,143 @@
     tools:context=".ui.activity.ForgetPwdActivity">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/main_25"
-        android:layout_marginTop="@dimen/main_25"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="@dimen/main_20"
-            android:layout_height="@dimen/main_20"
-            android:src="@mipmap/icon_round_orange"/>
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="32dp"
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/description_text_test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/main_5"
-            android:text="@string/verify_seed"
-            android:textColor="@color/color_f59a23"
-            android:textSize="@dimen/text_15"/>
-
-        <View
-            android:layout_width="@dimen/main_20"
-            android:layout_height="@dimen/main_2"
-            android:layout_marginLeft="@dimen/main_10"
-            android:background="@drawable/bg_orange_to_gray"></View>
-
-        <ImageView
-            android:layout_width="@dimen/main_20"
-            android:layout_height="@dimen/main_20"
-            android:layout_marginLeft="@dimen/main_10"
-            android:src="@mipmap/icon_round_gray"/>
+            android:layout_marginTop="13dp"
+            android:gravity="center_vertical"
+            android:text="@string/important_alert"
+            android:textColor="#FF4A92FF"
+            android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/description_text_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/main_5"
-            android:text="@string/reset_password"
-            android:textColor="@color/color_7f7f7f"
-            android:textSize="@dimen/text_15"/>
+            android:layout_marginTop="13dp"
+            android:gravity="center_vertical"
+            android:text="@string/create_step_two_description"
+            android:textColor="#FF4A92FF"
+            android:textSize="18sp" />
 
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/main_40"
-        android:layout_marginLeft="@dimen/main_25"
-        android:layout_marginRight="@dimen/main_25"
-        android:layout_marginTop="@dimen/main_50">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/bg_create_content_green"
+        android:elevation="10dp"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:id="@+id/edit_text_Content">
 
-        <Button
-            android:id="@+id/btn_back"
-            android:layout_width="@dimen/main_100"
-            android:layout_height="@dimen/main_40"
-            android:background="@drawable/bg_btn_round_blue_4"
-            android:drawableLeft="@mipmap/icon_turn_left_white"
-            android:paddingLeft="@dimen/main_20"
-            android:paddingRight="@dimen/main_20"
-            android:text="@string/back"
-            android:textColor="@color/color_white"/>
+    </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_next"
-            android:layout_width="@dimen/main_100"
-            android:layout_height="@dimen/main_40"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/bg_btn_round_blue_4"
-            android:drawableRight="@mipmap/icon_turn_right_white"
-            android:paddingLeft="@dimen/main_20"
-            android:paddingRight="@dimen/main_20"
-            android:text="@string/next"
-            android:textColor="@color/color_white"/>
-    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    app:srcCompat="@mipmap/arrow_left" />
+
+                <TextView
+                    android:id="@+id/tv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/back_upper"
+                    android:textColor="@color/color_black"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/btn_paste"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_paste"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:contentDescription="@string/paste_upper"
+                    app:srcCompat="@mipmap/icon_paste_green" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/paste_upper"
+                    android:textColor="@color/color_black"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/btn_forward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_next"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    app:srcCompat="@mipmap/arrow_right" />
+
+                <TextView
+                    android:id="@+id/tv_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/next_upper"
+                    android:textColor="@color/color_black"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+        </RelativeLayout>
+    </LinearLayout>
+
 </LinearLayout>
