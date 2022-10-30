@@ -13,13 +13,10 @@ import com.omni.wallet.baselibrary.http.engine.OkHttpEngine;
 import com.omni.wallet.baselibrary.http.interceptor.LogInterceptor;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
-import com.omni.wallet.thirdsupport.umeng.UMUtils;
 
 /**
  * Application
- * Created by fa on 2019/11/22.
  */
-
 public class AppApplication extends BaseApplication {
     private static final String TAG = AppApplication.class.getSimpleName();
     private RefWatcher mRefWatcher;
@@ -69,26 +66,6 @@ public class AppApplication extends BaseApplication {
             ARouter.openDebug();
         }
         ARouter.init(this);
-    }
-
-    @Override
-    protected void beforeInit(String processName) {
-        if (needRegisterPush(processName)) {
-            /**
-             * @描述： 友盟初始化
-             * @desc: Alliance initialization
-             */
-            UMUtils.init(getApplicationContext());
-//            // 友盟设置消息处理的Handler
-//            UMUtils.setMessageHandler(this, new DefaultPushHandler());
-//            // 友盟设置消息点击处理的handler
-//            UMUtils.setNotificationClickHandler(this, new DefaultNotificationClickHandler());
-//            // 注册推送服务（判断进程名字  包名:channel  才是友盟推送进程）
-//            UMUtils.registerPush(this, new DefaultPushRegisterCallback(getApplicationContext()));
-//            LogUtils.e(TAG, "进程" + processName + "注册推送");
-        } else {
-//            LogUtils.e(TAG, "进程" + processName + "不是App或者友盟进程，不注册友盟推送");
-        }
     }
 
     /**

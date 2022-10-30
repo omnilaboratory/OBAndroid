@@ -5,7 +5,7 @@ ext {
             minSdkVersion   : 19,
             targetSdkVersion: 28,
             compileVersion  : 28,
-            buildToolVersion: "26.0.2",
+            buildToolVersion: "28.0.3",
             versionCode     : 1,
             versionName     : "1.0.0"
     ]
@@ -139,12 +139,6 @@ ext {
             // 阿里巴巴ARouter
             ARouter              : "com.alibaba:arouter-api:${depVersion.arouterApiVersion}",
             ArouterAnnotation    : "com.alibaba:arouter-compiler:${depVersion.arouterCompilerVersion}",
-            // 友盟APP统计
-            UMengCommon          : "com.umeng.sdk:common:${depVersion.umengCommonVersion}",
-            UMengAnalytics       : "com.umeng.sdk:common:${depVersion.umengAnalyticsVersion}",
-            // 友盟推送
-            UMPushUtdid          : "com.umeng.sdk:utdid:${depVersion.umengUtdidVersion}",
-            UMPush               : "com.umeng.sdk:push:${depVersion.umengPushVersion}",
             // greenDao
             GreenDao             : "org.greenrobot:greendao:${depVersion.greenDaoVersion}",
             // greenDao加密库
@@ -160,18 +154,12 @@ ext {
             // Dagger2
             Dagger2              : "com.google.dagger:dagger:${depVersion.Dagger2Version}",
             Dagger2Annotation    : "com.google.dagger:dagger-compiler:${depVersion.Dagger2Version}",
-            // 快钱
-            kuaiqian             : "com.tencent.mm.opensdk:wechat-sdk-android-without-mta:${depVersion.kuaiqianVersion}",
             // 滚轮控件
             Wheelview            : "com.contrarywind:wheelview:${depVersion.WheelviewVersion}",
             // 时间选择器
             TimePickerView       : "com.contrarywind:Android-PickerView:${depVersion.TimePickerViewVersion}",
-            // 微信开放平台
-            WeChatPlatform       : "com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+",
             // ZXing
             ZXing                : "com.google.zxing:core:${depVersion.ZXingVersion}",
-            // 抖音
-            DouYin               : "com.bytedance.ies.ugc.aweme:open-sdk:${depVersion.DouYinVersion}"
     ]
 }
 

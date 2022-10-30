@@ -10,16 +10,16 @@ android {
         versionCode versions.versionCode
         versionName versions.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        ndk {
-            // 模块名称
-            abiFilters "armeabi-v7a"//cpu的类型,"armeabi", "arm64-v8a", "x86", "x86_64"
-        }
+//        ndk {
+//            // 模块名称
+//            abiFilters "armeabi-v7a"//cpu的类型,"armeabi", "arm64-v8a", "x86", "x86_64"
+//        }
     }
-    externalNativeBuild {
-        ndkBuild {
-            path file("src\\main\\jni\\Android.mk")
-        }
-    }
+//    externalNativeBuild {
+//        ndkBuild {
+//            path file("src\\main\\jni\\Android.mk")
+//        }
+//    }
     //so文件加载，需要添加下面代码
     sourceSets {
         main {

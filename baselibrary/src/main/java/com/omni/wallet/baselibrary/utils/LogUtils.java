@@ -24,10 +24,10 @@ public class LogUtils {
     private static final boolean isExpandMsg = true;
 
     // log标记
-    private static final String mark = "<XFLProperty>  ";
+    private static final String mark = "<OBAndroid>  ";
 
     // 日志文件存储路径
-    private static String LOG_PATH = "XFLProperty";// 日志文件在sdcard中的路径
+    private static String LOG_PATH = "OBAndroid";// 日志文件在sdcard中的路径
     //
 
 

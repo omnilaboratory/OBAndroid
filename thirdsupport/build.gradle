@@ -10,12 +10,12 @@ android {
         versionCode versions.versionCode
         versionName versions.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        ndk {
-            //选择要添加的对应cpu类型的.so库。
-            abiFilters 'armeabi-v7a'
-//          'armeabi' , 'x86' , 'armeabi-v7a', 'armeabi-v8a', 'x86_64', 'mips', 'mips64'
-            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
-        }
+//        ndk {
+//            //选择要添加的对应cpu类型的.so库。
+//            abiFilters 'armeabi-v7a'
+////          'armeabi' , 'x86' , 'armeabi-v7a', 'armeabi-v8a', 'x86_64', 'mips', 'mips64'
+//            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+//        }
     }
     buildTypes {
         release {
@@ -48,10 +48,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':baselibrary')
     compile project(':resource')
-    // 快钱
-    compile dependencies.kuaiqian
-    // 微信开放平台
-    compile dependencies.WeChatPlatform
     // ZXing
     compile dependencies.ZXing
 }

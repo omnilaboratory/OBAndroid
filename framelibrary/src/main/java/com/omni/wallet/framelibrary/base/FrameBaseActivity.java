@@ -12,8 +12,6 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.framelibrary.common.Constants;
 import com.omni.wallet.framelibrary.view.navigationBar.DefaultNavigationBar;
-import com.omni.wallet.thirdsupport.umeng.UMUtils;
-
 
 /**
  * 中间层Activity做业务扩展
@@ -86,18 +84,14 @@ public abstract class FrameBaseActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (!containFragment()) {
-            UMUtils.onPageStart(this.getClass().getName());
         }
-        UMUtils.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         if (!containFragment()) {
-            UMUtils.onPageEnd(this.getClass().getName());
         }
-        UMUtils.onPause(this);
     }
 
 }

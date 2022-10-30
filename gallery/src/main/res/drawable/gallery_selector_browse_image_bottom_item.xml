@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/gallery_shape_item_select" android:state_selected="true" />
-    <item android:drawable="@drawable/gallery_shape_item_default" android:state_selected="false" />
-    <item android:drawable="@drawable/gallery_shape_item_default" />
-
-</selector>
