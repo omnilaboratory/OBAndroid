@@ -1,6 +1,7 @@
 package com.omni.wallet.ui.activity;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -67,6 +68,14 @@ public class BalanceDetailActivity extends AppBaseActivity {
     RelativeLayout mMyInvoicesLayout;
     @BindView(R.id.recycler_my_invoices_list)
     RecyclerView mMyInvoicesRecyclerView;
+    @BindView(R.id.tv_channel_activities)
+    TextView mChannelActivitiesTv;
+    @BindView(R.id.tv_to_be_paid)
+    TextView mToBePaidTv;
+    @BindView(R.id.tv_to_be_paid_title)
+    TextView mToBePaidTitleTv;
+    @BindView(R.id.view_line)
+    View mLineView;
     private List<String> mTransactionsData = new ArrayList<>();
     private TransactionsAdapter mTransactionsAdapter;
     private List<String> mToBePaidData = new ArrayList<>();
@@ -109,11 +118,25 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mNetworkTv.setText("USDT lightning network");
             mLightningNetworkLayout.setVisibility(View.VISIBLE);
             mLinkNetworkLayout.setVisibility(View.GONE);
+            mChannelActivitiesTv.setText(R.string.channel_activities);
+            mChannelActivitiesTv.setTextColor(Color.parseColor("#4A92FF"));
+            mToBePaidTv.setText(R.string.to_be_paid);
+            mToBePaidTitleTv.setText(R.string.to_be_paid);
+            mToBePaidTv.setTextColor(Color.parseColor("#4A92FF"));
+            mLineView.setVisibility(View.VISIBLE);
+            mRootMyInvoicesLayout.setVisibility(View.VISIBLE);
         } else if (network.equals("link")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_link_black);
             mNetworkTv.setText("Omnilayer Mainnet");
             mLightningNetworkLayout.setVisibility(View.GONE);
             mLinkNetworkLayout.setVisibility(View.VISIBLE);
+            mChannelActivitiesTv.setText("My Account 1 Activities");
+            mChannelActivitiesTv.setTextColor(Color.parseColor("#000000"));
+            mToBePaidTv.setText(R.string.pending_txs);
+            mToBePaidTitleTv.setText(R.string.pending_txs);
+            mToBePaidTv.setTextColor(Color.parseColor("#000000"));
+            mLineView.setVisibility(View.GONE);
+            mRootMyInvoicesLayout.setVisibility(View.GONE);
         }
     }
 

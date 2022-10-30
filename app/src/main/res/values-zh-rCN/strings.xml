@@ -190,6 +190,7 @@
     <string name="day">Days</string>
     <string name="my_invoices">My Invoices</string>
     <string name="sender">SENDER</string>
+    <string name="pending_txs">Pending Txs</string>
 
     <!--token list 页面-->
     <string name="balance">余额</string>

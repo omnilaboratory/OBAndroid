@@ -424,6 +424,7 @@
                 android:background="@mipmap/icon_bottom_rectangle_two">
 
                 <TextView
+                    android:id="@+id/tv_channel_activities"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_40"
@@ -657,6 +658,7 @@
                     android:paddingTop="@dimen/main_20">
 
                     <TextView
+                        android:id="@+id/tv_to_be_paid"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_17"
@@ -665,6 +667,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_to_be_paid_num"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/main_18"
                         android:layout_marginLeft="@dimen/main_10"
@@ -677,6 +680,7 @@
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/view_line"
                     android:layout_width="@dimen/main_2"
                     android:layout_height="@dimen/main_55"
                     android:layout_marginTop="@dimen/main_15"
@@ -835,6 +839,7 @@
                     </RelativeLayout>
 
                     <TextView
+                        android:id="@+id/tv_to_be_paid_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/main_25"
