@@ -133,4 +133,13 @@ public class UnlockActivity extends AppBaseActivity {
     public void clickRecover() {
         switchActivity(RecoverWalletStepOneActivity.class);
     }
+
+    /**
+     * click forgot password
+     * 点击忘记密码
+     */
+    @OnClick(R.id.btv_forget_button)
+    public void clickForgetPass(){
+        switchActivity(ForgetPwdActivity.class);
+    }
 }

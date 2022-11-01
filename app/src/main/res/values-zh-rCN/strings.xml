@@ -14,6 +14,7 @@
     <string name="unlock_uppre">解锁</string>
     <string name="create_uppre">创建</string>
     <string name="recover_uppre">恢复</string>
+    <string name="forgot_pass">忘记密码？</string>
     <!-- ForgetPwd页面 -->
     <string name="forget_pwd">Forget Password</string>
     <string name="back">Back</string>

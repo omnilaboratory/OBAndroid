@@ -8,5 +8,6 @@
     <color name="color_black_80">#80000000</color>
     <color name="color_key">#40000000</color>
     <color name="color_orange">#FFea9518</color>
+    <color name="color_0066ff">#FF0066ff</color>
 
 </resources>
