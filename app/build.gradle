@@ -8,7 +8,7 @@ android {
     def versions = rootProject.ext.versions
     compileSdkVersion versions.compileVersion
     buildToolsVersion versions.buildToolVersion
-    ndkVersion "23.2.8568313"
+    ndkVersion "20.0.5594570"
     defaultConfig {
         multiDexEnabled = true
         applicationId versions.applicationId
