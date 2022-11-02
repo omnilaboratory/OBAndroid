@@ -3,7 +3,7 @@
     <!-- SplashActivity theme. -->
     <style name="SplashTheme" parent="AppTheme">
         <!-- Activity背景 -->
-        <item name="android:windowBackground">@color/color_white</item>
+        <item name="android:windowBackground">@color/page_white</item>
     </style>
 
     <!--消息页面使用TabLayout的时候的样式-->
@@ -33,5 +33,12 @@
         <item name="android:windowIsTranslucent">false</item>
         <!--模糊-->
         <item name="android:backgroundDimEnabled">false</item>
+    </style>
+    <!--Loading的Dialog样式-->
+    <style name="dialog_translucent_theme_loading" parent="dialog_default_theme">
+        <!--半透明-->
+        <item name="android:windowIsTranslucent">true</item>
+        <!--模糊-->
+        <item name="android:backgroundDimEnabled">true</item>
     </style>
 </resources>

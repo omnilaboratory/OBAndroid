@@ -54,6 +54,7 @@
     <string name="easy">EASY</string>
     <string name="normal">NORMAL</string>
     <string name="strong">STRONG</string>
+    <string name="empty">EMPTY</string>
     <!-- choose backup type页面 -->
     <string name="choose_backup_type">Choose Backup Type</string>
     <string name="local">Local</string>

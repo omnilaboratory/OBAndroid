@@ -36,18 +36,26 @@
             android:textSize="18sp" />
 
     </LinearLayout>
-
+    
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="15dp"
-        android:background="@drawable/bg_create_content_green"
         android:elevation="10dp"
-        android:orientation="vertical"
-        android:padding="10dp"
-        android:id="@+id/edit_text_Content">
+        android:gravity="center">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_create_content_green"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:id="@+id/edit_text_Content">
 
+        </LinearLayout>
     </LinearLayout>
+
+    
 
     <RelativeLayout
         android:layout_width="match_parent"

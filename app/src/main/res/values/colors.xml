@@ -9,5 +9,7 @@
     <color name="color_key">#40000000</color>
     <color name="color_orange">#FFea9518</color>
     <color name="color_0066ff">#FF0066ff</color>
+    <color name="page_white">#FFF9F9F9</color>
+    <color name="loading_bg_color">#FFB3B4B5</color>
 
 </resources>

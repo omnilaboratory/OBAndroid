@@ -106,7 +106,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                     normal.setBackgroundColor(getResources().getColor(R.color.color_orange));
                     strong.setBackgroundColor(getResources().getColor(R.color.color_green));
                     pass_strong_text.setVisibility(View.VISIBLE);
-                    pass_strong_text.setText("STORNG");
+                    pass_strong_text.setText("STRONG");
                     pass_strong_text.setTextColor(getResources().getColor(R.color.color_green));
                     break;
                 default:
@@ -114,22 +114,28 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                     normal.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
                     strong.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
                     pass_strong_text.setVisibility(View.VISIBLE);
-                    pass_strong_text.setText("");
-                    pass_strong_text.setTextColor(getResources().getColor(R.color.color_10_white));
+                    pass_strong_text.setText("EMPTY");
+                    pass_strong_text.setTextColor(getResources().getColor(R.color.color_todo_grey));
                     break;
             }
 
         }else if(strongerPwd==0){
-            pass_strong_text.setVisibility(View.INVISIBLE);
+            pass_strong_text.setVisibility(View.VISIBLE);
             pass_input_check.setVisibility(View.INVISIBLE);
-            pass_strong_text.setText("");
-            pass_strong_text.setTextColor(getResources().getColor(R.color.color_10_white));
+            easy.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
+            normal.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
+            strong.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
+            pass_strong_text.setText("EMPTY");
+            pass_strong_text.setTextColor(getResources().getColor(R.color.color_todo_grey));
         }else{
-            pass_strong_text.setVisibility(View.INVISIBLE);
-            pass_input_check.setVisibility(View.VISIBLE);
+            pass_strong_text.setVisibility(View.VISIBLE);
+            pass_input_check.setVisibility(View.INVISIBLE);
+            easy.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
+            normal.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
+            strong.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
             pass_input_check.setImageResource(R.mipmap.icon_wrong_red);
-            pass_strong_text.setText("");
-            pass_strong_text.setTextColor(getResources().getColor(R.color.color_10_white));
+            pass_strong_text.setText("EMPTY");
+            pass_strong_text.setTextColor(getResources().getColor(R.color.color_todo_grey));
         }
     }
 
