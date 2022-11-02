@@ -48,6 +48,10 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        initEvForSeeds();
+    }
+    
+    private void initEvForSeeds(){
         /**
          * 从xml文件中读取seeds
          * Get seeds form xml file
@@ -87,7 +91,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
                 TextView noText = new TextView(this);
                 RelativeLayout.LayoutParams noTextParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 noText.setTextColor(getResources().getColor(R.color.color_white));
-                noText.setTextSize(16.0f);
+                noText.setTextSize(20.0f);
                 noText.setText(noNum);
                 noText.setLayoutParams(noTextParams);
 

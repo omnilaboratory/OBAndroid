@@ -49,13 +49,17 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
-        /**
-         * 动态渲染24个输入框
-         * Dynamically render 24 input boxes
-         */
+        initEditViewForSeeds();
+        
+    }
+
+    /**
+     * 动态渲染24个输入框
+     * Dynamically render 24 input boxes
+     */
+    
+    private void initEditViewForSeeds(){
         LinearLayout editListContent = findViewById(R.id.edit_text_Content);
-
-
         for (int row = 1; row <= 8; row++) {
             RelativeLayout rowContent = new RelativeLayout(this);
             RelativeLayout.LayoutParams rowContentParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);

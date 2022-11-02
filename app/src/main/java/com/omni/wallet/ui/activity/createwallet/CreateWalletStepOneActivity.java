@@ -4,22 +4,29 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.protobuf.ByteString;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.NumberFormatter;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 
 import butterknife.OnClick;
+import lndmobile.Callback;
+import lndmobile.Lndmobile;
+import lnrpc.Walletunlocker;
 
 public class CreateWalletStepOneActivity extends AppBaseActivity {
     String[] seedArray = {"about", "gun", "blind", "method", "addict", "scrub", "red", "risbon", "such", "kitchen", "prevent", "gap", "super", "risk", "survey", "cable", "image", "weather", "prize", "item", "between", "moral", "worth", "must"};
     String seedsString = "";
     Context ctx = CreateWalletStepOneActivity.this;
+    LoadingDialog mLoadingDialog;
 
     @Override
     protected Drawable getWindowBackground() {
@@ -40,6 +47,11 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        createSeeds();
+        initTvForSeeds();
+    }
+    
+    private void initTvForSeeds(){
         for (int idx = 0;idx<seedArray.length;idx++){
             seedsString = seedsString + seedArray[idx]+ " ";
         }
@@ -57,15 +69,13 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
             RelativeLayout rowContent = new RelativeLayout(this);
             RelativeLayout.LayoutParams rowContentLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             rowContent.setLayoutParams(rowContentLayoutParams);
-            rowContent.setId(rowNum);
 
             LinearLayout rowInnerContent = new LinearLayout(this);
             LinearLayout.LayoutParams rowInnerContentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             rowInnerContent.setOrientation(LinearLayout.HORIZONTAL);
-            rowInnerContent.setPadding(0,0,0,40);
+            rowInnerContent.setPadding(0,20,0,30);
             rowInnerContent.setBaselineAligned(false);
             rowInnerContent.setLayoutParams(rowInnerContentParams);
-            rowInnerContent.setId(rowNum);
 
             for (int itemNum = 1; itemNum <= 3; itemNum++) {
                 int noNum = (rowNum - 1) * 3 + itemNum;
@@ -75,7 +85,6 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
                 itemInnerContent.setOrientation(LinearLayout.HORIZONTAL);
                 itemInnerContent.setBaselineAligned(false);
                 itemInnerContent.setLayoutParams(itemInnerContentParams);
-                itemInnerContent.setId(noNum);
 
                 TextView itemNoWidget = new TextView(this);
                 RelativeLayout.LayoutParams itemNoWidgetParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -84,7 +93,6 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
                 itemNoWidget.setTextColor(getResources().getColor(R.color.color_white));
                 itemNoWidget.setTextSize(20.0f);
                 itemNoWidget.setLayoutParams(itemNoWidgetParams);
-                itemNoWidget.setId(noNum);
 
                 TextView itemSeeWidget = new TextView(this);
                 RelativeLayout.LayoutParams itemSeedWidgetParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -92,7 +100,6 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
                 itemSeeWidget.setTextColor(getResources().getColor(R.color.color_black));
                 itemSeeWidget.setTextSize(20.0f);
                 itemSeeWidget.setLayoutParams(itemSeedWidgetParams);
-                itemSeeWidget.setId(noNum);
 
                 itemInnerContent.addView(itemNoWidget);
                 itemInnerContent.addView(itemSeeWidget);
@@ -102,6 +109,9 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
             rowContent.addView(rowInnerContent);
             linearLayout.addView(rowContent);
         }
+    }
+
+    private void createSeeds() {
     }
 
 

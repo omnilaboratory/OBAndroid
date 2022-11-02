@@ -13,6 +13,7 @@
     <string name="unlock_uppre">UNLOCK</string>
     <string name="create_uppre">CREATE</string>
     <string name="recover_uppre">RECOVER</string>
+    <string name="forgot_pass">Forgot password?</string>
     <!-- ForgetPwd页面 -->
     <string name="forget_pwd">Forget Password</string>
     <string name="back">Back</string>
@@ -53,6 +54,7 @@
     <string name="easy">EASY</string>
     <string name="normal">NORMAL</string>
     <string name="strong">STRONG</string>
+    <string name="empty">EMPTY</string>
     <!-- choose backup type页面 -->
     <string name="choose_backup_type">Choose Backup Type</string>
     <string name="local">Local</string>

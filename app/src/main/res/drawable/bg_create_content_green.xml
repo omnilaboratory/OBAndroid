@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <corners
-        android:radius="16dp"
-        android:topLeftRadius="16dp"
-        android:topRightRadius="16dp"
-        android:bottomLeftRadius="16dp"
-        android:bottomRightRadius="16dp" />
-    <solid
-        android:color="#CC11EA75" />
-</shape>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<!--阴影-->
+<item >
+    <shape android:shape="rectangle">
+        <gradient
+            android:type="radial"
+            android:centerX="0.5"
+            android:centerY="0.5"
+            android:gradientRadius="1in"
+            android:startColor="@color/color_white"
+            android:centerColor="#FFABAADD"
+            android:endColor="#40ABAADD"/>
+        <corners android:radius="14dp" />
+    </shape>
+</item>
+<!--前景-->
+<item
+    android:bottom="6dp"
+    >
+    <shape xmlns:android="http://schemas.android.com/apk/res/android">
+        <corners
+            android:radius="16dp" />
+        <solid
+            android:color="#CC11EA75" />
+    </shape>
+</item>
+</layer-list>

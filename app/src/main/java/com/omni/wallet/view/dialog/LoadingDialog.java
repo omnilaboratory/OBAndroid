@@ -29,8 +29,9 @@ public class LoadingDialog {
      * 展示
      */
     public void show() {
+        
         if (mAlertDialog == null) {
-            mAlertDialog = new AlertDialog.Builder(mContext, R.style.dialog_translucent_theme)
+            mAlertDialog = new AlertDialog.Builder(mContext, R.style.dialog_translucent_theme_loading)
                     .setContentView(com.omni.wallet.framelibrary.R.layout.layout_dialog_loading)
                     .setCanceledOnTouchOutside(false)
                     .setCancelable(mCancelable)
@@ -45,7 +46,7 @@ public class LoadingDialog {
         waitingIcon.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         mRotationAnimator = ObjectAnimator.ofFloat(waitingIcon, "rotation", 0, 359f);
         mRotationAnimator.setInterpolator(new LinearInterpolator());
-        mRotationAnimator.setDuration(1200);
+        mRotationAnimator.setDuration(4000);
         mRotationAnimator.setRepeatCount(ObjectAnimator.INFINITE);
         mRotationAnimator.start();
     }
