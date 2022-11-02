@@ -22,14 +22,67 @@ option go_package = "github.com/lightningnetwork/lnd/lnrpc";
  * https://github.com/lightninglabs/lightning-api
  */
 
+message ListAddressesRequest {
+    //    AddressType address_type = 1;
+    //    string account = 2;
+}
+message ListAddressesResponse {
+    repeated string items = 1;
+}
+message RecAddress {
+    string Addre = 1;
+    bool IsDefault = 2;
+}
+message ListRecAddressRequest {
+}
+message ListRecAddressResponse {
+    repeated RecAddress items = 1;
+}
+
+message SetDefaultAddressRequest {
+    string address = 1;
+}
+message SetDefaultAddressResponse {
+}
 // Lightning is the main RPC server of the daemon.
 service Lightning {
+    // doc
+    // https://github.com/OmniLayer/omnicore/blob/master/src/omnicore/doc/rpc-api.md#omni_getproperty
+    rpc ListAsset (ListAssetRequest) returns (ListAssetResponse);
+
+    /* obd update wxf
+     *  obd wallet need  all address in the wallet
+     */
+    rpc ListAddresses (ListAddressesRequest) returns (ListAddressesResponse);
+
+    rpc ListRecAddress (ListRecAddressRequest) returns (ListRecAddressResponse);
+    rpc SetDefaultAddress (SetDefaultAddressRequest)
+        returns (SetDefaultAddressResponse);
+
+    // map to omni_listtransactions
+    // doc
+    // https://github.com/OmniLayer/omnicore/blob/master/src/omnicore/doc/rpc-api.md#omni_listtransactions
+    rpc ListTranscations (ListTranscationsRequest)
+        returns (ListTranscationsResponse);
     /* lncli: `walletbalance`
     WalletBalance returns total unspent outputs(confirmed and unconfirmed), all
     confirmed unspent outputs and all unconfirmed unspent outputs under control
     of the wallet.
     */
     rpc WalletBalance (WalletBalanceRequest) returns (WalletBalanceResponse);
+
+    /* obd update wxf
+     * omni wallet's balance is queryed by address
+     */
+    rpc WalletBalanceByAddress (WalletBalanceByAddressRequest)
+        returns (WalletBalanceByAddressResponse);
+
+    /* obd update wxf
+     * get all asset balance  by address
+     omni_getallbalancesforaddress
+     */
+    rpc AssetsBalanceByAddress (AssetsBalanceByAddressRequest)
+        returns (AssetsBalanceByAddressResponse);
 
     /* lncli: `channelbalance`
     ChannelBalance returns a report on the total funds across all open channels,
@@ -63,6 +116,8 @@ service Lightning {
     target.
     */
     rpc SendCoins (SendCoinsRequest) returns (SendCoinsResponse);
+
+    rpc SendCoinsFrom (SendCoinsFromRequest) returns (SendCoinsResponse);
 
     /* lncli: `listunspent`
     Deprecated, use walletrpc.ListUnspent instead.
@@ -572,6 +627,85 @@ service Lightning {
         returns (stream CustomMessage);
 }
 
+message ListAssetRequest {
+}
+message ListTranscationsRequest {
+    repeated string addrs = 1;
+}
+message ListTranscationsResponse {
+    repeated AssetTx List = 1;
+}
+message AssetTx {
+    string amount = 1;
+
+    int64 block = 2;
+
+    string blockhash = 3;
+
+    int64 blocktime = 4;
+
+    int64 confirmations = 5;
+
+    bool divisible = 6;
+
+    string fee = 7;
+
+    bool ismine = 8;
+
+    int64 positioninblock = 9;
+
+    int64 propertyid = 10;
+
+    string referenceaddress = 11;
+
+    string sendingaddress = 12;
+
+    string txid = 13;
+
+    string type = 14;
+
+    int64 type_int = 15;
+
+    bool valid = 16;
+
+    int64 version = 17;
+}
+message ListAssetResponse {
+    repeated Asset List = 1;
+}
+message Asset {
+    // (number) the identifier
+    int64 propertyid = 11;
+    // (string) the name of the tokens
+    string name = 9;
+
+    // (string) the category used for the tokens
+    string category = 1;
+    // (string) the hex-encoded creation transaction hash
+    string creationtxid = 2;
+
+    // (string) additional information or a description
+    string data = 3;
+    // (string) the Bitcoin address of the issuance delegate, if there is one
+    string delegate = 4;
+
+    // (boolean) whether the tokens are divisible
+    bool divisible = 5;
+    // (boolean) whether the token supply is fixed
+    bool fixedissuance = 6;
+
+    // (string) the Bitcoin address of the issuer on record
+    string issuer = 7;
+    // (boolean) whether the token supply is managed by the issuer
+    bool managedissuance = 8;
+
+    bool non_fungibletoken = 10;
+
+    // (string) the subcategory used for the tokens
+    string subcategory = 12;
+    // (string) an URI, for example pointing to a website
+    string url = 13;
+}
 message SubscribeCustomMessagesRequest {
 }
 
@@ -1043,6 +1177,41 @@ message SendManyRequest {
 message SendManyResponse {
     // The id of the transaction
     string txid = 1;
+}
+
+message SendCoinsFromRequest {
+    // The address to send coins to
+    string addr = 1;
+
+    // The amount in satoshis to send
+    int64 amount = 2;
+
+    string from = 10;
+    int64 asset_amount = 11;
+    uint32 asset_id = 12;
+
+    // The target number of blocks that this transaction should be confirmed
+    // by.
+    int32 target_conf = 3;
+
+    // A manual fee rate set in sat/vbyte that should be used when crafting the
+    // transaction.
+    uint64 sat_per_vbyte = 4;
+
+    // Deprecated, use sat_per_vbyte.
+    // A manual fee rate set in sat/vbyte that should be used when crafting the
+    // transaction.
+    int64 sat_per_byte = 5 [deprecated = true];
+
+    // An optional label for the transaction, limited to 500 characters.
+    string label = 7;
+
+    // The minimum number of confirmations each one of your outputs used for
+    // the transaction must satisfy.
+    int32 min_confs = 8;
+
+    // Whether unconfirmed outputs should be used as inputs for the transaction.
+    bool spend_unconfirmed = 9;
 }
 
 message SendCoinsRequest {
@@ -1741,6 +1910,12 @@ message GetInfoResponse {
 
     // The identity pubkey of the current node.
     string identity_pubkey = 1;
+
+    /*
+      obd upadte wxf:
+      dns srv key. used in dns srv record
+    */
+    string pubkey_bech32 = 21;
 
     // If applicable, the alias of the current node, e.g. "bob"
     string alias = 2;
@@ -2521,7 +2696,6 @@ message WalletAccountBalance {
 
 message WalletBalanceRequest {
 }
-
 message WalletBalanceResponse {
     // The balance of the wallet
     int64 total_balance = 1;
@@ -2534,6 +2708,43 @@ message WalletBalanceResponse {
 
     // A mapping of each wallet account's name to its balance.
     map<string, WalletAccountBalance> account_balance = 4;
+}
+
+message WalletBalanceByAddressRequest {
+    string address = 1;
+    //    uint32 asset_id = 2;
+}
+message AssetsBalanceByAddressRequest {
+    string address = 1;
+}
+
+message AssetBalanceByAddressResponse {
+    int64 propertyid = 1;
+    string name = 2;
+    int64 balance = 3;
+    string reserved = 4;
+    string frozen = 5;
+}
+message AssetsBalanceByAddressResponse {
+    repeated AssetBalanceByAddressResponse list = 1;
+}
+
+message WalletBalanceByAddressResponse {
+    // The balance of the wallet
+    int64 total_balance = 1;
+
+    // The confirmed balance of a wallet(with >= 1 confirmations)
+    int64 confirmed_balance = 2;
+
+    // The unconfirmed balance of a wallet(with 0 confirmations)
+    int64 unconfirmed_balance = 3;
+
+    // A mapping of each wallet account's name to its balance.
+    map<string, WalletAccountBalance> account_balance = 4;
+
+    //    int64 asset_balance = 5;
+    //    string address = 6;
+    //    uint32 asset_id = 7;
 }
 
 message Amount {
@@ -3521,6 +3732,8 @@ message Payment {
 
     // The value of the payment in satoshis
     //    int64 value_sat = 7;
+
+    int64 asset_id = 17;
 
     // The value of the payment in milli-satoshis
     int64 value_msat = 8;

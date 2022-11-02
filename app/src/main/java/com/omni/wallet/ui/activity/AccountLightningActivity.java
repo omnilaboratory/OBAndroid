@@ -2,7 +2,7 @@ package com.omni.wallet.ui.activity;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,19 +11,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.AccountManagePopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
 import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
-import com.omni.wallet.utils.CopyUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +34,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import lndmobile.Callback;
+import lndmobile.Lndmobile;
+import lnrpc.LightningOuterClass;
 
 public class AccountLightningActivity extends AppBaseActivity {
     private static final String TAG = AccountLightningActivity.class.getSimpleName();
@@ -49,7 +54,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     private List<Map> blockData = new ArrayList<>();
     private List<Map> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
-    private List<Map> allData = new ArrayList<>();
+    private List<LightningOuterClass.AssetBalanceByAddressResponse> allData = new ArrayList<>();
+    LightningOuterClass.NewAddressResponse addressResp;
 
     MenuPopupWindow mMenuPopupWindow;
     FundPopupWindow mFundPopupWindow;
@@ -57,6 +63,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     SendStepOnePopupWindow mSendStepOnePopupWindow;
     SelectNodePopupWindow mSelectNodePopupWindow;
+    private LoadingDialog mLoadingDialog;
 
     @Override
     protected View getStatusBarTopView() {
@@ -75,6 +82,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        mLoadingDialog = new LoadingDialog(mContext);
         initAllData();
         initRecyclerView(allData);
     }
@@ -124,71 +132,144 @@ public class AccountLightningActivity extends AppBaseActivity {
     private void initAllData() {
         initBlockAssets();
         initLightningAssets();
-        allData.addAll(blockData);
-        allData.addAll(lightningData);
+//        allData.addAll(blockData);
+//        allData.addAll(lightningData);
 
     }
 
-    private void initRecyclerView(List data) {
+    private void initRecyclerView(List<LightningOuterClass.AssetBalanceByAddressResponse> allData) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerViewBlock.setLayoutManager(new LinearLayoutManager(mContext));
-        mAdapter = new MyAdapter(mContext, data, R.layout.layout_item_assets_list);
+        mAdapter = new MyAdapter(mContext, allData, R.layout.layout_item_assets_list);
         mRecyclerViewBlock.setAdapter(mAdapter);
     }
 
 
     @Override
     protected void initData() {
+        if (mLoadingDialog != null) {
+            mLoadingDialog.show();
+        }
+//        Lndmobile.listAsset(LightningOuterClass.ListAssetRequest.newBuilder().build().toByteArray(), new Callback() {
+//            @Override
+//            public void onError(Exception e) {
+//                LogUtils.e(TAG, "------------------listAssetonError------------------" + e.getMessage());
+//            }
+//
+//            @Override
+//            public void onResponse(byte[] bytes) {
+//                try {
+//                    LightningOuterClass.ListAssetResponse resp = LightningOuterClass.ListAssetResponse.parseFrom(bytes);
+//                    LogUtils.e(TAG, "------------------listAssetonResponse-----------------" + resp);
+//                } catch (InvalidProtocolBufferException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+        /**
+         * Create a new wallet address first, and then request the interface of each asset balance list
+         * 先创建新的钱包地址后再去请求各资产余额列表的接口
+         */
+        LightningOuterClass.NewAddressRequest asyncNewAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder()
+                .setTypeValue(2)
+                .build();
+        Lndmobile.newAddress(asyncNewAddressRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------newAddressOnError------------------" + e.getMessage());
+            }
 
+            @Override
+            public void onResponse(byte[] bytes) {
+                try {
+                    addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
+                        .setAddress(addressResp.getAddress())
+                        .build();
+                Lndmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
+                        if (mLoadingDialog != null) {
+                            mLoadingDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        try {
+                            LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
+                            allData.clear();
+                            allData.addAll(resp.getListList());
+                            mAdapter.notifyDataSetChanged();
+                            if (mLoadingDialog != null) {
+                                mLoadingDialog.dismiss();
+                            }
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        }, 1000);
     }
 
     /**
      * 资产列表适配器
      * The adapter for assets list
      */
-    private class MyAdapter extends CommonRecyclerAdapter<Map> {
+    private class MyAdapter extends CommonRecyclerAdapter<LightningOuterClass.AssetBalanceByAddressResponse> {
 
-        public MyAdapter(Context context, List<Map> data, int layoutId) {
+        public MyAdapter(Context context, List<LightningOuterClass.AssetBalanceByAddressResponse> data, int layoutId) {
             super(context, data, layoutId);
         }
 
 
         @Override
-        public void convert(ViewHolder holder, final int position, final Map item) {
-            if (position == blockData.size() - 1) {
-                LinearLayout lvContent = holder.getView(R.id.lv_item_content);
-                lvContent.setPadding(0, 0, 0, 100);
-            }
-
-
-            Integer tokenImageSourceId = Integer.parseInt(item.get("tokenImageSource").toString());
-            Integer networkImageSource = Integer.parseInt(item.get("networkImageSource").toString());
-            String assetsAmount = item.get("amount").toString();
-            String assetsValue = item.get("value").toString();
-            holder.setImageResource(R.id.iv_asset_logo, tokenImageSourceId);
-            holder.setImageResource(R.id.iv_asset_net, networkImageSource);
-            holder.setText(R.id.tv_asset_amount, assetsAmount);
-            holder.setText(R.id.tv_asset_value, assetsValue);
-            if (networkImageSource == R.mipmap.icon_network_link_black) {
-                holder.setOnItemClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "link");
-                        switchActivity(BalanceDetailActivity.class, bundle);
-                    }
-                });
-            } else {
-                holder.setOnItemClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "lightning");
-                        switchActivity(BalanceDetailActivity.class, bundle);
-                    }
-                });
-            }
+        public void convert(ViewHolder holder, final int position, final LightningOuterClass.AssetBalanceByAddressResponse item) {
+//            if (position == blockData.size() - 1) {
+//                LinearLayout lvContent = holder.getView(R.id.lv_item_content);
+//                lvContent.setPadding(0, 0, 0, 100);
+//            }
+//
+//
+//            Integer tokenImageSourceId = Integer.parseInt(item.get("tokenImageSource").toString());
+//            Integer networkImageSource = Integer.parseInt(item.get("networkImageSource").toString());
+//            String assetsAmount = item.get("amount").toString();
+//            String assetsValue = item.get("value").toString();
+//            holder.setImageResource(R.id.iv_asset_logo, tokenImageSourceId);
+//            holder.setImageResource(R.id.iv_asset_net, networkImageSource);
+//            holder.setText(R.id.tv_asset_amount, assetsAmount);
+//            holder.setText(R.id.tv_asset_value, assetsValue);
+//            if (networkImageSource == R.mipmap.icon_network_link_black) {
+//                holder.setOnItemClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "link");
+//                        switchActivity(BalanceDetailActivity.class, bundle);
+//                    }
+//                });
+//            } else {
+//                holder.setOnItemClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "lightning");
+//                        switchActivity(BalanceDetailActivity.class, bundle);
+//                    }
+//                });
+//            }
 
 
         }

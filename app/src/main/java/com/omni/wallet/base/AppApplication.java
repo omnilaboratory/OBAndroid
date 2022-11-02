@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.omni.wallet.baselibrary.base.BaseApplication;
@@ -13,6 +14,9 @@ import com.omni.wallet.baselibrary.http.engine.OkHttpEngine;
 import com.omni.wallet.baselibrary.http.interceptor.LogInterceptor;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
+
+import lndmobile.Callback;
+import lndmobile.Lndmobile;
 
 /**
  * Application
@@ -66,6 +70,29 @@ public class AppApplication extends BaseApplication {
             ARouter.openDebug();
         }
         ARouter.init(this);
+        /**
+         * Start the lnd node during initialization
+         * 初始化的时候启动lnd节点
+         */
+        LogUtils.e(TAG, "------------------getFilesDir------------------" + getApplicationContext().getFilesDir());
+        LogUtils.e(TAG, "------------------getExternalCacheDir------------------" + getApplicationContext().getExternalCacheDir());
+        Lndmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + " --noseedbackup --trickledelay=5000 --alias=alice\n" +
+                "--listen=0.0.0.0:9735\n" +
+                "--bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind\n" +
+                "--bitcoind.rpchost=16.162.119.13:18332 --bitcoind.rpcuser=polaruser\n" +
+                "--bitcoind.rpcpass=polarpass\n" +
+                "--bitcoind.zmqpubrawblock=tcp://16.162.119.13:28332\n" +
+                "--bitcoind.zmqpubrawtx=tcp://16.162.119.13:28333", new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
+            }
+        });
     }
 
     /**
@@ -76,6 +103,7 @@ public class AppApplication extends BaseApplication {
         String packageName = getApplicationContext().getPackageName();
         return (packageName + ":channel").equals(processName) || packageName.equals(processName);
     }
+
     /**
      * @描述： 解决放法数量超过65536
      * @desc: The number of solutions exceeds 65536

@@ -2,6 +2,7 @@ package com.omni.wallet.ui.activity;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
@@ -28,6 +30,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import lndmobile.Callback;
+import lndmobile.Lndmobile;
+import lnrpc.LightningOuterClass;
 
 public class ChannelsActivity extends AppBaseActivity {
     private static final String TAG = ChannelsActivity.class.getSimpleName();
@@ -79,6 +84,26 @@ public class ChannelsActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         getItemData();
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                Lndmobile.getInfo(LightningOuterClass.GetInfoRequest.newBuilder().build().toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        LogUtils.e(TAG, "------------------getInfoonError------------------" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        try {
+                            LightningOuterClass.GetInfoResponse resp = LightningOuterClass.GetInfoResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------getInfoonResponse-----------------" + resp);
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        }, 1000);
     }
 
     private void getItemData() {
@@ -222,11 +247,13 @@ public class ChannelsActivity extends AppBaseActivity {
         String toastString = getResources().getString(R.string.toast_copy_address);
         CopyUtil.SelfCopy(ChannelsActivity.this, toCopyAddress, toastString);
     }
+
     @OnClick(R.id.lv_network_title_content)
-    public void clickSelectNode(){
+    public void clickSelectNode() {
         mSelectNodePopupWindow = new SelectNodePopupWindow(mContext);
         mSelectNodePopupWindow.show(mParentLayout);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
