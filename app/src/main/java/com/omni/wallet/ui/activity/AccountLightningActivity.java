@@ -192,6 +192,20 @@ public class AccountLightningActivity extends AppBaseActivity {
         });
         new Handler().postDelayed(new Runnable() {
             public void run() {
+                LightningOuterClass.SetDefaultAddressRequest setDefaultAddressRequest = LightningOuterClass.SetDefaultAddressRequest.newBuilder()
+                        .setAddress(addressResp.getAddress())
+                        .build();
+                Lndmobile.setDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+
+                    @Override
+                    public void onResponse(byte[] bytes) {
+
+                    }
+                });
                 LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
                         .setAddress(addressResp.getAddress())
                         .build();
