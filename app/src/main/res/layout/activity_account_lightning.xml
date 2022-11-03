@@ -157,7 +157,10 @@
                                 android:textStyle="bold"/>
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:id="@+id/tv_wallet_address"
+                                android:singleLine="true"
+                                android:ellipsize="middle"
+                                android:layout_width="@dimen/main_115"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/main_6"
                                 android:text="01234e*****bg453123"

@@ -70,6 +70,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <EditText
+                        android:id="@+id/edit_local"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/main_26"
                         android:layout_marginRight="@dimen/main_80"
@@ -118,6 +119,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <EditText
+                        android:id="@+id/edit_water_drip"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/main_26"
                         android:layout_marginRight="@dimen/main_80"
@@ -166,6 +168,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <EditText
+                        android:id="@+id/edit_remote"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/main_26"
                         android:layout_marginRight="@dimen/main_80"
@@ -286,6 +289,7 @@
                 android:background="@color/color_80p_transparent"></View>
 
             <EditText
+                android:id="@+id/edit_vaild_pubkey"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/main_59"
                 android:layout_gravity="center"
@@ -354,6 +358,7 @@
                 android:orientation="horizontal">
 
                 <EditText
+                    android:id="@+id/edit_channel_amount"
                     android:layout_width="@dimen/main_218"
                     android:layout_height="@dimen/main_32"
                     android:background="@drawable/bg_black_rectangle_round_0"
@@ -362,6 +367,7 @@
                     android:textSize="@dimen/text_16"/>
 
                 <Button
+                    android:id="@+id/btn_amount_unit"
                     android:layout_width="@dimen/main_61"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/main_12"
@@ -397,6 +403,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_channel_amount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
@@ -460,6 +467,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tv_channel_fee"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="100"

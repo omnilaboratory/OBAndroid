@@ -2,7 +2,7 @@ package com.omni.wallet.ui.activity;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,6 +47,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     View mTopView;
     @BindView(R.id.iv_menu)
     ImageView mMenuIv;
+    @BindView(R.id.tv_wallet_address)
+    TextView mWalletAddressTv;
     @BindView(R.id.recycler_assets_list_block)
     public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock(The Recycler View Block for Assets List)
     @BindView(R.id.tv_account_value)
@@ -64,6 +66,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     SendStepOnePopupWindow mSendStepOnePopupWindow;
     SelectNodePopupWindow mSelectNodePopupWindow;
     private LoadingDialog mLoadingDialog;
+
+    private String pubkey;
 
     @Override
     protected View getStatusBarTopView() {
@@ -151,22 +155,27 @@ public class AccountLightningActivity extends AppBaseActivity {
         if (mLoadingDialog != null) {
             mLoadingDialog.show();
         }
-//        Lndmobile.listAsset(LightningOuterClass.ListAssetRequest.newBuilder().build().toByteArray(), new Callback() {
-//            @Override
-//            public void onError(Exception e) {
-//                LogUtils.e(TAG, "------------------listAssetonError------------------" + e.getMessage());
-//            }
-//
-//            @Override
-//            public void onResponse(byte[] bytes) {
-//                try {
-//                    LightningOuterClass.ListAssetResponse resp = LightningOuterClass.ListAssetResponse.parseFrom(bytes);
-//                    LogUtils.e(TAG, "------------------listAssetonResponse-----------------" + resp);
-//                } catch (InvalidProtocolBufferException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+        /**
+         * Get wallet related information
+         * 获取钱包相关信息
+         */
+        Lndmobile.getInfo(LightningOuterClass.GetInfoRequest.newBuilder().build().toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------getInfoOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                try {
+                    LightningOuterClass.GetInfoResponse resp = LightningOuterClass.GetInfoResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------getInfoOnResponse-----------------" + resp);
+                    pubkey = resp.getIdentityPubkey();
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         /**
          * Create a new wallet address first, and then request the interface of each asset balance list
          * 先创建新的钱包地址后再去请求各资产余额列表的接口
@@ -184,58 +193,68 @@ public class AccountLightningActivity extends AppBaseActivity {
             public void onResponse(byte[] bytes) {
                 try {
                     addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
+                    mWalletAddressTv.setText(addressResp.getAddress());
                     LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
             }
         });
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                LightningOuterClass.SetDefaultAddressRequest setDefaultAddressRequest = LightningOuterClass.SetDefaultAddressRequest.newBuilder()
-                        .setAddress(addressResp.getAddress())
-                        .build();
-                Lndmobile.setDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
-                    @Override
-                    public void onError(Exception e) {
-
-                    }
-
-                    @Override
-                    public void onResponse(byte[] bytes) {
-
-                    }
-                });
-                LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
-                        .setAddress(addressResp.getAddress())
-                        .build();
-                Lndmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
-                    @Override
-                    public void onError(Exception e) {
-                        LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
-                        if (mLoadingDialog != null) {
-                            mLoadingDialog.dismiss();
-                        }
-                    }
-
-                    @Override
-                    public void onResponse(byte[] bytes) {
-                        try {
-                            LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
-                            LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
-                            allData.clear();
-                            allData.addAll(resp.getListList());
-                            mAdapter.notifyDataSetChanged();
-                            if (mLoadingDialog != null) {
-                                mLoadingDialog.dismiss();
-                            }
-                        } catch (InvalidProtocolBufferException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+        /**
+         * request the interface of each asset balance list
+         * 请求各资产余额列表的接口
+         */
+        LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
+                .setAddress("ms5u6Wmc8xF8wFBo9w5HFouFNAmnWzkVa6")
+                .build();
+        Lndmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
+                if (mLoadingDialog != null) {
+                    mLoadingDialog.dismiss();
+                }
             }
-        }, 1000);
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (mLoadingDialog != null) {
+                    mLoadingDialog.dismiss();
+                }
+                try {
+                    LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
+                    allData.clear();
+                    allData.addAll(resp.getListList());
+                    mAdapter.notifyDataSetChanged();
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+//        /**
+//         * Set the created new wallet address as the default wallet address
+//         * 将创建新的钱包地址设置为默认钱包地址
+//         */
+//        LightningOuterClass.SetDefaultAddressRequest setDefaultAddressRequest = LightningOuterClass.SetDefaultAddressRequest.newBuilder()
+//                .setAddress(addressResp.getAddress())
+//                .build();
+//        Lndmobile.setDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
+//            @Override
+//            public void onError(Exception e) {
+//                LogUtils.e(TAG, "------------------setDefaultAddressOnError------------------" + e.getMessage());
+//            }
+//
+//            @Override
+//            public void onResponse(byte[] bytes) {
+//                try {
+//                    LightningOuterClass.SetDefaultAddressResponse resp = LightningOuterClass.SetDefaultAddressResponse.parseFrom(bytes);
+//                    LogUtils.e(TAG, "------------------setDefaultAddressOnResponse------------------" + resp.toString());
+//                } catch (InvalidProtocolBufferException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
     }
 
     /**
@@ -284,8 +303,9 @@ public class AccountLightningActivity extends AppBaseActivity {
 //                    }
 //                });
 //            }
-
-
+            // TODO: 2022/11/3 暂定待修改与完善
+            holder.setText(R.id.tv_asset_amount, String.valueOf(item.getBalance()));
+            holder.setText(R.id.tv_asset_value, item.getFrozen());
         }
     }
 
@@ -300,7 +320,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     public void clickCopy() {
         //接收需要复制到粘贴板的地址
         //Get the address which will copy to clipboard
-        String toCopyAddress = "01234e*****bg453123";
+        String toCopyAddress = mWalletAddressTv.getText().toString();
         //接收需要复制成功的提示语
         //Get the notice when you copy success
         String toastString = getResources().getString(R.string.toast_copy_address);
@@ -362,7 +382,9 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @OnClick(R.id.iv_channel_list)
     public void clickChannelList() {
-        switchActivity(ChannelsActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(ChannelsActivity.KEY_PUBKEY, pubkey);
+        switchActivity(ChannelsActivity.class, bundle);
     }
 
     /**
@@ -406,7 +428,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @OnClick(R.id.layout_create_channel)
     public void clickCreateChannel() {
         mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-        mCreateChannelStepOnePopupWindow.show(mParentLayout);
+        mCreateChannelStepOnePopupWindow.show(mParentLayout, pubkey);
     }
 
     @Override

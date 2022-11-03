@@ -2,6 +2,7 @@ package com.omni.wallet.ui.activity;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,11 +20,11 @@ import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.listItems.Channel;
-import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
+import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.popupwindow.ChannelDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
-import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,14 @@ public class ChannelsActivity extends AppBaseActivity {
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     ChannelDetailsPopupWindow mChannelDetailsPopupWindow;
     SelectNodePopupWindow mSelectNodePopupWindow;
+
+    public static final String KEY_PUBKEY = "pubkeyKey";
+    private String pubkey;
+
+    @Override
+    protected void getBundleData(Bundle bundle) {
+        pubkey = bundle.getString(KEY_PUBKEY);
+    }
 
     @Override
     protected View getStatusBarTopView() {
@@ -86,17 +95,52 @@ public class ChannelsActivity extends AppBaseActivity {
         getItemData();
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                Lndmobile.getInfo(LightningOuterClass.GetInfoRequest.newBuilder().build().toByteArray(), new Callback() {
+                Lndmobile.listChannels(LightningOuterClass.ListChannelsRequest.newBuilder().build().toByteArray(), new Callback() {
                     @Override
                     public void onError(Exception e) {
-                        LogUtils.e(TAG, "------------------getInfoonError------------------" + e.getMessage());
+                        LogUtils.e(TAG, "------------------listChannelsOnError------------------" + e.getMessage());
                     }
 
                     @Override
                     public void onResponse(byte[] bytes) {
                         try {
-                            LightningOuterClass.GetInfoResponse resp = LightningOuterClass.GetInfoResponse.parseFrom(bytes);
-                            LogUtils.e(TAG, "------------------getInfoonResponse-----------------" + resp);
+                            LightningOuterClass.ListChannelsResponse resp = LightningOuterClass.ListChannelsResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------listChannelsOnResponse-----------------" + resp.getChannelsList());
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                Lndmobile.pendingChannels(LightningOuterClass.PendingChannelsRequest.newBuilder().build().toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        LogUtils.e(TAG, "------------------pendingChannelsOnError------------------" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        try {
+                            LightningOuterClass.PendingChannelsResponse resp = LightningOuterClass.PendingChannelsResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------pendingChannelsOnResponse1-----------------" + resp.getPendingOpenChannelsList());
+                            LogUtils.e(TAG, "------------------pendingChannelsOnResponse2-----------------" + resp.getPendingClosingChannelsList());
+                            LogUtils.e(TAG, "------------------pendingChannelsOnResponse3-----------------" + resp.getPendingForceClosingChannelsList());
+                            LogUtils.e(TAG, "------------------pendingChannelsOnResponse4-----------------" + resp.getWaitingCloseChannelsList());
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                Lndmobile.closedChannels(LightningOuterClass.ClosedChannelsRequest.newBuilder().build().toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        LogUtils.e(TAG, "------------------closedChannelsOnError------------------" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        try {
+                            LightningOuterClass.ClosedChannelsResponse resp = LightningOuterClass.ClosedChannelsResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------closedChannelsOnResponse-----------------" + resp.getChannelsList());
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
                         }
@@ -225,7 +269,7 @@ public class ChannelsActivity extends AppBaseActivity {
     @OnClick(R.id.iv_create_channel)
     public void clickcCreateChannel() {
         mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-        mCreateChannelStepOnePopupWindow.show(mParentLayout);
+        mCreateChannelStepOnePopupWindow.show(mParentLayout, pubkey);
     }
 
     /**

@@ -39,7 +39,7 @@ public class CreateChannelStepTwoPopupWindow {
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
                     mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-                    mCreateChannelStepOnePopupWindow.show(view);
+                    mCreateChannelStepOnePopupWindow.show(view,"123");
                 }
             });
             // 点击create
