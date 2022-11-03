@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.protobuf.ByteString;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.utils.CopyUtil;
@@ -18,9 +16,6 @@ import com.omni.wallet.view.dialog.LoadingDialog;
 
 
 import butterknife.OnClick;
-import lndmobile.Callback;
-import lndmobile.Lndmobile;
-import lnrpc.Walletunlocker;
 
 public class CreateWalletStepOneActivity extends AppBaseActivity {
     String[] seedArray = {"about", "gun", "blind", "method", "addict", "scrub", "red", "risbon", "such", "kitchen", "prevent", "gap", "super", "risk", "survey", "cable", "image", "weather", "prize", "item", "between", "moral", "worth", "must"};
