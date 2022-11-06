@@ -98,6 +98,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_balance_amount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="My account 1"
@@ -106,7 +107,10 @@
                         android:textStyle="bold"/>
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tv_wallet_address"
+                        android:singleLine="true"
+                        android:ellipsize="middle"
+                        android:layout_width="@dimen/main_165"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/main_6"
                         android:text="01234e*****bg453123"
@@ -225,6 +229,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tv_balance_account"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15000.0000"
@@ -232,6 +237,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_balance_unit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
@@ -255,6 +261,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_balance_account_exchange"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15055.0000"
@@ -262,6 +269,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_balance_unit_exchange"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
@@ -487,6 +495,7 @@
                                 android:orientation="horizontal">
 
                                 <TextView
+                                    android:id="@+id/tv_balance_account_1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="15000.0000"
@@ -494,6 +503,7 @@
                                     android:textSize="@dimen/text_16"/>
 
                                 <TextView
+                                    android:id="@+id/tv_balance_unit_1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/main_5"
@@ -516,6 +526,7 @@
                                     android:textSize="@dimen/text_16"/>
 
                                 <TextView
+                                    android:id="@+id/tv_balance_account_exchange_1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="15055.0000"
@@ -523,6 +534,7 @@
                                     android:textSize="@dimen/text_16"/>
 
                                 <TextView
+                                    android:id="@+id/tv_balance_unit_exchange_1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/main_5"
@@ -769,6 +781,7 @@
                                 android:orientation="horizontal">
 
                                 <TextView
+                                    android:id="@+id/tv_balance_account_2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="15000.0000"
@@ -776,6 +789,7 @@
                                     android:textSize="@dimen/text_16"/>
 
                                 <TextView
+                                    android:id="@+id/tv_balance_unit_2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/main_5"
@@ -798,6 +812,7 @@
                                     android:textSize="@dimen/text_16"/>
 
                                 <TextView
+                                    android:id="@+id/tv_balance_account_exchange_2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="15055.0000"
@@ -805,6 +820,7 @@
                                     android:textSize="@dimen/text_16"/>
 
                                 <TextView
+                                    android:id="@+id/tv_balance_unit_exchange_2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/main_5"
@@ -998,6 +1014,7 @@
                                 android:orientation="horizontal">
 
                                 <TextView
+                                    android:id="@+id/tv_balance_account_3"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="15000.0000"
@@ -1005,6 +1022,7 @@
                                     android:textSize="@dimen/text_16"/>
 
                                 <TextView
+                                    android:id="@+id/tv_balance_unit_3"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/main_5"
@@ -1027,6 +1045,7 @@
                                     android:textSize="@dimen/text_16"/>
 
                                 <TextView
+                                    android:id="@+id/tv_balance_account_exchange_3"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="15055.0000"
@@ -1034,6 +1053,7 @@
                                     android:textSize="@dimen/text_16"/>
 
                                 <TextView
+                                    android:id="@+id/tv_balance_unit_exchange_3"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/main_5"

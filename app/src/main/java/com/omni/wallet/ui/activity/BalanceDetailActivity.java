@@ -44,6 +44,42 @@ public class BalanceDetailActivity extends AppBaseActivity {
     ImageView mNetworkIv;
     @BindView(R.id.tv_network)
     TextView mNetworkTv;
+    @BindView(R.id.tv_balance_amount)
+    TextView mBalanceAmountTv;
+    @BindView(R.id.tv_wallet_address)
+    TextView mWalletAddressTv;
+    @BindView(R.id.tv_balance_account)
+    TextView mBalanceAccountTv;
+    @BindView(R.id.tv_balance_unit)
+    TextView mBalanceUnitTv;
+    @BindView(R.id.tv_balance_account_exchange)
+    TextView mBalanceAccountExchangeTv;
+    @BindView(R.id.tv_balance_unit_exchange)
+    TextView mBalanceUnitExchangeTv;
+    @BindView(R.id.tv_balance_account_1)
+    TextView mBalanceAccount1Tv;
+    @BindView(R.id.tv_balance_unit_1)
+    TextView mBalanceUnit1Tv;
+    @BindView(R.id.tv_balance_account_exchange_1)
+    TextView mBalanceAccountExchange1Tv;
+    @BindView(R.id.tv_balance_unit_exchange_1)
+    TextView mBalanceUnitExchange1Tv;
+    @BindView(R.id.tv_balance_account_2)
+    TextView mBalanceAccount2Tv;
+    @BindView(R.id.tv_balance_unit_2)
+    TextView mBalanceUnit2Tv;
+    @BindView(R.id.tv_balance_account_exchange_2)
+    TextView mBalanceAccountExchange2Tv;
+    @BindView(R.id.tv_balance_unit_exchange_2)
+    TextView mBalanceUnitExchange2Tv;
+    @BindView(R.id.tv_balance_account_3)
+    TextView mBalanceAccount3Tv;
+    @BindView(R.id.tv_balance_unit_3)
+    TextView mBalanceUnit3Tv;
+    @BindView(R.id.tv_balance_account_exchange_3)
+    TextView mBalanceAccountExchange3Tv;
+    @BindView(R.id.tv_balance_unit_exchange_3)
+    TextView mBalanceUnitExchange3Tv;
     @BindView(R.id.layout_network_lightning)
     RelativeLayout mLightningNetworkLayout;
     @BindView(R.id.layout_network_link)
@@ -83,7 +119,15 @@ public class BalanceDetailActivity extends AppBaseActivity {
     private List<String> mMyInvoicesData = new ArrayList<>();
     private MyInvoicesAdapter mMyInvoicesAdapter;
 
+    public static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";
+    public static final String KEY_WALLET_ADDRESS = "walletAddressKey";
+    public static final String KEY_BALANCE_ACCOUNT = "balanceAccountKey";
+    public static final String KEY_ASSET_ID = "assetIdKey";
     public static final String KEY_NETWORK = "networkKey";
+    long balanceAmount;
+    long balanceAccount;
+    long assetId;
+    String walletAddress;
     String network;
 
     PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow;
@@ -93,6 +137,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
     @Override
     protected void getBundleData(Bundle bundle) {
+        balanceAmount = bundle.getLong(KEY_BALANCE_AMOUNT);
+        balanceAccount = bundle.getLong(KEY_BALANCE_ACCOUNT);
+        walletAddress = bundle.getString(KEY_WALLET_ADDRESS);
+        assetId = bundle.getLong(KEY_ASSET_ID);
         network = bundle.getString(KEY_NETWORK);
     }
 
@@ -138,6 +186,16 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mLineView.setVisibility(View.GONE);
             mRootMyInvoicesLayout.setVisibility(View.GONE);
         }
+        mBalanceAmountTv.setText("My account " + balanceAmount);
+        mWalletAddressTv.setText(walletAddress);
+        mBalanceAccountTv.setText(balanceAccount + "");
+        mBalanceAccountExchangeTv.setText(balanceAccount + "");
+        mBalanceAccount1Tv.setText(balanceAccount + "");
+        mBalanceAccountExchange1Tv.setText(balanceAccount + "");
+        mBalanceAccount2Tv.setText(balanceAccount + "");
+        mBalanceAccountExchange2Tv.setText(balanceAccount + "");
+        mBalanceAccount3Tv.setText(balanceAccount + "");
+        mBalanceAccountExchange3Tv.setText(balanceAccount + "");
     }
 
     @Override
@@ -293,7 +351,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     public void copyAddress() {
         //接收需要复制到粘贴板的地址
         //Get the address which will copy to clipboard
-        String toCopyAddress = "01234e*****bg453123";
+        String toCopyAddress = walletAddress;
         //接收需要复制成功的提示语
         //Get the notice when you copy success
         String toastString = getResources().getString(R.string.toast_copy_address);
@@ -359,7 +417,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.layout_create_invoice)
     public void clickCreateInvoice() {
         mCreateInvoiceStepOnePopupWindow = new CreateInvoiceStepOnePopupWindow(mContext);
-        mCreateInvoiceStepOnePopupWindow.show(mParentLayout);
+        mCreateInvoiceStepOnePopupWindow.show(mParentLayout, walletAddress, assetId);
     }
 
     /**

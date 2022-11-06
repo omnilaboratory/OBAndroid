@@ -104,14 +104,14 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/tv_account_value"
+                            android:id="@+id/tv_balance_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:shadowColor="#40000000"
                             android:shadowDx="0"
                             android:shadowDy="4"
                             android:shadowRadius="4"
-                            android:text="$ 50000000"
+                            android:text="$ 0"
                             android:textColor="@color/color_black"
                             android:textSize="@dimen/text_18"/>
 
@@ -149,9 +149,10 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tv_balance_amount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="My account 1 balance"
+                                android:text="My account 0 balance"
                                 android:textColor="@color/color_black"
                                 android:textSize="@dimen/text_12"
                                 android:textStyle="bold"/>
@@ -322,7 +323,7 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_assets_list_block"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/main_40"
                     android:layout_marginLeft="@dimen/main_10"
                     android:layout_marginRight="@dimen/main_40"

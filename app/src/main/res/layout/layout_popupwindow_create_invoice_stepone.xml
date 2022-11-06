@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/main_25"
+                android:layout_marginTop="@dimen/main_20"
                 android:letterSpacing="0.25"
                 android:text="@string/create_invoice"
                 android:textColor="@color/color_black"
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_20"
                 android:layout_marginRight="@dimen/main_20"
-                android:layout_marginTop="@dimen/main_25"
+                android:layout_marginTop="@dimen/main_20"
                 android:background="@drawable/bg_black_rectangle_round_0_thin"
                 android:orientation="vertical">
 
@@ -70,6 +70,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tv_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/main_15"
@@ -95,50 +96,84 @@
                 android:layout_marginTop="@dimen/main_10">
 
                 <TextView
+                    android:layout_marginTop="@dimen/main_10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:text="@string/asset_one"
                     android:textColor="@color/color_99_transparent"
                     android:textSize="@dimen/text_16"/>
 
                 <RelativeLayout
+                    android:id="@+id/layout_select_asset"
                     android:layout_width="@dimen/main_179"
-                    android:layout_height="@dimen/main_32"
+                    android:layout_height="@dimen/main_50"
                     android:layout_alignParentRight="true"
-                    android:background="@drawable/bg_black_rectangle_round_0_thin"
-                    android:orientation="horizontal">
+                    android:background="@drawable/bg_black_rectangle_round_0_thin">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/main_10"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginRight="@dimen/main_10"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="@dimen/main_20"
-                            android:layout_height="@dimen/main_20"
-                            android:src="@mipmap/icon_usdt_logo_small"/>
-
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="@dimen/main_5"
-                            android:text="USDT"
-                            android:textColor="@color/color_99_transparent"
-                            android:textSize="@dimen/text_16"/>
+                            android:layout_gravity="right"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
-                        <ImageView
-                            android:layout_width="@dimen/main_24"
-                            android:layout_height="@dimen/main_24"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:src="@mipmap/icon_arrow_down_black_two"/>
+                            <ImageView
+                                android:layout_width="@dimen/main_20"
+                                android:layout_height="@dimen/main_20"
+                                android:src="@mipmap/icon_usdt_logo_small"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="@dimen/main_5"
+                                android:text="USDT"
+                                android:textColor="@color/color_99_transparent"
+                                android:textSize="@dimen/text_16"/>
+
+                            <ImageView
+                                android:layout_width="@dimen/main_24"
+                                android:layout_height="@dimen/main_24"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:src="@mipmap/icon_arrow_down_black_two"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_gravity="right"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/capacity"
+                                android:textColor="@color/color_99_transparent"
+                                android:textSize="@dimen/text_14"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=":"
+                                android:textColor="@color/color_99_transparent"
+                                android:textSize="@dimen/text_14"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textColor="@color/color_99_transparent"
+                                android:textSize="@dimen/text_14"/>
+                        </LinearLayout>
                     </LinearLayout>
                 </RelativeLayout>
             </RelativeLayout>
@@ -240,7 +275,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_20"
                 android:layout_marginRight="@dimen/main_20"
-                android:layout_marginTop="@dimen/main_12">
+                android:layout_marginTop="@dimen/main_10">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -274,15 +309,19 @@
                     android:gravity="center_vertical|right"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <EditText
+                        android:id="@+id/edit_amount"
+                        android:background="@null"
+                        android:textColorHint="@color/color_99_transparent"
+                        android:hint="0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_55"
-                        android:text="100.00"
                         android:textColor="@color/color_99_transparent"
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_amount_unit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
@@ -348,12 +387,15 @@
                         android:gravity="right"
                         android:orientation="vertical">
 
-                        <TextView
+                        <EditText
+                            android:id="@+id/edit_time"
+                            android:hint="0"
+                            android:textColorHint="@color/color_80p_transparent"
+                            android:background="@null"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="@dimen/main_10"
-                            android:text="100"
                             android:textColor="@color/color_80p_transparent"
                             android:textSize="@dimen/text_16"/>
                     </RelativeLayout>
@@ -365,7 +407,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_60"
                 android:layout_marginRight="@dimen/main_60"
-                android:layout_marginTop="@dimen/main_45">
+                android:layout_marginTop="@dimen/main_30">
 
                 <LinearLayout
                     android:id="@+id/layout_back_to_none"
@@ -528,6 +570,7 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                android:id="@+id/tv_amount_failed"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="100.00"
@@ -535,6 +578,7 @@
                                 android:textSize="@dimen/text_16"/>
 
                             <TextView
+                                android:id="@+id/tv_amount_unit_failed"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/main_5"
@@ -581,6 +625,7 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                android:id="@+id/tv_time_failed"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="100"
@@ -588,6 +633,7 @@
                                 android:textSize="@dimen/text_16"/>
 
                             <TextView
+                                android:id="@+id/tv_time_unit_failed"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/main_5"
@@ -605,6 +651,7 @@
                         android:background="@color/color_black"/>
 
                     <TextView
+                        android:id="@+id/tv_failed_message"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_55"
@@ -789,6 +836,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_amount_success"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="100.00"
@@ -796,6 +844,7 @@
                             android:textSize="@dimen/text_16"/>
 
                         <TextView
+                            android:id="@+id/tv_amount_unit_success"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
@@ -842,6 +891,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_time_success"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="100"
@@ -849,6 +899,7 @@
                             android:textSize="@dimen/text_16"/>
 
                         <TextView
+                            android:id="@+id/tv_time_unit_success"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
@@ -866,6 +917,7 @@
                     android:background="@color/color_black"/>
 
                 <ImageView
+                    android:id="@+id/iv_success_qrcode"
                     android:layout_width="@dimen/main_100"
                     android:layout_height="@dimen/main_100"
                     android:layout_gravity="center"
@@ -894,6 +946,7 @@
                                 android:layout_height="match_parent">
 
                                 <TextView
+                                    android:id="@+id/tv_success_payment"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/main_10"
@@ -906,6 +959,7 @@
                     </LinearLayout>
 
                     <ImageView
+                        android:id="@+id/iv_success_copy"
                         android:layout_width="@dimen/main_36"
                         android:layout_height="@dimen/main_36"
                         android:layout_centerVertical="true"
@@ -919,7 +973,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="@dimen/main_30"
+                android:layout_marginBottom="@dimen/main_20"
                 android:layout_marginLeft="@dimen/main_50"
                 android:layout_marginRight="@dimen/main_30">
 

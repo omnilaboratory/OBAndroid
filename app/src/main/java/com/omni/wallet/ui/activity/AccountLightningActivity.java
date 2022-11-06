@@ -47,12 +47,14 @@ public class AccountLightningActivity extends AppBaseActivity {
     View mTopView;
     @BindView(R.id.iv_menu)
     ImageView mMenuIv;
+    @BindView(R.id.tv_balance_value)
+    TextView mBalanceValueTv;
+    @BindView(R.id.tv_balance_amount)
+    TextView mBalanceAmountTv;
     @BindView(R.id.tv_wallet_address)
     TextView mWalletAddressTv;
     @BindView(R.id.recycler_assets_list_block)
     public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock(The Recycler View Block for Assets List)
-    @BindView(R.id.tv_account_value)
-    public TextView accountValue;//资产列表所有的资产价值总和 (The Sum Value of all Assets in the List)
     private List<Map> blockData = new ArrayList<>();
     private List<Map> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
@@ -67,6 +69,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     SelectNodePopupWindow mSelectNodePopupWindow;
     private LoadingDialog mLoadingDialog;
 
+    long balanceAmount;
     private String pubkey;
 
     @Override
@@ -88,7 +91,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
         initAllData();
-        initRecyclerView(allData);
+        initRecyclerView();
     }
 
     /**
@@ -141,7 +144,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     }
 
-    private void initRecyclerView(List<LightningOuterClass.AssetBalanceByAddressResponse> allData) {
+    private void initRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerViewBlock.setLayoutManager(new LinearLayoutManager(mContext));
@@ -163,6 +166,9 @@ public class AccountLightningActivity extends AppBaseActivity {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------getInfoOnError------------------" + e.getMessage());
+                if (mLoadingDialog != null) {
+                    mLoadingDialog.dismiss();
+                }
             }
 
             @Override
@@ -173,6 +179,9 @@ public class AccountLightningActivity extends AppBaseActivity {
                     pubkey = resp.getIdentityPubkey();
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
+                }
+                if (mLoadingDialog != null) {
+                    mLoadingDialog.dismiss();
                 }
             }
         });
@@ -195,6 +204,28 @@ public class AccountLightningActivity extends AppBaseActivity {
                     addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
                     mWalletAddressTv.setText(addressResp.getAddress());
                     LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
+                    LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
+                            .setAddress(addressResp.getAddress())
+                            .build();
+                    Lndmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            try {
+                                LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
+                                mBalanceValueTv.setText("$ " + resp.getTotalBalance());
+                                balanceAmount = resp.getConfirmedBalance();
+                                mBalanceAmountTv.setText("My account " + balanceAmount + " balance");
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -211,16 +242,10 @@ public class AccountLightningActivity extends AppBaseActivity {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
-                if (mLoadingDialog != null) {
-                    mLoadingDialog.dismiss();
-                }
             }
 
             @Override
             public void onResponse(byte[] bytes) {
-                if (mLoadingDialog != null) {
-                    mLoadingDialog.dismiss();
-                }
                 try {
                     LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
@@ -306,6 +331,33 @@ public class AccountLightningActivity extends AppBaseActivity {
             // TODO: 2022/11/3 暂定待修改与完善
             holder.setText(R.id.tv_asset_amount, String.valueOf(item.getBalance()));
             holder.setText(R.id.tv_asset_value, item.getFrozen());
+            if (item.getName().equals("ftoken")) {
+                holder.setOnItemClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bundle bundle = new Bundle();
+                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_AMOUNT,balanceAmount);
+                        bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS,addressResp.getAddress());
+                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT,item.getBalance());
+                        bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID,item.getPropertyid());
+                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "lightning");
+                        switchActivity(BalanceDetailActivity.class, bundle);
+                    }
+                });
+            } else {
+                holder.setOnItemClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bundle bundle = new Bundle();
+                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_AMOUNT,balanceAmount);
+                        bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS,addressResp.getAddress());
+                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT,item.getBalance());
+                        bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID,item.getPropertyid());
+                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "link");
+                        switchActivity(BalanceDetailActivity.class, bundle);
+                    }
+                });
+            }
         }
     }
 

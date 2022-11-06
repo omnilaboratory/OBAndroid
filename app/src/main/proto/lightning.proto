@@ -3639,6 +3639,16 @@ message ListInvoiceRequest {
     specified index offset. This can be used to paginate backwards.
     */
     bool reversed = 6;
+
+    /* obd update wxf
+     * query  special asset's invoices ,set this field to true,and set the
+     asset_id field too.
+     * query all assets invoice set IsqueryAsset to false, and  asset_id field
+     will be ignore.
+
+     */
+    bool is_query_asset = 8;
+    uint32 asset_id = 7;
 }
 message ListInvoiceResponse {
     /*
@@ -3832,6 +3842,15 @@ message ListPaymentsRequest {
     of the returned payments is always oldest first (ascending index order).
     */
     bool reversed = 4;
+
+    /* obd update wxf
+ * query  special asset's payment ,set this field to true,and set the
+ asset_id field too.
+ * query all assets invoice set IsqueryAsset to false, and  asset_id field
+ will be ignore.
+ */
+    bool is_query_asset = 5;
+    uint32 asset_id = 6;
 }
 
 message ListPaymentsResponse {
