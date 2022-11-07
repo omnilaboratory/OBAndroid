@@ -14,6 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.common.io.BaseEncoding;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
@@ -32,6 +35,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import lndmobile.Callback;
+import lndmobile.Lndmobile;
+import lnrpc.LightningOuterClass;
 
 public class BalanceDetailActivity extends AppBaseActivity {
     private static final String TAG = AccountLightningActivity.class.getSimpleName();
@@ -219,6 +225,32 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mTransactionsData.add(str);
         }
         mTransactionsRecyclerView.setAdapter(mTransactionsAdapter);
+        fetchTransactionsFromLND();
+    }
+
+    /**
+     * This will fetch lightning Transactions from LND.
+     * 请求交易列表各个状态的接口
+     */
+    public void fetchTransactionsFromLND() {
+        LightningOuterClass.ListTranscationsRequest transcationsRequest = LightningOuterClass.ListTranscationsRequest.newBuilder()
+                .build();
+        Lndmobile.listTranscations(transcationsRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------transcationsOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                try {
+                    LightningOuterClass.ListTranscationsResponse resp = LightningOuterClass.ListTranscationsResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------transcationsOnResponse-----------------" + resp);
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -235,6 +267,33 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mToBePaidData.add(str);
         }
         mToBePaidRecyclerView.setAdapter(mToBePaidAdapter);
+        fetchPaymentsFromLND();
+    }
+
+    /**
+     * This will fetch lightning payments from LND.
+     * 请求支付列表各个状态的接口
+     */
+    public void fetchPaymentsFromLND() {
+        LightningOuterClass.ListPaymentsRequest paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
+                .setIncludeIncomplete(false)
+                .build();
+        Lndmobile.listPayments(paymentsRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------paymentsOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                try {
+                    LightningOuterClass.ListPaymentsResponse resp = LightningOuterClass.ListPaymentsResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------paymentsOnResponse-----------------" + resp);
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -251,6 +310,38 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mMyInvoicesData.add(str);
         }
         mMyInvoicesRecyclerView.setAdapter(mMyInvoicesAdapter);
+        fetchInvoicesFromLND(100);
+    }
+
+    /**
+     * This will fetch all lightning invoices from LND.
+     * 请求发票列表各个状态的接口
+     */
+    private void fetchInvoicesFromLND(long lastIndex) {
+        LightningOuterClass.ListInvoiceRequest invoiceRequest = LightningOuterClass.ListInvoiceRequest.newBuilder()
+                .setNumMaxInvoices(lastIndex)
+                .build();
+        Lndmobile.listInvoices(invoiceRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------invoiceOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                try {
+                    LightningOuterClass.ListInvoiceResponse resp = LightningOuterClass.ListInvoiceResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------invoiceOnResponse-----------------" + resp);
+                    if (resp.getLastIndexOffset() < lastIndex) {
+
+                    } else {
+                        fetchInvoicesFromLND(lastIndex + 100);
+                    }
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -291,15 +382,45 @@ public class BalanceDetailActivity extends AppBaseActivity {
             holder.getView(R.id.tv_to_be_paid_delete).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    menuLayout.quickClose();
-                    mToBePaidData.remove(position);
-                    mToBePaidAdapter.notifyRemoveItem(position);
-                    if (mToBePaidData.size() == 0) {
-                        mToBePaidAdapter.notifyDataSetChanged();
-                    }
+                    /**
+                     * Used to delete a payment probe.
+                     * 删除付款
+                     */
+                    LightningOuterClass.DeletePaymentRequest deletePaymentRequest = LightningOuterClass.DeletePaymentRequest.newBuilder()
+                            .setPaymentHash(byteStringFromHex(""))
+                            .setFailedHtlcsOnly(false)
+                            .build();
+                    Lndmobile.deletePayment(deletePaymentRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------deletePaymentOnError------------------" + e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            try {
+                                LightningOuterClass.DeletePaymentResponse resp = LightningOuterClass.DeletePaymentResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------deletePaymentOnResponse-----------------" + resp);
+                                menuLayout.quickClose();
+                                mToBePaidData.remove(position);
+                                mToBePaidAdapter.notifyRemoveItem(position);
+                                if (mToBePaidData.size() == 0) {
+                                    mToBePaidAdapter.notifyDataSetChanged();
+                                }
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                 }
             });
         }
+    }
+
+    // ByteString values when using for example "paymentRequest.getDescriptionBytes()" can for some reason not directly be used as they are double in length
+    private static ByteString byteStringFromHex(String hexString) {
+        byte[] hexBytes = BaseEncoding.base16().decode(hexString.toUpperCase());
+        return ByteString.copyFrom(hexBytes);
     }
 
     /**
