@@ -51,6 +51,7 @@ public class CreateChannelStepOnePopupWindow {
     String nodePubkey;
     long assetId;
     int time;
+    long feeStr;
     List<LightningOuterClass.Asset> list = new ArrayList<>();
 
     public CreateChannelStepOnePopupWindow(Context context) {
@@ -251,14 +252,14 @@ public class CreateChannelStepOnePopupWindow {
         Lndmobile.listAsset(LightningOuterClass.ListAssetRequest.newBuilder().build().toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------listAssetonError------------------" + e.getMessage());
+                LogUtils.e(TAG, "------------------listAssetOnError------------------" + e.getMessage());
             }
 
             @Override
             public void onResponse(byte[] bytes) {
                 try {
                     LightningOuterClass.ListAssetResponse resp = LightningOuterClass.ListAssetResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------listAssetonResponse-----------------" + resp);
+                    LogUtils.e(TAG, "------------------listAssetOnResponse-----------------" + resp);
                     list.clear();
                     list.addAll(resp.getListList());
                 } catch (InvalidProtocolBufferException e) {
@@ -297,16 +298,22 @@ public class CreateChannelStepOnePopupWindow {
                 .putAddrToAmount(address, amount)
                 .setTargetConf(targetConf)
                 .build();
-
         Lndmobile.estimateFee(asyncEstimateFeeRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-
+                LogUtils.e(TAG, "------------------asyncEstimateFeeOnError------------------" + e.getMessage());
             }
 
             @Override
             public void onResponse(byte[] bytes) {
-
+                try {
+                    LightningOuterClass.EstimateFeeResponse resp = LightningOuterClass.EstimateFeeResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------asyncEstimateFeeOnResponse-----------------" + resp);
+                    feeStr = resp.getFeeSat();
+                    channelFeeTv.setText(feeStr + "");
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

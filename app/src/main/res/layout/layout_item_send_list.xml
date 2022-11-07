@@ -23,14 +23,29 @@
         android:textColor="@color/color_white"
         android:textSize="@dimen/text_16"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/lv_friend_item_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/main_45"
-        android:layout_marginRight="@dimen/main_35"
-        android:orientation="vertical">
-
-    </LinearLayout>
-
+        android:layout_marginRight="@dimen/main_35">
+        <TextView
+            android:id="@+id/tv_send_list_name"
+            android:textSize="@dimen/text_16"
+            android:text="Alice"
+            android:textColor="@color/color_99_transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tv_send_list_address"
+            android:gravity="right"
+            android:singleLine="true"
+            android:ellipsize="middle"
+            android:layout_alignParentRight="true"
+            android:textSize="@dimen/text_16"
+            android:text="1mn8382odjd.........34gy7"
+            android:textColor="@color/color_99_transparent"
+            android:layout_width="@dimen/main_180"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
 </LinearLayout>

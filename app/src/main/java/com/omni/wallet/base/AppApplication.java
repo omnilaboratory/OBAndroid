@@ -77,7 +77,6 @@ public class AppApplication extends BaseApplication {
         LogUtils.e(TAG, "------------------getFilesDir------------------" + getApplicationContext().getFilesDir());
         LogUtils.e(TAG, "------------------getExternalCacheDir------------------" + getApplicationContext().getExternalCacheDir());
         Lndmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + " --noseedbackup --trickledelay=5000 --alias=alice\n" +
-                "--listen=0.0.0.0:9735\n" +
                 "--bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind\n" +
                 "--bitcoind.rpchost=16.162.119.13:18332 --bitcoind.rpcuser=polaruser\n" +
                 "--bitcoind.rpcpass=polarpass\n" +
@@ -86,7 +85,7 @@ public class AppApplication extends BaseApplication {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
-            }
+            }   
 
             @Override
             public void onResponse(byte[] bytes) {

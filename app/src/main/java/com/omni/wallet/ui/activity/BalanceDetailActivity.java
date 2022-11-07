@@ -407,7 +407,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.layout_pay_invoice)
     public void clickPayInvoice() {
         mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-        mPayInvoiceStepOnePopupWindow.show(mParentLayout);
+        mPayInvoiceStepOnePopupWindow.show(mParentLayout, walletAddress, assetId);
     }
 
     /**

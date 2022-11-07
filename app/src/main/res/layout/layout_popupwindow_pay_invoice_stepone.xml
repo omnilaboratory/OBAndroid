@@ -107,6 +107,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/tv_from_node_address"
                     android:layout_width="@dimen/main_163"
                     android:layout_height="wrap_content"
                     android:text="02e56dkcasdasdasdasdasdasddwqqffqwdqwdqxcs"
@@ -114,6 +115,7 @@
                     android:textSize="@dimen/text_16"/>
 
                 <TextView
+                    android:id="@+id/tv_from_node_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -132,6 +134,7 @@
                 android:textSize="@dimen/text_16"/>
 
             <EditText
+                android:id="@+id/edit_invoice"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/main_140"
                 android:layout_marginLeft="@dimen/main_30"
@@ -295,6 +298,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/tv_from_node_address_1"
                     android:layout_width="@dimen/main_163"
                     android:layout_height="wrap_content"
                     android:text="02e56dkcasdasdasdasdasdasddwqqffqwdqwdqxcs"
@@ -302,6 +306,7 @@
                     android:textSize="@dimen/text_16"/>
 
                 <TextView
+                    android:id="@+id/tv_from_node_name_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -328,6 +333,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/tv_to_node_address_1"
                     android:layout_width="@dimen/main_163"
                     android:layout_height="wrap_content"
                     android:text="02e56dkcasdasdasdasdasdasddwqqffqwdqwdqxcs"
@@ -335,6 +341,7 @@
                     android:textSize="@dimen/text_16"/>
 
                 <TextView
+                    android:id="@+id/tv_to_node_name_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -372,17 +379,19 @@
                         android:orientation="horizontal">
 
                         <ImageView
+                            android:id="@+id/iv_amount_logo"
                             android:layout_width="@dimen/main_32"
                             android:layout_height="@dimen/main_32"
                             android:src="@mipmap/icon_usdt_logo"/>
 
                         <TextView
+                            android:id="@+id/tv_amount_pay"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_10"
                             android:text="1000.00"
                             android:textColor="@color/color_white"
-                            android:textSize="@dimen/text_20"/>
+                            android:textSize="@dimen/text_20" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -402,6 +411,7 @@
                             android:textSize="@dimen/text_20"/>
 
                         <TextView
+                            android:id="@+id/tv_amount_pay_exchange"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
@@ -442,10 +452,11 @@
                             android:textSize="@dimen/text_20"/>
 
                         <TextView
+                            android:id="@+id/tv_amount_pay_fef"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
-                            android:text="$1.55"
+                            android:text="$0"
                             android:textColor="@color/color_white"
                             android:textSize="@dimen/text_20"/>
                     </LinearLayout>
@@ -600,6 +611,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/tv_from_node_address_2"
                     android:layout_width="@dimen/main_163"
                     android:layout_height="wrap_content"
                     android:text="02e56dkcasdasdasdasdasdasddwqqffqwdqwdqxcs"
@@ -607,6 +619,7 @@
                     android:textSize="@dimen/text_16"/>
 
                 <TextView
+                    android:id="@+id/tv_from_node_name_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -633,6 +646,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/tv_to_node_address_2"
                     android:layout_width="@dimen/main_163"
                     android:layout_height="wrap_content"
                     android:text="02e56dkcasdasdasdasdasdasddwqqffqwdqwdqxcs"
@@ -640,6 +654,7 @@
                     android:textSize="@dimen/text_16"/>
 
                 <TextView
+                    android:id="@+id/tv_to_node_name_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -670,11 +685,13 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/iv_amount_logo_1"
                         android:layout_width="@dimen/main_32"
                         android:layout_height="@dimen/main_32"
                         android:src="@mipmap/icon_usdt_logo"/>
 
                     <TextView
+                        android:id="@+id/tv_amount_pay_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_10"
@@ -700,6 +717,7 @@
                         android:textSize="@dimen/text_20"/>
 
                     <TextView
+                        android:id="@+id/tv_amount_pay_exchange_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
@@ -743,7 +761,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
-                        android:text="$1.55"
+                        android:text="$0"
                         android:textColor="@color/color_black"
                         android:textSize="@dimen/text_20"/>
                 </LinearLayout>
@@ -832,6 +850,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_from_node_address_3"
                         android:layout_width="@dimen/main_100"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -860,6 +879,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_to_node_address_3"
                         android:layout_width="@dimen/main_100"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -896,11 +916,13 @@
                         android:orientation="horizontal">
 
                         <ImageView
+                            android:id="@+id/iv_amount_logo_2"
                             android:layout_width="@dimen/main_20"
                             android:layout_height="@dimen/main_20"
                             android:src="@mipmap/icon_usdt_logo_small"/>
 
                         <TextView
+                            android:id="@+id/tv_amount_unit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_15"
@@ -934,6 +956,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_amount_pay_2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="100.00"
@@ -941,6 +964,7 @@
                             android:textSize="@dimen/text_16"/>
 
                         <TextView
+                            android:id="@+id/tv_amount_unit_1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
@@ -987,13 +1011,15 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_pay_time"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="100"
+                            android:text="0"
                             android:textColor="@color/color_80p_transparent"
                             android:textSize="@dimen/text_16"/>
 
                         <TextView
+                            android:id="@+id/tv_pay_time_unit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
@@ -1011,6 +1037,7 @@
                     android:background="@color/color_black"/>
 
                 <TextView
+                    android:id="@+id/tv_failed_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_55"

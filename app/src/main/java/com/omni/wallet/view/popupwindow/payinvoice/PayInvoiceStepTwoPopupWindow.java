@@ -39,7 +39,7 @@ public class PayInvoiceStepTwoPopupWindow {
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
                     mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-                    mPayInvoiceStepOnePopupWindow.show(view);
+                    mPayInvoiceStepOnePopupWindow.show(view, "", 0);
                 }
             });
             // 点击pay

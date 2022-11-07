@@ -50,7 +50,7 @@ public class CreateInvoiceSuccessPopupWindow {
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
                     mCreateInvoiceStepOnePopupWindow = new CreateInvoiceStepOnePopupWindow(mContext);
-                    mCreateInvoiceStepOnePopupWindow.show(view);
+                    mCreateInvoiceStepOnePopupWindow.show(view,"",0);
                 }
             });
             // 点击share to
