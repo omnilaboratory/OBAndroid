@@ -61,19 +61,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
     
     private void initTvForSeeds(){
         System.out.println("--------------------------------Start init tv for seeds--------------------------------");
-        for (int idx = 0;idx<seedArray.size();idx++){
-            seedsString = seedsString + seedArray.get(idx)+ " ";
-        }
-        System.out.println("--------------------------------"+seedsString+"--------------------------------");
-        /**
-         * 使用SharedPreferences 对象，在生成seeds时候将seeds备份到本地文件
-         * Use SharedPreferences Class to back up seeds to local file,when create seeds.
-         */
-        SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
-        SharedPreferences.Editor editor = secretData.edit();
-        editor.putString("seeds",seedsString);
-        editor.commit();
-
+        
         
         
         for (int rowNum = 1; rowNum <= 8; rowNum++) {
@@ -150,7 +138,18 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
                         seedArray.add(genSeedResponseList.get(i).toString());
                         Log.e("seed item",genSeedResponseList.get(i).toString());
                     }
-                    initTvForSeeds();
+                    for (int idx = 0;idx<seedArray.size();idx++){
+                        seedsString = seedsString + seedArray.get(idx)+ " ";
+                    }
+                    /**
+                     * 使用SharedPreferences 对象，在生成seeds时候将seeds备份到本地文件
+                     * Use SharedPreferences Class to back up seeds to local file,when create seeds.
+                     */
+                    SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = secretData.edit();
+                    editor.putString("seeds",seedsString);
+                    editor.commit();
+//                    initTvForSeeds();
                     mLoadingDialog.dismiss();
                 }catch (InvalidProtocolBufferException e){
                     e.printStackTrace();

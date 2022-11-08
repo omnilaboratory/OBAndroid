@@ -1,5 +1,6 @@
 package com.omni.wallet.ui.activity.createwallet;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -26,7 +27,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
     private ArrayList<EditText> list = new ArrayList<>();
 
     Context ctx = CreateWalletStepTwoActivity.this;
-    String[] seedList = new String[24];
+    String[] seedList;
 
 
     @Override
@@ -51,6 +52,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
         initEvForSeeds();
     }
     
+    @SuppressLint("LongLogTag")
     private void initEvForSeeds(){
         /**
          * 从xml文件中读取seeds
@@ -167,7 +169,9 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
      */
     @OnClick(R.id.description_text_test)
     public void clickForEnterSeeds(){
+        
         for (int i = 0; i < list.size(); i++) {
+            Log.e("seed item",seedList[i]);
             list.get(i).setText(seedList[i]);
         }
     }

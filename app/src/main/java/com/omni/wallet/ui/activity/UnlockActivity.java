@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
@@ -23,6 +25,9 @@ import com.omni.wallet.utils.Md5Util;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import lndmobile.Callback;
+import lndmobile.Lndmobile;
+import lnrpc.Walletunlocker;
 
 public class UnlockActivity extends AppBaseActivity {
     Context ctx = UnlockActivity.this;
@@ -106,8 +111,25 @@ public class UnlockActivity extends AppBaseActivity {
     public void clickUnlock() {
         String passwordString = mPwdEdit.getText().toString();
         String passMd5 = Md5Util.getMD5Str(passwordString);
+        Log.e("unlock password",passMd5);
+        Log.e("unlock localPass",localPass);
         if(localPass.equals(passMd5)){
-            switchActivity(AccountLightningActivity.class);
+            Walletunlocker.UnlockWalletRequest unlockWalletRequest =  Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
+            Lndmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
+                @Override
+                public void onError(Exception e) {
+                    Log.e("unlock failed","unlock failed");
+                    e.printStackTrace();
+                    
+                }
+
+                @Override
+                public void onResponse(byte[] bytes) {
+                    switchActivity(AccountLightningActivity.class);
+                }
+            });
+                    
+//            
         }else{
             String toastString = getResources().getString(R.string.toast_unlock_error);
             Toast checkPassToast = Toast.makeText(UnlockActivity.this,toastString,Toast.LENGTH_LONG);
