@@ -5,6 +5,7 @@ import android.support.multidex.MultiDex;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.utils.Wallet;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.omni.wallet.baselibrary.base.BaseApplication;
@@ -94,13 +95,7 @@ public class AppApplication extends BaseApplication {
          */
         LogUtils.e(TAG, "------------------getFilesDir------------------" + getApplicationContext().getFilesDir());
         LogUtils.e(TAG, "------------------getExternalCacheDir------------------" + getApplicationContext().getExternalCacheDir());
-        Lndmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + "  --trickledelay=5000 --alias=alice\n" +
-                "--listen=0.0.0.0:9735\n" +
-                "--bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind\n" +
-                "--bitcoind.rpchost=16.162.119.13:18332 --bitcoind.rpcuser=polaruser\n" +
-                "--bitcoind.rpcpass=polarpass\n" +
-                "--bitcoind.zmqpubrawblock=tcp://16.162.119.13:28332\n" +
-                "--bitcoind.zmqpubrawtx=tcp://16.162.119.13:28333", new Callback() {
+        Lndmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE, new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());

@@ -39,6 +39,14 @@ public class Wallet {
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
+    public static final String START_NODE = "  --trickledelay=5000 --alias=alice\n" +
+            "--listen=0.0.0.0:9735\n" +
+            "--bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind\n" +
+            "--bitcoind.rpchost=16.162.119.13:18332 --bitcoind.rpcuser=polaruser\n" +
+            "--bitcoind.rpcpass=polarpass\n" +
+            "--bitcoind.zmqpubrawblock=tcp://16.162.119.13:28332\n" +
+            "--bitcoind.zmqpubrawtx=tcp://16.162.119.13:28333";
+
     private Wallet() {
         ;
     }
