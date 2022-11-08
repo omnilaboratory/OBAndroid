@@ -15,6 +15,7 @@ import com.omni.wallet.baselibrary.http.interceptor.LogInterceptor;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 
+import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 import lndmobile.Callback;
 import lndmobile.Lndmobile;
 
@@ -24,6 +25,23 @@ import lndmobile.Lndmobile;
 public class AppApplication extends BaseApplication {
     private static final String TAG = AppApplication.class.getSimpleName();
     private RefWatcher mRefWatcher;
+    private static AppApplication mContext;
+
+    public AppApplication() {
+        mContext = this;
+
+        RxJavaPlugins.setErrorHandler(e -> {
+            if (e.getMessage() != null && e.getMessage().contains("shutdownNow")) {
+                // Is propagated from gRPC when shutting down channel
+            } else {
+                LogUtils.e("RxJava", e.getMessage());
+            }
+        });
+    }
+
+    public static AppApplication getAppContext() {
+        return mContext;
+    }
 
     @Override
     protected void init() {
@@ -92,15 +110,6 @@ public class AppApplication extends BaseApplication {
                 LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
             }
         });
-    }
-
-    /**
-     * @描述： 判读是否主进程或者友盟推送进程
-     * @desc: Judge whether it is the main process or the process pushed by the Alliance
-     */
-    private boolean needRegisterPush(String processName) {
-        String packageName = getApplicationContext().getPackageName();
-        return (packageName + ":channel").equals(processName) || packageName.equals(processName);
     }
 
     /**

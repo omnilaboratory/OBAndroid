@@ -99,7 +99,7 @@
             android:screenOrientation="portrait"/>
         <!-- Channels页面 -->
         <activity
-            android:name=".ui.activity.ChannelsActivity"
+            android:name=".ui.activity.channel.ChannelsActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- backupBlock页面 -->

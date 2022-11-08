@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout android:id="@+id/channelRootView"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_marginBottom="@dimen/main_20">
+    android:layout_marginBottom="@dimen/main_20"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <LinearLayout
             android:id="@+id/lv_info_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <ImageView
                 android:id="@+id/iv_channel_state"
                 android:layout_width="@dimen/main_16"
                 android:layout_height="@dimen/main_16"
-                android:background="@drawable/bg_btn_round_009b19_25"
                 android:layout_gravity="center"
-                android:layout_marginRight="@dimen/main_10"/>
+                android:layout_marginRight="@dimen/main_10"
+                android:background="@drawable/bg_btn_round_009b19_25" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -30,49 +32,55 @@
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/main_8"
                 android:background="@color/color_black"
+                android:paddingBottom="3dp"
                 android:paddingLeft="5dp"
-                android:paddingTop="3dp"
                 android:paddingRight="5dp"
-                android:paddingBottom="3dp">
+                android:paddingTop="3dp">
 
                 <TextView
-                    android:width="60dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:width="60dp"
                     android:text="Remote"
                     android:textColor="@color/color_white"
                     android:textSize="@dimen/text_16" />
             </RelativeLayout>
+
             <RelativeLayout
-                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_weight="1">
+
                 <TextView
                     android:id="@+id/tv_node_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_16"
                     android:text="McDonald"
                     android:textColor="@color/color_black"
-                    android:textStyle="bold"/>
+                    android:textSize="@dimen/text_16"
+                    android:textStyle="bold" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/main_10">
+
                 <ImageView
                     android:id="@+id/im_token_type"
                     android:layout_width="@dimen/main_24"
                     android:layout_height="@dimen/main_24"
-                    android:src="@mipmap/icon_usdt_logo"/>
+                    android:src="@mipmap/icon_usdt_logo" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/main_10">
+
                 <TextView
                     android:id="@+id/tv_token_type"
                     android:layout_width="wrap_content"
@@ -80,41 +88,44 @@
                     android:text="USDT"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/main_5">
+            android:layout_marginTop="@dimen/main_5"
+            android:orientation="horizontal">
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_26"
-                android:background="@color/color_black"
-                android:paddingTop="@dimen/main_3"
-                android:paddingBottom="@dimen/main_3"
-                android:paddingRight="@dimen/main_5"
-                android:paddingLeft="@dimen/main_5"
-                android:layout_marginRight="@dimen/main_10"
                 android:layout_gravity="center"
-                >
+                android:layout_marginLeft="@dimen/main_26"
+                android:layout_marginRight="@dimen/main_10"
+                android:background="@color/color_black"
+                android:paddingBottom="@dimen/main_3"
+                android:paddingLeft="@dimen/main_5"
+                android:paddingRight="@dimen/main_5"
+                android:paddingTop="@dimen/main_3">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/color_white"
                     android:width="60dp"
                     android:text="Pubkey"
-                    android:textSize="@dimen/text_16"/>
+                    android:textColor="@color/color_white"
+                    android:textSize="@dimen/text_16" />
             </RelativeLayout>
+
             <RelativeLayout
-                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_weight="1"
                 android:gravity="end">
+
                 <TextView
                     android:id="@+id/tv_pubkey_value"
                     android:layout_width="wrap_content"
@@ -123,7 +134,7 @@
                     android:text="03felksw.............xwqwcs985"
                     android:textAlignment="textEnd"
                     android:textColor="#99000000"
-                    android:textSize="@dimen/text_16"/>
+                    android:textSize="@dimen/text_16" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
@@ -131,93 +142,100 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="@dimen/main_15">
+        android:layout_marginTop="@dimen/main_15"
+        android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Local:"
                     android:textColor="#A5000000"
-                    android:textSize="@dimen/text_16"
-                    />
+                    android:textSize="@dimen/text_16" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/main_5">
+
                 <TextView
                     android:id="@+id/tv_local_amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="100.00"
                     android:textColor="#A506d78f"
-                    android:textSize="@dimen/text_16"
-                    />
+                    android:textSize="@dimen/text_16" />
             </RelativeLayout>
-            <RelativeLayout android:layout_width="0dp"
+
+            <RelativeLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:layout_weight="1" />
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Remote:"
                     android:textColor="#A5000000"
-                    android:textSize="@dimen/text_16"
-                    />
+                    android:textSize="@dimen/text_16" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/main_5">
+
                 <TextView
                     android:id="@+id/tv_remote_amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="600.00"
                     android:textColor="#A54C49F4"
-                    android:textSize="@dimen/text_16"
-                    />
+                    android:textSize="@dimen/text_16" />
             </RelativeLayout>
         </LinearLayout>
 
         <ProgressBar
-            android:layout_marginTop="@dimen/main_10"
             android:id="@+id/pv_amount_percent"
+            style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="10dp"
+            android:layout_marginTop="@dimen/main_10"
             android:max="100"
             android:progress="50"
-            android:secondaryProgress="100"
-            style="@android:style/Widget.ProgressBar.Horizontal"
-            android:progressDrawable="@drawable/self_progressbar_horizontal"/>
+            android:progressDrawable="@drawable/self_progressbar_horizontal"
+            android:secondaryProgress="100" />
 
         <!--<RelativeLayout-->
-            <!--android:id="@+id/rv_progress_content"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="10dp"-->
-            <!--android:background="@drawable/bg_blue_percent_rectangle_round"-->
-            <!--android:layout_marginTop="@dimen/main_5">-->
-            <!--<RelativeLayout-->
-                <!--android:id="@+id/rv_local_rectangle"-->
-                <!--android:layout_width="100dp"-->
-                <!--android:layout_height="10dp"-->
-                <!--android:background="@drawable/bg_green_percent_rectangle_round">-->
-            <!--</RelativeLayout>-->
+        <!--android:id="@+id/rv_progress_content"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="10dp"-->
+        <!--android:background="@drawable/bg_blue_percent_rectangle_round"-->
+        <!--android:layout_marginTop="@dimen/main_5">-->
+        <!--<RelativeLayout-->
+        <!--android:id="@+id/rv_local_rectangle"-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="10dp"-->
+        <!--android:background="@drawable/bg_green_percent_rectangle_round">-->
+        <!--</RelativeLayout>-->
         <!--</RelativeLayout>-->
     </LinearLayout>
 
@@ -228,5 +246,5 @@
         android:layout_marginLeft="@dimen/main_40"
         android:layout_marginRight="@dimen/main_40"
         android:layout_marginTop="@dimen/main_15"
-        android:background="@color/color_80p_transparent"/>
+        android:background="@color/color_80p_transparent" />
 </LinearLayout>

@@ -2,7 +2,7 @@ ext {
     // app 相关版本控制
     versions = [
             applicationId   : "com.omni.wallet",
-            minSdkVersion   : 19,
+            minSdkVersion   : 21,
             targetSdkVersion: 28,
             compileVersion  : 28,
             buildToolVersion: "28.0.3",

@@ -3,6 +3,7 @@ package com.omni.wallet.view.popupwindow;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -18,7 +19,7 @@ import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.ui.activity.ChannelsActivity;
+import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.ui.activity.ScanActivity;
 
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class CreateChannelStepOnePopupWindow {
     }
 
 
-    public void show(final View view, String pubKey) {
+    public void show(final View view, long balanceAmount, String walletAddress, String pubKey) {
         if (mBasePopWindow == null) {
             nodePubkey = pubKey;
             mBasePopWindow = new BasePopWindow(mContext);
@@ -197,8 +198,12 @@ public class CreateChannelStepOnePopupWindow {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
+                    Bundle bundle = new Bundle();
+                    bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
+                    bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
+                    bundle.putString(ChannelsActivity.KEY_PUBKEY, pubKey);
                     Intent intent = new Intent(mContext, ChannelsActivity.class);
-                    mContext.startActivity(intent);
+                    mContext.startActivity(intent,bundle);
                     /**
                      * Opening transaction channel
                      * 开通交易通道

@@ -29,7 +29,7 @@ import java.util.List;
  */
 
 public class AccountManagePopupWindow {
-    private static final String TAG = ChannelDetailsPopupWindow.class.getSimpleName();
+    private static final String TAG = AccountManagePopupWindow.class.getSimpleName();
 
     private Context accountContext;
     private BasePopWindow accountBasePopWindow;

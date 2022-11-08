@@ -18,6 +18,7 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.AccountManagePopupWindow;
@@ -336,10 +337,11 @@ public class AccountLightningActivity extends AppBaseActivity {
                     @Override
                     public void onClick(View v) {
                         Bundle bundle = new Bundle();
-                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_AMOUNT,balanceAmount);
-                        bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS,addressResp.getAddress());
-                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT,item.getBalance());
-                        bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID,item.getPropertyid());
+                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_AMOUNT, balanceAmount);
+                        bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS, addressResp.getAddress());
+                        bundle.putString(BalanceDetailActivity.KEY_PUBKEY, pubkey);
+                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT, item.getBalance());
+                        bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID, item.getPropertyid());
                         bundle.putString(BalanceDetailActivity.KEY_NETWORK, "lightning");
                         switchActivity(BalanceDetailActivity.class, bundle);
                     }
@@ -349,10 +351,11 @@ public class AccountLightningActivity extends AppBaseActivity {
                     @Override
                     public void onClick(View v) {
                         Bundle bundle = new Bundle();
-                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_AMOUNT,balanceAmount);
-                        bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS,addressResp.getAddress());
-                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT,item.getBalance());
-                        bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID,item.getPropertyid());
+                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_AMOUNT, balanceAmount);
+                        bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS, addressResp.getAddress());
+                        bundle.putString(BalanceDetailActivity.KEY_PUBKEY, pubkey);
+                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT, item.getBalance());
+                        bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID, item.getPropertyid());
                         bundle.putString(BalanceDetailActivity.KEY_NETWORK, "link");
                         switchActivity(BalanceDetailActivity.class, bundle);
                     }
@@ -398,7 +401,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @OnClick(R.id.iv_fund)
     public void clickFund() {
         mFundPopupWindow = new FundPopupWindow(mContext);
-        mFundPopupWindow.show(mParentLayout);
+        mFundPopupWindow.show(mParentLayout, addressResp.getAddress());
     }
 
     /**
@@ -435,6 +438,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     @OnClick(R.id.iv_channel_list)
     public void clickChannelList() {
         Bundle bundle = new Bundle();
+        bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
+        bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, addressResp.getAddress());
         bundle.putString(ChannelsActivity.KEY_PUBKEY, pubkey);
         switchActivity(ChannelsActivity.class, bundle);
     }
@@ -470,7 +475,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @OnClick(R.id.iv_menu)
     public void clickMemu() {
         mMenuPopupWindow = new MenuPopupWindow(mContext);
-        mMenuPopupWindow.show(mMenuIv);
+        mMenuPopupWindow.show(mMenuIv, balanceAmount, addressResp.getAddress(), pubkey);
     }
 
     /**
@@ -480,7 +485,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @OnClick(R.id.layout_create_channel)
     public void clickCreateChannel() {
         mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-        mCreateChannelStepOnePopupWindow.show(mParentLayout, pubkey);
+        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, addressResp.getAddress(), pubkey);
     }
 
     @Override

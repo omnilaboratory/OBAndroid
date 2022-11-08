@@ -24,6 +24,7 @@ import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
+import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
@@ -118,15 +119,16 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TextView mToBePaidTitleTv;
     @BindView(R.id.view_line)
     View mLineView;
-    private List<String> mTransactionsData = new ArrayList<>();
+    private List<LightningOuterClass.AssetTx> mTransactionsData = new ArrayList<>();
     private TransactionsAdapter mTransactionsAdapter;
-    private List<String> mToBePaidData = new ArrayList<>();
+    private List<LightningOuterClass.Payment> mToBePaidData = new ArrayList<>();
     private ToBePaidAdapter mToBePaidAdapter;
-    private List<String> mMyInvoicesData = new ArrayList<>();
+    private List<LightningOuterClass.Invoice> mMyInvoicesData = new ArrayList<>();
     private MyInvoicesAdapter mMyInvoicesAdapter;
 
     public static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";
     public static final String KEY_WALLET_ADDRESS = "walletAddressKey";
+    public static final String KEY_PUBKEY = "pubkeyKey";
     public static final String KEY_BALANCE_ACCOUNT = "balanceAccountKey";
     public static final String KEY_ASSET_ID = "assetIdKey";
     public static final String KEY_NETWORK = "networkKey";
@@ -135,6 +137,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     long assetId;
     String walletAddress;
     String network;
+    private String pubkey;
 
     PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow;
     SendStepOnePopupWindow mSendStepOnePopupWindow;
@@ -148,6 +151,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         walletAddress = bundle.getString(KEY_WALLET_ADDRESS);
         assetId = bundle.getLong(KEY_ASSET_ID);
         network = bundle.getString(KEY_NETWORK);
+        pubkey = bundle.getString(KEY_PUBKEY);
     }
 
     @Override
@@ -220,10 +224,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mTransactionsRecyclerView.setLayoutManager(layoutManager);
         mTransactionsAdapter = new TransactionsAdapter(mContext, mTransactionsData, R.layout.layout_item_transactions_list);
-        for (int i = 0; i < 10; i++) {
-            String str = new String();
-            mTransactionsData.add(str);
-        }
         mTransactionsRecyclerView.setAdapter(mTransactionsAdapter);
         fetchTransactionsFromLND();
     }
@@ -246,6 +246,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 try {
                     LightningOuterClass.ListTranscationsResponse resp = LightningOuterClass.ListTranscationsResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------transcationsOnResponse-----------------" + resp);
+                    mTransactionsData.clear();
+                    mTransactionsData.addAll(resp.getListList());
+                    mTransactionsAdapter.notifyDataSetChanged();
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -262,10 +265,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mToBePaidRecyclerView.setLayoutManager(layoutManager);
         mToBePaidAdapter = new ToBePaidAdapter(mContext, mToBePaidData, R.layout.layout_item_to_be_paid_list);
-        for (int i = 0; i < 10; i++) {
-            String str = new String();
-            mToBePaidData.add(str);
-        }
         mToBePaidRecyclerView.setAdapter(mToBePaidAdapter);
         fetchPaymentsFromLND();
     }
@@ -276,6 +275,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     public void fetchPaymentsFromLND() {
         LightningOuterClass.ListPaymentsRequest paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
+                .setAssetId((int) assetId)
                 .setIncludeIncomplete(false)
                 .build();
         Lndmobile.listPayments(paymentsRequest.toByteArray(), new Callback() {
@@ -289,6 +289,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 try {
                     LightningOuterClass.ListPaymentsResponse resp = LightningOuterClass.ListPaymentsResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------paymentsOnResponse-----------------" + resp);
+                    mToBePaidData.clear();
+                    mToBePaidData.addAll(resp.getPaymentsList());
+                    mToBePaidAdapter.notifyDataSetChanged();
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -305,10 +308,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mMyInvoicesRecyclerView.setLayoutManager(layoutManager);
         mMyInvoicesAdapter = new MyInvoicesAdapter(mContext, mMyInvoicesData, R.layout.layout_item_my_invoices_list);
-        for (int i = 0; i < 10; i++) {
-            String str = new String();
-            mMyInvoicesData.add(str);
-        }
         mMyInvoicesRecyclerView.setAdapter(mMyInvoicesAdapter);
         fetchInvoicesFromLND(100);
     }
@@ -319,6 +318,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     private void fetchInvoicesFromLND(long lastIndex) {
         LightningOuterClass.ListInvoiceRequest invoiceRequest = LightningOuterClass.ListInvoiceRequest.newBuilder()
+                .setAssetId((int) assetId)
+                .setIsQueryAsset(true)
                 .setNumMaxInvoices(lastIndex)
                 .build();
         Lndmobile.listInvoices(invoiceRequest.toByteArray(), new Callback() {
@@ -333,7 +334,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     LightningOuterClass.ListInvoiceResponse resp = LightningOuterClass.ListInvoiceResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------invoiceOnResponse-----------------" + resp);
                     if (resp.getLastIndexOffset() < lastIndex) {
-
+                        mMyInvoicesData.clear();
+                        mMyInvoicesData.addAll(resp.getInvoicesList());
+                        mMyInvoicesAdapter.notifyDataSetChanged();
                     } else {
                         fetchInvoicesFromLND(lastIndex + 100);
                     }
@@ -348,14 +351,14 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * the adapter of activity list
      * 交易列表适配器
      */
-    private class TransactionsAdapter extends CommonRecyclerAdapter<String> {
+    private class TransactionsAdapter extends CommonRecyclerAdapter<LightningOuterClass.AssetTx> {
 
-        public TransactionsAdapter(Context context, List<String> data, int layoutId) {
+        public TransactionsAdapter(Context context, List<LightningOuterClass.AssetTx> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, final int position, final String item) {
+        public void convert(ViewHolder holder, final int position, final LightningOuterClass.AssetTx item) {
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -370,14 +373,14 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * the adapter of to be paid list
      * 未支付列表适配器
      */
-    private class ToBePaidAdapter extends CommonRecyclerAdapter<String> {
+    private class ToBePaidAdapter extends CommonRecyclerAdapter<LightningOuterClass.Payment> {
 
-        public ToBePaidAdapter(Context context, List<String> data, int layoutId) {
+        public ToBePaidAdapter(Context context, List<LightningOuterClass.Payment> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, final int position, final String item) {
+        public void convert(ViewHolder holder, final int position, final LightningOuterClass.Payment item) {
             final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_to_be_paid_list_swipe_menu);
             holder.getView(R.id.tv_to_be_paid_delete).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -427,14 +430,14 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * the adapter of my invoices list
      * 我的发票列表适配器
      */
-    private class MyInvoicesAdapter extends CommonRecyclerAdapter<String> {
+    private class MyInvoicesAdapter extends CommonRecyclerAdapter<LightningOuterClass.Invoice> {
 
-        public MyInvoicesAdapter(Context context, List<String> data, int layoutId) {
+        public MyInvoicesAdapter(Context context, List<LightningOuterClass.Invoice> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, final int position, final String item) {
+        public void convert(ViewHolder holder, final int position, final LightningOuterClass.Invoice item) {
             final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_my_invoices_list_swipe_menu);
             holder.getView(R.id.tv_my_invoices_delete).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -518,7 +521,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @OnClick(R.id.iv_channel_list)
     public void clickChannelList() {
-        switchActivity(ChannelsActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
+        bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
+        bundle.putString(ChannelsActivity.KEY_PUBKEY, pubkey);
+        switchActivity(ChannelsActivity.class, bundle);
     }
 
     /**

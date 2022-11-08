@@ -101,6 +101,10 @@
     <color name="color_E51414">#ffE51414</color>
     <color name="color_9906d78f">#9906d78f</color>
     <color name="color_994C49F4">#994C49F4</color>
+    <color name="superGreen">#3EE673</color>
+    <color name="superRed">#E63939</color>
+    <color name="gray">#959595</color>
+    <color name="lightningOrange">#FD9800</color>
     <!--<color name="color_2F3030">#ff2F3030</color>-->
     <!--<color name="color_a0a0a0">#ffa0a0a0</color>-->
 

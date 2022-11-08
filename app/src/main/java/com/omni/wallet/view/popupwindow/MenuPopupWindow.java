@@ -2,12 +2,13 @@ package com.omni.wallet.view.popupwindow;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.ui.activity.ChannelsActivity;
+import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 
 /**
  * popup window for Menu
@@ -24,7 +25,7 @@ public class MenuPopupWindow {
     }
 
 
-    public void show(View view) {
+    public void show(View view, long balanceAmount, String walletAddress, String pubKey) {
         if (mMenuPopWindow == null) {
             mMenuPopWindow = new BasePopWindow(mContext);
             View rootView = mMenuPopWindow.setContentView(R.layout.layout_popupwindow_menu);
@@ -52,8 +53,12 @@ public class MenuPopupWindow {
                 @Override
                 public void onClick(View v) {
                     mMenuPopWindow.dismiss();
+                    Bundle bundle = new Bundle();
+                    bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
+                    bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
+                    bundle.putString(ChannelsActivity.KEY_PUBKEY, pubKey);
                     Intent intent = new Intent(mContext, ChannelsActivity.class);
-                    mContext.startActivity(intent);
+                    mContext.startActivity(intent,bundle);
                 }
             });
             if (mMenuPopWindow.isShowing()) {

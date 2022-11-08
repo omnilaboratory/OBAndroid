@@ -193,6 +193,13 @@
     <string name="my_invoices">My Invoices</string>
     <string name="sender">MEMO</string>
     <string name="pending_txs">Pending Txs</string>
+    <string name="channel_no_alias">Unnamed</string>
+    <string name="channel_state_open">open</string>
+    <string name="channel_state_offline">offline</string>
+    <string name="channel_state_pending_closing">pending close</string>
+    <string name="channel_state_pending_force_closing">pending force close</string>
+    <string name="channel_state_pending_open">pending open</string>
+    <string name="channel_state_waiting_close">waiting close</string>
 
     <!--token list 页面-->
     <string name="balance">余额</string>

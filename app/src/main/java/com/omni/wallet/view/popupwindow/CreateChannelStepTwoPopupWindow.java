@@ -8,7 +8,7 @@ import android.view.WindowManager;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.ui.activity.ChannelsActivity;
+import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 
 /**
  * CreateChannelStepTwo的弹窗
@@ -39,7 +39,7 @@ public class CreateChannelStepTwoPopupWindow {
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
                     mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-                    mCreateChannelStepOnePopupWindow.show(view,"123");
+                    mCreateChannelStepOnePopupWindow.show(view, 0, "123", "123");
                 }
             });
             // 点击create

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 
+import com.google.protobuf.ByteString;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 
@@ -26,7 +27,7 @@ public class ChannelDetailsPopupWindow {
         this.mContext = context;
     }
 
-    public void show(final View view) {
+    public void show(final View view, ByteString channel, long balanceAmount, String walletAddress, String pubKey) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
             View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_channel_details);
@@ -46,7 +47,7 @@ public class ChannelDetailsPopupWindow {
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
                     mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-                    mCreateChannelStepOnePopupWindow.show(view,"123");
+                    mCreateChannelStepOnePopupWindow.show(view, balanceAmount, walletAddress, pubKey);
                 }
             });
             //click close channel button
