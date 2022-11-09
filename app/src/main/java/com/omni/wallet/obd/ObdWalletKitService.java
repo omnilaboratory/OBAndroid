@@ -1,8 +1,8 @@
-package com.omni.wallet.lnd;
+package com.omni.wallet.obd;
 
 import io.reactivex.rxjava3.core.Single;
 
-public interface LndWalletKitService {
+public interface ObdWalletKitService {
 
     Single<walletrpc.Walletkit.ListUnspentResponse> listUnspent(walletrpc.Walletkit.ListUnspentRequest request);
 

@@ -1,9 +1,9 @@
-package com.omni.wallet.lnd;
+package com.omni.wallet.obd;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-public interface LndStateService {
+public interface ObdStateService {
 
     Observable<lnrpc.Stateservice.SubscribeStateResponse> subscribeState(lnrpc.Stateservice.SubscribeStateRequest request);
 

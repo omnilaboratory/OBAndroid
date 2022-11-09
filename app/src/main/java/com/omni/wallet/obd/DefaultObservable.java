@@ -1,4 +1,4 @@
-package com.omni.wallet.lnd;
+package com.omni.wallet.obd;
 
 import android.support.annotation.NonNull;
 

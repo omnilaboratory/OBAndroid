@@ -1,8 +1,8 @@
-package com.omni.wallet.lnd;
+package com.omni.wallet.obd;
 
 import io.reactivex.rxjava3.core.Single;
 
-public interface LndVersionerService {
+public interface ObdVersionerService {
 
     Single<verrpc.Verrpc.Version> getVersion(verrpc.Verrpc.VersionRequest request);
 }

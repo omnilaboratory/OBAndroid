@@ -1,8 +1,8 @@
-package com.omni.wallet.lnd;
+package com.omni.wallet.obd;
 
 import io.reactivex.rxjava3.core.Observable;
 
-public interface LndChainNotifierService {
+public interface ObdChainNotifierService {
 
     Observable<chainrpc.Chainnotifier.ConfEvent> registerConfirmationsNtfn(chainrpc.Chainnotifier.ConfRequest request);
 

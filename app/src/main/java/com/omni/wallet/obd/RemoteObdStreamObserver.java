@@ -1,4 +1,4 @@
-package com.omni.wallet.lnd;
+package com.omni.wallet.obd;
 
 import io.grpc.stub.StreamObserver;
 import io.reactivex.rxjava3.core.ObservableEmitter;
@@ -6,11 +6,11 @@ import io.reactivex.rxjava3.core.ObservableEmitter;
 /**
  * Used to wrap gRPC Observer with Rx ObservableEmitter
  */
-public class RemoteLndStreamObserver<V> implements StreamObserver<V> {
+public class RemoteObdStreamObserver<V> implements StreamObserver<V> {
 
     private final ObservableEmitter<V> mEmitter;
 
-    RemoteLndStreamObserver(ObservableEmitter<V> emitter) {
+    RemoteObdStreamObserver(ObservableEmitter<V> emitter) {
         mEmitter = emitter;
     }
 

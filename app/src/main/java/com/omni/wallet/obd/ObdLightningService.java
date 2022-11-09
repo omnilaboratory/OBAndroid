@@ -1,9 +1,9 @@
-package com.omni.wallet.lnd;
+package com.omni.wallet.obd;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
-public interface LndLightningService {
+public interface ObdLightningService {
 
     /*
      * GYL, oblnd mobile team.

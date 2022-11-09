@@ -1,8 +1,8 @@
-package com.omni.wallet.lnd;
+package com.omni.wallet.obd;
 
 import io.reactivex.rxjava3.core.Single;
 
-public interface LndAutopilotService {
+public interface ObdAutopilotService {
 
     Single<autopilotrpc.AutopilotOuterClass.StatusResponse> status(autopilotrpc.AutopilotOuterClass.StatusRequest request);
 

@@ -1,8 +1,8 @@
-package com.omni.wallet.lnd;
+package com.omni.wallet.obd;
 
 import io.reactivex.rxjava3.core.Single;
 
-public interface LndWalletUnlockerService {
+public interface ObdWalletUnlockerService {
 
     Single<lnrpc.Walletunlocker.GenSeedResponse> genSeed(lnrpc.Walletunlocker.GenSeedRequest request);
 
