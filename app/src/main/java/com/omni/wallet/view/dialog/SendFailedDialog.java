@@ -1,6 +1,7 @@
 package com.omni.wallet.view.dialog;
 
 import android.content.Context;
+import android.widget.TextView;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
@@ -19,7 +20,7 @@ public class SendFailedDialog {
         this.mContext = context;
     }
 
-    public void show() {
+    public void show(String message) {
         if (mAlertDialog == null) {
             mAlertDialog = new AlertDialog.Builder(mContext)
                     .setContentView(R.layout.dialog_send_failed)
@@ -27,6 +28,8 @@ public class SendFailedDialog {
                     .setCanceledOnTouchOutside(true)
                     .create();
         }
+        TextView info = mAlertDialog.getViewById(R.id.tv_failed_message);
+        info.setText(message);
         mAlertDialog.show();
     }
 

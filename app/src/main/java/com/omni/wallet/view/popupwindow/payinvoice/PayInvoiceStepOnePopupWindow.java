@@ -18,9 +18,9 @@ import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.utils.RefConstants;
 import com.omni.wallet.utils.UriUtil;
 
-import lndmobile.Callback;
-import lndmobile.Lndmobile;
 import lnrpc.LightningOuterClass;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 import routerrpc.RouterOuterClass;
 
 /**
@@ -114,7 +114,7 @@ public class PayInvoiceStepOnePopupWindow {
                     LightningOuterClass.PayReqString decodePaymentRequest = LightningOuterClass.PayReqString.newBuilder()
                             .setPayReq(lnInvoice)
                             .build();
-                    Lndmobile.decodePayReq(decodePaymentRequest.toByteArray(), new Callback() {
+                    Obdmobile.decodePayReq(decodePaymentRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
                             LogUtils.e(TAG, "------------------decodePaymentOnError------------------" + e.getMessage());
@@ -164,7 +164,7 @@ public class PayInvoiceStepOnePopupWindow {
                             .setTimeoutSeconds(RefConstants.TIMEOUT_MEDIUM * RefConstants.TOR_TIMEOUT_MULTIPLIER)
                             .setMaxParts(RefConstants.LN_MAX_PARTS)
                             .build();
-                    Lndmobile.sendPaymentSync(sendPaymentRequest.toByteArray(), new Callback() {
+                    Obdmobile.sendPaymentSync(sendPaymentRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
                             LogUtils.e(TAG, "------------------sendPaymentOnError------------------" + e.getMessage());

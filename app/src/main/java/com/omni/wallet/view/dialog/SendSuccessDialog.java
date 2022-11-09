@@ -1,6 +1,7 @@
 package com.omni.wallet.view.dialog;
 
 import android.content.Context;
+import android.widget.TextView;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
@@ -19,7 +20,7 @@ public class SendSuccessDialog {
         this.mContext = context;
     }
 
-    public void show() {
+    public void show(String message) {
         if (mAlertDialog == null) {
             mAlertDialog = new AlertDialog.Builder(mContext)
                     .setContentView(R.layout.dialog_send_success)
@@ -27,6 +28,8 @@ public class SendSuccessDialog {
                     .setCanceledOnTouchOutside(true)
                     .create();
         }
+        TextView info = mAlertDialog.getViewById(R.id.tv_success_message);
+        info.setText(message);
         mAlertDialog.show();
     }
 

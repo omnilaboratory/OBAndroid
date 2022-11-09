@@ -19,16 +19,16 @@ import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.ui.activity.ScanActivity;
+import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import lndmobile.Callback;
-import lndmobile.Lndmobile;
-import lndmobile.RecvStream;
 import lnrpc.LightningOuterClass;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
+import obdmobile.RecvStream;
 
 /**
  * CreateChannelStepOne的弹窗
@@ -217,7 +217,7 @@ public class CreateChannelStepOnePopupWindow {
                             .setLocalFundingAssetAmount(Long.parseLong(channelAmountEdit.getText().toString()))
                             .setAssetId((int) assetId)
                             .build();
-                    Lndmobile.openChannel(openChannelRequest.toByteArray(), new RecvStream() {
+                    Obdmobile.openChannel(openChannelRequest.toByteArray(), new RecvStream() {
                         @Override
                         public void onError(Exception e) {
                             LogUtils.e(TAG, "------------------openChannelOnError------------------" + e.getMessage());
@@ -254,7 +254,7 @@ public class CreateChannelStepOnePopupWindow {
     }
 
     private void getListAsset() {
-        Lndmobile.listAsset(LightningOuterClass.ListAssetRequest.newBuilder().build().toByteArray(), new Callback() {
+        Obdmobile.listAsset(LightningOuterClass.ListAssetRequest.newBuilder().build().toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------listAssetOnError------------------" + e.getMessage());
@@ -303,7 +303,7 @@ public class CreateChannelStepOnePopupWindow {
                 .putAddrToAmount(address, amount)
                 .setTargetConf(targetConf)
                 .build();
-        Lndmobile.estimateFee(asyncEstimateFeeRequest.toByteArray(), new Callback() {
+        Obdmobile.estimateFee(asyncEstimateFeeRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------asyncEstimateFeeOnError------------------" + e.getMessage());

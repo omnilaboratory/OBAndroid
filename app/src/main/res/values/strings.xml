@@ -199,6 +199,41 @@
     <string name="channel_state_pending_force_closing">pending force close</string>
     <string name="channel_state_pending_open">pending open</string>
     <string name="channel_state_waiting_close">waiting close</string>
+    <string name="channel_close_success">Channel closing successfully initiated</string>
+    <string name="error_channel_close_offline">Peer is offline. Only force close allowed.</string>
+    <string name="error_channel_close_timeout">Channel could not be closed within deadline.</string>
+    <string name="error_channel_close">Could not close channel</string>
+
+    <plurals name="duration_second">
+        <item quantity="one">%d Second</item>
+        <item quantity="other">%d Seconds</item>
+    </plurals>
+    <plurals name="duration_minute">
+        <item quantity="one">%d Minute</item>
+        <item quantity="other">%d Minutes</item>
+    </plurals>
+    <plurals name="duration_hour">
+        <item quantity="one">%d Hour</item>
+        <item quantity="other">%d Hours</item>
+    </plurals>
+    <plurals name="duration_day">
+        <item quantity="one">%d Day</item>
+        <item quantity="other">%d Days</item>
+    </plurals>
+    <plurals name="duration_week">
+        <item quantity="one">%d Week</item>
+        <item quantity="other">%d Weeks</item>
+    </plurals>
+    <plurals name="duration_month">
+        <item quantity="one">%d Month</item>
+        <item quantity="other">%d Months</item>
+    </plurals>
+    <plurals name="duration_year">
+        <item quantity="one">%d Year</item>
+        <item quantity="other">%d Years</item>
+    </plurals>
+    <string name="duration_second_short" translatable="false">sec</string>
+    <string name="duration_minute_short" translatable="false">min</string>
 
     <!--token list 页面-->
     <string name="balance">Balance</string>

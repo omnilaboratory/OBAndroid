@@ -152,7 +152,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     public void onChannelSelect(ByteString channel, int type) {
         if (channel != null) {
             mChannelDetailsPopupWindow = new ChannelDetailsPopupWindow(mContext);
-            mChannelDetailsPopupWindow.show(mParentLayout, channel, balanceAmount, walletAddress, pubkey);
+            mChannelDetailsPopupWindow.show(mParentLayout, channel, type, balanceAmount, walletAddress, pubkey);
         }
     }
 

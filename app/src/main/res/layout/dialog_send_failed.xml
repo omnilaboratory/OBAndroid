@@ -20,6 +20,7 @@
             android:src="@mipmap/icon_failed_red"/>
 
         <TextView
+            android:id="@+id/tv_failed_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_30"

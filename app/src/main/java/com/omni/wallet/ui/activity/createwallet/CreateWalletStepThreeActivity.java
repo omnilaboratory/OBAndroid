@@ -28,9 +28,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
-import lndmobile.Callback;
-import lndmobile.Lndmobile;
 import lnrpc.Walletunlocker;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 public class CreateWalletStepThreeActivity extends AppBaseActivity {
     Context ctx = CreateWalletStepThreeActivity.this;
@@ -256,7 +256,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
 
             Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
 
-            Lndmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
+            Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
                 @Override
                 public void onError(Exception e) {
                     Log.e("initWallet Error",e.toString());

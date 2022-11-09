@@ -17,10 +17,10 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import lndmobile.Callback;
-import lndmobile.Lndmobile;
-import lndmobile.RecvStream;
 import lnrpc.LightningOuterClass;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
+import obdmobile.RecvStream;
 
 public class Wallet {
 
@@ -47,6 +47,13 @@ public class Wallet {
             "--bitcoind.zmqpubrawblock=tcp://16.162.119.13:28332\n" +
             "--bitcoind.zmqpubrawtx=tcp://16.162.119.13:28333";
 
+    public static final String START_NODE_OMNI = " --noseedbackup --trickledelay=5000 --alias=alice\n" +
+            "--autopilot.active --maxpendingchannels=100 " +
+            "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
+            "--omnicoreproxy.rpchost=regnet.oblnd.top:18332 " +
+            "--omnicoreproxy.zmqpubrawblock=tcp://regnet.oblnd.top:28332 " +
+            "--omnicoreproxy.zmqpubrawtx=tcp://regnet.oblnd.top:28333";
+
     private Wallet() {
         ;
     }
@@ -68,7 +75,7 @@ public class Wallet {
                 .setChannelPoint(point)
                 .setForce(force)
                 .build();
-        Lndmobile.closeChannel(closeChannelRequest.toByteArray(), new RecvStream() {
+        Obdmobile.closeChannel(closeChannelRequest.toByteArray(), new RecvStream() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------closeChannelOnError------------------" + e.getMessage());
@@ -87,7 +94,7 @@ public class Wallet {
     }
 
     public void fetchChannelsFromLND() {
-        Lndmobile.listChannels(LightningOuterClass.ListChannelsRequest.newBuilder().build().toByteArray(), new Callback() {
+        Obdmobile.listChannels(LightningOuterClass.ListChannelsRequest.newBuilder().build().toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------listChannelsOnError------------------" + e.getMessage());
@@ -105,7 +112,7 @@ public class Wallet {
                 }
             }
         });
-        Lndmobile.pendingChannels(LightningOuterClass.PendingChannelsRequest.newBuilder().build().toByteArray(), new Callback() {
+        Obdmobile.pendingChannels(LightningOuterClass.PendingChannelsRequest.newBuilder().build().toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------pendingChannelsOnError------------------" + e.getMessage());
@@ -132,7 +139,7 @@ public class Wallet {
                 }
             }
         });
-        Lndmobile.closedChannels(LightningOuterClass.ClosedChannelsRequest.newBuilder().build().toByteArray(), new Callback() {
+        Obdmobile.closedChannels(LightningOuterClass.ClosedChannelsRequest.newBuilder().build().toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------closedChannelsOnError------------------" + e.getMessage());
@@ -241,7 +248,7 @@ public class Wallet {
                 .setPubKey(pubkey)
                 .build();
 
-        Lndmobile.getNodeInfo(nodeInfoRequest.toByteArray(), new Callback() {
+        Obdmobile.getNodeInfo(nodeInfoRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------nodeInfoOnError-----------------" + e.getMessage());

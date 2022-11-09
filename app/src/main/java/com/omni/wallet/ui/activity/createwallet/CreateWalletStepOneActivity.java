@@ -16,16 +16,14 @@ import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.NumberFormatter;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import lndmobile.Callback;
-import lndmobile.Lndmobile;
-import lnrpc.LightningOuterClass;
 import lnrpc.Walletunlocker;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 public class CreateWalletStepOneActivity extends AppBaseActivity {
     List <String> seedArray = new ArrayList();
@@ -122,7 +120,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
         Log.e("create error:","123456789");
         mLoadingDialog.show();
         Walletunlocker.GenSeedRequest genSeedRequest = Walletunlocker.GenSeedRequest.newBuilder().build();
-        Lndmobile.genSeed(genSeedRequest.toByteArray(), new Callback() {
+        Obdmobile.genSeed(genSeedRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 Log.e("create error:",e.toString());

@@ -24,9 +24,9 @@ import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.popupwindow.SelectAssetPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
 
-import lndmobile.Callback;
-import lndmobile.Lndmobile;
 import lnrpc.LightningOuterClass;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 /**
  * 汉: 创建发票的步骤一弹窗
@@ -160,7 +160,7 @@ public class CreateInvoiceStepOnePopupWindow {
                             .setExpiry(Long.parseLong("86400")) // in seconds
                             .setPrivate(false)
                             .build();
-                    Lndmobile.addInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
+                    Obdmobile.addInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
                             LogUtils.e(TAG, "------------------addInvoiceOnError------------------" + e.getMessage());

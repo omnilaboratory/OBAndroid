@@ -4,21 +4,21 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 
 import com.alibaba.android.arouter.launcher.ARouter;
-import com.omni.wallet.baselibrary.utils.LogUtils;
-import com.omni.wallet.utils.Wallet;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
 import com.omni.wallet.baselibrary.base.BaseApplication;
 import com.omni.wallet.baselibrary.common.Constants;
 import com.omni.wallet.baselibrary.http.HttpUtils;
 import com.omni.wallet.baselibrary.http.engine.OkHttpEngine;
 import com.omni.wallet.baselibrary.http.interceptor.LogInterceptor;
 import com.omni.wallet.baselibrary.utils.AppUtils;
+import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
+import com.omni.wallet.utils.Wallet;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
-import lndmobile.Callback;
-import lndmobile.Lndmobile;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 /**
  * Application
@@ -95,7 +95,7 @@ public class AppApplication extends BaseApplication {
          */
         LogUtils.e(TAG, "------------------getFilesDir------------------" + getApplicationContext().getFilesDir());
         LogUtils.e(TAG, "------------------getExternalCacheDir------------------" + getApplicationContext().getExternalCacheDir());
-        Lndmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE, new Callback() {
+        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE_OMNI, new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());

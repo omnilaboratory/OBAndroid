@@ -36,9 +36,9 @@ import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
 import java.util.ArrayList;
 import java.util.List;
 
-import lndmobile.Callback;
-import lndmobile.Lndmobile;
 import lnrpc.LightningOuterClass;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 /**
  * SendStepOne的弹窗
@@ -135,7 +135,7 @@ public class SendStepOnePopupWindow {
             LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(layoutManager);
-            Lndmobile.getTransactions(LightningOuterClass.GetTransactionsRequest.newBuilder().build().toByteArray(), new Callback() {
+            Obdmobile.getTransactions(LightningOuterClass.GetTransactionsRequest.newBuilder().build().toByteArray(), new Callback() {
                 @Override
                 public void onError(Exception e) {
                     LogUtils.e(TAG, "------------------getTransactionsOnError------------------" + e.getMessage());
@@ -359,7 +359,7 @@ public class SendStepOnePopupWindow {
                             .setAmount(Long.parseLong(amountInputView.getText().toString()))
                             .setTargetConf(time)
                             .build();
-                    Lndmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
+                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
                             rootView.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
@@ -372,7 +372,7 @@ public class SendStepOnePopupWindow {
                             mLoadingDialog.dismiss();
                             mBasePopWindow.dismiss();
                             mSendSuccessDialog = new SendSuccessDialog(mContext);
-                            mSendSuccessDialog.show();
+                            mSendSuccessDialog.show("success");
                         }
                     });
                 }
@@ -388,7 +388,7 @@ public class SendStepOnePopupWindow {
                             .setAmount(Long.parseLong(amountInputView.getText().toString()))
                             .setTargetConf(time)
                             .build();
-                    Lndmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
+                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
                             failedMessageTv.setText(e.getMessage());
@@ -399,7 +399,7 @@ public class SendStepOnePopupWindow {
                             mLoadingDialog.dismiss();
                             mBasePopWindow.dismiss();
                             mSendSuccessDialog = new SendSuccessDialog(mContext);
-                            mSendSuccessDialog.show();
+                            mSendSuccessDialog.show("success");
                         }
                     });
                 }
@@ -511,7 +511,7 @@ public class SendStepOnePopupWindow {
                 .putAddrToAmount(selectAddress, amount)
                 .setTargetConf(targetConf)
                 .build();
-        Lndmobile.estimateFee(asyncEstimateFeeRequest.toByteArray(), new Callback() {
+        Obdmobile.estimateFee(asyncEstimateFeeRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------asyncEstimateFeeOnError------------------" + e.getMessage());

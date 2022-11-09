@@ -36,9 +36,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import lndmobile.Callback;
-import lndmobile.Lndmobile;
 import lnrpc.LightningOuterClass;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 public class BalanceDetailActivity extends AppBaseActivity {
     private static final String TAG = AccountLightningActivity.class.getSimpleName();
@@ -235,7 +235,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     public void fetchTransactionsFromLND() {
         LightningOuterClass.ListTranscationsRequest transcationsRequest = LightningOuterClass.ListTranscationsRequest.newBuilder()
                 .build();
-        Lndmobile.listTranscations(transcationsRequest.toByteArray(), new Callback() {
+        Obdmobile.listTranscations(transcationsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------transcationsOnError------------------" + e.getMessage());
@@ -278,7 +278,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 .setAssetId((int) assetId)
                 .setIncludeIncomplete(false)
                 .build();
-        Lndmobile.listPayments(paymentsRequest.toByteArray(), new Callback() {
+        Obdmobile.listPayments(paymentsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------paymentsOnError------------------" + e.getMessage());
@@ -322,7 +322,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 .setIsQueryAsset(true)
                 .setNumMaxInvoices(lastIndex)
                 .build();
-        Lndmobile.listInvoices(invoiceRequest.toByteArray(), new Callback() {
+        Obdmobile.listInvoices(invoiceRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------invoiceOnError------------------" + e.getMessage());
@@ -393,7 +393,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             .setPaymentHash(byteStringFromHex(""))
                             .setFailedHtlcsOnly(false)
                             .build();
-                    Lndmobile.deletePayment(deletePaymentRequest.toByteArray(), new Callback() {
+                    Obdmobile.deletePayment(deletePaymentRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
                             LogUtils.e(TAG, "------------------deletePaymentOnError------------------" + e.getMessage());
