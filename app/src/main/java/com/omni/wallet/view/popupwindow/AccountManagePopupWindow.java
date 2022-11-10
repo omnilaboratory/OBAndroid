@@ -82,6 +82,9 @@ public class AccountManagePopupWindow {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.ListRecAddressResponse resp = LightningOuterClass.ListRecAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------listRecAddressOnResponse-----------------" + resp);

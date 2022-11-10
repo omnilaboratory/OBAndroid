@@ -156,9 +156,9 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
-        if (mLoadingDialog != null) {
-            mLoadingDialog.show();
-        }
+//        if (mLoadingDialog != null) {
+//            mLoadingDialog.show();
+//        }
         /**
          * Get wallet related information
          * 获取钱包相关信息
@@ -167,22 +167,25 @@ public class AccountLightningActivity extends AppBaseActivity {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------getInfoOnError------------------" + e.getMessage());
-                if (mLoadingDialog != null) {
-                    mLoadingDialog.dismiss();
-                }
+//                if (mLoadingDialog != null) {
+//                    mLoadingDialog.dismiss();
+//                }
             }
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.GetInfoResponse resp = LightningOuterClass.GetInfoResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------getInfoOnResponse-----------------" + resp);
                     pubkey = resp.getIdentityPubkey();
+//                    if (mLoadingDialog != null) {
+//                        mLoadingDialog.dismiss();
+//                    }
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
-                }
-                if (mLoadingDialog != null) {
-                    mLoadingDialog.dismiss();
                 }
             }
         });
@@ -201,6 +204,9 @@ public class AccountLightningActivity extends AppBaseActivity {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
                     mWalletAddressTv.setText(addressResp.getAddress());
@@ -216,12 +222,20 @@ public class AccountLightningActivity extends AppBaseActivity {
 
                         @Override
                         public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
                             try {
                                 LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
                                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
-                                mBalanceValueTv.setText("$ " + resp.getTotalBalance());
-                                balanceAmount = resp.getConfirmedBalance();
-                                mBalanceAmountTv.setText("My account " + balanceAmount + " balance");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mBalanceValueTv.setText("$ " + resp.getTotalBalance());
+                                        balanceAmount = resp.getConfirmedBalance();
+                                        mBalanceAmountTv.setText("My account " + balanceAmount + " balance");
+                                    }
+                                });
                             } catch (InvalidProtocolBufferException e) {
                                 e.printStackTrace();
                             }
@@ -247,25 +261,33 @@ public class AccountLightningActivity extends AppBaseActivity {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
                     allData.clear();
                     allData.addAll(resp.getListList());
-                    mAdapter.notifyDataSetChanged();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
             }
         });
-//        /**
-//         * Set the created new wallet address as the default wallet address
-//         * 将创建新的钱包地址设置为默认钱包地址
-//         */
+        /**
+         * Set the created new wallet address as the default wallet address
+         * 将创建新的钱包地址设置为默认钱包地址
+         */
 //        LightningOuterClass.SetDefaultAddressRequest setDefaultAddressRequest = LightningOuterClass.SetDefaultAddressRequest.newBuilder()
 //                .setAddress(addressResp.getAddress())
 //                .build();
-//        Lndmobile.setDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
+//        Obdmobile.setDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
 //            @Override
 //            public void onError(Exception e) {
 //                LogUtils.e(TAG, "------------------setDefaultAddressOnError------------------" + e.getMessage());
@@ -273,6 +295,9 @@ public class AccountLightningActivity extends AppBaseActivity {
 //
 //            @Override
 //            public void onResponse(byte[] bytes) {
+//                if (bytes == null) {
+//                    return;
+//                }
 //                try {
 //                    LightningOuterClass.SetDefaultAddressResponse resp = LightningOuterClass.SetDefaultAddressResponse.parseFrom(bytes);
 //                    LogUtils.e(TAG, "------------------setDefaultAddressOnResponse------------------" + resp.toString());

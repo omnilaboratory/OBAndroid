@@ -122,6 +122,9 @@ public class PayInvoiceStepOnePopupWindow {
 
                         @Override
                         public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
                             try {
                                 LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
                                 LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
@@ -179,6 +182,9 @@ public class PayInvoiceStepOnePopupWindow {
 
                         @Override
                         public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
                             try {
                                 LightningOuterClass.Payment resp = LightningOuterClass.Payment.parseFrom(bytes);
                                 LogUtils.e(TAG, "------------------sendPaymentOnResponse-----------------" + resp);

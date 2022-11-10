@@ -1,1 +1,1 @@
-include ':app', ':baselibrary', ':resource', ':framelibrary', ':libjpeg', ':thirdsupport'
+include ':app', ':baselibrary', ':resource', ':framelibrary', ':thirdsupport'

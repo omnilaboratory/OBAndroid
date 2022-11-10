@@ -243,12 +243,20 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.ListTranscationsResponse resp = LightningOuterClass.ListTranscationsResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------transcationsOnResponse-----------------" + resp);
                     mTransactionsData.clear();
                     mTransactionsData.addAll(resp.getListList());
-                    mTransactionsAdapter.notifyDataSetChanged();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTransactionsAdapter.notifyDataSetChanged();
+                        }
+                    });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -286,12 +294,20 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.ListPaymentsResponse resp = LightningOuterClass.ListPaymentsResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------paymentsOnResponse-----------------" + resp);
                     mToBePaidData.clear();
                     mToBePaidData.addAll(resp.getPaymentsList());
-                    mToBePaidAdapter.notifyDataSetChanged();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mToBePaidAdapter.notifyDataSetChanged();
+                        }
+                    });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -330,13 +346,21 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.ListInvoiceResponse resp = LightningOuterClass.ListInvoiceResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------invoiceOnResponse-----------------" + resp);
                     if (resp.getLastIndexOffset() < lastIndex) {
                         mMyInvoicesData.clear();
                         mMyInvoicesData.addAll(resp.getInvoicesList());
-                        mMyInvoicesAdapter.notifyDataSetChanged();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mMyInvoicesAdapter.notifyDataSetChanged();
+                            }
+                        });
                     } else {
                         fetchInvoicesFromLND(lastIndex + 100);
                     }

@@ -2,7 +2,6 @@ package com.omni.wallet.framelibrary.utils;
 
 import android.content.Context;
 
-import com.libjpeg.NativeUtil;
 import com.omni.wallet.baselibrary.utils.FileUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ThreadPoolUtils;
@@ -65,7 +64,7 @@ public class CompressImageUtils {
                     LogUtils.e(TAG, "压缩文件的生成结果：" + result);
                 }
                 // 压缩
-                NativeUtil.compressBitmap(imagePath, mCompressResultPath, mMaxImageSize);
+//                NativeUtil.compressBitmap(imagePath, mCompressResultPath, mMaxImageSize);
                 LogUtils.e(TAG, "压缩后图片(" + mCompressResultPath + ")大小是：" + FileUtils.getFileLength(mCompressResultPath));
                 // 压缩完成判断文件是否存在（文件本身大小就满足的时候不会走压缩，所以要将原路径赋值给最终路径）
                 if (new File(mCompressResultPath).exists()) {

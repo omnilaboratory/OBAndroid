@@ -204,6 +204,7 @@
     <string name="error_channel_close_offline">Peer is offline. Only force close allowed.</string>
     <string name="error_channel_close_timeout">Channel could not be closed within deadline.</string>
     <string name="error_channel_close">Could not close channel</string>
+    <string name="create_invoice_amount">Please enter the amount</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

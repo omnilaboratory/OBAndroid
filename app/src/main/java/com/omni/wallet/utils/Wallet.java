@@ -83,6 +83,9 @@ public class Wallet {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.CloseStatusUpdate resp = LightningOuterClass.CloseStatusUpdate.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------closeChannelOnResponse-----------------" + resp);
@@ -102,6 +105,9 @@ public class Wallet {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.ListChannelsResponse resp = LightningOuterClass.ListChannelsResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------listChannelsOnResponse-----------------" + resp.getChannelsList());
@@ -120,6 +126,9 @@ public class Wallet {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.PendingChannelsResponse resp = LightningOuterClass.PendingChannelsResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------pendingChannelsOnResponse1-----------------" + resp.getPendingOpenChannelsList());
@@ -147,6 +156,9 @@ public class Wallet {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.ClosedChannelsResponse resp = LightningOuterClass.ClosedChannelsResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------closedChannelsOnResponse-----------------" + resp.getChannelsList());
@@ -259,6 +271,9 @@ public class Wallet {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.NodeInfo nodeInfo = LightningOuterClass.NodeInfo.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------nodeInfoOnResponse-----------------" + nodeInfo);

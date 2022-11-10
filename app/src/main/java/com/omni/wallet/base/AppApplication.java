@@ -103,7 +103,7 @@ public class AppApplication extends BaseApplication {
 
             @Override
             public void onResponse(byte[] bytes) {
-                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
+//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
             }
         });
     }

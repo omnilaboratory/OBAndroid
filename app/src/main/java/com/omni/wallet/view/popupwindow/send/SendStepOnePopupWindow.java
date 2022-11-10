@@ -143,6 +143,9 @@ public class SendStepOnePopupWindow {
 
                 @Override
                 public void onResponse(byte[] bytes) {
+                    if (bytes == null) {
+                        return;
+                    }
                     try {
                         LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
                         LogUtils.e(TAG, "------------------getTransactionsOnResponse-----------------" + resp);
@@ -519,6 +522,9 @@ public class SendStepOnePopupWindow {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.EstimateFeeResponse resp = LightningOuterClass.EstimateFeeResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------asyncEstimateFeeOnResponse-----------------" + resp);

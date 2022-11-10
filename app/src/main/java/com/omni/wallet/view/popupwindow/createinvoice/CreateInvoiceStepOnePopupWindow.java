@@ -8,7 +8,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,6 +16,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.StringUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.utils.CopyUtil;
@@ -59,7 +60,7 @@ public class CreateInvoiceStepOnePopupWindow {
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
             TextView addressTv = rootView.findViewById(R.id.tv_address);
-            LinearLayout selectAssetLayout = rootView.findViewById(R.id.layout_select_asset);
+            RelativeLayout selectAssetLayout = rootView.findViewById(R.id.layout_select_asset);
             timeButton = rootView.findViewById(R.id.btn_time);
             EditText amountEdit = rootView.findViewById(R.id.edit_amount);
             EditText amountTimeEdit = rootView.findViewById(R.id.edit_time);
@@ -153,10 +154,14 @@ public class CreateInvoiceStepOnePopupWindow {
             rootView.findViewById(R.id.layout_next).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(StringUtils.isEmpty(amountEdit.getText().toString())){
+                        ToastUtils.showToast(mContext,mContext.getString(R.string.create_invoice_amount));
+                        return;
+                    }
                     LightningOuterClass.Invoice asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                             .setAssetId((int) assetId)
                             .setAmount(Long.parseLong(amountEdit.getText().toString()))
-                            .setMemo("暂未设置")
+                            .setMemo("暂无")
                             .setExpiry(Long.parseLong("86400")) // in seconds
                             .setPrivate(false)
                             .build();
@@ -173,6 +178,9 @@ public class CreateInvoiceStepOnePopupWindow {
 
                         @Override
                         public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
                             try {
                                 LightningOuterClass.AddInvoiceResponse resp = LightningOuterClass.AddInvoiceResponse.parseFrom(bytes);
                                 LogUtils.e(TAG, "------------------addInvoiceOnResponse-----------------" + resp);

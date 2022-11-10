@@ -262,6 +262,9 @@ public class CreateChannelStepOnePopupWindow {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.ListAssetResponse resp = LightningOuterClass.ListAssetResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------listAssetOnResponse-----------------" + resp);
@@ -311,6 +314,9 @@ public class CreateChannelStepOnePopupWindow {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 try {
                     LightningOuterClass.EstimateFeeResponse resp = LightningOuterClass.EstimateFeeResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------asyncEstimateFeeOnResponse-----------------" + resp);

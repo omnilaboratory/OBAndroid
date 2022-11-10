@@ -30,7 +30,6 @@ dependencies {
     def dependencies = rootProject.ext.deps
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':baselibrary')
-    implementation project(':libjpeg')
     implementation project(':thirdsupport')
     // ARouter
     annotationProcessor dependencies.ArouterAnnotation
