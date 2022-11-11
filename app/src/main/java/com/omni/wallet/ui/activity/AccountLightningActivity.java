@@ -3,6 +3,7 @@ package com.omni.wallet.ui.activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,8 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.event.SelectAccountEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
@@ -27,6 +30,10 @@ import com.omni.wallet.view.popupwindow.FundPopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
 import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,6 +79,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     long balanceAmount;
     private String pubkey;
+    private String address;
 
     @Override
     protected View getStatusBarTopView() {
@@ -156,6 +164,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
 //        if (mLoadingDialog != null) {
 //            mLoadingDialog.show();
 //        }
@@ -181,6 +190,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     LightningOuterClass.GetInfoResponse resp = LightningOuterClass.GetInfoResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------getInfoOnResponse-----------------" + resp);
                     pubkey = resp.getIdentityPubkey();
+                    User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
 //                    if (mLoadingDialog != null) {
 //                        mLoadingDialog.dismiss();
 //                    }
@@ -415,8 +425,36 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @OnClick(R.id.iv_account_manage)
     public void clickAccount() {
-        mAccountManagePopupWindow = new AccountManagePopupWindow(mContext);
-        mAccountManagePopupWindow.show(mParentLayout);
+        LightningOuterClass.ListRecAddressRequest listRecAddressRequest = LightningOuterClass.ListRecAddressRequest.newBuilder()
+                .build();
+        Obdmobile.listRecAddress(listRecAddressRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------listRecAddressOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.ListRecAddressResponse resp = LightningOuterClass.ListRecAddressResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------listRecAddressOnResponse-----------------" + resp);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Looper.prepare();
+                            mAccountManagePopupWindow = new AccountManagePopupWindow(mContext);
+                            mAccountManagePopupWindow.show(mParentLayout, resp.getItemsList());
+                            Looper.loop();
+                        }
+                    }).start();
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -513,9 +551,23 @@ public class AccountLightningActivity extends AppBaseActivity {
         mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, addressResp.getAddress(), pubkey);
     }
 
+
+    /**
+     * 选择钱包地址后的消息通知监听
+     * Message notification monitoring after selecting wallet address
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(SelectAccountEvent event) {
+        if (event == null) {
+            return;
+        }
+        address = event.getAddress();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         if (mMenuPopupWindow != null) {
             mMenuPopupWindow.release();
         }

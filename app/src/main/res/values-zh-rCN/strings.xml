@@ -205,6 +205,16 @@
     <string name="error_channel_close_timeout">Channel could not be closed within deadline.</string>
     <string name="error_channel_close">Could not close channel</string>
     <string name="create_invoice_amount">Please enter the amount</string>
+    <string name="error_get_peers">Could not fetch peers list.</string>
+    <string name="error_get_peers_timeout">Peers could not be fetched within deadline.</string>
+    <string name="error_connect_peer">Could not establish connection to peer node.</string>
+    <string name="error_connect_peer_refused">Connection has been refused by peer.</string>
+    <string name="error_connect_peer_self">Cannot make connection to self.</string>
+    <string name="error_connect_peer_no_host">Cannot connect to node without IP-address or host.</string>
+    <string name="error_connect_peer_timeout">Could not connect to peer within deadline.</string>
+    <string name="error_channel_open_pending_max">Number of pending channels exceed maximum.</string>
+    <string name="error_channel_open_timeout">Channel could not be opened within deadline.</string>
+    <string name="error_channel_open">Could not open channel with connected node: %s</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

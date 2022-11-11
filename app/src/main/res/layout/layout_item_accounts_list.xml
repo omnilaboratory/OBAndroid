@@ -74,7 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_10"
-                android:text="1.6"/>
+                android:text="0"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

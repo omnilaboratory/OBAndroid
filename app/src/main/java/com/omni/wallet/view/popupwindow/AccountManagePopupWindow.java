@@ -1,29 +1,26 @@
 package com.omni.wallet.view.popupwindow;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
-import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.event.SelectAccountEvent;
 import com.omni.wallet.listItems.Account;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import lnrpc.LightningOuterClass;
-import obdmobile.Callback;
-import obdmobile.Obdmobile;
 
 
 /**
@@ -42,6 +39,7 @@ public class AccountManagePopupWindow {
     private List<LightningOuterClass.RecAddress> addressData = new ArrayList<>();
     private AccountAdapter accountAdapter;
     View accountView;
+    TextView recentsAddressTv;
 
     public AccountManagePopupWindow(Context context) {
         this.accountContext = context;
@@ -72,35 +70,11 @@ public class AccountManagePopupWindow {
         accountData.add(account_6);
         accountData.add(account_7);
         accountData.add(account_8);
-        LightningOuterClass.ListRecAddressRequest listRecAddressRequest = LightningOuterClass.ListRecAddressRequest.newBuilder()
-                .build();
-        Obdmobile.listRecAddress(listRecAddressRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------listRecAddressOnError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                if (bytes == null) {
-                    return;
-                }
-                try {
-                    LightningOuterClass.ListRecAddressResponse resp = LightningOuterClass.ListRecAddressResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------listRecAddressOnResponse-----------------" + resp);
-                    addressData.clear();
-                    addressData.addAll(resp.getItemsList());
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
-    public void show(final View view) {
+    public void show(final View view, List<LightningOuterClass.RecAddress> addressData) {
         accountView = view;
         if (accountBasePopWindow == null) {
-            initAccountData();
             accountBasePopWindow = new BasePopWindow(accountContext);
             View rootView = accountBasePopWindow.setContentView(R.layout.layout_popupwindow_account_manage);
             accountBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
@@ -122,6 +96,9 @@ public class AccountManagePopupWindow {
             rootView.findViewById(R.id.lv_account_recent_first).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    SelectAccountEvent event = new SelectAccountEvent();
+                    event.setAddress(addressData.get(0).getAddre());
+                    EventBus.getDefault().post(event);
                     accountBasePopWindow.dismiss();
                 }
             });
@@ -132,12 +109,15 @@ public class AccountManagePopupWindow {
                     accountBasePopWindow.dismiss();
                 }
             });
+            recentsAddressTv = rootView.findViewById(R.id.tv_recents_address);
+            recentsAddressTv.setText(addressData.get(0).getAddre());
             RecyclerView accountRecyclerView = rootView.findViewById(R.id.rv_account_list);
             LinearLayoutManager layoutManager = new LinearLayoutManager(accountContext);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             accountRecyclerView.setLayoutManager(layoutManager);
-            accountAdapter = new AccountAdapter(accountContext, accountData, R.layout.layout_item_accounts_list);
+            accountAdapter = new AccountAdapter(accountContext, addressData, R.layout.layout_item_accounts_list);
             accountRecyclerView.setAdapter(accountAdapter);
+            accountAdapter.notifyDataSetChanged();
 
             if (accountBasePopWindow.isShowing()) {
                 return;
@@ -154,48 +134,53 @@ public class AccountManagePopupWindow {
      * @date: 2022-10-14
      */
 
-    private class AccountAdapter extends CommonRecyclerAdapter<Account> {
-        public AccountAdapter(Context context, List<Account> data, int layoutId) {
+    private class AccountAdapter extends CommonRecyclerAdapter<LightningOuterClass.RecAddress> {
+        public AccountAdapter(Context context, List<LightningOuterClass.RecAddress> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, int position, Account item) {
-            holder.setText(R.id.tv_account_nickname, item.getAccountName());
-            holder.setText(R.id.tv_account_address, item.getAccountAddress());
-            holder.setText(R.id.tv_account_value, item.getAccountBalance() + "");
-            String avatarSrc = item.getAvatarSrc();
-            TextView avatarText = holder.getView(R.id.tv_avatar_text);
-            ImageView avatarImage = holder.getView(R.id.iv_avatar);
-            if (avatarSrc != null) {
-                avatarImage.setImageURI(Uri.parse(item.getAvatarSrc()));
-                avatarImage.setVisibility(View.VISIBLE);
-                avatarText.setVisibility(View.GONE);
-            } else {
-                switch (item.getAvatarColor()) {
-                    default:
-                        avatarText.setBackground(accountContext.getResources().getDrawable(R.drawable.bg_conner_24_black));
-                        break;
-                    case 1:
-                        avatarText.setBackground(accountContext.getResources().getDrawable(R.drawable.bg_conner_24_green));
-                        break;
-                    case 2:
-                        avatarText.setBackground(accountContext.getResources().getDrawable(R.drawable.bg_conner_24_orange));
-                        break;
-                    case 3:
-                        avatarText.setBackground(accountContext.getResources().getDrawable(R.drawable.bg_conner_24_black));
-                        break;
-                    case 4:
-                        avatarText.setBackground(accountContext.getResources().getDrawable(R.drawable.bg_conner_24_blue));
-                        break;
-                }
-                avatarText.setText(item.getAvatarString());
-                avatarText.setVisibility(View.VISIBLE);
-                avatarImage.setVisibility(View.GONE);
-            }
+        public void convert(ViewHolder holder, int position, LightningOuterClass.RecAddress item) {
+//            holder.setText(R.id.tv_account_nickname, item.getAccountName());
+//            holder.setText(R.id.tv_account_address, item.getAccountAddress());
+//            holder.setText(R.id.tv_account_value, item.getAccountBalance() + "");
+//            String avatarSrc = item.getAvatarSrc();
+//            TextView avatarText = holder.getView(R.id.tv_avatar_text);
+//            ImageView avatarImage = holder.getView(R.id.iv_avatar);
+//            if (avatarSrc != null) {
+//                avatarImage.setImageURI(Uri.parse(item.getAvatarSrc()));
+//                avatarImage.setVisibility(View.VISIBLE);
+//                avatarText.setVisibility(View.GONE);
+//            } else {
+//                switch (item.getAvatarColor()) {
+//                    default:
+//                        avatarText.setBackground(accountContext.getResources().getDrawable(R.drawable.bg_conner_24_black));
+//                        break;
+//                    case 1:
+//                        avatarText.setBackground(accountContext.getResources().getDrawable(R.drawable.bg_conner_24_green));
+//                        break;
+//                    case 2:
+//                        avatarText.setBackground(accountContext.getResources().getDrawable(R.drawable.bg_conner_24_orange));
+//                        break;
+//                    case 3:
+//                        avatarText.setBackground(accountContext.getResources().getDrawable(R.drawable.bg_conner_24_black));
+//                        break;
+//                    case 4:
+//                        avatarText.setBackground(accountContext.getResources().getDrawable(R.drawable.bg_conner_24_blue));
+//                        break;
+//                }
+//                avatarText.setText(item.getAvatarString());
+//                avatarText.setVisibility(View.VISIBLE);
+//                avatarImage.setVisibility(View.GONE);
+//            }
+            holder.setText(R.id.tv_avatar_text, item.getAddre().substring(0, 1));
+            holder.setText(R.id.tv_account_address, item.getAddre());
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    SelectAccountEvent event = new SelectAccountEvent();
+                    event.setAddress(item.getAddre());
+                    EventBus.getDefault().post(event);
                     accountBasePopWindow.dismiss();
                 }
             });

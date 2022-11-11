@@ -18,10 +18,13 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -197,37 +200,32 @@ public class CreateChannelStepOnePopupWindow {
             rootView.findViewById(R.id.layout_create).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mBasePopWindow.dismiss();
-                    Bundle bundle = new Bundle();
-                    bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
-                    bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
-                    bundle.putString(ChannelsActivity.KEY_PUBKEY, pubKey);
-                    Intent intent = new Intent(mContext, ChannelsActivity.class);
-                    mContext.startActivity(intent,bundle);
-                    /**
-                     * Opening transaction channel
-                     * 开通交易通道
-                     */
-                    byte[] nodeKeyBytes = hexStringToByteArray(nodePubkey);
-                    LightningOuterClass.OpenChannelRequest openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
-                            .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
-                            .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
-                            .setPrivate(false)
-                            .setLocalFundingBtcAmount(Long.parseLong(channelAmountEdit.getText().toString()))
-                            .setLocalFundingAssetAmount(Long.parseLong(channelAmountEdit.getText().toString()))
-                            .setAssetId((int) assetId)
-                            .build();
-                    Obdmobile.openChannel(openChannelRequest.toByteArray(), new RecvStream() {
+                    Obdmobile.listPeers(LightningOuterClass.ListPeersRequest.newBuilder().build().toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
-                            LogUtils.e(TAG, "------------------openChannelOnError------------------" + e.getMessage());
+                            if (e.getMessage().toLowerCase().contains("terminated")) {
+                                ToastUtils.showToast(mContext, mContext.getString(R.string.error_get_peers_timeout));
+                            } else {
+                                ToastUtils.showToast(mContext, mContext.getString(R.string.error_get_peers));
+                            }
                         }
 
                         @Override
                         public void onResponse(byte[] bytes) {
                             try {
-                                LightningOuterClass.BatchOpenChannelResponse resp = LightningOuterClass.BatchOpenChannelResponse.parseFrom(bytes);
-                                LogUtils.e(TAG, "------------------openChannelOnResponse-----------------" + resp);
+                                LightningOuterClass.ListPeersResponse resp = LightningOuterClass.ListPeersResponse.parseFrom(bytes);
+                                boolean connected = false;
+                                for (LightningOuterClass.Peer node : resp.getPeersList()) {
+                                    if (node.getPubKey().equals(pubKey)) {
+                                        connected = true;
+                                        break;
+                                    }
+                                }
+                                if (connected) {
+                                    openChannelConnected(balanceAmount, walletAddress);
+                                } else {
+                                    connectPeer(balanceAmount, walletAddress);
+                                }
                             } catch (InvalidProtocolBufferException e) {
                                 e.printStackTrace();
                             }
@@ -251,6 +249,77 @@ public class CreateChannelStepOnePopupWindow {
             }
             mBasePopWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
         }
+    }
+
+    private void openChannelConnected(long balanceAmount, String walletAddress) {
+        /**
+         * Opening transaction channel
+         * 开通交易通道
+         */
+        byte[] nodeKeyBytes = hexStringToByteArray(nodePubkey);
+        LightningOuterClass.OpenChannelRequest openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
+                .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
+                .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
+                .setPrivate(false)
+                .setLocalFundingBtcAmount(Long.parseLong(channelAmountEdit.getText().toString()))
+                .setLocalFundingAssetAmount(Long.parseLong(channelAmountEdit.getText().toString()))
+                .setAssetId((int) assetId)
+                .build();
+        Obdmobile.openChannel(openChannelRequest.toByteArray(), new RecvStream() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------openChannelOnError------------------" + e.getMessage());
+                if (e.getMessage().toLowerCase().contains("pending channels exceed maximum")) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_pending_max));
+                } else if (e.getMessage().toLowerCase().contains("terminated")) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_timeout));
+                } else {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open));
+                }
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+//                try {
+//                    LightningOuterClass.OpenStatusUpdate resp = LightningOuterClass.OpenStatusUpdate.parseFrom(bytes);
+//                    LogUtils.e(TAG, "------------------openChannelOnResponse-----------------" + resp.getUpdateCase().getNumber());
+                mBasePopWindow.dismiss();
+                Bundle bundle = new Bundle();
+                bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
+                bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
+                bundle.putString(ChannelsActivity.KEY_PUBKEY, nodePubkey);
+                Intent intent = new Intent(mContext, ChannelsActivity.class);
+                mContext.startActivity(intent, bundle);
+//                } catch (InvalidProtocolBufferException e) {
+//                    e.printStackTrace();
+//                }
+            }
+        });
+    }
+
+    private void connectPeer(long balanceAmount, String walletAddress) {
+        LightningOuterClass.LightningAddress lightningAddress = LightningOuterClass.LightningAddress.newBuilder()
+                .setPubkeyBytes(ByteString.copyFrom(nodePubkey.getBytes(StandardCharsets.UTF_8))).build();
+        LightningOuterClass.ConnectPeerRequest connectPeerRequest = LightningOuterClass.ConnectPeerRequest.newBuilder().setAddr(lightningAddress).build();
+        Obdmobile.connectPeer(connectPeerRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                if (e.getMessage().toLowerCase().contains("refused")) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_refused));
+                } else if (e.getMessage().toLowerCase().contains("self")) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_self));
+                } else if (e.getMessage().toLowerCase().contains("terminated")) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_timeout));
+                } else {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer));
+                }
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                openChannelConnected(balanceAmount, walletAddress);
+            }
+        });
     }
 
     private void getListAsset() {
@@ -291,7 +360,7 @@ public class CreateChannelStepOnePopupWindow {
 
     private void estimateOnChainFee(long amount, int targetConf) {
         String address;
-        switch ("regtest") {
+        switch (User.getInstance().getNetwork(mContext)) {
             case "testnet":
                 address = "tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx";
                 break;

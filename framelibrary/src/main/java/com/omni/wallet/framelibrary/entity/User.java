@@ -48,7 +48,9 @@ public class User {
     private String jsonStr;
     // 是否正在显示版本更新的Dialog
     private boolean isShowUpdateDialog = false;
-
+    /***************************Omni Wallet**********************************/
+    // 网络类型
+    private String network;
 
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
@@ -155,6 +157,18 @@ public class User {
 
     public void setShowUpdateDialog(boolean showUpdateDialog) {
         isShowUpdateDialog = showUpdateDialog;
+    }
+
+    /***************************Omni Wallet**********************************/
+
+    public String getNetwork(Context context) {
+        network = PreferencesUtils.getNetworkFromLocal(context);
+        return network;
+    }
+
+    public void setNetwork(Context context, String network) {
+        PreferencesUtils.saveNetworkToLocal(context, network);
+        this.network = network;
     }
 
     /**

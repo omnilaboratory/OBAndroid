@@ -21,9 +21,10 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_USER_JOB = "userJobKey";// 保存用户职位的Key
     private static final String KEY_QR_CODE_LINK = "QRCodeLinkKey";// 保存用户二维码链接的Key
     private static final String KEY_COMPANY_ID = "companyIdKey";// 保存用户物业公司ID的Key
-    private static final String KEY_FIRST_LOGIN = "firstLoginKey";// 新用户第一次登陆标识Key
-
+    private static final String KEY_FIRST_LOGIN = "firstLoginKey";// 新用户第一次登陆标识Ke
     private static final String KEY_VERSION_CODE = "versionCodeKey";// 保存版本信息的Key
+    /****************************Omni Wallet*********************************/
+    private static final String KEY_NETWORK = "networkKey";// 保存网络类型的Key
 
     /**
      * 版本信息本地化
@@ -178,5 +179,20 @@ public class PreferencesUtils extends BasePreferencesUtils {
      */
     public static long getUpdateAPKSizeFromLocal(Context context) {
         return getLong(SETTINGS, context, KEY_UPDATE_APK_SIZE, 0L);
+    }
+
+    /***************************Omni Wallet**********************************/
+    /**
+     * 获取本地保存的网络类型
+     */
+    public static String getNetworkFromLocal(Context context) {
+        return getString(SETTINGS, context, KEY_NETWORK);
+    }
+
+    /**
+     * 网络类型本地化
+     */
+    public static void saveNetworkToLocal(Context context, String value) {
+        putString(SETTINGS, context, KEY_NETWORK, value);
     }
 }
