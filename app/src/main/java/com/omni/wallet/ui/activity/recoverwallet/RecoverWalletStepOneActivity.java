@@ -3,6 +3,8 @@ package com.omni.wallet.ui.activity.recoverwallet;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.view.ActionMode;
@@ -27,6 +29,7 @@ import butterknife.OnClick;
 
 public class RecoverWalletStepOneActivity extends AppBaseActivity {
     private ArrayList<EditText> list = new ArrayList<EditText>();
+    private Context ctx = RecoverWalletStepOneActivity.this;
     @Override
     protected Drawable getWindowBackground() {
         return ContextCompat.getDrawable(mContext, R.color.color_f9f9f9);
@@ -164,6 +167,18 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
+        String seedsString ="";
+        for (int i = 0; i<list.size();i++){
+            seedsString = seedsString + list.get(i).getText() + "";
+        }
+        /**
+         * 使用SharedPreferences 对象，在生成seeds时候将seeds备份到本地文件
+         * Use SharedPreferences Class to back up seeds to local file,when create seeds.
+         */
+        SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
+        SharedPreferences.Editor editor = secretData.edit();
+        editor.putString("seeds",seedsString);
+        editor.commit();
         switchActivity(RecoverWalletStepTwoActivity.class);
     }
 }
