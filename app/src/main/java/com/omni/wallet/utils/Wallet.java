@@ -54,6 +54,13 @@ public class Wallet {
             "--omnicoreproxy.zmqpubrawblock=tcp://regnet.oblnd.top:28332 " +
             "--omnicoreproxy.zmqpubrawtx=tcp://regnet.oblnd.top:28333";
 
+    public static final String START_NODE_OMNI_WITH_SEED = "--trickledelay=5000 --alias=alice\n" +
+            "--autopilot.active --maxpendingchannels=100 " +
+            "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
+            "--omnicoreproxy.rpchost=regnet.oblnd.top:18332 " +
+            "--omnicoreproxy.zmqpubrawblock=tcp://regnet.oblnd.top:28332 " +
+            "--omnicoreproxy.zmqpubrawtx=tcp://regnet.oblnd.top:28333";
+
     private Wallet() {
         ;
     }

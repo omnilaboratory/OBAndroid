@@ -264,16 +264,13 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                 }
                 @Override
                 public void onResponse(byte[] bytes) {
+                    if (bytes == null){
+                        return;
+                    }
                     try {
                         Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
                         ByteString macaroon = initWalletResponse.getAdminMacaroon();
-                        int size = initWalletResponse.getSerializedSize();
-                        Walletunlocker.InitWalletResponse instanceType = initWalletResponse.getDefaultInstanceForType();
-                        Parser<Walletunlocker.InitWalletResponse> parserType = initWalletResponse.getParserForType();
                         Log.e("initWallet response",macaroon.toString());
-                        Log.e("initWallet response",Integer.toString(size));
-                        Log.e("initWallet response",instanceType.toString());
-                        Log.e("initWallet response",parserType.toString());
                         switchActivity(BackupBlockProcessActivity.class);
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();
