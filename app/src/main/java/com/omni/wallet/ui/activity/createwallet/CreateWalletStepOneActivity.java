@@ -56,66 +56,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
     protected void initData() {
         createSeeds();
     }
-    
-    private void initTvForSeeds(){
-        System.out.println("--------------------------------Start init tv for seeds--------------------------------");
-        
-        
-        
-        for (int rowNum = 1; rowNum <= 8; rowNum++) {
-            System.out.println("--------------------------------row number:"+rowNum+"--------------------------------");
-            RelativeLayout rowContent = new RelativeLayout(this);
-            RelativeLayout.LayoutParams rowContentLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            rowContent.setLayoutParams(rowContentLayoutParams);
-
-            LinearLayout rowInnerContent = new LinearLayout(this);
-            LinearLayout.LayoutParams rowInnerContentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            rowInnerContent.setOrientation(LinearLayout.HORIZONTAL);
-            rowInnerContent.setPadding(0,20,0,30);
-            rowInnerContent.setBaselineAligned(false);
-            rowInnerContent.setLayoutParams(rowInnerContentParams);
-
-            for (int itemNum = 1; itemNum <= 3; itemNum++) {
-                
-                int noNum = (rowNum - 1) * 3 + itemNum;
-                System.out.println("--------------------------------item number:"+noNum+"--------------------------------");
-                LinearLayout itemInnerContent = new LinearLayout(this);
-                LinearLayout.LayoutParams itemInnerContentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
-                itemInnerContent.setOrientation(LinearLayout.HORIZONTAL);
-                itemInnerContent.setBaselineAligned(false);
-                itemInnerContent.setLayoutParams(itemInnerContentParams);
-
-                TextView itemNoWidget = new TextView(this);
-                RelativeLayout.LayoutParams itemNoWidgetParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                String itemNoString = NumberFormatter.formatNo(2, noNum) + ".";
-                itemNoWidget.setText(itemNoString);
-                itemNoWidget.setTextColor(getResources().getColor(R.color.color_white));
-                itemNoWidget.setTextSize(20.0f);
-                itemNoWidget.setLayoutParams(itemNoWidgetParams);
-
-                TextView itemSeeWidget = new TextView(this);
-                RelativeLayout.LayoutParams itemSeedWidgetParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                itemSeeWidget.setText(seedArray.get(noNum-1));
-                itemSeeWidget.setTextColor(getResources().getColor(R.color.color_black));
-                itemSeeWidget.setTextSize(20.0f);
-                itemSeeWidget.setLayoutParams(itemSeedWidgetParams);
-
-                itemInnerContent.addView(itemNoWidget);
-                itemInnerContent.addView(itemSeeWidget);
-                rowInnerContent.addView(itemInnerContent);
-                System.out.println("--------------------------------item number:"+noNum+"over--------------------------------");
-            }
-            
-            rowContent.addView(rowInnerContent);
-            System.out.println("--------------------------------row number:"+rowNum+"rowInner add over--------------------------------");
-            System.out.println("--------------------------------row number:"+rowNum+lvSeedContent.toString()+"rowInner add start--------------------------------");
-            lvSeedContent.addView(rowContent);
-            System.out.println("--------------------------------row number:"+rowNum+lvSeedContent.toString()+"rowInner add over--------------------------------");
-            System.out.println("--------------------------------row number:"+rowNum+"over--------------------------------");
-        }
-        System.out.println("--------------------------------End init tv for seeds--------------------------------");
-    }
-
+  
     private void createSeeds() {
         Log.e("create error:","123456789");
         mLoadingDialog.show();
