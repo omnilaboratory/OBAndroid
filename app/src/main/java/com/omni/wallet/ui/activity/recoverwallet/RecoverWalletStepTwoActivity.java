@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -13,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
@@ -20,9 +23,14 @@ import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
 import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
+import lnrpc.Walletunlocker;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 public class RecoverWalletStepTwoActivity extends AppBaseActivity {
     Context ctx = RecoverWalletStepTwoActivity.this;
@@ -222,10 +230,43 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
              * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
              */
             SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
+            String seedsString = secretData.getString("seeds", "none");
+            String[] seedList = seedsString.split(" ");
             SharedPreferences.Editor editor = secretData.edit();
             editor.putString("password",md5String);
             editor.commit();
-            switchActivity(BackupBlockProcessActivity.class);
+            Walletunlocker.InitWalletRequest.Builder initWalletRequestBuilder = Walletunlocker.InitWalletRequest.newBuilder();
+            List newSeedList = initWalletRequestBuilder.getCipherSeedMnemonicList();
+            Log.e("newSeedList",newSeedList.toString());
+            for (int i =0;i<seedList.length;i++){
+                initWalletRequestBuilder.addCipherSeedMnemonic(seedList[i]);
+                String mnemonicString = initWalletRequestBuilder.getCipherSeedMnemonic(i);
+                Log.e("mnemonicString",mnemonicString);
+            }
+            initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
+
+            Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
+            Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
+                @Override
+                public void onError(Exception e) {
+                    Log.e("initWallet Error",e.toString());
+                    e.printStackTrace();
+                }
+                @Override
+                public void onResponse(byte[] bytes) {
+                    if (bytes == null){
+                        return;
+                    }
+                    try {
+                        Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
+                        ByteString macaroon = initWalletResponse.getAdminMacaroon();
+                        Log.e("initWallet response",macaroon.toString());
+                        switchActivity(BackupBlockProcessActivity.class);
+                    } catch (InvalidProtocolBufferException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }else{
             String checkSetPassWrongString = "";
             if(strongerPwd<0){
