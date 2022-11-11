@@ -118,8 +118,7 @@ public class UnlockActivity extends AppBaseActivity {
             Lndmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
                 @Override
                 public void onError(Exception e) {
-                    Log.e("unlock failed","unlock failed");
-                    e.printStackTrace();
+                    Log.e("unlock failed",e.toString());
                     
                 }
 
