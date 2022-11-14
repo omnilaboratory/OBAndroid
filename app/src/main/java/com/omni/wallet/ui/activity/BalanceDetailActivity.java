@@ -49,12 +49,18 @@ public class BalanceDetailActivity extends AppBaseActivity {
     View mTopView;
     @BindView(R.id.iv_network)
     ImageView mNetworkIv;
+    @BindView(R.id.tv_network_type)
+    TextView mNetworkTypeTv;
     @BindView(R.id.tv_network)
     TextView mNetworkTv;
     @BindView(R.id.tv_balance_amount)
     TextView mBalanceAmountTv;
     @BindView(R.id.tv_wallet_address)
     TextView mWalletAddressTv;
+    @BindView(R.id.iv_asset_logo)
+    ImageView mAssetLogoIv;
+    @BindView(R.id.tv_asset_name)
+    TextView mAssetNameTv;
     @BindView(R.id.tv_balance_account)
     TextView mBalanceAccountTv;
     @BindView(R.id.tv_balance_unit)
@@ -173,6 +179,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     protected void initView() {
         if (network.equals("lightning")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_vector);
+            mNetworkTypeTv.setText(R.string.lightning);
             mNetworkTv.setText("USDT lightning network");
             mLightningNetworkLayout.setVisibility(View.VISIBLE);
             mLinkNetworkLayout.setVisibility(View.GONE);
@@ -185,6 +192,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mRootMyInvoicesLayout.setVisibility(View.VISIBLE);
         } else if (network.equals("link")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_link_black);
+            mNetworkTypeTv.setText(R.string.mainnet);
             mNetworkTv.setText("Omnilayer Mainnet");
             mLightningNetworkLayout.setVisibility(View.GONE);
             mLinkNetworkLayout.setVisibility(View.VISIBLE);
@@ -195,6 +203,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mToBePaidTv.setTextColor(Color.parseColor("#000000"));
             mLineView.setVisibility(View.GONE);
             mRootMyInvoicesLayout.setVisibility(View.GONE);
+        }
+        if (assetId == 0) {
+            mAssetLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
+            mAssetNameTv.setText("BTC");
+        } else {
+            mAssetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
+            mAssetNameTv.setText("USDT");
         }
         mBalanceAmountTv.setText("My account " + balanceAmount);
         mWalletAddressTv.setText(walletAddress);

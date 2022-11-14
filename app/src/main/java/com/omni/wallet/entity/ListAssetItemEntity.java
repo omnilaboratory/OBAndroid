@@ -1,103 +1,39 @@
 package com.omni.wallet.entity;
 
-import com.google.gson.annotations.SerializedName;
 import com.omni.wallet.framelibrary.entity.BaseListEntity;
 
 /**
- * 汉:
- * En:
+ * 汉: 各资产余额列表单个资产实体类
+ * En: ListAssetItemEntity
  * author: guoyalei
  * date: 2022/11/2
  */
 public class ListAssetItemEntity extends BaseListEntity {
-    @SerializedName("category")
-    private String category;
-    @SerializedName("creationtxid")
-    private String creationtxid;
-    @SerializedName("data")
-    private String data;
-    @SerializedName("divisible")
-    private boolean divisible;
-    @SerializedName("issuer")
-    private String issuer;
-    @SerializedName("name")
-    private String name;
-    @SerializedName("propertyid")
-    private String propertyid;
-    @SerializedName("subcategory")
-    private String subcategory;
-    @SerializedName("url")
-    private String url;
+    private long amount;
+    private long propertyid;
+    private int type;
 
-    public String getCategory() {
-        return category;
+    public long getAmount() {
+        return amount;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setAmount(long amount) {
+        this.amount = amount;
     }
 
-    public String getCreationtxid() {
-        return creationtxid;
-    }
-
-    public void setCreationtxid(String creationtxid) {
-        this.creationtxid = creationtxid;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public boolean isDivisible() {
-        return divisible;
-    }
-
-    public void setDivisible(boolean divisible) {
-        this.divisible = divisible;
-    }
-
-    public String getIssuer() {
-        return issuer;
-    }
-
-    public void setIssuer(String issuer) {
-        this.issuer = issuer;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPropertyid() {
+    public long getPropertyid() {
         return propertyid;
     }
 
-    public void setPropertyid(String propertyid) {
+    public void setPropertyid(long propertyid) {
         this.propertyid = propertyid;
     }
 
-    public String getSubcategory() {
-        return subcategory;
+    public int getType() {
+        return type;
     }
 
-    public void setSubcategory(String subcategory) {
-        this.subcategory = subcategory;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+    public void setType(int type) {
+        this.type = type;
     }
 }

@@ -19,6 +19,7 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SelectAccountEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
@@ -36,9 +37,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -63,10 +62,10 @@ public class AccountLightningActivity extends AppBaseActivity {
     TextView mWalletAddressTv;
     @BindView(R.id.recycler_assets_list_block)
     public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock(The Recycler View Block for Assets List)
-    private List<Map> blockData = new ArrayList<>();
-    private List<Map> lightningData = new ArrayList<>();
+    private List<ListAssetItemEntity> blockData = new ArrayList<>();
+    private List<ListAssetItemEntity> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
-    private List<LightningOuterClass.AssetBalanceByAddressResponse> allData = new ArrayList<>();
+    private List<ListAssetItemEntity> allData = new ArrayList<>();
     LightningOuterClass.NewAddressResponse addressResp;
 
     MenuPopupWindow mMenuPopupWindow;
@@ -99,7 +98,6 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Override
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
-        initAllData();
         initRecyclerView();
     }
 
@@ -108,20 +106,20 @@ public class AccountLightningActivity extends AppBaseActivity {
      * Test data for block assets
      */
     private void initBlockAssets() {
-        Map a = new HashMap<String, String>();
-        a.put("tokenImageSource", R.mipmap.icon_usdt_logo_small);
-        a.put("networkImageSource", R.mipmap.icon_network_link_black);
-        a.put("amount", 10000.0000f);
-        a.put("value", 70000.0000f);
-        Map b = new HashMap<String, String>();
-        b.put("tokenImageSource", R.mipmap.icon_btc_logo_small);
-        b.put("networkImageSource", R.mipmap.icon_network_link_black);
-        b.put("amount", 10000.0000f);
-        b.put("value", 70000.0000f);
-        blockData.add(a);
-        blockData.add(b);
-        blockData.add(a);
-        blockData.add(b);
+//        Map a = new HashMap<String, String>();
+//        a.put("tokenImageSource", R.mipmap.icon_usdt_logo_small);
+//        a.put("networkImageSource", R.mipmap.icon_network_link_black);
+//        a.put("amount", 10000.0000f);
+//        a.put("value", 70000.0000f);
+//        Map b = new HashMap<String, String>();
+//        b.put("tokenImageSource", R.mipmap.icon_btc_logo_small);
+//        b.put("networkImageSource", R.mipmap.icon_network_link_black);
+//        b.put("amount", 10000.0000f);
+//        b.put("value", 70000.0000f);
+//        blockData.add(a);
+//        blockData.add(b);
+//        blockData.add(a);
+//        blockData.add(b);
     }
 
     /**
@@ -129,28 +127,33 @@ public class AccountLightningActivity extends AppBaseActivity {
      * Test data for Lightning assets
      */
     private void initLightningAssets() {
-        Map c = new HashMap<String, String>();
-        c.put("tokenImageSource", R.mipmap.icon_usdt_logo_small);
-        c.put("networkImageSource", R.mipmap.icon_network_vector);
-        c.put("amount", 10000.0000f);
-        c.put("value", 70000.0000f);
-        Map d = new HashMap<String, String>();
-        d.put("tokenImageSource", R.mipmap.icon_btc_logo_small);
-        d.put("networkImageSource", R.mipmap.icon_network_vector);
-        d.put("amount", 10000.0000f);
-        d.put("value", 70000.0000f);
-        lightningData.add(c);
-        lightningData.add(d);
-        lightningData.add(c);
-        lightningData.add(d);
+//        Map c = new HashMap<String, String>();
+//        c.put("tokenImageSource", R.mipmap.icon_usdt_logo_small);
+//        c.put("networkImageSource", R.mipmap.icon_network_vector);
+//        c.put("amount", 10000.0000f);
+//        c.put("value", 70000.0000f);
+//        Map d = new HashMap<String, String>();
+//        d.put("tokenImageSource", R.mipmap.icon_btc_logo_small);
+//        d.put("networkImageSource", R.mipmap.icon_network_vector);
+//        d.put("amount", 10000.0000f);
+//        d.put("value", 70000.0000f);
+//        lightningData.add(c);
+//        lightningData.add(d);
+//        lightningData.add(c);
+//        lightningData.add(d);
     }
 
     private void initAllData() {
         initBlockAssets();
         initLightningAssets();
-//        allData.addAll(blockData);
-//        allData.addAll(lightningData);
-
+        allData.addAll(blockData);
+        allData.addAll(lightningData);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void initRecyclerView() {
@@ -194,6 +197,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 //                    if (mLoadingDialog != null) {
 //                        mLoadingDialog.dismiss();
 //                    }
+                    initAllData();
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -242,8 +246,14 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     @Override
                                     public void run() {
                                         mBalanceValueTv.setText("$ " + resp.getTotalBalance());
-                                        balanceAmount = resp.getConfirmedBalance();
+                                        balanceAmount = resp.getTotalBalance();
                                         mBalanceAmountTv.setText("My account " + balanceAmount + " balance");
+                                        blockData.clear();
+                                        ListAssetItemEntity entity = new ListAssetItemEntity();
+                                        entity.setAmount(resp.getTotalBalance());
+                                        entity.setPropertyid(0);
+                                        entity.setType(1);
+                                        blockData.add(entity);
                                     }
                                 });
                             } catch (InvalidProtocolBufferException e) {
@@ -277,14 +287,14 @@ public class AccountLightningActivity extends AppBaseActivity {
                 try {
                     LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
-                    allData.clear();
-                    allData.addAll(resp.getListList());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    });
+                    lightningData.clear();
+                    for (int i = 0; i < resp.getListList().size(); i++) {
+                        ListAssetItemEntity entity = new ListAssetItemEntity();
+                        entity.setAmount(resp.getListList().get(i).getBalance());
+                        entity.setPropertyid(resp.getListList().get(i).getPropertyid());
+                        entity.setType(2);
+                        lightningData.add(entity);
+                    }
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -322,19 +332,19 @@ public class AccountLightningActivity extends AppBaseActivity {
      * 资产列表适配器
      * The adapter for assets list
      */
-    private class MyAdapter extends CommonRecyclerAdapter<LightningOuterClass.AssetBalanceByAddressResponse> {
+    private class MyAdapter extends CommonRecyclerAdapter<ListAssetItemEntity> {
 
-        public MyAdapter(Context context, List<LightningOuterClass.AssetBalanceByAddressResponse> data, int layoutId) {
+        public MyAdapter(Context context, List<ListAssetItemEntity> data, int layoutId) {
             super(context, data, layoutId);
         }
 
 
         @Override
-        public void convert(ViewHolder holder, final int position, final LightningOuterClass.AssetBalanceByAddressResponse item) {
-//            if (position == blockData.size() - 1) {
-//                LinearLayout lvContent = holder.getView(R.id.lv_item_content);
-//                lvContent.setPadding(0, 0, 0, 100);
-//            }
+        public void convert(ViewHolder holder, final int position, final ListAssetItemEntity item) {
+            if (position == 0) {
+                LinearLayout lvContent = holder.getView(R.id.lv_item_content);
+                lvContent.setPadding(0, 0, 0, 100);
+            }
 //
 //
 //            Integer tokenImageSourceId = Integer.parseInt(item.get("tokenImageSource").toString());
@@ -364,10 +374,16 @@ public class AccountLightningActivity extends AppBaseActivity {
 //                    }
 //                });
 //            }
-            // TODO: 2022/11/3 暂定待修改与完善
-            holder.setText(R.id.tv_asset_amount, String.valueOf(item.getBalance()));
-            holder.setText(R.id.tv_asset_value, item.getFrozen());
-            if (item.getName().equals("ftoken")) {
+            // TODO: 2022/11/14 暂定待修改与完善
+            if (item.getPropertyid() == 0) {
+                holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_btc_logo_small);
+            } else {
+                holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_usdt_logo_small);
+            }
+            holder.setText(R.id.tv_asset_amount, String.valueOf(item.getAmount()));
+            holder.setText(R.id.tv_asset_value, String.valueOf(item.getAmount()));
+            if (item.getType() == 1) {
+                holder.setImageResource(R.id.iv_asset_net, R.mipmap.icon_network_link_black);
                 holder.setOnItemClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -375,13 +391,14 @@ public class AccountLightningActivity extends AppBaseActivity {
                         bundle.putLong(BalanceDetailActivity.KEY_BALANCE_AMOUNT, balanceAmount);
                         bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS, addressResp.getAddress());
                         bundle.putString(BalanceDetailActivity.KEY_PUBKEY, pubkey);
-                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT, item.getBalance());
+                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT, item.getAmount());
                         bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID, item.getPropertyid());
-                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "lightning");
+                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "link");
                         switchActivity(BalanceDetailActivity.class, bundle);
                     }
                 });
             } else {
+                holder.setImageResource(R.id.iv_asset_net, R.mipmap.icon_network_vector);
                 holder.setOnItemClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -389,9 +406,9 @@ public class AccountLightningActivity extends AppBaseActivity {
                         bundle.putLong(BalanceDetailActivity.KEY_BALANCE_AMOUNT, balanceAmount);
                         bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS, addressResp.getAddress());
                         bundle.putString(BalanceDetailActivity.KEY_PUBKEY, pubkey);
-                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT, item.getBalance());
+                        bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT, item.getAmount());
                         bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID, item.getPropertyid());
-                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "link");
+                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "lightning");
                         switchActivity(BalanceDetailActivity.class, bundle);
                     }
                 });

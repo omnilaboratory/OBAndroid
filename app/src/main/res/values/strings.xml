@@ -144,6 +144,7 @@
     <string name="omnibolt_11_invoice">OMNIBOLT 7 INVOICE</string>
     <string name="failed">Failed</string>
     <string name="invoice_created">Invoice Created</string>
+    <string name="lightning">lightning</string>
     <string name="mainnet">mainnet</string>
     <string name="omnilayer_mainnet">Omnilayer Mainnet</string>
     <string name="regtest">Regtest</string>

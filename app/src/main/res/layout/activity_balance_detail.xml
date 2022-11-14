@@ -46,6 +46,7 @@
                     android:src="@mipmap/icon_network_vector"/>
 
                 <TextView
+                    android:id="@+id/tv_network_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_4"
@@ -162,11 +163,13 @@
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/iv_asset_logo"
                     android:layout_width="@dimen/main_32"
                     android:layout_height="@dimen/main_32"
                     android:src="@mipmap/icon_usdt_logo_small"/>
 
                 <TextView
+                    android:id="@+id/tv_asset_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_10"

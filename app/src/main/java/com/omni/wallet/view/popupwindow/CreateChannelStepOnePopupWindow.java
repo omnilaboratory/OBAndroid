@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -212,22 +213,26 @@ public class CreateChannelStepOnePopupWindow {
 
                         @Override
                         public void onResponse(byte[] bytes) {
-                            try {
-                                LightningOuterClass.ListPeersResponse resp = LightningOuterClass.ListPeersResponse.parseFrom(bytes);
-                                boolean connected = false;
-                                for (LightningOuterClass.Peer node : resp.getPeersList()) {
-                                    if (node.getPubKey().equals(pubKey)) {
-                                        connected = true;
-                                        break;
+                            if (bytes == null) {
+                                connectPeer(balanceAmount, walletAddress);
+                            } else {
+                                try {
+                                    LightningOuterClass.ListPeersResponse resp = LightningOuterClass.ListPeersResponse.parseFrom(bytes);
+                                    boolean connected = false;
+                                    for (LightningOuterClass.Peer node : resp.getPeersList()) {
+                                        if (node.getPubKey().equals(pubKey)) {
+                                            connected = true;
+                                            break;
+                                        }
                                     }
+                                    if (connected) {
+                                        openChannelConnected(balanceAmount, walletAddress);
+                                    } else {
+                                        connectPeer(balanceAmount, walletAddress);
+                                    }
+                                } catch (InvalidProtocolBufferException e) {
+                                    e.printStackTrace();
                                 }
-                                if (connected) {
-                                    openChannelConnected(balanceAmount, walletAddress);
-                                } else {
-                                    connectPeer(balanceAmount, walletAddress);
-                                }
-                            } catch (InvalidProtocolBufferException e) {
-                                e.printStackTrace();
                             }
                         }
                     });
@@ -304,15 +309,22 @@ public class CreateChannelStepOnePopupWindow {
         Obdmobile.connectPeer(connectPeerRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                if (e.getMessage().toLowerCase().contains("refused")) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_refused));
-                } else if (e.getMessage().toLowerCase().contains("self")) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_self));
-                } else if (e.getMessage().toLowerCase().contains("terminated")) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_timeout));
-                } else {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer));
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+                        if (e.getMessage().toLowerCase().contains("refused")) {
+                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_refused));
+                        } else if (e.getMessage().toLowerCase().contains("self")) {
+                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_self));
+                        } else if (e.getMessage().toLowerCase().contains("terminated")) {
+                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_timeout));
+                        } else {
+                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer));
+                        }
+                        Looper.loop();
+                    }
+                }).start();
             }
 
             @Override
