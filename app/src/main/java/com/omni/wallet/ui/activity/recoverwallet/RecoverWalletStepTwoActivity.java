@@ -261,6 +261,10 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                         Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
                         ByteString macaroon = initWalletResponse.getAdminMacaroon();
                         Log.e("initWallet response",macaroon.toString());
+                        SharedPreferences macaroonData = ctx.getSharedPreferences("macaroonData", MODE_PRIVATE);
+                        SharedPreferences.Editor macaroonDataEditor = macaroonData.edit();
+                        macaroonDataEditor.putString("macaroon", macaroon.toString());
+                        macaroonDataEditor.commit();
                         switchActivity(BackupBlockProcessActivity.class);
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();

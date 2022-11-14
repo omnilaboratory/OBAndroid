@@ -253,6 +253,10 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
                         Log.e("macaroon",macaroon);
                         editor.putString("password",newPassMd5String);
                         editor.commit();
+                        SharedPreferences macaroonData = ctx.getSharedPreferences("macaroonData", MODE_PRIVATE);
+                        SharedPreferences.Editor macaroonDataEditor = macaroonData.edit();
+                        macaroonDataEditor.putString("macaroon", macaroon.toString());
+                        macaroonDataEditor.commit();
                         Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(newPassMd5String)).build();
                         Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
                             @Override

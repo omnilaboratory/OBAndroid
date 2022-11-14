@@ -23,6 +23,7 @@ import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
 import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
 
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -255,6 +256,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
 
             Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
+            
 
             Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
                 @Override
@@ -270,6 +272,10 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                     try {
                         Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
                         ByteString macaroon = initWalletResponse.getAdminMacaroon();
+                        SharedPreferences macaroonData = ctx.getSharedPreferences("macaroonData", MODE_PRIVATE);
+                        SharedPreferences.Editor macaroonDataEditor = macaroonData.edit();
+                        macaroonDataEditor.putString("macaroon", macaroon.toString());
+                        macaroonDataEditor.commit();
                         Log.e("initWallet response",macaroon.toString());
                         switchActivity(BackupBlockProcessActivity.class);
                     } catch (InvalidProtocolBufferException e) {
