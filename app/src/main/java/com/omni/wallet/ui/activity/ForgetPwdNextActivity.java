@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -13,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.utils.CheckInputRules;
@@ -21,6 +24,9 @@ import com.omni.wallet.utils.Md5Util;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
+import lnrpc.Walletunlocker;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 public class ForgetPwdNextActivity extends AppBaseActivity {
     Context ctx = ForgetPwdNextActivity.this;
@@ -66,6 +72,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
     public void passwordChangeCheck(){
         String password = mPwdEdit.getText().toString();
         int strongerPwd = CheckInputRules.checkePwd(password);
+        System.out.println(strongerPwd);
         View easy =findViewById(R.id.pass_strong_state_easy);
         View normal = findViewById(R.id.pass_strong_state_normal);
         View strong = findViewById(R.id.pass_strong_state_strong);
@@ -104,7 +111,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
                     normal.setBackgroundColor(getResources().getColor(R.color.color_orange));
                     strong.setBackgroundColor(getResources().getColor(R.color.color_green));
                     pass_strong_text.setVisibility(View.VISIBLE);
-                    pass_strong_text.setText("STORNG");
+                    pass_strong_text.setText("STRONG");
                     pass_strong_text.setTextColor(getResources().getColor(R.color.color_green));
                     break;
                 default:
@@ -112,22 +119,28 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
                     normal.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
                     strong.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
                     pass_strong_text.setVisibility(View.VISIBLE);
-                    pass_strong_text.setText("");
-                    pass_strong_text.setTextColor(getResources().getColor(R.color.color_10_white));
+                    pass_strong_text.setText("EMPTY");
+                    pass_strong_text.setTextColor(getResources().getColor(R.color.color_todo_grey));
                     break;
             }
 
         }else if(strongerPwd==0){
-            pass_strong_text.setVisibility(View.INVISIBLE);
+            pass_strong_text.setVisibility(View.VISIBLE);
             pass_input_check.setVisibility(View.INVISIBLE);
-            pass_strong_text.setText("");
-            pass_strong_text.setTextColor(getResources().getColor(R.color.color_10_white));
+            easy.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
+            normal.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
+            strong.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
+            pass_strong_text.setText("EMPTY");
+            pass_strong_text.setTextColor(getResources().getColor(R.color.color_todo_grey));
         }else{
-            pass_strong_text.setVisibility(View.INVISIBLE);
-            pass_input_check.setVisibility(View.VISIBLE);
+            pass_strong_text.setVisibility(View.VISIBLE);
+            pass_input_check.setVisibility(View.INVISIBLE);
+            easy.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
+            normal.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
+            strong.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
             pass_input_check.setImageResource(R.mipmap.icon_wrong_red);
-            pass_strong_text.setText("");
-            pass_strong_text.setTextColor(getResources().getColor(R.color.color_10_white));
+            pass_strong_text.setText("EMPTY");
+            pass_strong_text.setTextColor(getResources().getColor(R.color.color_todo_grey));
         }
     }
 
@@ -214,15 +227,55 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
         TextView passwordViewRepeat = findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
-            String md5String = Md5Util.getMD5Str(password);
             /**
              * 使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
              * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
              */
             SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
             SharedPreferences.Editor editor = secretData.edit();
-            editor.putString("password",md5String);
-            editor.commit();
+            String newPassMd5String = Md5Util.getMD5Str(password);
+            String oldPassMd5String = secretData.getString("password", "");
+            Walletunlocker.ChangePasswordRequest changePasswordRequest = Walletunlocker.ChangePasswordRequest.newBuilder().setCurrentPassword(ByteString.copyFromUtf8(oldPassMd5String)).setNewPassword(ByteString.copyFromUtf8(newPassMd5String)).build();
+            Obdmobile.changePassword(changePasswordRequest.toByteArray(), new Callback() {
+                @Override
+                public void onError(Exception e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(byte[] bytes) {
+                    if(bytes == null){
+                        return;
+                    }
+                    try {
+                        Walletunlocker.ChangePasswordResponse changePasswordResponse = Walletunlocker.ChangePasswordResponse.parseFrom(bytes);
+                        String macaroon = changePasswordResponse.getAdminMacaroon().toString();
+                        Log.e("macaroon",macaroon);
+                        editor.putString("password",newPassMd5String);
+                        editor.commit();
+                        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(newPassMd5String)).build();
+                        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
+                            @Override
+                            public void onError(Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            @Override
+                            public void onResponse(byte[] bytes) {
+                                switchActivity(AccountLightningActivity.class);
+                            }
+                        });
+                        
+                    } catch (InvalidProtocolBufferException e) {
+                        e.printStackTrace();
+                    }
+                    
+                    
+                }
+            });
+            
+            
+            
             switchActivity(AccountLightningActivity.class);
         }else{
             String checkSetPassWrongString = "";

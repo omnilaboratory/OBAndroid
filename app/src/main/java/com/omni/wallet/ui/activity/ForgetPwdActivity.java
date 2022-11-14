@@ -2,8 +2,11 @@ package com.omni.wallet.ui.activity;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -23,6 +26,8 @@ import butterknife.OnClick;
 
 public class ForgetPwdActivity extends AppBaseActivity {
     private ArrayList<EditText> list = new ArrayList<EditText>();
+    String[] seedList;
+    Context ctx = ForgetPwdActivity.this;
     @Override
     protected Drawable getWindowBackground() {
         return ContextCompat.getDrawable(mContext, R.color.color_f9f9f9);
@@ -45,6 +50,13 @@ public class ForgetPwdActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        /**
+         * 从xml文件中读取seeds
+         * Get seeds form xml file
+         */
+        SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
+        String seedsString = secretData.getString("seeds", "none");
+        seedList = seedsString.split(" ");
         /**
          * 动态渲染24个输入框
          * Dynamically render 24 input boxes
@@ -156,6 +168,27 @@ public class ForgetPwdActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
-        switchActivity(ForgetPwdNextActivity.class);
+        Boolean checkResult = true;
+        for (int i = 0; i < list.size(); i++) {
+            String inputItemText = list.get(i).getText().toString();
+            String seed_no = "seed_" + Integer.toString(i);
+            Log.d(seed_no, seedList[i]);
+            if (inputItemText.equals(seedList[i])) {
+                Log.d(Integer.toString(i), inputItemText);
+            } else {
+                checkResult = false;
+                String toastTextHead = getResources().getString(R.string.toast_check_seeds_wrong_head);
+                String toastTextEnd = getResources().getString(R.string.toast_check_seeds_wrong_end);
+                String toastText = toastTextHead + Integer.toString(i+1) + "" + toastTextEnd;
+                Toast checkWrongToast = Toast.makeText(ForgetPwdActivity.this,toastText,Toast.LENGTH_LONG);
+                checkWrongToast.setGravity(Gravity.TOP,0,40);
+                checkWrongToast.show();
+                Log.d(seed_no, "wrong");
+                break;
+            }
+        }
+        if(checkResult){
+            switchActivity(ForgetPwdNextActivity.class);    
+        }
     }
 }
