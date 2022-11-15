@@ -22,6 +22,7 @@ import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
 import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
+import lnrpc.LightningGrpc;
+import lnrpc.LightningOuterClass;
 import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -45,6 +48,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
     public ImageView mConfirmPwdEyeIv;
     private boolean mCanClick = true;
     private boolean mConfirmCanClick = true;
+    LoadingDialog mLoadingDialog;
 
     @Override
     protected Drawable getWindowBackground() {
@@ -59,7 +63,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-
+        mLoadingDialog = new LoadingDialog(mContext);
     }
 
     @Override
@@ -211,6 +215,8 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             mConfirmPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
         }
     }
+    
+    
 
     /**
      * 点击Back
@@ -227,12 +233,14 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
+        
         Log.e("initWallet response","start");
         String password = mPwdEdit.getText().toString();
         int strongerPwd = CheckInputRules.checkePwd(password);
         TextView passwordViewRepeat = findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
+            mLoadingDialog.show();
             String md5String = Md5Util.getMD5Str(password);
             System.out.println(md5String);
             /**
@@ -263,10 +271,12 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                 public void onError(Exception e) {
                     Log.e("initWallet Error",e.toString());
                     e.printStackTrace();
+                    mLoadingDialog.dismiss();
                 }
                 @Override
                 public void onResponse(byte[] bytes) {
                     if (bytes == null){
+                        mLoadingDialog.dismiss();
                         return;
                     }
                     try {
@@ -278,8 +288,11 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                         macaroonDataEditor.commit();
                         Log.e("initWallet response",macaroon.toString());
                         switchActivity(BackupBlockProcessActivity.class);
+                        
+                        
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();
+                        mLoadingDialog.dismiss();
                     }
                 }
             });
