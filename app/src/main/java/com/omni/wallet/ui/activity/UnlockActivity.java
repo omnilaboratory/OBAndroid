@@ -8,6 +8,7 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -69,12 +70,12 @@ public class UnlockActivity extends AppBaseActivity {
          */
         SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
         localPass = secretData.getString("password","");
-       /* localSeed = secretData.getString("seeds","");
+        localSeed = secretData.getString("seeds","");
         if (localSeed.isEmpty()){
             bottomBtnGroup.setVisibility(View.VISIBLE);
         }else{
             bottomBtnGroup.setVisibility(View.INVISIBLE);
-        }*/
+        }
     }
 
     /**
