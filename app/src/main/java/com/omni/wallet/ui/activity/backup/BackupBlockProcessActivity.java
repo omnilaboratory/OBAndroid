@@ -52,16 +52,18 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     public void newAddressToWallet (){
         mLoadingDialog.show();
         Log.e("new address","start");
-        LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setType(LightningOuterClass.AddressType.UNUSED_WITNESS_PUBKEY_HASH).build();
+        LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
         Obdmobile.newAddress(newAddressRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
+                Log.e("newAddressError",e.toString());
                 mLoadingDialog.dismiss();
             }
 
             @Override
             public void onResponse(byte[] bytes) {
+                Log.e("newAddressS","success");
                 if(bytes == null){
                     mLoadingDialog.dismiss();
                     return;

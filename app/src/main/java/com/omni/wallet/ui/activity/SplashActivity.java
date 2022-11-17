@@ -1,7 +1,9 @@
 package com.omni.wallet.ui.activity;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -138,9 +140,22 @@ public class SplashActivity extends AppBaseActivity {
      */
     private void turnToNextPage() {
         if (User.getInstance().isLogin(mContext) & !StringUtils.isEmpty(User.getInstance().getFirstLogin(mContext))) {
-            switchActivityFinish(UnlockActivity.class, mBundle);
+            SharedPreferences secretData = mContext.getSharedPreferences("secretData", MODE_PRIVATE);
+            String localPass = secretData.getString("password","");
+            if(localPass.isEmpty()){
+                switchActivityFinish(SetPwdActivity.class, mBundle);
+            }else{
+                switchActivityFinish(UnlockActivity.class, mBundle);
+            }
+            
         } else {
-            switchActivityFinish(UnlockActivity.class, mBundle);
+            SharedPreferences secretData = mContext.getSharedPreferences("secretData", MODE_PRIVATE);
+            String localPass = secretData.getString("password","");
+            if(localPass.isEmpty()){
+                switchActivityFinish(SetPwdActivity.class, mBundle);
+            }else{
+                switchActivityFinish(UnlockActivity.class, mBundle);
+            }
         }
     }
 
