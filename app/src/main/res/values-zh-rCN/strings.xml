@@ -220,6 +220,14 @@
     <string name="error_channel_open_pending_max">Number of pending channels exceed maximum.</string>
     <string name="error_channel_open_timeout">Channel could not be opened within deadline.</string>
     <string name="error_channel_open">Could not open channel with connected node: %s</string>
+    <string name="token_info">Token Info</string>
+    <string name="active">Active</string>
+    <string name="issuer">Issuer</string>
+    <string name="property_id">Property ID</string>
+    <string name="type">Type</string>
+    <string name="date_one">Date</string>
+    <string name="url">URL</string>
+    <string name="divisible">Divisible</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

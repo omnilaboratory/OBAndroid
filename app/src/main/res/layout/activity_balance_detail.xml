@@ -187,6 +187,13 @@
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/iv_token_info"
+                    android:layout_width="@dimen/main_32"
+                    android:layout_height="@dimen/main_32"
+                    android:layout_marginRight="@dimen/main_13"
+                    android:src="@mipmap/icon_token_info"/>
+
+                <ImageView
                     android:id="@+id/iv_scan"
                     android:layout_width="@dimen/main_32"
                     android:layout_height="@dimen/main_32"

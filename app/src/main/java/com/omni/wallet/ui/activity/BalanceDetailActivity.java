@@ -27,6 +27,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
@@ -150,6 +151,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     SendStepOnePopupWindow mSendStepOnePopupWindow;
     CreateInvoiceStepOnePopupWindow mCreateInvoiceStepOnePopupWindow;
     TransactionsDetailsPopupWindow mTransactionsDetailsPopupWindow;
+    TokenInfoPopupWindow mTokenInfoPopupWindow;
 
     @Override
     protected void getBundleData(Bundle bundle) {
@@ -532,6 +534,17 @@ public class BalanceDetailActivity extends AppBaseActivity {
     public void clickMore() {
 
     }
+
+    /**
+     * click token info button
+     * 点击token info按钮
+     */
+    @OnClick(R.id.iv_token_info)
+    public void clickTokenInfo() {
+        mTokenInfoPopupWindow = new TokenInfoPopupWindow(mContext);
+        mTokenInfoPopupWindow.show(mParentLayout);
+    }
+
 
     /**
      * click scan button

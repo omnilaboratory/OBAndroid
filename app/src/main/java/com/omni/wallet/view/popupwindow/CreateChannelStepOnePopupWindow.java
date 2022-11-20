@@ -29,6 +29,7 @@ import com.omni.wallet.lightning.LightningNodeUri;
 import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
+import com.omni.wallet.utils.Wallet;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -145,6 +146,7 @@ public class CreateChannelStepOnePopupWindow {
 
     private void showStepTwo(View rootView) {
         EditText vaildPubkeyEdit = rootView.findViewById(R.id.edit_vaild_pubkey);
+        TextView nodeNameTv = rootView.findViewById(R.id.tv_node_name);
         EditText channelAmountEdit = rootView.findViewById(R.id.edit_channel_amount);
         TextView channelAmountTv = rootView.findViewById(R.id.tv_channel_amount);
         channelFeeTv = rootView.findViewById(R.id.tv_channel_fee);
@@ -152,6 +154,7 @@ public class CreateChannelStepOnePopupWindow {
         Button speedButton = rootView.findViewById(R.id.btn_speed);
 
 //        vaildPubkeyEdit.setText(nodePubkey);
+        nodeNameTv.setText(Wallet.getInstance().getNodeAliasFromPubKey(nodePubkey, mContext));
         channelAmountTv.setText(assetBalanceMax);
         channelAmountEdit.addTextChangedListener(new TextWatcher() {
             @Override
