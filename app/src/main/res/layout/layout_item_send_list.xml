@@ -8,7 +8,6 @@
         android:id="@+id/v_deliver"
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_0.2"
-        android:layout_marginTop="@dimen/main_15"
         android:background="@color/color_black"/>
 
     <TextView
@@ -28,7 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/main_45"
-        android:layout_marginRight="@dimen/main_35">
+        android:layout_marginRight="@dimen/main_35"
+        android:layout_marginBottom="@dimen/main_15">
         <TextView
             android:id="@+id/tv_send_list_name"
             android:textSize="@dimen/text_16"

@@ -19,6 +19,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
@@ -477,6 +478,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Invoice item) {
+            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
+            holder.setText(R.id.tv_amount, item.getAmount() + "");
             final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_my_invoices_list_swipe_menu);
             holder.getView(R.id.tv_my_invoices_delete).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -574,7 +577,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.layout_pay_invoice)
     public void clickPayInvoice() {
         mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-        mPayInvoiceStepOnePopupWindow.show(mParentLayout, walletAddress, assetId);
+        mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId);
     }
 
     /**
@@ -584,7 +587,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.layout_create_invoice)
     public void clickCreateInvoice() {
         mCreateInvoiceStepOnePopupWindow = new CreateInvoiceStepOnePopupWindow(mContext);
-        mCreateInvoiceStepOnePopupWindow.show(mParentLayout, walletAddress, assetId);
+        mCreateInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
     }
 
     /**

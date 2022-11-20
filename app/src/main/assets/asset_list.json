@@ -1,0 +1,10 @@
+{
+  "BTC": {
+    "assetId": "0",
+    "network": "1"
+  },
+  "USDT": {
+    "assetId": "2147483651",
+    "network": "2"
+  }
+}

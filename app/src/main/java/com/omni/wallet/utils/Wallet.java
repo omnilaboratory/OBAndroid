@@ -6,6 +6,7 @@ import android.content.Context;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.entity.ListAssetItemEntity;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -37,6 +38,10 @@ public class Wallet {
     public List<LightningOuterClass.ChannelCloseSummary> mClosedChannelsList;
     public List<LightningOuterClass.NodeInfo> mNodeInfos = new LinkedList<>();
 
+    public List<ListAssetItemEntity> blockData = new ArrayList<>();
+    public List<ListAssetItemEntity> lightningData = new ArrayList<>();
+    public List<ListAssetItemEntity> allData = new ArrayList<>();
+
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public static final String START_NODE = "  --trickledelay=5000 --alias=alice\n" +
@@ -47,19 +52,19 @@ public class Wallet {
             "--bitcoind.zmqpubrawblock=tcp://16.162.119.13:28332\n" +
             "--bitcoind.zmqpubrawtx=tcp://16.162.119.13:28333";
 
-    public static final String START_NODE_OMNI = " --noseedbackup --trickledelay=5000 --alias=alice\n" +
+    public static final String START_NODE_OMNI = " --noseedbackup --trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
-            "--omnicoreproxy.rpchost=regnet.oblnd.top:18332 " +
-            "--omnicoreproxy.zmqpubrawblock=tcp://regnet.oblnd.top:28332 " +
-            "--omnicoreproxy.zmqpubrawtx=tcp://regnet.oblnd.top:28333";
+            "--omnicoreproxy.rpchost=43.138.107.248:18332 " +
+            "--omnicoreproxy.zmqpubrawblock=tcp://43.138.107.248:28332 " +
+            "--omnicoreproxy.zmqpubrawtx=tcp://43.138.107.248:28333";
 
-    public static final String START_NODE_OMNI_WITH_SEED = "--trickledelay=5000 --alias=alice\n" +
+    public static final String START_NODE_OMNI_WITH_SEED = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
-            "--omnicoreproxy.rpchost=regnet.oblnd.top:18332 " +
-            "--omnicoreproxy.zmqpubrawblock=tcp://regnet.oblnd.top:28332 " +
-            "--omnicoreproxy.zmqpubrawtx=tcp://regnet.oblnd.top:28333";
+            "--omnicoreproxy.rpchost=43.138.107.248:18332 " +
+            "--omnicoreproxy.zmqpubrawblock=tcp://43.138.107.248:28332 " +
+            "--omnicoreproxy.zmqpubrawtx=tcp://43.138.107.248:28333";
 
     private Wallet() {
         ;
@@ -343,6 +348,101 @@ public class Wallet {
         PrefsUtil.editPrefs().putString(PrefsUtil.NODE_INFO_CACHE, cache.toString()).apply();
     }
 
+    /**
+     * Create a new wallet address first, and then request the interface of each asset balance list
+     * 先创建新的钱包地址后再去请求各资产余额列表的接口
+     */
+    public void fetchWalletBalance() {
+        LightningOuterClass.NewAddressRequest asyncNewAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder()
+                .setTypeValue(2)
+                .build();
+        Obdmobile.newAddress(asyncNewAddressRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------newAddressOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.NewAddressResponse addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
+                    LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
+                            .setAddress(addressResp.getAddress())
+                            .build();
+                    Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
+                            try {
+                                LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
+                                blockData.clear();
+                                ListAssetItemEntity entity = new ListAssetItemEntity();
+                                entity.setAmount(resp.getTotalBalance());
+                                entity.setPropertyid(0);
+                                entity.setType(1);
+                                blockData.add(entity);
+                                allData.addAll(blockData);
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * request the interface of each asset balance list
+     * 请求各资产余额列表的接口
+     */
+    public void fetchAssetsBalanceByAddress() {
+        LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
+                .setAddress("mtowceAw2yeftR1pPg15QcsDqsnSik7Spz")
+                .build();
+        Obdmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
+                    lightningData.clear();
+                    for (int i = 0; i < resp.getListList().size(); i++) {
+                        ListAssetItemEntity entity = new ListAssetItemEntity();
+                        entity.setAmount(resp.getListList().get(i).getBalance());
+                        entity.setPropertyid(resp.getListList().get(i).getPropertyid());
+                        entity.setType(2);
+                        lightningData.add(entity);
+                        allData.addAll(lightningData);
+                    }
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
     /**
      * Notify all listeners that channels have been updated.

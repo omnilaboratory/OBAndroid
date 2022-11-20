@@ -6,9 +6,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
+
+import lnrpc.LightningOuterClass;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 /**
  * popup window for Menu
@@ -49,6 +55,7 @@ public class MenuPopupWindow {
                     mMenuPopWindow.dismiss();
                 }
             });
+            // channel manage
             rootView.findViewById(R.id.layout_channel_manage).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -58,7 +65,32 @@ public class MenuPopupWindow {
                     bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
                     bundle.putString(ChannelsActivity.KEY_PUBKEY, pubKey);
                     Intent intent = new Intent(mContext, ChannelsActivity.class);
-                    mContext.startActivity(intent,bundle);
+                    mContext.startActivity(intent, bundle);
+                }
+            });
+            // disconnect
+            rootView.findViewById(R.id.layout_disconnect).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    LightningOuterClass.DisconnectPeerRequest disconnectPeerRequest = LightningOuterClass.DisconnectPeerRequest.newBuilder()
+                            .setPubKey(pubKey)
+                            .build();
+                    Obdmobile.disconnectPeer(disconnectPeerRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------disconnectPeerOnError------------------" + e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            try {
+                                LightningOuterClass.DisconnectPeerResponse resp = LightningOuterClass.DisconnectPeerResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------disconnectPeerOnResponse-----------------" + resp);
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                 }
             });
             if (mMenuPopWindow.isShowing()) {

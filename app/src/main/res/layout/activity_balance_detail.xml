@@ -41,8 +41,8 @@
 
                 <ImageView
                     android:id="@+id/iv_network"
-                    android:layout_width="@dimen/main_24"
-                    android:layout_height="@dimen/main_24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@mipmap/icon_network_vector"/>
 
                 <TextView

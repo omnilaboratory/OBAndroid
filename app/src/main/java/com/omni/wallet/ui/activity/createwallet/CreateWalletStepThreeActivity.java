@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Parser;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
@@ -24,14 +23,11 @@ import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
-import lnrpc.LightningGrpc;
-import lnrpc.LightningOuterClass;
 import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -215,8 +211,8 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             mConfirmPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
         }
     }
-    
-    
+
+
 
     /**
      * 点击Back
@@ -233,7 +229,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
-        
+
         Log.e("initWallet response","start");
         String password = mPwdEdit.getText().toString();
         int strongerPwd = CheckInputRules.checkePwd(password);
@@ -264,7 +260,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
 
             Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
-            
+
 
             Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
                 @Override
@@ -288,15 +284,15 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                         macaroonDataEditor.commit();
                         Log.e("initWallet response",macaroon.toString());
                         switchActivity(BackupBlockProcessActivity.class);
-                        
-                        
+
+
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();
                         mLoadingDialog.dismiss();
                     }
                 }
             });
-//            
+//
         }else{
             String checkSetPassWrongString = "";
             if(strongerPwd<0){

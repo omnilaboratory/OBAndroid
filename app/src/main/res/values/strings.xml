@@ -205,6 +205,10 @@
     <string name="error_channel_close_timeout">Channel could not be closed within deadline.</string>
     <string name="error_channel_close">Could not close channel</string>
     <string name="create_invoice_amount">Please enter the amount</string>
+    <string name="enter_node_pubkey">Please enter node pubkey</string>
+    <string name="amount_greater_than_0">Amount must be greater than 0</string>
+    <string name="credit_is_running_low">Sorry, your credit is running low</string>
+    <string name="enter_the_time">Please enter the time</string>
     <string name="error_get_peers">Could not fetch peers list.</string>
     <string name="error_get_peers_timeout">Peers could not be fetched within deadline.</string>
     <string name="error_connect_peer">Could not establish connection to peer node.</string>
