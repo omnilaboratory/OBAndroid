@@ -3,6 +3,8 @@ package com.omni.wallet.view.popupwindow.send;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -20,18 +22,22 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.ListAssetItemEntity;
+import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.listItems.Friend;
 import com.omni.wallet.listItems.FriendGroup;
 import com.omni.wallet.ui.activity.ScanActivity;
-import com.omni.wallet.utils.GetResourceUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.SendSuccessDialog;
 import com.omni.wallet.view.popupwindow.SelectAssetPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,25 +59,15 @@ public class SendStepOnePopupWindow {
     private MyAdapter mAdapter;
     View mView;
     private List<FriendGroup> friendGroups = new ArrayList<>();
-    String selectAddress;
-    int time;
+    String selectAddress = "mhHHDCmkceKKXCFYCk7gRo5UaJmCi6rCk8";
+    int time = 1;
     long feeStr;
+    long assetId = 0;
+    String assetBalance = "0";
+    String assetBalanceMax;
     private LoadingDialog mLoadingDialog;
     // 初始数据（Initial data）
-    String sendFriendName = "Alpha";
-    String sendAddress = "1mn8382odjddwedqw323f3d32343f23fweg65er4345yge43t4534gy7";
-    String type = "USDT";
-    Double sendAmount = 100.00d;
-    Double sendValue = 710.23d;
-    Double gasFeeAmount = 100.00d;
-    Double gasFeeValue = 5.06d;
-    Double totalValue = 715.29d;
-
-    Double assetBalance = 500.00d;
-    String toAddress = "1mn8382odjddwedqw323f3d32343f23fweg65er4345yge43t4534gy7";
-    String toFriendName = "to_friend_name";
-    Button speedButton;
-    LinearLayout assetLayout;
+    String toFriendName = "Alice";
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetPopupWindow mSelectAssetPopupWindow;
     SendSuccessDialog mSendSuccessDialog;
@@ -126,295 +122,8 @@ public class SendStepOnePopupWindow {
 
             mLoadingDialog = new LoadingDialog(mContext);
             friendGroupsData();
-            /**
-             * @description: RecyclerView for send list
-             * @描述： send list 的 RecyclerView
-             */
-            TextView recentsAddressTv = rootView.findViewById(R.id.tv_recents_address);
-            RecyclerView mRecyclerView = rootView.findViewById(R.id.recycler_send_list);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
-            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(layoutManager);
-            Obdmobile.getTransactions(LightningOuterClass.GetTransactionsRequest.newBuilder().build().toByteArray(), new Callback() {
-                @Override
-                public void onError(Exception e) {
-                    LogUtils.e(TAG, "------------------getTransactionsOnError------------------" + e.getMessage());
-                }
-
-                @Override
-                public void onResponse(byte[] bytes) {
-                    if (bytes == null) {
-                        return;
-                    }
-                    try {
-                        LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
-                        LogUtils.e(TAG, "------------------getTransactionsOnResponse-----------------" + resp);
-                        recentsAddressTv.setText(resp.getTransactions(0).getDestAddresses(0));
-                        mData.clear();
-                        mData.addAll(resp.getTransactionsList());
-                        mAdapter = new MyAdapter(mContext, mData, R.layout.layout_item_send_list);
-                        mRecyclerView.setAdapter(mAdapter);
-                        mAdapter.notifyDataSetChanged();
-                    } catch (InvalidProtocolBufferException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            /**
-             * @description: click scan icon
-             * @描述： 点击scan
-             */
-            rootView.findViewById(R.id.iv_scan).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PermissionUtils.launchCamera((Activity) mContext, new PermissionUtils.PermissionCallback() {
-                        @Override
-                        public void onRequestPermissionSuccess() {
-                            mBasePopWindow.dismiss();
-                            Intent intent = new Intent(mContext, ScanActivity.class);
-                            mContext.startActivity(intent);
-                        }
-
-                        @Override
-                        public void onRequestPermissionFailure(List<String> permissions) {
-                            LogUtils.e(TAG, "扫码页面摄像头权限拒绝");
-                        }
-
-                        @Override
-                        public void onRequestPermissionFailureWithAskNeverAgain(List<String> permissions) {
-                            LogUtils.e(TAG, "扫码页面摄像头权限拒绝并且勾选不再提示");
-                        }
-                    });
-                }
-            });
-            TextView toAddressView = rootView.findViewById(R.id.tv_to_address);
-            toAddressView.setText(selectAddress);
-            TextView assetsBalanceView = rootView.findViewById(R.id.tv_asset_balance);
-            assetsBalanceView.setText(assetBalance.toString());
-            TextView toFriendNameView = rootView.findViewById(R.id.tv_to_friend_name);
-            toFriendNameView.setText(toFriendName);
-            sendFeeTv = rootView.findViewById(R.id.tv_send_fee);
-            TextView sendFeeExchangeTv = rootView.findViewById(R.id.tv_send_fee_exchange);
-            assetLayout = rootView.findViewById(R.id.layout_asset);
-            assetLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mSelectAssetPopupWindow = new SelectAssetPopupWindow(mContext);
-                    mSelectAssetPopupWindow.setOnItemClickCallback(new SelectAssetPopupWindow.ItemCleckListener() {
-                        @Override
-                        public void onItemClick(View view, String item) {
-                            ToastUtils.showToast(mContext, "Asset");
-                        }
-                    });
-                    mSelectAssetPopupWindow.show(v);
-                }
-            });
-            speedButton = rootView.findViewById(R.id.btn_speed);
-            speedButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mSelectSpeedPopupWindow = new SelectSpeedPopupWindow(mContext);
-                    mSelectSpeedPopupWindow.setOnItemClickCallback(new SelectSpeedPopupWindow.ItemCleckListener() {
-                        @Override
-                        public void onItemClick(View view) {
-                            switch (view.getId()) {
-                                case R.id.tv_slow:
-                                    speedButton.setText(R.string.slow);
-                                    time = 1; // 10 Minutes
-                                    break;
-                                case R.id.tv_medium:
-                                    speedButton.setText(R.string.medium);
-                                    time = 6 * 6; // 6 Hours
-                                    break;
-                                case R.id.tv_fast:
-                                    speedButton.setText(R.string.fast);
-                                    time = 6 * 24; // 24 Hours
-                                    break;
-                            }
-                        }
-                    });
-                    mSelectSpeedPopupWindow.show(v);
-                }
-            });
-
-            /**
-             * @描述: 增加MAX按钮的点击事件，点击将balance的值填入amount输入框中
-             * @Description: Add the click event of MAX button, click to fill the balance value into the amount input box
-             * @author: Tong ChangHui
-             * @E-mail: tch081092@gmail.com
-             */
-
-            final EditText amountInputView = rootView.findViewById(R.id.etv_send_amount);
-            amountInputView.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    estimateOnChainFee(count, time);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
-            TextView maxBtnView = rootView.findViewById(R.id.tv_btn_set_amount_max);
-            maxBtnView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    amountInputView.setText(assetBalance.toString());
-                }
-            });
-
-            /**
-             * @desc: Click back button then back to step one
-             * @描述： 点击back显示step one
-             */
-            rootView.findViewById(R.id.layout_back_to_one).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    rootView.findViewById(R.id.lv_step_one_content).setVisibility(View.VISIBLE);
-                    rootView.findViewById(R.id.lv_step_two_content).setVisibility(View.GONE);
-                }
-            });
-            /**
-             * @desc: Click next button then forward to step three
-             * @描述： 点击next跳转到step three
-             */
-            rootView.findViewById(R.id.layout_next).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    rootView.findViewById(R.id.lv_step_two_content).setVisibility(View.GONE);
-                    rootView.findViewById(R.id.lv_step_three_content).setVisibility(View.VISIBLE);
-                }
-            });
-
-            /**
-             * @描述: 初始化页面初始数据包括：friendName、address、send amount、send value、gas fee、fee value、total used value
-             * @Description: The initial data of the initialization page includes friend name, address, send value, gas fee, fee value, total used value
-             * @author: Tong ChangHui
-             * @E-mail: tch081092@gmail.com
-             */
-
-            TextView friendNameView = rootView.findViewById(R.id.tv_send_friend_name);
-            friendNameView.setText(sendFriendName);
-            TextView friendAddressView = rootView.findViewById(R.id.tv_send_address);
-            friendAddressView.setText(selectAddress);
-            ImageView tokenImage = rootView.findViewById(R.id.iv_send_token_image);
-            tokenImage.setImageDrawable(mContext.getResources().getDrawable(GetResourceUtil.getTokenImageId(mContext, type)));
-            TextView tokenTypeView = rootView.findViewById(R.id.tv_send_token_type);
-            tokenTypeView.setText(type);
-            TextView tokenTypeView2 = rootView.findViewById(R.id.tv_send_token_type_2);
-            tokenTypeView2.setText(type);
-            TextView sendAmountView = rootView.findViewById(R.id.tv_send_amount);
-            sendAmountView.setText(amountInputView.getText().toString());
-            TextView sendAmountValueView = rootView.findViewById(R.id.tv_send_amount_value);
-            sendAmountValueView.setText(amountInputView.getText().toString());
-            TextView feeAmountView = rootView.findViewById(R.id.tv_send_gas_fee_amount);
-            feeAmountView.setText(feeStr + "");
-            TextView feeAmountValueView = rootView.findViewById(R.id.tv_send_gas_fee_amount_value);
-            feeAmountValueView.setText(gasFeeValue.toString());
-            TextView sendUsedValueView = rootView.findViewById(R.id.tv_send_used_value);
-            sendUsedValueView.setText(totalValue.toString());
-
-            /**
-             * @desc: Click back button then back to step two
-             * @描述： 点击back显示step two
-             */
-            rootView.findViewById(R.id.layout_back_to_two).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    rootView.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
-                    rootView.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
-                }
-            });
-            TextView failedNameTcv = rootView.findViewById(R.id.tv_failed_name);
-            failedNameTcv.setText(sendFriendName);
-            TextView friendAddressTv = rootView.findViewById(R.id.tv_failed_address);
-            friendAddressTv.setText(selectAddress);
-            ImageView assetLogoIv = rootView.findViewById(R.id.iv_asset_logo);
-            assetLogoIv.setImageDrawable(mContext.getResources().getDrawable(GetResourceUtil.getTokenImageId(mContext, type)));
-            TextView assetUnitTv = rootView.findViewById(R.id.tv_asset_unit);
-            assetUnitTv.setText(type);
-            TextView failedAmountTv = rootView.findViewById(R.id.tv_failed_amount);
-            failedAmountTv.setText(amountInputView.getText().toString());
-            TextView failedAmountUnitTv = rootView.findViewById(R.id.tv_failed_amount_unit);
-            failedAmountUnitTv.setText(type);
-            TextView failedGasFeeTv = rootView.findViewById(R.id.tv_failed_gas_fee);
-            failedGasFeeTv.setText(feeStr + "");
-            TextView failedTotalValueTv = rootView.findViewById(R.id.tv_failed_total_value);
-            failedTotalValueTv.setText(gasFeeValue.toString());
-            TextView failedMessageTv = rootView.findViewById(R.id.tv_failed_message);
-
-            /**
-             * @desc: Click confirm button then forward to succeed or failed step
-             * @描述： 点击 confirm button 显示成功或者失败的页面
-             */
-            rootView.findViewById(R.id.layout_confirm).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mLoadingDialog.show();
-                    LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
-                            .setAddr(selectAddress)
-                            .setAmount(Long.parseLong(amountInputView.getText().toString()))
-                            .setTargetConf(time)
-                            .build();
-                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
-                        @Override
-                        public void onError(Exception e) {
-                            rootView.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
-                            rootView.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
-                            failedMessageTv.setText(e.getMessage());
-                        }
-
-                        @Override
-                        public void onResponse(byte[] bytes) {
-                            mLoadingDialog.dismiss();
-                            mBasePopWindow.dismiss();
-                            mSendSuccessDialog = new SendSuccessDialog(mContext);
-                            mSendSuccessDialog.show("success");
-                        }
-                    });
-                }
-            });
-
-            // 点击try again
-            rootView.findViewById(R.id.layout_try_again).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mLoadingDialog.show();
-                    LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
-                            .setAddr(selectAddress)
-                            .setAmount(Long.parseLong(amountInputView.getText().toString()))
-                            .setTargetConf(time)
-                            .build();
-                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
-                        @Override
-                        public void onError(Exception e) {
-                            failedMessageTv.setText(e.getMessage());
-                        }
-
-                        @Override
-                        public void onResponse(byte[] bytes) {
-                            mLoadingDialog.dismiss();
-                            mBasePopWindow.dismiss();
-                            mSendSuccessDialog = new SendSuccessDialog(mContext);
-                            mSendSuccessDialog.show("success");
-                        }
-                    });
-                }
-            });
-            // 点击explorer
-            rootView.findViewById(R.id.layout_explorer).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mBasePopWindow.dismiss();
-                }
-            });
-
+            fetchWalletBalance();
+            showStepOne(rootView);
             /**
              * @备注： 点击cancel 按钮
              * @description: Click cancel button
@@ -430,6 +139,490 @@ public class SendStepOnePopupWindow {
             }
             mBasePopWindow.showAtLocation(mView, Gravity.CENTER, 0, 0);
         }
+    }
+
+    /**
+     * send step one
+     */
+    private void showStepOne(View view) {
+        /**
+         * @description: RecyclerView for send list
+         * @描述： send list 的 RecyclerView
+         */
+        TextView recentsAddressTv = view.findViewById(R.id.tv_recents_address);
+        recentsAddressTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBasePopWindow.getContentView().findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
+                mBasePopWindow.getContentView().findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
+                showStepTwo(view);
+            }
+        });
+        RecyclerView mRecyclerView = view.findViewById(R.id.recycler_send_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(layoutManager);
+        Obdmobile.getTransactions(LightningOuterClass.GetTransactionsRequest.newBuilder().build().toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------getTransactionsOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------getTransactionsOnResponse-----------------" + resp);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            recentsAddressTv.setText(resp.getTransactions(0).getDestAddresses(0));
+                            mData.clear();
+                            mData.addAll(resp.getTransactionsList());
+                            mAdapter = new MyAdapter(mContext, mData, R.layout.layout_item_send_list);
+                            mRecyclerView.setAdapter(mAdapter);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        /**
+         * @description: click scan icon
+         * @描述： 点击scan
+         */
+        view.findViewById(R.id.iv_scan).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PermissionUtils.launchCamera((Activity) mContext, new PermissionUtils.PermissionCallback() {
+                    @Override
+                    public void onRequestPermissionSuccess() {
+                        mBasePopWindow.dismiss();
+                        Intent intent = new Intent(mContext, ScanActivity.class);
+                        mContext.startActivity(intent);
+                    }
+
+                    @Override
+                    public void onRequestPermissionFailure(List<String> permissions) {
+                        LogUtils.e(TAG, "扫码页面摄像头权限拒绝");
+                    }
+
+                    @Override
+                    public void onRequestPermissionFailureWithAskNeverAgain(List<String> permissions) {
+                        LogUtils.e(TAG, "扫码页面摄像头权限拒绝并且勾选不再提示");
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * send step two
+     */
+    private void showStepTwo(View view) {
+        TextView toAddressView = view.findViewById(R.id.tv_to_address);
+        toAddressView.setText(selectAddress);
+        TextView toFriendNameView = view.findViewById(R.id.tv_to_friend_name);
+        toFriendNameView.setText(toFriendName);
+        ImageView assetTypeIv = view.findViewById(R.id.iv_asset_type);
+        TextView assetTypeTv = view.findViewById(R.id.tv_asset_type);
+        TextView amountTypeTv = view.findViewById(R.id.tv_amount_type);
+        TextView assetsBalanceTv = view.findViewById(R.id.tv_asset_balance);
+        if (assetId == 0) {
+            assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
+            assetTypeTv.setText("BTC");
+            amountTypeTv.setText("BTC");
+        } else {
+            assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
+            assetTypeTv.setText("USDT");
+            amountTypeTv.setText("USDT");
+        }
+        assetsBalanceTv.setText(assetBalanceMax);
+        sendFeeTv = view.findViewById(R.id.tv_send_fee);
+        TextView sendFeeExchangeTv = view.findViewById(R.id.tv_send_fee_exchange);
+        sendFeeExchangeTv.setText("0");
+        LinearLayout assetLayout = view.findViewById(R.id.layout_asset);
+        assetLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelectAssetPopupWindow = new SelectAssetPopupWindow(mContext);
+                mSelectAssetPopupWindow.setOnItemClickCallback(new SelectAssetPopupWindow.ItemCleckListener() {
+                    @Override
+                    public void onItemClick(View view, ListAssetItemEntity item) {
+                        if (item.getPropertyid() == 0) {
+                            assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
+                            assetTypeTv.setText("BTC");
+                            amountTypeTv.setText("BTC");
+                        } else {
+                            assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
+                            assetTypeTv.setText("USDT");
+                            amountTypeTv.setText("USDT");
+                        }
+                        assetId = item.getPropertyid();
+                        assetBalanceMax = item.getAmount() + "";
+                        assetsBalanceTv.setText(assetBalanceMax);
+                    }
+                });
+                mSelectAssetPopupWindow.show(v);
+            }
+        });
+        /**
+         * @描述: 增加MAX按钮的点击事件，点击将balance的值填入amount输入框中
+         * @Description: Add the click event of MAX button, click to fill the balance value into the amount input box
+         * @author: Tong ChangHui
+         * @E-mail: tch081092@gmail.com
+         */
+        final EditText amountInputView = view.findViewById(R.id.etv_send_amount);
+        amountInputView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                estimateOnChainFee(count, time);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                assetBalance = s.toString();
+                if (!StringUtils.isEmpty(s.toString())) {
+                    estimateOnChainFee(Long.parseLong(assetBalance), time);
+                }
+            }
+        });
+        TextView maxBtnView = view.findViewById(R.id.tv_btn_set_amount_max);
+        maxBtnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                amountInputView.setText(assetBalanceMax);
+            }
+        });
+        Button speedButton = view.findViewById(R.id.btn_speed);
+        speedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelectSpeedPopupWindow = new SelectSpeedPopupWindow(mContext);
+                mSelectSpeedPopupWindow.setOnItemClickCallback(new SelectSpeedPopupWindow.ItemCleckListener() {
+                    @Override
+                    public void onItemClick(View view) {
+                        switch (view.getId()) {
+                            case R.id.tv_slow:
+                                speedButton.setText(R.string.slow);
+                                time = 1; // 10 Minutes
+                                estimateOnChainFee(Long.parseLong(amountInputView.getText().toString()), time);
+                                break;
+                            case R.id.tv_medium:
+                                speedButton.setText(R.string.medium);
+                                time = 6 * 6; // 6 Hours
+                                estimateOnChainFee(Long.parseLong(amountInputView.getText().toString()), time);
+                                break;
+                            case R.id.tv_fast:
+                                speedButton.setText(R.string.fast);
+                                time = 6 * 24; // 24 Hours
+                                estimateOnChainFee(Long.parseLong(amountInputView.getText().toString()), time);
+                                break;
+                        }
+                    }
+                });
+                mSelectSpeedPopupWindow.show(v);
+            }
+        });
+        /**
+         * @desc: Click back button then back to step one
+         * @描述： 点击back显示step one
+         */
+        view.findViewById(R.id.layout_back_to_one).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                view.findViewById(R.id.lv_step_one_content).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.lv_step_two_content).setVisibility(View.GONE);
+                showStepOne(view);
+            }
+        });
+        /**
+         * @desc: Click next button then forward to step three
+         * @描述： 点击next跳转到step three
+         */
+        view.findViewById(R.id.layout_next).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtils.isEmpty(assetBalance)) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
+                    return;
+                }
+                if (assetBalance.equals("0")) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
+                    return;
+                }
+                if (Long.parseLong(assetBalance) - Long.parseLong(assetBalanceMax) > 0) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
+                    return;
+                }
+                view.findViewById(R.id.lv_step_two_content).setVisibility(View.GONE);
+                view.findViewById(R.id.lv_step_three_content).setVisibility(View.VISIBLE);
+                showStepThree(view);
+            }
+        });
+    }
+
+    /**
+     * send step three
+     */
+    private void showStepThree(View view) {
+        /**
+         * @描述: 初始化页面初始数据包括：friendName、address、send amount、send value、gas fee、fee value、total used value
+         * @Description: The initial data of the initialization page includes friend name, address, send value, gas fee, fee value, total used value
+         * @author: Tong ChangHui
+         * @E-mail: tch081092@gmail.com
+         */
+        TextView friendNameView = view.findViewById(R.id.tv_send_friend_name);
+        friendNameView.setText(toFriendName);
+        TextView friendAddressView = view.findViewById(R.id.tv_send_address);
+        friendAddressView.setText(selectAddress);
+        ImageView tokenImage = view.findViewById(R.id.iv_send_token_image);
+        TextView tokenTypeView = view.findViewById(R.id.tv_send_token_type);
+        TextView tokenTypeView2 = view.findViewById(R.id.tv_send_token_type_2);
+        if (assetId == 0) {
+            tokenImage.setImageResource(R.mipmap.icon_btc_logo_small);
+            tokenTypeView.setText("BTC");
+            tokenTypeView2.setText("BTC");
+        } else {
+            tokenImage.setImageResource(R.mipmap.icon_usdt_logo_small);
+            tokenTypeView.setText("USDT");
+            tokenTypeView2.setText("USDT");
+        }
+        TextView sendAmountView = view.findViewById(R.id.tv_send_amount);
+        sendAmountView.setText(assetBalance);
+        TextView sendAmountValueView = view.findViewById(R.id.tv_send_amount_value);
+        sendAmountValueView.setText(assetBalance);
+        TextView feeAmountView = view.findViewById(R.id.tv_send_gas_fee_amount);
+        feeAmountView.setText(feeStr + "");
+        TextView feeAmountValueView = view.findViewById(R.id.tv_send_gas_fee_amount_value);
+        feeAmountValueView.setText("0");
+        TextView sendUsedValueView = view.findViewById(R.id.tv_send_used_value);
+        sendUsedValueView.setText("0");
+        /**
+         * @desc: Click back button then back to step two
+         * @描述： 点击back显示step two
+         */
+        view.findViewById(R.id.layout_back_to_two).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                view.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                showStepTwo(view);
+            }
+        });
+        /**
+         * @desc: Click confirm button then forward to succeed or failed step
+         * @描述： 点击 confirm button 显示成功或者失败的页面
+         */
+        view.findViewById(R.id.layout_confirm).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogUtils.e(TAG, selectAddress);
+                LogUtils.e(TAG, assetBalance);
+                LogUtils.e(TAG, String.valueOf(time));
+                LogUtils.e(TAG, String.valueOf(assetId));
+                mLoadingDialog.show();
+                if (assetId == 0) {
+                    LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
+                            .setAddr(selectAddress)
+                            .setFrom("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
+                            .setAmount(Long.parseLong(assetBalance))
+                            .setTargetConf(time)
+                            .build();
+                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    view.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
+                                    view.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                                    mLoadingDialog.dismiss();
+                                    showStepFailed(view, e.getMessage());
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mLoadingDialog.dismiss();
+                                    mBasePopWindow.dismiss();
+                                    mSendSuccessDialog = new SendSuccessDialog(mContext);
+                                    mSendSuccessDialog.show("success");
+                                    EventBus.getDefault().post(new SendSuccessEvent());
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
+                            .setAssetId((int) assetId)
+                            .setAddr(selectAddress)
+                            .setFrom("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
+                            .setAssetAmount(Long.parseLong(assetBalance))
+                            .setTargetConf(time)
+                            .build();
+                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    view.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
+                                    view.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                                    mLoadingDialog.dismiss();
+                                    showStepFailed(view, e.getMessage());
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mLoadingDialog.dismiss();
+                                    mBasePopWindow.dismiss();
+                                    mSendSuccessDialog = new SendSuccessDialog(mContext);
+                                    mSendSuccessDialog.show("success");
+                                    EventBus.getDefault().post(new SendSuccessEvent());
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * send step failed
+     */
+    private void showStepFailed(View view, String message) {
+        TextView failedNameTcv = view.findViewById(R.id.tv_failed_name);
+        failedNameTcv.setText(toFriendName);
+        TextView friendAddressTv = view.findViewById(R.id.tv_failed_address);
+        friendAddressTv.setText(selectAddress);
+        ImageView assetLogoIv = view.findViewById(R.id.iv_asset_logo);
+        TextView assetUnitTv = view.findViewById(R.id.tv_asset_unit);
+        TextView failedAmountUnitTv = view.findViewById(R.id.tv_failed_amount_unit);
+        if (assetId == 0) {
+            assetLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
+            assetUnitTv.setText("BTC");
+            failedAmountUnitTv.setText("BTC");
+        } else {
+            assetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
+            assetUnitTv.setText("USDT");
+            failedAmountUnitTv.setText("USDT");
+        }
+        TextView failedAmountTv = view.findViewById(R.id.tv_failed_amount);
+        failedAmountTv.setText(assetBalance);
+        TextView failedGasFeeTv = view.findViewById(R.id.tv_failed_gas_fee);
+        failedGasFeeTv.setText(feeStr + "");
+        TextView failedTotalValueTv = view.findViewById(R.id.tv_failed_total_value);
+        failedTotalValueTv.setText("0");
+        TextView failedMessageTv = view.findViewById(R.id.tv_failed_message);
+        failedMessageTv.setText(message);
+
+        // 点击try again
+        view.findViewById(R.id.layout_try_again).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLoadingDialog.show();
+                if (assetId == 0) {
+                    LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
+                            .setAddr(selectAddress)
+                            .setFrom("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
+                            .setAmount(Long.parseLong(assetBalance))
+                            .setTargetConf(time)
+                            .build();
+                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    view.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
+                                    view.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                                    mLoadingDialog.dismiss();
+                                    failedMessageTv.setText(e.getMessage());
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mLoadingDialog.dismiss();
+                                    mBasePopWindow.dismiss();
+                                    mSendSuccessDialog = new SendSuccessDialog(mContext);
+                                    mSendSuccessDialog.show("success");
+                                    EventBus.getDefault().post(new SendSuccessEvent());
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
+                            .setAssetId((int) assetId)
+                            .setAddr(selectAddress)
+                            .setFrom("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
+                            .setAssetAmount(Long.parseLong(assetBalance))
+                            .setTargetConf(time)
+                            .build();
+                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    view.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
+                                    view.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                                    mLoadingDialog.dismiss();
+                                    failedMessageTv.setText(e.getMessage());
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mLoadingDialog.dismiss();
+                                    mBasePopWindow.dismiss();
+                                    mSendSuccessDialog = new SendSuccessDialog(mContext);
+                                    mSendSuccessDialog.show("success");
+                                    EventBus.getDefault().post(new SendSuccessEvent());
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
+        // 点击explorer
+        view.findViewById(R.id.layout_explorer).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBasePopWindow.dismiss();
+            }
+        });
     }
 
     /**
@@ -504,10 +697,12 @@ public class SendStepOnePopupWindow {
                 }
             });
             holder.setText(R.id.tv_send_list_address, item.getDestAddresses(0));
-
         }
     }
 
+    /**
+     * calculate fee
+     */
     private void estimateOnChainFee(long amount, int targetConf) {
         // let LND estimate fee
         LightningOuterClass.EstimateFeeRequest asyncEstimateFeeRequest = LightningOuterClass.EstimateFeeRequest.newBuilder()
@@ -518,6 +713,13 @@ public class SendStepOnePopupWindow {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------asyncEstimateFeeOnError------------------" + e.getMessage());
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        feeStr = 0;
+                        sendFeeTv.setText(feeStr + "");
+                    }
+                });
             }
 
             @Override
@@ -528,8 +730,65 @@ public class SendStepOnePopupWindow {
                 try {
                     LightningOuterClass.EstimateFeeResponse resp = LightningOuterClass.EstimateFeeResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------asyncEstimateFeeOnResponse-----------------" + resp);
-                    feeStr = resp.getFeeSat();
-                    sendFeeTv.setText(feeStr + "");
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            feeStr = resp.getFeeSat();
+                            sendFeeTv.setText(feeStr + "");
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * Create a new wallet address first, and then request the interface of each asset balance list
+     * 先创建新的钱包地址后再去请求各资产余额列表的接口
+     */
+    public void fetchWalletBalance() {
+        LightningOuterClass.NewAddressRequest asyncNewAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder()
+                .setTypeValue(2)
+                .build();
+        Obdmobile.newAddress(asyncNewAddressRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------newAddressOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.NewAddressResponse addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
+                    LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
+                            .setAddress(addressResp.getAddress())
+                            .build();
+                    Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
+                            try {
+                                LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
+                                assetBalanceMax = resp.getTotalBalance() + "";
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }

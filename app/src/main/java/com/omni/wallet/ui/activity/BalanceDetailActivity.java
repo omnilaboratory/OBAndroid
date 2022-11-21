@@ -19,6 +19,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
@@ -26,6 +27,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
@@ -149,6 +151,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     SendStepOnePopupWindow mSendStepOnePopupWindow;
     CreateInvoiceStepOnePopupWindow mCreateInvoiceStepOnePopupWindow;
     TransactionsDetailsPopupWindow mTransactionsDetailsPopupWindow;
+    TokenInfoPopupWindow mTokenInfoPopupWindow;
 
     @Override
     protected void getBundleData(Bundle bundle) {
@@ -477,6 +480,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Invoice item) {
+            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
+            holder.setText(R.id.tv_amount, item.getAmount() + "");
             final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_my_invoices_list_swipe_menu);
             holder.getView(R.id.tv_my_invoices_delete).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -531,6 +536,17 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click token info button
+     * 点击token info按钮
+     */
+    @OnClick(R.id.iv_token_info)
+    public void clickTokenInfo() {
+        mTokenInfoPopupWindow = new TokenInfoPopupWindow(mContext);
+        mTokenInfoPopupWindow.show(mParentLayout);
+    }
+
+
+    /**
      * click scan button
      * 点击扫描按钮
      */
@@ -574,7 +590,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.layout_pay_invoice)
     public void clickPayInvoice() {
         mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-        mPayInvoiceStepOnePopupWindow.show(mParentLayout, walletAddress, assetId);
+        mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId);
     }
 
     /**
@@ -584,7 +600,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.layout_create_invoice)
     public void clickCreateInvoice() {
         mCreateInvoiceStepOnePopupWindow = new CreateInvoiceStepOnePopupWindow(mContext);
-        mCreateInvoiceStepOnePopupWindow.show(mParentLayout, walletAddress, assetId);
+        mCreateInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
     }
 
     /**

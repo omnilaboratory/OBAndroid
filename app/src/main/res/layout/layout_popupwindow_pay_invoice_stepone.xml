@@ -133,23 +133,34 @@
                 android:textColor="@color/color_80p_transparent"
                 android:textSize="@dimen/text_16"/>
 
-            <EditText
-                android:id="@+id/edit_invoice"
+            <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/main_140"
-                android:layout_marginLeft="@dimen/main_30"
-                android:layout_marginRight="@dimen/main_30"
-                android:layout_marginTop="@dimen/main_15"
-                android:background="@drawable/bg_black_rectangle_round_0"
-                android:gravity="start"
-                android:hint="@string/pay_invoice_txt"
-                android:paddingBottom="@dimen/main_10"
-                android:paddingLeft="@dimen/main_15"
-                android:paddingRight="@dimen/main_15"
-                android:paddingTop="@dimen/main_10"
-                android:textColor="@color/color_99_transparent"
-                android:textColorHint="@color/color_99_transparent"
-                android:textSize="@dimen/text_16"/>
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:id="@+id/edit_invoice"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/main_140"
+                        android:layout_marginLeft="@dimen/main_30"
+                        android:layout_marginRight="@dimen/main_30"
+                        android:layout_marginTop="@dimen/main_15"
+                        android:background="@drawable/bg_black_rectangle_round_0"
+                        android:gravity="start"
+                        android:hint="@string/pay_invoice_txt"
+                        android:paddingBottom="@dimen/main_10"
+                        android:paddingLeft="@dimen/main_15"
+                        android:paddingRight="@dimen/main_15"
+                        android:paddingTop="@dimen/main_10"
+                        android:textColor="@color/color_99_transparent"
+                        android:textColorHint="@color/color_99_transparent"
+                        android:textSize="@dimen/text_16"/>
+                </RelativeLayout>
+            </android.support.v4.widget.NestedScrollView>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -959,7 +970,7 @@
                             android:id="@+id/tv_amount_pay_2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="100.00"
+                            android:text="0"
                             android:textColor="@color/color_red"
                             android:textSize="@dimen/text_16"/>
 
@@ -1045,28 +1056,6 @@
                     android:layout_marginTop="@dimen/main_20"
                     android:gravity="center"
                     android:text="1、can not find path to pay"
-                    android:textColor="@color/color_black"
-                    android:textSize="@dimen/text_16"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_55"
-                    android:layout_marginRight="@dimen/main_55"
-                    android:layout_marginTop="@dimen/main_20"
-                    android:gravity="center"
-                    android:text="2、payment path broken"
-                    android:textColor="@color/color_black"
-                    android:textSize="@dimen/text_16"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_55"
-                    android:layout_marginRight="@dimen/main_55"
-                    android:layout_marginTop="@dimen/main_20"
-                    android:gravity="center"
-                    android:text="3、Receiver is offline"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
             </LinearLayout>

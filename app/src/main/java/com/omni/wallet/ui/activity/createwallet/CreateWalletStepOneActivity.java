@@ -6,14 +6,12 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.utils.CopyUtil;
-import com.omni.wallet.utils.NumberFormatter;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import java.util.ArrayList;
@@ -137,7 +135,12 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
                     textView23.setText(seedArray.get(22));
                     TextView textView24 = (TextView)findViewById(R.id.seed_text_24);
                     textView24.setText(seedArray.get(23));
-                    mLoadingDialog.dismiss();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLoadingDialog.dismiss();
+                        }
+                    });
                 }catch (InvalidProtocolBufferException e){
                     e.printStackTrace();
                     mLoadingDialog.dismiss();

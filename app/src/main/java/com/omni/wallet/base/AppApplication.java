@@ -107,17 +107,17 @@ public class AppApplication extends BaseApplication {
             }
         });
 
-       /* Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE_OMNI_WITH_SEED, new Callback() {
-            @Override
-            public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
-            }
-        });*/
+//        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE_OMNI_WITH_SEED, new Callback() {
+//            @Override
+//            public void onError(Exception e) {
+//                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
+//            }
+//
+//            @Override
+//            public void onResponse(byte[] bytes) {
+////                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
+//            }
+//        });
     }
 
     /**

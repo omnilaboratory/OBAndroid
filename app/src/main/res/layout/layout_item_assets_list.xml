@@ -68,7 +68,7 @@
             <ImageView
                 android:id="@+id/iv_asset_net"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/main_24"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:src="@mipmap/icon_network_link_black"/>
         </RelativeLayout>

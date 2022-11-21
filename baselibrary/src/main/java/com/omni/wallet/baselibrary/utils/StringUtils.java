@@ -429,6 +429,16 @@ public class StringUtils {
     }
 
     /**
+     * 加密手机号中间四位
+     **/
+    public static String encodePubkey(String pubkey) {
+        if (isEmpty(pubkey)) {
+            return pubkey;
+        }
+        return pubkey.substring(0, 11) + ".........." + pubkey.substring(pubkey.length() - 30, pubkey.length());
+    }
+
+    /**
      * 去掉链接的下划线
      */
     public static void removeHtmlTextBottomLine(TextView textView) {

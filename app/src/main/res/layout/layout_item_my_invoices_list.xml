@@ -18,9 +18,10 @@
             android:layout_weight="2">
 
             <TextView
+                android:id="@+id/tv_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="9/22"
+                android:text="——"
                 android:textColor="@color/color_black"
                 android:textSize="@dimen/text_16"/>
         </RelativeLayout>
@@ -31,10 +32,11 @@
             android:layout_weight="3">
 
             <TextView
+                android:id="@+id/tv_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:text="100.00"
+                android:text="0"
                 android:textColor="@color/color_black"
                 android:textSize="@dimen/text_16"/>
         </RelativeLayout>
@@ -45,6 +47,7 @@
             android:layout_weight="3.5">
 
             <TextView
+                android:id="@+id/tv_memo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -59,6 +62,7 @@
             android:layout_weight="3">
 
             <ImageView
+                android:id="@+id/iv_state"
                 android:layout_width="@dimen/main_24"
                 android:layout_height="@dimen/main_24"
                 android:layout_centerInParent="true"

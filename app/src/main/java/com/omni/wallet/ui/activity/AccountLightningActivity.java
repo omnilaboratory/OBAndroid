@@ -21,6 +21,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SelectAccountEvent;
+import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
@@ -144,8 +145,6 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     private void initAllData() {
-        initBlockAssets();
-        initLightningAssets();
         allData.addAll(blockData);
         allData.addAll(lightningData);
         runOnUiThread(new Runnable() {
@@ -168,9 +167,6 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-//        if (mLoadingDialog != null) {
-//            mLoadingDialog.show();
-//        }
         /**
          * Get wallet related information
          * 获取钱包相关信息
@@ -179,9 +175,6 @@ public class AccountLightningActivity extends AppBaseActivity {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------getInfoOnError------------------" + e.getMessage());
-//                if (mLoadingDialog != null) {
-//                    mLoadingDialog.dismiss();
-//                }
             }
 
             @Override
@@ -194,10 +187,6 @@ public class AccountLightningActivity extends AppBaseActivity {
                     LogUtils.e(TAG, "------------------getInfoOnResponse-----------------" + resp);
                     pubkey = resp.getIdentityPubkey();
                     User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
-//                    if (mLoadingDialog != null) {
-//                        mLoadingDialog.dismiss();
-//                    }
-                    initAllData();
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -254,6 +243,13 @@ public class AccountLightningActivity extends AppBaseActivity {
                                         entity.setPropertyid(0);
                                         entity.setType(1);
                                         blockData.add(entity);
+                                        allData.addAll(blockData);
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mAdapter.notifyDataSetChanged();
+                                            }
+                                        });
                                     }
                                 });
                             } catch (InvalidProtocolBufferException e) {
@@ -271,7 +267,7 @@ public class AccountLightningActivity extends AppBaseActivity {
          * 请求各资产余额列表的接口
          */
         LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
-                .setAddress("ms5u6Wmc8xF8wFBo9w5HFouFNAmnWzkVa6")
+                .setAddress("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
                 .build();
         Obdmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
             @Override
@@ -294,6 +290,13 @@ public class AccountLightningActivity extends AppBaseActivity {
                         entity.setPropertyid(resp.getListList().get(i).getPropertyid());
                         entity.setType(2);
                         lightningData.add(entity);
+                        allData.addAll(lightningData);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
                     }
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
@@ -574,11 +577,20 @@ public class AccountLightningActivity extends AppBaseActivity {
      * Message notification monitoring after selecting wallet address
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(SelectAccountEvent event) {
+    public void onSelectAccountEvent(SelectAccountEvent event) {
         if (event == null) {
             return;
         }
         address = event.getAddress();
+    }
+
+    /**
+     * 支付成功后的消息通知监听
+     * Message notification monitoring after successful payment
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSendSuccessEvent(SendSuccessEvent event) {
+
     }
 
     @Override

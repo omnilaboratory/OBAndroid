@@ -41,8 +41,8 @@
 
                 <ImageView
                     android:id="@+id/iv_network"
-                    android:layout_width="@dimen/main_24"
-                    android:layout_height="@dimen/main_24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@mipmap/icon_network_vector"/>
 
                 <TextView
@@ -185,6 +185,13 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/main_29"
                 android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/iv_token_info"
+                    android:layout_width="@dimen/main_32"
+                    android:layout_height="@dimen/main_32"
+                    android:layout_marginRight="@dimen/main_13"
+                    android:src="@mipmap/icon_token_info"/>
 
                 <ImageView
                     android:id="@+id/iv_scan"
