@@ -8,26 +8,38 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
+import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
 import com.omni.wallet.utils.Md5Util;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import lnrpc.Walletunlocker;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 public class UnlockActivity extends AppBaseActivity {
     Context ctx = UnlockActivity.this;
     String localPass ="";
+    String localSeed = "";
 
     @BindView(R.id.password_input)
     public EditText mPwdEdit;
     @BindView(R.id.pass_switch)
     public ImageView mPwdEyeIv;
     private boolean mCanClick = true;
+    @BindView(R.id.bottom_btn_group)
+    public RelativeLayout bottomBtnGroup;
 
 
     @Override
@@ -58,6 +70,12 @@ public class UnlockActivity extends AppBaseActivity {
          */
         SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
         localPass = secretData.getString("password","");
+        localSeed = secretData.getString("seeds","");
+        if (localSeed.isEmpty()){
+            bottomBtnGroup.setVisibility(View.VISIBLE);
+        }else{
+            bottomBtnGroup.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -94,10 +112,8 @@ public class UnlockActivity extends AppBaseActivity {
         String passMd5 = Md5Util.getMD5Str(passwordString);
         Log.e("unlock password",passMd5);
         Log.e("unlock localPass",localPass);
-
         if(localPass.equals(passMd5)){
-            switchActivity(AccountLightningActivity.class);
-            /*Walletunlocker.UnlockWalletRequest unlockWalletRequest =  Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
+            Walletunlocker.UnlockWalletRequest unlockWalletRequest =  Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
             Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
                 @Override
                 public void onError(Exception e) {
@@ -111,9 +127,9 @@ public class UnlockActivity extends AppBaseActivity {
                     switchActivity(AccountLightningActivity.class);
 
                 }
-            });*/
+            });
 
-//
+//            
         }else{
             String toastString = getResources().getString(R.string.toast_unlock_error);
             Toast checkPassToast = Toast.makeText(UnlockActivity.this,toastString,Toast.LENGTH_LONG);
@@ -126,26 +142,26 @@ public class UnlockActivity extends AppBaseActivity {
      * click create button
      * 点击Create
      */
-    /*@OnClick(R.id.btn_create)
+    @OnClick(R.id.btn_create)
     public void clickCreate() {
         switchActivity(CreateWalletStepOneActivity.class);
-    }*/
+    }
 
     /**
      * click recover button
      * 点击Recover
      */
-    /*@OnClick(R.id.btn_recover)
+    @OnClick(R.id.btn_recover)
     public void clickRecover() {
         switchActivity(RecoverWalletStepOneActivity.class);
-    }*/
+    }
 
     /**
      * click forgot password
      * 点击忘记密码
      */
-   /* @OnClick(R.id.btv_forget_button)
+    @OnClick(R.id.btv_forget_button)
     public void clickForgetPass(){
         switchActivity(ForgetPwdActivity.class);
-    }*/
+    }
 }

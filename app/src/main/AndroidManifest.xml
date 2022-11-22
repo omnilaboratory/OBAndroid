@@ -43,10 +43,6 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- Set Pass页面 -->
-        <activity
-            android:name=".ui.activity.SetPwdActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
         <!-- ForgetPwd页面 -->
         <activity
             android:name=".ui.activity.ForgetPwdActivity"
