@@ -24,12 +24,15 @@ import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.ListAssetItemEntity;
+import com.omni.wallet.entity.event.OpenChannelEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.lightning.LightningNodeUri;
 import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.Wallet;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -66,7 +69,6 @@ public class CreateChannelStepOnePopupWindow {
 
     public void show(final View view, long balanceAmount, String walletAddress, String pubKey) {
         if (mBasePopWindow == null) {
-            nodePubkey = pubKey;
             mBalanceAmount = balanceAmount;
             mWalletAddress = walletAddress;
 
@@ -77,6 +79,7 @@ public class CreateChannelStepOnePopupWindow {
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
+            getListPeers();
             fetchWalletBalance();
             showStepOne(rootView);
             /**
@@ -153,7 +156,7 @@ public class CreateChannelStepOnePopupWindow {
         Button amountUnitButton = rootView.findViewById(R.id.btn_amount_unit);
         Button speedButton = rootView.findViewById(R.id.btn_speed);
 
-//        vaildPubkeyEdit.setText(nodePubkey);
+        vaildPubkeyEdit.setText(nodePubkey);
         nodeNameTv.setText(Wallet.getInstance().getNodeAliasFromPubKey(nodePubkey, mContext));
         channelAmountTv.setText(assetBalanceMax);
         channelAmountEdit.addTextChangedListener(new TextWatcher() {
@@ -240,6 +243,9 @@ public class CreateChannelStepOnePopupWindow {
         rootView.findViewById(R.id.layout_create).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // values from LND
+                long minSendAmount = 20000;
+                long maxSendAmount = 16777215;
                 nodePubkey = vaildPubkeyEdit.getText().toString();
                 assetBalance = channelAmountEdit.getText().toString();
                 if (StringUtils.isEmpty(nodePubkey)) {
@@ -254,13 +260,82 @@ public class CreateChannelStepOnePopupWindow {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
                     return;
                 }
+
+//                if (Long.parseLong(assetBalance) - minSendAmount < 0) {
+//                    ToastUtils.showToast(mContext, mContext.getString(R.string.minimum_input));
+//                    return;
+//                }
+
+//                if (Long.parseLong(assetBalance) - maxSendAmount > 0) {
+//                    ToastUtils.showToast(mContext, mContext.getString(R.string.maximum_input));
+//                    return;
+//                }
+
                 if (Long.parseLong(assetBalance) - Long.parseLong(assetBalanceMax) > 0) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
                     return;
                 }
-                Obdmobile.listPeers(LightningOuterClass.ListPeersRequest.newBuilder().build().toByteArray(), new Callback() {
+                openChannelConnected(mBalanceAmount, mWalletAddress);
+//                Obdmobile.listPeers(LightningOuterClass.ListPeersRequest.newBuilder().build().toByteArray(), new Callback() {
+//                    @Override
+//                    public void onError(Exception e) {
+//                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                LogUtils.e(TAG, "Error listing peers request: " + e.getMessage());
+//                                if (e.getMessage().toLowerCase().contains("terminated")) {
+//                                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_get_peers_timeout));
+//                                } else {
+//                                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_get_peers));
+//                                }
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onResponse(byte[] bytes) {
+//                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (bytes == null) {
+//                                    connectPeer(mBalanceAmount, mWalletAddress);
+//                                } else {
+//                                    try {
+//                                        LightningOuterClass.ListPeersResponse resp = LightningOuterClass.ListPeersResponse.parseFrom(bytes);
+//                                        LogUtils.e(TAG, "------------------listPeersonResponse------------------" + resp.toString());
+//                                        boolean connected = false;
+//                                        for (LightningOuterClass.Peer node : resp.getPeersList()) {
+//                                            if (node.getPubKey().equals(nodePubkey)) {
+//                                                connected = true;
+//                                                break;
+//                                            }
+//                                        }
+//                                        if (connected) {
+//                                            LogUtils.e(TAG, "Already connected to peer, trying to open channel...");
+//                                            openChannelConnected(mBalanceAmount, mWalletAddress);
+//                                        } else {
+//                                            LogUtils.e(TAG, "Not connected to peer, trying to connect...");
+//                                            connectPeer(mBalanceAmount, mWalletAddress);
+//                                        }
+//                                    } catch (InvalidProtocolBufferException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            }
+//                        });
+//                    }
+//                });
+            }
+        });
+    }
+
+    private void getListPeers() {
+        Obdmobile.listPeers(LightningOuterClass.ListPeersRequest.newBuilder().build().toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
-                    public void onError(Exception e) {
+                    public void run() {
                         LogUtils.e(TAG, "Error listing peers request: " + e.getMessage());
                         if (e.getMessage().toLowerCase().contains("terminated")) {
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_get_peers_timeout));
@@ -268,38 +343,27 @@ public class CreateChannelStepOnePopupWindow {
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_get_peers));
                         }
                     }
+                });
+            }
 
+            @Override
+            public void onResponse(byte[] bytes) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
-                    public void onResponse(byte[] bytes) {
-                        if (bytes == null) {
-                            connectPeer(mBalanceAmount, mWalletAddress);
-                        } else {
-                            try {
-                                LightningOuterClass.ListPeersResponse resp = LightningOuterClass.ListPeersResponse.parseFrom(bytes);
-                                LogUtils.e(TAG, "------------------listPeersonResponse------------------" + resp.toString());
-                                boolean connected = false;
-                                for (LightningOuterClass.Peer node : resp.getPeersList()) {
-                                    if (node.getPubKey().equals(nodePubkey)) {
-                                        connected = true;
-                                        break;
-                                    }
-                                }
-                                if (connected) {
-                                    LogUtils.e(TAG, "Already connected to peer, trying to open channel...");
-                                    openChannelConnected(mBalanceAmount, mWalletAddress);
-                                } else {
-                                    LogUtils.e(TAG, "Not connected to peer, trying to connect...");
-                                    connectPeer(mBalanceAmount, mWalletAddress);
-                                }
-                            } catch (InvalidProtocolBufferException e) {
-                                e.printStackTrace();
-                            }
+                    public void run() {
+                        try {
+                            LightningOuterClass.ListPeersResponse resp = LightningOuterClass.ListPeersResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------listPeersonResponse------------------" + resp.toString());
+                            nodePubkey = resp.getPeers(0).getPubKey();
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
             }
         });
     }
+
 
     /**
      * Opening transaction channel
@@ -311,38 +375,49 @@ public class CreateChannelStepOnePopupWindow {
                 .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
                 .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
                 .setPrivate(false)
-                .setLocalFundingBtcAmount(Long.parseLong(assetBalance))
+                .setLocalFundingBtcAmount(20000)
                 .setLocalFundingAssetAmount(Long.parseLong(assetBalance))
                 .setAssetId((int) assetId)
                 .build();
         Obdmobile.openChannel(openChannelRequest.toByteArray(), new RecvStream() {
             @Override
             public void onError(Exception e) {
-                LogUtils.e(TAG, "Error opening channel: " + e.getMessage());
-                if (e.getMessage().toLowerCase().contains("pending channels exceed maximum")) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_pending_max));
-                } else if (e.getMessage().toLowerCase().contains("terminated")) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_timeout));
-                } else {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open));
-                }
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        LogUtils.e(TAG, "Error opening channel: " + e.getMessage());
+                        if (e.getMessage().toLowerCase().contains("pending channels exceed maximum")) {
+                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_pending_max));
+                        } else if (e.getMessage().toLowerCase().contains("terminated")) {
+                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_timeout));
+                        } else {
+                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open));
+                        }
+                    }
+                });
             }
 
             @Override
             public void onResponse(byte[] bytes) {
-                try {
-                    LightningOuterClass.OpenStatusUpdate resp = LightningOuterClass.OpenStatusUpdate.parseFrom(bytes);
-                    LogUtils.e(TAG, "Open channel update: " + resp.getUpdateCase().getNumber());
-                    mBasePopWindow.dismiss();
-                    Bundle bundle = new Bundle();
-                    bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
-                    bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
-                    bundle.putString(ChannelsActivity.KEY_PUBKEY, nodePubkey);
-                    Intent intent = new Intent(mContext, ChannelsActivity.class);
-                    mContext.startActivity(intent, bundle);
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.OpenStatusUpdate resp = LightningOuterClass.OpenStatusUpdate.parseFrom(bytes);
+                            LogUtils.e(TAG, "Open channel update: " + resp.getUpdateCase().getNumber());
+                            EventBus.getDefault().post(new OpenChannelEvent());
+                            mBasePopWindow.dismiss();
+                            Bundle bundle = new Bundle();
+                            bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
+                            bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
+                            bundle.putString(ChannelsActivity.KEY_PUBKEY, nodePubkey);
+                            Intent intent = new Intent(mContext, ChannelsActivity.class);
+                            mContext.startActivity(intent, bundle);
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }
@@ -350,7 +425,7 @@ public class CreateChannelStepOnePopupWindow {
     private void connectPeer(long balanceAmount, String walletAddress) {
         LightningNodeUri nodeUri = LightningParser.parseNodeUri(nodePubkey);
         if (nodeUri.getHost() == null || nodeUri.getHost().isEmpty()) {
-            LogUtils.d(TAG, "Host info missing. Trying to fetch host info to connect peer...");
+            LogUtils.e(TAG, "Host info missing. Trying to fetch host info to connect peer...");
             fetchNodeInfoToConnectPeer(balanceAmount, walletAddress);
             return;
         }
@@ -384,7 +459,12 @@ public class CreateChannelStepOnePopupWindow {
             @Override
             public void onResponse(byte[] bytes) {
                 LogUtils.e(TAG, "Successfully connected to peer, trying to open channel...");
-                openChannelConnected(balanceAmount, walletAddress);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        openChannelConnected(balanceAmount, walletAddress);
+                    }
+                });
             }
         });
     }
@@ -397,30 +477,40 @@ public class CreateChannelStepOnePopupWindow {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "Fetching host info failed. Exception in get node info (" + nodePubkey + ") request task: " + e.getMessage());
-                ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_no_host));
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_no_host));
+                    }
+                });
             }
 
             @Override
             public void onResponse(byte[] bytes) {
-                try {
-                    LightningOuterClass.NodeInfo nodeInfo = LightningOuterClass.NodeInfo.parseFrom(bytes);
-                    if (nodeInfo.getNode().getAddressesCount() > 0) {
-                        String tempUri = nodePubkey + "@" + nodeInfo.getNode().getAddresses(0).getAddr();
-                        LightningNodeUri nodeUriWithHost = LightningParser.parseNodeUri(tempUri);
-                        if (nodeUriWithHost != null) {
-                            LogUtils.e(TAG, "Host info successfully fetched. NodeUriWithHost: " + nodeUriWithHost.getAsString());
-                            connectPeer(balanceAmount, walletAddress);
-                        } else {
-                            LogUtils.e(TAG, "Failed to parse nodeUri");
-                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_no_host));
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.NodeInfo nodeInfo = LightningOuterClass.NodeInfo.parseFrom(bytes);
+                            if (nodeInfo.getNode().getAddressesCount() > 0) {
+                                String tempUri = nodePubkey + "@" + nodeInfo.getNode().getAddresses(0).getAddr();
+                                LightningNodeUri nodeUriWithHost = LightningParser.parseNodeUri(tempUri);
+                                if (nodeUriWithHost != null) {
+                                    LogUtils.e(TAG, "Host info successfully fetched. NodeUriWithHost: " + nodeUriWithHost.getAsString());
+                                    connectPeer(balanceAmount, walletAddress);
+                                } else {
+                                    LogUtils.e(TAG, "Failed to parse nodeUri");
+                                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_no_host));
+                                }
+                            } else {
+                                LogUtils.e(TAG, "Node Info does not contain any addresses.");
+                                ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_no_host));
+                            }
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
                         }
-                    } else {
-                        LogUtils.e(TAG, "Node Info does not contain any addresses.");
-                        ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_no_host));
                     }
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
+                });
             }
         });
     }
@@ -449,7 +539,7 @@ public class CreateChannelStepOnePopupWindow {
         }
         // let LND estimate fee
         LightningOuterClass.EstimateFeeRequest asyncEstimateFeeRequest = LightningOuterClass.EstimateFeeRequest.newBuilder()
-                .putAddrToAmount(address, amount)
+                .putAddrToAmount(mWalletAddress, amount)
                 .setTargetConf(targetConf)
                 .build();
         Obdmobile.estimateFee(asyncEstimateFeeRequest.toByteArray(), new Callback() {
@@ -510,7 +600,7 @@ public class CreateChannelStepOnePopupWindow {
                     LightningOuterClass.NewAddressResponse addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
                     LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                            .setAddress(addressResp.getAddress())
+                            .setAddress(User.getInstance().getWalletAddress(mContext))
                             .build();
                     Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
                         @Override

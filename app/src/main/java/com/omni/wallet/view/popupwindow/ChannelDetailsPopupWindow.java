@@ -1,9 +1,9 @@
 package com.omni.wallet.view.popupwindow;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,6 +17,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.ui.activity.channel.ChannelListItem;
 import com.omni.wallet.utils.MonetaryUtil;
 import com.omni.wallet.utils.TimeFormatUtil;
@@ -25,6 +26,8 @@ import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.SendFailedDialog;
 import com.omni.wallet.view.dialog.SendSuccessDialog;
+
+import org.greenrobot.eventbus.EventBus;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Obdmobile;
@@ -141,14 +144,6 @@ public class ChannelDetailsPopupWindow {
                     mCreateChannelStepOnePopupWindow.show(view, balanceAmount, walletAddress, pubKey);
                 }
             });
-            //click close channel button
-            // 点击closeChannel按钮
-            rootView.findViewById(R.id.layout_close_channel).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mBasePopWindow.dismiss();
-                }
-            });
             //click close button at bottom
             // 点击底部close
             rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
@@ -168,14 +163,21 @@ public class ChannelDetailsPopupWindow {
         LightningOuterClass.Channel channel = LightningOuterClass.Channel.parseFrom(channelString);
         mRemoteName.setText(Wallet.getInstance().getNodeAliasFromPubKey(channel.getRemotePubkey(), mContext));
         mRemotePubkey.setText(channel.getRemotePubkey());
+        if (channel.getAssetId() == 0) {
+            mAssetLogo.setImageResource(R.mipmap.icon_btc_logo_small);
+            mAssetUnit.setText("BTC");
+        } else {
+            mAssetLogo.setImageResource(R.mipmap.icon_usdt_logo_small);
+            mAssetUnit.setText("USDT");
+        }
         mFundingTransaction.setText(channel.getChannelPoint().substring(0, channel.getChannelPoint().indexOf(':')));
         // register for channel close events and keep channel point for later comparison
         mChannelPoint = channel.getChannelPoint();
         showClosingButton(!channel.getActive(), channel.getCsvDelay());
         if (channel.getActive()) {
-            mStatusDot.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.superGreen)));
+            mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_009b19_25);
         } else {
-            mStatusDot.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.gray)));
+            mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_99000000_25);
         }
         long availableCapacity = channel.getAssetCapacity() - channel.getCommitFee();
         setBalances(channel.getLocalAssetBalance(), channel.getRemoteAssetBalance(), availableCapacity);
@@ -197,33 +199,30 @@ public class ChannelDetailsPopupWindow {
 
     private void bindPendingOpenChannel(ByteString channelString) throws InvalidProtocolBufferException {
         LightningOuterClass.PendingChannelsResponse.PendingOpenChannel pendingOpenChannel = LightningOuterClass.PendingChannelsResponse.PendingOpenChannel.parseFrom(channelString);
-        setBasicInformation(pendingOpenChannel.getChannel().getRemoteNodePub(),
+        setBasicInformation(pendingOpenChannel.getChannel().getAssetId(), pendingOpenChannel.getChannel().getRemoteNodePub(),
                 pendingOpenChannel.getChannel().getRemoteNodePub(),
-                R.color.lightningOrange,
                 pendingOpenChannel.getChannel().getChannelPoint());
-
+        mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ec9a1e_25);
         setBalances(pendingOpenChannel.getChannel().getLocalBalance(), pendingOpenChannel.getChannel().getRemoteBalance(), pendingOpenChannel.getChannel().getAssetCapacity());
         mAnotherInfo.setVisibility(View.VISIBLE);
     }
 
     private void bindWaitingCloseChannel(ByteString channelString) throws InvalidProtocolBufferException {
         LightningOuterClass.PendingChannelsResponse.WaitingCloseChannel waitingCloseChannel = LightningOuterClass.PendingChannelsResponse.WaitingCloseChannel.parseFrom(channelString);
-        setBasicInformation(waitingCloseChannel.getChannel().getRemoteNodePub(),
+        setBasicInformation(waitingCloseChannel.getChannel().getAssetId(), waitingCloseChannel.getChannel().getRemoteNodePub(),
                 waitingCloseChannel.getChannel().getRemoteNodePub(),
-                R.color.superRed,
                 waitingCloseChannel.getChannel().getChannelPoint());
-
+        mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ff0000_25);
         setBalances(waitingCloseChannel.getChannel().getLocalBalance(), waitingCloseChannel.getChannel().getRemoteBalance(), waitingCloseChannel.getChannel().getAssetCapacity());
         mAnotherInfo.setVisibility(View.VISIBLE);
     }
 
     private void bindPendingCloseChannel(ByteString channelString) throws InvalidProtocolBufferException {
         LightningOuterClass.PendingChannelsResponse.ClosedChannel pendingCloseChannel = LightningOuterClass.PendingChannelsResponse.ClosedChannel.parseFrom(channelString);
-        setBasicInformation(pendingCloseChannel.getChannel().getRemoteNodePub(),
+        setBasicInformation(pendingCloseChannel.getChannel().getAssetId(), pendingCloseChannel.getChannel().getRemoteNodePub(),
                 pendingCloseChannel.getChannel().getRemoteNodePub(),
-                R.color.superRed,
                 pendingCloseChannel.getChannel().getChannelPoint());
-
+        mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ff0000_25);
         setBalances(pendingCloseChannel.getChannel().getLocalBalance(), pendingCloseChannel.getChannel().getRemoteBalance(), pendingCloseChannel.getChannel().getAssetCapacity());
         mAnotherInfo.setVisibility(View.VISIBLE);
     }
@@ -231,18 +230,24 @@ public class ChannelDetailsPopupWindow {
     private void bindForceClosingChannel(ByteString channelString) throws InvalidProtocolBufferException {
         LightningOuterClass.PendingChannelsResponse.ForceClosedChannel forceClosedChannel = LightningOuterClass.PendingChannelsResponse.ForceClosedChannel.parseFrom(channelString);
 
-        setBasicInformation(forceClosedChannel.getChannel().getRemoteNodePub(),
+        setBasicInformation(forceClosedChannel.getChannel().getAssetId(), forceClosedChannel.getChannel().getRemoteNodePub(),
                 forceClosedChannel.getChannel().getRemoteNodePub(),
-                R.color.superRed,
                 forceClosedChannel.getChannel().getChannelPoint());
+        mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ff0000_25);
         setBalances(forceClosedChannel.getChannel().getLocalBalance(), forceClosedChannel.getChannel().getRemoteBalance(), forceClosedChannel.getChannel().getAssetCapacity());
         mAnotherInfo.setVisibility(View.VISIBLE);
     }
 
-    private void setBasicInformation(@NonNull String remoteNodePublicKey, @NonNull String remotePubKey, int statusDot, @NonNull String channelPoint) {
+    private void setBasicInformation(@NonNull int assetId, @NonNull String remoteNodePublicKey, @NonNull String remotePubKey, @NonNull String channelPoint) {
         mRemoteName.setText(Wallet.getInstance().getNodeAliasFromPubKey(remoteNodePublicKey, mContext));
         mRemotePubkey.setText(remotePubKey);
-        mStatusDot.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, statusDot)));
+        if (assetId == 0) {
+            mAssetLogo.setImageResource(R.mipmap.icon_btc_logo_small);
+            mAssetUnit.setText("BTC");
+        } else {
+            mAssetLogo.setImageResource(R.mipmap.icon_usdt_logo_small);
+            mAssetUnit.setText("USDT");
+        }
         mFundingTransaction.setText(channelPoint.substring(0, channelPoint.indexOf(':')));
     }
 
@@ -279,29 +284,43 @@ public class ChannelDetailsPopupWindow {
         Obdmobile.closeChannel(closeChannelRequest.toByteArray(), new RecvStream() {
             @Override
             public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------closeChannelOnError------------------" + e.getMessage());
-                mBasePopWindow.dismiss();
-                mLoadingDialog.dismiss();
-                if (e.getMessage().toLowerCase().contains("offline")) {
-                    mSendFailedDialog.show(mContext.getString(R.string.error_channel_close_offline));
-                } else if (e.getMessage().toLowerCase().contains("terminated")) {
-                    mSendFailedDialog.show(mContext.getString(R.string.error_channel_close_timeout));
-                } else {
-                    mSendFailedDialog.show(mContext.getString(R.string.error_channel_close));
+                if (e.getMessage().equals("EOF")) {
+                    return;
                 }
+                LogUtils.e(TAG, "------------------closeChannelOnError------------------" + e.getMessage());
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBasePopWindow.dismiss();
+                        mLoadingDialog.dismiss();
+                        if (e.getMessage().toLowerCase().contains("offline")) {
+                            mSendFailedDialog.show(mContext.getString(R.string.error_channel_close_offline));
+                        } else if (e.getMessage().toLowerCase().contains("terminated")) {
+                            mSendFailedDialog.show(mContext.getString(R.string.error_channel_close_timeout));
+                        } else {
+                            mSendFailedDialog.show(mContext.getString(R.string.error_channel_close));
+                        }
+                    }
+                });
             }
 
             @Override
             public void onResponse(byte[] bytes) {
-                try {
-                    LightningOuterClass.CloseStatusUpdate resp = LightningOuterClass.CloseStatusUpdate.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------closeChannelOnResponse-----------------" + resp);
-                    mBasePopWindow.dismiss();
-                    mLoadingDialog.dismiss();
-                    mSendSuccessDialog.show(mContext.getString(R.string.channel_close_success));
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.CloseStatusUpdate resp = LightningOuterClass.CloseStatusUpdate.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------closeChannelOnResponse-----------------" + resp);
+                            EventBus.getDefault().post(new CloseChannelEvent());
+                            mBasePopWindow.dismiss();
+                            mLoadingDialog.dismiss();
+                            mSendSuccessDialog.show(mContext.getString(R.string.channel_close_success));
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }

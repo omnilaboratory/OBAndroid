@@ -1,9 +1,7 @@
 package com.omni.wallet.ui.activity.channel;
 
-import android.content.res.ColorStateList;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import lnrpc.LightningOuterClass;
@@ -19,7 +17,7 @@ public abstract class PendingChannelViewHolder extends ChannelViewHolder {
     int getStatusColor();
 
     private void setState() {
-        mStatusDot.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, getStatusColor())));
+        mStatusDot.setBackgroundResource(getStatusColor());
     }
 
     void bindPendingChannelItem(LightningOuterClass.PendingChannelsResponse.PendingChannel pendingChannel) {
@@ -32,5 +30,8 @@ public abstract class PendingChannelViewHolder extends ChannelViewHolder {
 
         // Set name
         setName(pendingChannel.getRemoteNodePub());
+
+        // Set logo
+        setLogo(pendingChannel.getAssetId());
     }
 }

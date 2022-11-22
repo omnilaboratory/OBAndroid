@@ -52,7 +52,7 @@ public class Wallet {
             "--bitcoind.zmqpubrawblock=tcp://16.162.119.13:28332\n" +
             "--bitcoind.zmqpubrawtx=tcp://16.162.119.13:28333";
 
-    public static final String START_NODE_OMNI = " --noseedbackup --trickledelay=5000 --debuglevel=debug --alias=alice\n" +
+    public static final String START_NODE_OMNI = " --noseedbackup --trickledelay=5000 --debuglevel=trace --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
             "--omnicoreproxy.rpchost=43.138.107.248:18332 " +
@@ -118,13 +118,16 @@ public class Wallet {
             @Override
             public void onResponse(byte[] bytes) {
                 if (bytes == null) {
+                    mOpenChannelsList = null;
+                    broadcastChannelsUpdated();
                     return;
                 }
                 try {
                     LightningOuterClass.ListChannelsResponse resp = LightningOuterClass.ListChannelsResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------listChannelsOnResponse-----------------" + resp.getChannelsList());
-                    mOpenChannelsList.clear();
+//                    mOpenChannelsList.clear();
                     mOpenChannelsList = resp.getChannelsList();
+                    broadcastChannelsUpdated();
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -139,6 +142,11 @@ public class Wallet {
             @Override
             public void onResponse(byte[] bytes) {
                 if (bytes == null) {
+                    mPendingOpenChannelsList = null;
+                    mPendingClosedChannelsList = null;
+                    mPendingForceClosedChannelsList = null;
+                    mPendingWaitingCloseChannelsList = null;
+                    broadcastChannelsUpdated();
                     return;
                 }
                 try {
@@ -147,14 +155,15 @@ public class Wallet {
                     LogUtils.e(TAG, "------------------pendingChannelsOnResponse2-----------------" + resp.getPendingClosingChannelsList());
                     LogUtils.e(TAG, "------------------pendingChannelsOnResponse3-----------------" + resp.getPendingForceClosingChannelsList());
                     LogUtils.e(TAG, "------------------pendingChannelsOnResponse4-----------------" + resp.getWaitingCloseChannelsList());
-                    mPendingOpenChannelsList.clear();
+//                    mPendingOpenChannelsList.clear();
                     mPendingOpenChannelsList = resp.getPendingOpenChannelsList();
-                    mPendingClosedChannelsList.clear();
+//                    mPendingClosedChannelsList.clear();
                     mPendingClosedChannelsList = resp.getPendingClosingChannelsList();
-                    mPendingForceClosedChannelsList.clear();
+//                    mPendingForceClosedChannelsList.clear();
                     mPendingForceClosedChannelsList = resp.getPendingForceClosingChannelsList();
-                    mPendingWaitingCloseChannelsList.clear();
+//                    mPendingWaitingCloseChannelsList.clear();
                     mPendingWaitingCloseChannelsList = resp.getWaitingCloseChannelsList();
+                    broadcastChannelsUpdated();
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -169,13 +178,16 @@ public class Wallet {
             @Override
             public void onResponse(byte[] bytes) {
                 if (bytes == null) {
+                    mClosedChannelsList = null;
+                    broadcastChannelsUpdated();
                     return;
                 }
                 try {
                     LightningOuterClass.ClosedChannelsResponse resp = LightningOuterClass.ClosedChannelsResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------closedChannelsOnResponse-----------------" + resp.getChannelsList());
-                    mClosedChannelsList.clear();
+//                    mClosedChannelsList.clear();
                     mClosedChannelsList = resp.getChannelsList();
+                    broadcastChannelsUpdated();
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -197,52 +209,60 @@ public class Wallet {
                     channelNodes.add(c.getRemotePubkey());
                 }
             }
-            for (LightningOuterClass.PendingChannelsResponse.PendingOpenChannel c : mPendingOpenChannelsList) {
-                boolean alreadyFetched = false;
-                for (LightningOuterClass.NodeInfo i : mNodeInfos) {
-                    if (i.getNode().getPubKey().equals(c.getChannel().getRemoteNodePub())) {
-                        alreadyFetched = true;
-                        break;
+            if (mPendingOpenChannelsList != null) {
+                for (LightningOuterClass.PendingChannelsResponse.PendingOpenChannel c : mPendingOpenChannelsList) {
+                    boolean alreadyFetched = false;
+                    for (LightningOuterClass.NodeInfo i : mNodeInfos) {
+                        if (i.getNode().getPubKey().equals(c.getChannel().getRemoteNodePub())) {
+                            alreadyFetched = true;
+                            break;
+                        }
                     }
-                }
-                if (!alreadyFetched) {
-                    channelNodes.add(c.getChannel().getRemoteNodePub());
+                    if (!alreadyFetched) {
+                        channelNodes.add(c.getChannel().getRemoteNodePub());
+                    }
                 }
             }
-            for (LightningOuterClass.PendingChannelsResponse.ClosedChannel c : mPendingClosedChannelsList) {
-                boolean alreadyFetched = false;
-                for (LightningOuterClass.NodeInfo i : mNodeInfos) {
-                    if (i.getNode().getPubKey().equals(c.getChannel().getRemoteNodePub())) {
-                        alreadyFetched = true;
-                        break;
+            if (mPendingClosedChannelsList != null) {
+                for (LightningOuterClass.PendingChannelsResponse.ClosedChannel c : mPendingClosedChannelsList) {
+                    boolean alreadyFetched = false;
+                    for (LightningOuterClass.NodeInfo i : mNodeInfos) {
+                        if (i.getNode().getPubKey().equals(c.getChannel().getRemoteNodePub())) {
+                            alreadyFetched = true;
+                            break;
+                        }
                     }
-                }
-                if (!alreadyFetched) {
-                    channelNodes.add(c.getChannel().getRemoteNodePub());
+                    if (!alreadyFetched) {
+                        channelNodes.add(c.getChannel().getRemoteNodePub());
+                    }
                 }
             }
-            for (LightningOuterClass.PendingChannelsResponse.ForceClosedChannel c : mPendingForceClosedChannelsList) {
-                boolean alreadyFetched = false;
-                for (LightningOuterClass.NodeInfo i : mNodeInfos) {
-                    if (i.getNode().getPubKey().equals(c.getChannel().getRemoteNodePub())) {
-                        alreadyFetched = true;
-                        break;
+            if (mPendingForceClosedChannelsList != null) {
+                for (LightningOuterClass.PendingChannelsResponse.ForceClosedChannel c : mPendingForceClosedChannelsList) {
+                    boolean alreadyFetched = false;
+                    for (LightningOuterClass.NodeInfo i : mNodeInfos) {
+                        if (i.getNode().getPubKey().equals(c.getChannel().getRemoteNodePub())) {
+                            alreadyFetched = true;
+                            break;
+                        }
                     }
-                }
-                if (!alreadyFetched) {
-                    channelNodes.add(c.getChannel().getRemoteNodePub());
+                    if (!alreadyFetched) {
+                        channelNodes.add(c.getChannel().getRemoteNodePub());
+                    }
                 }
             }
-            for (LightningOuterClass.PendingChannelsResponse.WaitingCloseChannel c : mPendingWaitingCloseChannelsList) {
-                boolean alreadyFetched = false;
-                for (LightningOuterClass.NodeInfo i : mNodeInfos) {
-                    if (i.getNode().getPubKey().equals(c.getChannel().getRemoteNodePub())) {
-                        alreadyFetched = true;
-                        break;
+            if (mPendingForceClosedChannelsList != null) {
+                for (LightningOuterClass.PendingChannelsResponse.WaitingCloseChannel c : mPendingWaitingCloseChannelsList) {
+                    boolean alreadyFetched = false;
+                    for (LightningOuterClass.NodeInfo i : mNodeInfos) {
+                        if (i.getNode().getPubKey().equals(c.getChannel().getRemoteNodePub())) {
+                            alreadyFetched = true;
+                            break;
+                        }
                     }
-                }
-                if (!alreadyFetched) {
-                    channelNodes.add(c.getChannel().getRemoteNodePub());
+                    if (!alreadyFetched) {
+                        channelNodes.add(c.getChannel().getRemoteNodePub());
+                    }
                 }
             }
 

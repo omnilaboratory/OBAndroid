@@ -20,6 +20,7 @@ import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
+import com.omni.wallet.entity.event.OpenChannelEvent;
 import com.omni.wallet.entity.event.SelectAccountEvent;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
@@ -100,6 +101,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
         initRecyclerView();
+        // TODO: 2022/11/21 待修改
+        User.getInstance().setWalletAddress(mContext, "n3rv5CCjPz6iuWjnR1gcAeW5fWMwB1nQdH");
     }
 
     /**
@@ -192,6 +195,37 @@ public class AccountLightningActivity extends AppBaseActivity {
                 }
             }
         });
+        getAssetAndBtcData();
+        /**
+         * Set the created new wallet address as the default wallet address
+         * 将创建新的钱包地址设置为默认钱包地址
+         */
+        LightningOuterClass.SetDefaultAddressRequest setDefaultAddressRequest = LightningOuterClass.SetDefaultAddressRequest.newBuilder()
+                .setAddress("n3rv5CCjPz6iuWjnR1gcAeW5fWMwB1nQdH")
+                .build();
+        Obdmobile.setDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------setDefaultAddressOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.SetDefaultAddressResponse resp = LightningOuterClass.SetDefaultAddressResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------setDefaultAddressOnResponse------------------" + resp.toString());
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void getAssetAndBtcData() {
+        allData.clear();
         /**
          * Create a new wallet address first, and then request the interface of each asset balance list
          * 先创建新的钱包地址后再去请求各资产余额列表的接口
@@ -215,7 +249,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     mWalletAddressTv.setText(addressResp.getAddress());
                     LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
                     LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                            .setAddress(addressResp.getAddress())
+                            .setAddress("n3rv5CCjPz6iuWjnR1gcAeW5fWMwB1nQdH")
                             .build();
                     Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
                         @Override
@@ -267,7 +301,7 @@ public class AccountLightningActivity extends AppBaseActivity {
          * 请求各资产余额列表的接口
          */
         LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
-                .setAddress("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
+                .setAddress("n3rv5CCjPz6iuWjnR1gcAeW5fWMwB1nQdH")
                 .build();
         Obdmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
             @Override
@@ -290,45 +324,19 @@ public class AccountLightningActivity extends AppBaseActivity {
                         entity.setPropertyid(resp.getListList().get(i).getPropertyid());
                         entity.setType(2);
                         lightningData.add(entity);
-                        allData.addAll(lightningData);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mAdapter.notifyDataSetChanged();
-                            }
-                        });
                     }
+                    allData.addAll(lightningData);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
             }
         });
-        /**
-         * Set the created new wallet address as the default wallet address
-         * 将创建新的钱包地址设置为默认钱包地址
-         */
-//        LightningOuterClass.SetDefaultAddressRequest setDefaultAddressRequest = LightningOuterClass.SetDefaultAddressRequest.newBuilder()
-//                .setAddress(addressResp.getAddress())
-//                .build();
-//        Obdmobile.setDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
-//            @Override
-//            public void onError(Exception e) {
-//                LogUtils.e(TAG, "------------------setDefaultAddressOnError------------------" + e.getMessage());
-//            }
-//
-//            @Override
-//            public void onResponse(byte[] bytes) {
-//                if (bytes == null) {
-//                    return;
-//                }
-//                try {
-//                    LightningOuterClass.SetDefaultAddressResponse resp = LightningOuterClass.SetDefaultAddressResponse.parseFrom(bytes);
-//                    LogUtils.e(TAG, "------------------setDefaultAddressOnResponse------------------" + resp.toString());
-//                } catch (InvalidProtocolBufferException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
     }
 
     /**
@@ -590,7 +598,16 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSendSuccessEvent(SendSuccessEvent event) {
+        getAssetAndBtcData();
+    }
 
+    /**
+     * 开通通道后的消息通知监听
+     * Message notification monitoring after open channel
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onOpenChannelEvent(OpenChannelEvent event) {
+        getAssetAndBtcData();
     }
 
     @Override

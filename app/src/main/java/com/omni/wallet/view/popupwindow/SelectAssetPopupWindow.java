@@ -13,6 +13,7 @@ import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
+import com.omni.wallet.framelibrary.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +90,7 @@ public class SelectAssetPopupWindow {
                     LightningOuterClass.NewAddressResponse addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
                     LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                            .setAddress(addressResp.getAddress())
+                            .setAddress(User.getInstance().getWalletAddress(mContext))
                             .build();
                     Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
                         @Override
@@ -131,7 +132,7 @@ public class SelectAssetPopupWindow {
      */
     public void fetchAssetsBalanceByAddress() {
         LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
-                .setAddress("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
+                .setAddress(User.getInstance().getWalletAddress(mContext))
                 .build();
         Obdmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
             @Override

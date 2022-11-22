@@ -51,6 +51,8 @@ public class User {
     /***************************Omni Wallet**********************************/
     // 网络类型
     private String network;
+    // 钱包地址
+    private String walletAddress;
 
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
@@ -171,6 +173,15 @@ public class User {
         this.network = network;
     }
 
+    public String getWalletAddress(Context context) {
+        walletAddress = PreferencesUtils.getWalletAddressFromLocal(context);
+        return walletAddress;
+    }
+
+    public void setWalletAddress(Context context, String walletAddress) {
+        PreferencesUtils.saveWalletAddressToLocal(context, walletAddress);
+        this.walletAddress = walletAddress;
+    }
     /**
      * 清空用户登录相关信息
      */

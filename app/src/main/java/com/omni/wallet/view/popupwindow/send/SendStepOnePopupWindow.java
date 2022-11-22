@@ -29,6 +29,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SendSuccessEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.listItems.Friend;
 import com.omni.wallet.listItems.FriendGroup;
 import com.omni.wallet.ui.activity.ScanActivity;
@@ -435,7 +436,7 @@ public class SendStepOnePopupWindow {
                 if (assetId == 0) {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAddr(selectAddress)
-                            .setFrom("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
+                            .setFrom(User.getInstance().getWalletAddress(mContext))
                             .setAmount(Long.parseLong(assetBalance))
                             .setTargetConf(time)
                             .build();
@@ -458,11 +459,11 @@ public class SendStepOnePopupWindow {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    EventBus.getDefault().post(new SendSuccessEvent());
                                     mLoadingDialog.dismiss();
                                     mBasePopWindow.dismiss();
                                     mSendSuccessDialog = new SendSuccessDialog(mContext);
                                     mSendSuccessDialog.show("success");
-                                    EventBus.getDefault().post(new SendSuccessEvent());
                                 }
                             });
                         }
@@ -471,7 +472,7 @@ public class SendStepOnePopupWindow {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAssetId((int) assetId)
                             .setAddr(selectAddress)
-                            .setFrom("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
+                            .setFrom(User.getInstance().getWalletAddress(mContext))
                             .setAssetAmount(Long.parseLong(assetBalance))
                             .setTargetConf(time)
                             .build();
@@ -494,11 +495,11 @@ public class SendStepOnePopupWindow {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    EventBus.getDefault().post(new SendSuccessEvent());
                                     mLoadingDialog.dismiss();
                                     mBasePopWindow.dismiss();
                                     mSendSuccessDialog = new SendSuccessDialog(mContext);
                                     mSendSuccessDialog.show("success");
-                                    EventBus.getDefault().post(new SendSuccessEvent());
                                 }
                             });
                         }
@@ -545,7 +546,7 @@ public class SendStepOnePopupWindow {
                 if (assetId == 0) {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAddr(selectAddress)
-                            .setFrom("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
+                            .setFrom(User.getInstance().getWalletAddress(mContext))
                             .setAmount(Long.parseLong(assetBalance))
                             .setTargetConf(time)
                             .build();
@@ -568,11 +569,11 @@ public class SendStepOnePopupWindow {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    EventBus.getDefault().post(new SendSuccessEvent());
                                     mLoadingDialog.dismiss();
                                     mBasePopWindow.dismiss();
                                     mSendSuccessDialog = new SendSuccessDialog(mContext);
                                     mSendSuccessDialog.show("success");
-                                    EventBus.getDefault().post(new SendSuccessEvent());
                                 }
                             });
                         }
@@ -581,7 +582,7 @@ public class SendStepOnePopupWindow {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAssetId((int) assetId)
                             .setAddr(selectAddress)
-                            .setFrom("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
+                            .setFrom(User.getInstance().getWalletAddress(mContext))
                             .setAssetAmount(Long.parseLong(assetBalance))
                             .setTargetConf(time)
                             .build();
@@ -604,11 +605,11 @@ public class SendStepOnePopupWindow {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    EventBus.getDefault().post(new SendSuccessEvent());
                                     mLoadingDialog.dismiss();
                                     mBasePopWindow.dismiss();
                                     mSendSuccessDialog = new SendSuccessDialog(mContext);
                                     mSendSuccessDialog.show("success");
-                                    EventBus.getDefault().post(new SendSuccessEvent());
                                 }
                             });
                         }
@@ -767,7 +768,7 @@ public class SendStepOnePopupWindow {
                     LightningOuterClass.NewAddressResponse addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
                     LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                            .setAddress(addressResp.getAddress())
+                            .setAddress(User.getInstance().getWalletAddress(mContext))
                             .build();
                     Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
                         @Override

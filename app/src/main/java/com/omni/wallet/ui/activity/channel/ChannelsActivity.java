@@ -8,12 +8,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.protobuf.ByteString;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.Wallet;
@@ -21,6 +23,10 @@ import com.omni.wallet.view.popupwindow.ChannelDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +44,11 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     View mTopView;
     @BindView(R.id.iv_menu)
     ImageView mMenuIv;
+    @BindView(R.id.tv_balance_amount)
+    TextView mBalanceAmountTv;
+    @BindView(R.id.tv_wallet_address)
+    TextView mWalletAddressTv;
+
     @BindView(R.id.recycler_channels_list)
     public RecyclerView mRecyclerView;// 通道列表的RecyclerView
 
@@ -80,6 +91,8 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
 
     @Override
     protected void initView() {
+        mBalanceAmountTv.setText("My account " + balanceAmount);
+        mWalletAddressTv.setText(walletAddress);
         Wallet.getInstance().registerChannelsUpdatedSubscriptionListener(this);
         initRecyclerView();
         Wallet.getInstance().fetchChannelsFromLND();
@@ -89,7 +102,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
 
     @Override
     protected void initData() {
-
+        EventBus.getDefault().register(this);
     }
 
     private void initRecyclerView() {
@@ -145,6 +158,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
         }
         // Show offline channels at the bottom
         mChannelItems.addAll(offlineChannels);
+        mAdapter.replaceAll(mChannelItems);
     }
 
 
@@ -223,7 +237,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     public void copyAddress() {
         //接收需要复制到粘贴板的地址
         //Get the address which will copy to clipboard
-        String toCopyAddress = "01234e*****bg453123";
+        String toCopyAddress = walletAddress;
         //接收需要复制成功的提示语
         //Get the notice when you copy success
         String toastString = getResources().getString(R.string.toast_copy_address);
@@ -236,10 +250,21 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
         mSelectNodePopupWindow.show(mParentLayout);
     }
 
+    /**
+     * 关闭通道后的消息通知监听
+     * Message notification monitoring after open channel
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCloseChannelEvent(CloseChannelEvent event) {
+        Wallet.getInstance().fetchChannelsFromLND();
+        updateChannelsDisplayList();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Wallet.getInstance().unregisterChannelsUpdatedSubscriptionListener(this);
+        EventBus.getDefault().unregister(this);
         if (mMenuPopupWindow != null) {
             mMenuPopupWindow.release();
         }

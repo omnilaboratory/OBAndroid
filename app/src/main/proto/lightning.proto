@@ -2743,7 +2743,7 @@ message WalletBalanceByAddressResponse {
     map<string, WalletAccountBalance> account_balance = 4;
 
     //    int64 asset_balance = 5;
-    //    string address = 6;
+    string address = 6;
     //    uint32 asset_id = 7;
 }
 
