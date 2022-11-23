@@ -102,7 +102,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
                 cellEditText.setBackground(null);
                 cellEditText.setHint(getResources().getString(R.string.create_seed_input_hit));
                 cellEditText.setTextSize(16.0f);
-                cellEditText.setTextColor(getResources().getColor(R.color.color_black));
+                cellEditText.setTextColor(getResources().getColor(R.color.color_white));
                 cellEditText.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
                 cellEditText.setLayoutParams(cellEditTextParams);
 

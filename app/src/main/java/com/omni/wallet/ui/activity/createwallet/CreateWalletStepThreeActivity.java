@@ -28,7 +28,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
-import lnrpc.Stateservice;
 import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -283,8 +282,8 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                         SharedPreferences.Editor macaroonDataEditor = macaroonData.edit();
                         macaroonDataEditor.putString("macaroon", macaroon.toString());
                         macaroonDataEditor.commit();
-                        checkWalletAlready();
-                    } catch (InvalidProtocolBufferException | InterruptedException e) {
+                        switchActivity(BackupBlockProcessActivity.class);
+                    } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();
                         mLoadingDialog.dismiss();
                     }
@@ -304,46 +303,6 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
         }
 
     }
-    private void checkWalletAlready () throws InterruptedException {
-        Thread.sleep(5000);
-        Stateservice.GetStateRequest getStateRequest = Stateservice.GetStateRequest.newBuilder().build();
-        Obdmobile.getState(getStateRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                e.printStackTrace();
-                Log.e("checkWalletReady","No");
-                try {
-                    checkWalletAlready ();
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                try {
-                    Stateservice.GetStateResponse getStateResponse = Stateservice.GetStateResponse.parseFrom(bytes);
-                    int stateValue = getStateResponse.getStateValue();
-                    if(stateValue ==4){
-                        Log.e("checkWalletReady", String.valueOf(stateValue));
-                        switchActivity(BackupBlockProcessActivity.class);
-                    }else{
-                        Log.e("checkWalletReady", String.valueOf(stateValue));
-                        Log.e("checkWalletReady","No");
-                        checkWalletAlready ();
-                    }
-                    mLoadingDialog.dismiss();
-                } catch (InvalidProtocolBufferException | InterruptedException e) {
-                    e.printStackTrace();
-                    Log.e("checkWalletReady","No");
-                    try {
-                        checkWalletAlready ();
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-
-            }
-        });
-    } 
+    
+    
 }

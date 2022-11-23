@@ -135,12 +135,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
                     textView23.setText(seedArray.get(22));
                     TextView textView24 = (TextView)findViewById(R.id.seed_text_24);
                     textView24.setText(seedArray.get(23));
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mLoadingDialog.dismiss();
-                        }
-                    });
+                    runOnUiThread(() -> mLoadingDialog.dismiss());
                 }catch (InvalidProtocolBufferException e){
                     e.printStackTrace();
                     mLoadingDialog.dismiss();
