@@ -207,6 +207,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/my_process_outer"
                 android:layout_width="300dp"
                 android:layout_height="8dp"
                 android:background="@drawable/bg_process_out"

@@ -5,8 +5,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -30,7 +33,7 @@ import obdmobile.Obdmobile;
 public class BackupBlockProcessActivity extends AppBaseActivity {
     
     private Context ctx = BackupBlockProcessActivity.this;
-    SharedPreferences blockData;
+    
     List<String> accountList = new ArrayList<>();
     LoadingDialog mLoadingDialog;
     String totalBlockHeight = "";
@@ -45,6 +48,10 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     TextView syncBlockNumView;
     @BindView(R.id.commit_num_sync)
     TextView commitNumSyncView;
+    @BindView(R.id.process_inner)
+    RelativeLayout rvProcessInner;
+    @BindView(R.id.my_process_outer)
+    RelativeLayout rvMyProcessOuter;
     
 
     @Override
@@ -59,7 +66,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     
     @Override
     protected void initView() {
-        blockData = ctx.getSharedPreferences("BlockData", MODE_PRIVATE);
         mLoadingDialog = new LoadingDialog(mContext);
         accountList = WalletGetInfo.getAccountList(ctx);
         for (int i = 0; i < accountList.size();i++){
@@ -68,26 +74,60 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         BlockReaderUtil blockReaderUtil = new BlockReaderUtil(ctx);
         blockReaderUtil.getTotalBlockHeight();
     }
+    @SuppressLint("LongLogTag")
     public void initViewByData(){
+        SharedPreferences blockData = ctx.getSharedPreferences("BlockData", MODE_PRIVATE);
         totalBlockHeight = blockData.getString("totalBlockHeight","0");
         currentBlockHeight = blockData.getString("currentBlockHeight","0");
-        if(!(!totalBlockHeight.equals("0") && !currentBlockHeight.equals("0") &&Integer.parseInt(currentBlockHeight)>=Integer.parseInt(totalBlockHeight))){
-            float totalHeight =  Float.parseFloat(totalBlockHeight);
-            float currentHeight =  Float.parseFloat(currentBlockHeight);
-            float percent = (currentHeight/totalHeight * 100);
-            String percentString = String.format("%.2f",percent);
-            
+        double totalHeight =  Double.parseDouble(totalBlockHeight);
+        double currentHeight =  Double.parseDouble(currentBlockHeight);
+        if(currentHeight>totalHeight){
+            currentBlockHeight = totalBlockHeight;
+        }
+        double percent = (currentHeight/totalHeight * 100);
+        double totalWidth =  rvMyProcessOuter.getWidth();
+        int innerWidth =0;
+        int innerHeight = (int)rvMyProcessOuter.getHeight()-2;
+
+        String percentString = String.format("%.2f",percent);
+        if(Double.isNaN(percent)){
+            percentString = "0";
+            percent = 0.00d;
+            innerWidth = 0;
+        }else {
+            innerWidth = (int) (totalWidth*percent/100);
+        }
+        Log.e("innerWidth,innerHeight",innerWidth+","+innerHeight);
+        if(!syncPercentView.getText().equals(percentString)){
+            syncPercentView.setText(percentString + "%");
+            RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth,innerHeight);
+            rvProcessInner.setLayoutParams(rlInnerParam);
+        }
+        if(!syncedBlockNumView.getText().equals(currentBlockHeight)){
             syncedBlockNumView.setText(currentBlockHeight);
             commitNumSyncedView.setText(currentBlockHeight);
+        }
+        if(!syncBlockNumView.getText().equals(totalBlockHeight)){
             syncBlockNumView.setText(totalBlockHeight);
             commitNumSyncView.setText(totalBlockHeight);
-            try {
-                Thread.sleep(5000);
-                initViewByData();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        }
+        if(!(!totalBlockHeight.equals("0") && !currentBlockHeight.equals("0") &&Integer.parseInt(currentBlockHeight)>=Integer.parseInt(totalBlockHeight))){
             
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(10000);
+                            initViewByData();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        
+                    }
+                });
+            
+        }else{
+            Log.e("-----------------------let do something------------","koko");
         }
     }
     
@@ -135,6 +175,13 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     @SuppressLint("LongLogTag")
     @Override
     protected void initData() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                initViewByData();
+            }
+        }).start();
+        
     }
 
     private void checkWalletAlready () throws InterruptedException {

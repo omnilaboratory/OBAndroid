@@ -95,7 +95,6 @@ public class BlockReaderUtil {
         
         int catchingBlock = 0;
         String fileLocal = String.valueOf(ctx.getExternalCacheDir()) + "/logs/bitcoin/regtest/lnd.log";
-        Log.e("----------------fileLocal-------------------",fileLocal);
         BufferedReader bfr = null;
         try {
             bfr = new BufferedReader(new FileReader(fileLocal));
@@ -120,16 +119,11 @@ public class BlockReaderUtil {
             if(line != null){
 //                Get catching block height from log
                 if(checkString(line)){
-                    Log.e("-----------------logOutputContent-----------------",line);
                     String stringHeight = line.split("height")[1].split(",")[0];
                     catchingBlock = Integer.parseInt(stringHeight.trim());
-                    Log.e("-----------------catchingHeight-----------------",stringHeight);
                 }else if(checkSyncedOver(line)){
-                    Log.e("-----------------logOutputContent-----------------",line);
-                    Log.e("-----------------logOutputContent-----------------","synced over");
                     String stringHeight = line.split("height=")[1].split("\\)")[0];
                     catchingBlock = Integer.parseInt(stringHeight.trim());
-                    Log.e("---------------usefulCatchingBlock--------------", String.valueOf(catchingBlock));
                     editor.putString("currentBlockHeight", String.valueOf(catchingBlock));
                     editor.commit();
                     try {
@@ -141,7 +135,6 @@ public class BlockReaderUtil {
                 }
             }else{
                 try {
-                    Log.e("---------------usefulCatchingBlock--------------", String.valueOf(catchingBlock));
                     editor.putString("currentBlockHeight", String.valueOf(catchingBlock));
                     editor.commit();
                     bfr.close();
@@ -163,26 +156,22 @@ public class BlockReaderUtil {
     @SuppressLint("LongLogTag")
     private Boolean checkString(String logLine){
         Boolean isMatch = false;
-        Log.e("-----------------logOutputContent-----------------",logLine);
         String pattern;
         pattern = ".*Catching up block hashes to height \\d+, this might take a while.*";
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(logLine);
         isMatch = m.matches();
-        Log.e("-----------------logOutputContentIsMatch-----------------",isMatch.toString());
         return isMatch;
     }
     
     @SuppressLint("LongLogTag")
     private Boolean checkSyncedOver(String logLine){
         Boolean isMatch = false;
-        Log.e("-----------------logOutputContent-----------------",logLine);
         String pattern;
         pattern = ".*Chain backend is fully synced \\(end_height=\\d+\\)!.*";
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(logLine);
         isMatch = m.matches();
-        Log.e("-----------------logOutputContentIsMatch-----------------",isMatch.toString());
         return isMatch;
     }
 }
