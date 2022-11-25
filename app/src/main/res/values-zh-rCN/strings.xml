@@ -276,7 +276,7 @@
 
     <!--common 通用-->
     <string name="aets">≈</string>
-    <string name="example_qr_str">bc1q6e5v0ts86thszdau4efgllx9lq0wxkwhquv7sh</string>
+    <string name="example_qr_str">**********************************</string>
     <string name="copy_upper">复制</string>
     <string name="paste_upper">粘贴</string>
     <string name="copy_address_upper">复制地址</string>

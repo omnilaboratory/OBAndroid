@@ -4,17 +4,23 @@ package com.omni.wallet.ui.activity.backup;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.utils.DisplayUtil;
+import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.ui.activity.AccountLightningActivity;
 import com.omni.wallet.utils.BlockReaderUtil;
 import com.omni.wallet.utils.WalletGetInfo;
@@ -52,6 +58,12 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     RelativeLayout rvProcessInner;
     @BindView(R.id.my_process_outer)
     RelativeLayout rvMyProcessOuter;
+    @BindView(R.id.qr_address)
+    TextView qrAddressTv;
+    @BindView(R.id.qr_image)
+    ImageView qrAddressIv;
+    
+    String newCreatedAddress;
     
 
     @Override
@@ -127,6 +139,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                 });
             
         }else{
+            newAddressToWallet();
             Log.e("-----------------------let do something------------","koko");
         }
     }
@@ -134,7 +147,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     
 
     public void newAddressToWallet (){
-        mLoadingDialog.show();
+        
         Log.e("new address","start");
         LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
         Obdmobile.newAddress(newAddressRequest.toByteArray(), new Callback() {
@@ -142,14 +155,14 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             public void onError(Exception e) {
                 e.printStackTrace();
                 Log.e("newAddressError",e.toString());
-                mLoadingDialog.dismiss();
+                
             }
 
             @Override
             public void onResponse(byte[] bytes) {
                 Log.e("newAddressS","success");
                 if(bytes == null){
-                    mLoadingDialog.dismiss();
+                    
                     return;
                 }
                 try {
@@ -157,16 +170,18 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                     LightningOuterClass.NewAddressResponse newAddressResponse = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
                     String address = newAddressResponse.getAddress();
                     Log.e("new address",address);
+                    newCreatedAddress = address;
+                    qrAddressTv.setText(address);
+                    Bitmap mQRBitmap = CodeUtils.createQRCode(address, DisplayUtil.dp2px(mContext, 100));
+                    qrAddressIv.setImageBitmap(mQRBitmap);
                     SharedPreferences addressList = ctx.getSharedPreferences("Account", MODE_PRIVATE);
                     SharedPreferences.Editor editor = addressList.edit();
                     editor.putString("accountList",address);
                     editor.commit();
-                    mLoadingDialog.dismiss();
-                    Log.e("new address","will jump");
-
+                    
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
-                    mLoadingDialog.dismiss();
+                    
                 }
             }
         });
@@ -245,7 +260,18 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @OnClick(R.id.btn_copy_addresss)
     public void clickCopyAddress(){
-
+        if(newCreatedAddress==null){
+            String toastMsg = "Block is syncing now,please wait a moment!";
+            Toast copySuccessToast = Toast.makeText(ctx,toastMsg,Toast.LENGTH_LONG);
+            copySuccessToast.setGravity(Gravity.TOP,0,30);
+            copySuccessToast.show();
+        }else{
+            String toastMsg = "Address is copied.";
+            Toast copySuccessToast = Toast.makeText(ctx,toastMsg,Toast.LENGTH_LONG);
+            copySuccessToast.setGravity(Gravity.TOP,0,30);
+            copySuccessToast.show();
+        }
+        
     }
 
     /**
@@ -255,6 +281,14 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @OnClick(R.id.btn_start)
     public void clickStart(){
-        switchActivity(AccountLightningActivity.class);
+        if(newCreatedAddress==null){
+            String toastMsg = "Block is syncing now,please wait a moment!";
+            Toast copySuccessToast = Toast.makeText(ctx,toastMsg,Toast.LENGTH_LONG);
+            copySuccessToast.setGravity(Gravity.TOP,0,30);
+            copySuccessToast.show();
+        }else{
+            switchActivity(AccountLightningActivity.class);
+        }
+        
     }
 }
