@@ -696,7 +696,7 @@
                         android:background="@drawable/bg_red_rectangle_round_5"
                         android:gravity="center"
                         android:minWidth="@dimen/main_40"
-                        android:text="15"
+                        android:text="0"
                         android:textColor="@color/color_white"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>
@@ -726,13 +726,14 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_my_invoices_num"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/main_18"
                         android:layout_marginLeft="@dimen/main_10"
                         android:background="@drawable/bg_06d78f_rectangle_round_5"
                         android:gravity="center"
                         android:minWidth="@dimen/main_40"
-                        android:text="25"
+                        android:text="0"
                         android:textColor="@color/color_white"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>

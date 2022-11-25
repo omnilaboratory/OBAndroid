@@ -307,7 +307,7 @@ public class PayInvoiceStepOnePopupWindow {
                                                             rootView.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
                                                             rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
                                                             rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                                            showStepFailed(rootView, "UNKNOWN:Error");
+                                                            showStepFailed(rootView, e.getMessage());
                                                         }
                                                     });
                                                 }
