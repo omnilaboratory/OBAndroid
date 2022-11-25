@@ -52,7 +52,7 @@ public class Wallet {
             "--bitcoind.zmqpubrawblock=tcp://16.162.119.13:28332\n" +
             "--bitcoind.zmqpubrawtx=tcp://16.162.119.13:28333";
 
-    public static final String START_NODE_OMNI = " --noseedbackup --trickledelay=5000 --debuglevel=trace --alias=alice\n" +
+    public static final String START_NODE_OMNI = " --noseedbackup --trickledelay=5000 --debuglevel=trace --enable-upfront-shutdown --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
             "--omnicoreproxy.rpchost=43.138.107.248:18332 " +
@@ -369,6 +369,24 @@ public class Wallet {
     }
 
     /**
+     * Get the maximum amount that can be received over Lightning Channels.
+     *
+     * @return amount in satoshis
+     */
+    public long getMaxLightningReceiveAmount() {
+        // Mpp is supported. Use the sum of the remote balances of all channels as maximum.
+        long tempMax = 0L;
+        if (mOpenChannelsList != null) {
+            for (LightningOuterClass.Channel c : mOpenChannelsList) {
+                if (c.getActive()) {
+                    tempMax = tempMax + Math.max(c.getRemoteAssetBalance() - c.getRemoteConstraints().getChanReserveSat(), 0);
+                }
+            }
+        }
+        return tempMax;
+    }
+
+    /**
      * Create a new wallet address first, and then request the interface of each asset balance list
      * 先创建新的钱包地址后再去请求各资产余额列表的接口
      */
@@ -409,7 +427,7 @@ public class Wallet {
                                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
                                 blockData.clear();
                                 ListAssetItemEntity entity = new ListAssetItemEntity();
-                                entity.setAmount(resp.getTotalBalance());
+                                entity.setAmount(resp.getConfirmedBalance());
                                 entity.setPropertyid(0);
                                 entity.setType(1);
                                 blockData.add(entity);

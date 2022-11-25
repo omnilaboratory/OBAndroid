@@ -43,6 +43,9 @@ public class CreateInvoiceStepOnePopupWindow {
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
+    TextView mCanSendTv;
+    TextView mCanReceiveTv;
+    ProgressBar mProgressBar;
     SelectAssetPopupWindow mSelectAssetPopupWindow;
     SelectTimePopupWindow mSelectTimePopupWindow;
     String mAddress;
@@ -103,9 +106,13 @@ public class CreateInvoiceStepOnePopupWindow {
         TextView assetTypeTv = rootView.findViewById(R.id.tv_asset_type);
         TextView assetMaxTv = rootView.findViewById(R.id.tv_asset_max);
         assetMaxTv.setText(assetBalanceMax + "");
-        Button timeButton = rootView.findViewById(R.id.btn_time);
+        mCanSendTv = rootView.findViewById(R.id.tv_can_send);
+        mCanReceiveTv = rootView.findViewById(R.id.tv_can_receive);
+        mProgressBar = rootView.findViewById(R.id.progressbar);
+        TextView amountMaxTv = rootView.findViewById(R.id.tv_amount_max);
         EditText amountEdit = rootView.findViewById(R.id.edit_amount);
         TextView amountUnitTv = rootView.findViewById(R.id.tv_amount_unit);
+        Button timeButton = rootView.findViewById(R.id.btn_time);
         EditText amountTimeEdit = rootView.findViewById(R.id.edit_time);
         if (mAssetId == 0) {
             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
@@ -116,6 +123,7 @@ public class CreateInvoiceStepOnePopupWindow {
             assetTypeTv.setText("USDT");
             amountUnitTv.setText("USDT");
         }
+        getChannelBalance(mAssetId);
         RelativeLayout selectAssetLayout = rootView.findViewById(R.id.layout_select_asset);
         selectAssetLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +149,12 @@ public class CreateInvoiceStepOnePopupWindow {
                 mSelectAssetPopupWindow.show(v);
             }
         });
+        amountMaxTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                amountEdit.setText(assetBalanceMax + "");
+            }
+        });
         timeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,13 +178,6 @@ public class CreateInvoiceStepOnePopupWindow {
                 mSelectTimePopupWindow.show(v);
             }
         });
-        /**
-         * @描述： 设置进度条
-         * @desc: set progress bar
-         */
-        ProgressBar mProgressBar = rootView.findViewById(R.id.progressbar);
-        float barValue = (float) ((double) 100 / (double) 600);
-        mProgressBar.setProgress((int) (barValue * 100f));
         /**
          * @描述： 点击Back
          * @desc: click back button
@@ -199,6 +206,7 @@ public class CreateInvoiceStepOnePopupWindow {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
                     return;
                 }
+                // TODO: 2022/11/23 最大值最小值的判断需要完善一下
                 if (Long.parseLong(amountInput) - assetBalanceMax > 0) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
                     return;
@@ -212,7 +220,7 @@ public class CreateInvoiceStepOnePopupWindow {
                         .setAmount(Long.parseLong(amountEdit.getText().toString()))
                         .setMemo("暂无")
                         .setExpiry(Long.parseLong("86400")) // in seconds
-                        .setPrivate(true)
+                        .setPrivate(false)
                         .build();
                 Obdmobile.addInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
                     @Override
@@ -396,6 +404,48 @@ public class CreateInvoiceStepOnePopupWindow {
             @Override
             public void onClick(View v) {
 
+            }
+        });
+    }
+
+    /**
+     * get Channel Balance
+     * 查询通道余额
+     *
+     * @param propertyid
+     */
+    private void getChannelBalance(long propertyid) {
+        LightningOuterClass.ChannelBalanceRequest channelBalanceRequest = LightningOuterClass.ChannelBalanceRequest.newBuilder()
+                .setAssetId((int) propertyid)
+                .build();
+        Obdmobile.channelBalance(channelBalanceRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.ChannelBalanceResponse resp = LightningOuterClass.ChannelBalanceResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
+                            mCanSendTv.setText(resp.getLocalBalance().getMsat() + "");
+                            mCanReceiveTv.setText(resp.getRemoteBalance().getMsat() + "");
+                            /**
+                             * @描述： 设置进度条
+                             * @desc: set progress bar
+                             */
+                            long totalBalance = resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat();
+                            float barValue = (float) ((double) resp.getLocalBalance().getMsat() / (double) totalBalance);
+                            mProgressBar.setProgress((int) (barValue * 100f));
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }

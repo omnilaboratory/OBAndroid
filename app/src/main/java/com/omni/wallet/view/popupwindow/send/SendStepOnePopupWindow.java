@@ -408,7 +408,8 @@ public class SendStepOnePopupWindow {
         TextView feeAmountValueView = view.findViewById(R.id.tv_send_gas_fee_amount_value);
         feeAmountValueView.setText("0");
         TextView sendUsedValueView = view.findViewById(R.id.tv_send_used_value);
-        sendUsedValueView.setText("0");
+        long sendUsedValue = Long.parseLong(assetBalance) + feeStr;
+        sendUsedValueView.setText(sendUsedValue + "");
         /**
          * @desc: Click back button then back to step two
          * @描述： 点击back显示step two
@@ -534,7 +535,8 @@ public class SendStepOnePopupWindow {
         TextView failedGasFeeTv = view.findViewById(R.id.tv_failed_gas_fee);
         failedGasFeeTv.setText(feeStr + "");
         TextView failedTotalValueTv = view.findViewById(R.id.tv_failed_total_value);
-        failedTotalValueTv.setText("0");
+        long totalValue = Long.parseLong(assetBalance) + feeStr;
+        failedTotalValueTv.setText(totalValue + "");
         TextView failedMessageTv = view.findViewById(R.id.tv_failed_message);
         failedMessageTv.setText(message);
 
@@ -784,7 +786,7 @@ public class SendStepOnePopupWindow {
                             try {
                                 LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
                                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
-                                assetBalanceMax = resp.getTotalBalance() + "";
+                                assetBalanceMax = resp.getConfirmedBalance() + "";
                             } catch (InvalidProtocolBufferException e) {
                                 e.printStackTrace();
                             }

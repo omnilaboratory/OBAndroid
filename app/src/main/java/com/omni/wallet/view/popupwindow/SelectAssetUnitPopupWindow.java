@@ -1,6 +1,8 @@
 package com.omni.wallet.view.popupwindow;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -109,12 +111,17 @@ public class SelectAssetUnitPopupWindow {
                                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
                                 blockData.clear();
                                 ListAssetItemEntity entity = new ListAssetItemEntity();
-                                entity.setAmount(resp.getTotalBalance());
+                                entity.setAmount(resp.getConfirmedBalance());
                                 entity.setPropertyid(0);
                                 entity.setType(1);
                                 blockData.add(entity);
                                 allData.addAll(blockData);
-                                mAdapter.notifyDataSetChanged();
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                });
                             } catch (InvalidProtocolBufferException e) {
                                 e.printStackTrace();
                             }
@@ -156,9 +163,14 @@ public class SelectAssetUnitPopupWindow {
                         entity.setPropertyid(resp.getListList().get(i).getPropertyid());
                         entity.setType(2);
                         lightningData.add(entity);
-                        allData.addAll(lightningData);
-//                        mAdapter.notifyDataSetChanged();
                     }
+                    allData.addAll(lightningData);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }

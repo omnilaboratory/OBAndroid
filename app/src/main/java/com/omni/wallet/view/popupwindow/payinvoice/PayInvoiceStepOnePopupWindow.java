@@ -185,16 +185,26 @@ public class PayInvoiceStepOnePopupWindow {
                                                         rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.VISIBLE);
                                                         rootView.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.GONE);
                                                         showStepTwo(rootView);
+                                                        deletePaymentProbe(payment.getPaymentHash());
                                                     }
                                                 });
-                                                deletePaymentProbe(payment.getPaymentHash());
                                                 break;
                                             case FAILURE_REASON_NO_ROUTE:
-                                                deletePaymentProbe(payment.getPaymentHash());
+                                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        deletePaymentProbe(payment.getPaymentHash());
+                                                    }
+                                                });
                                                 break;
                                             default:
-                                                ToastUtils.showToast(mContext, payment.getFailureReason().toString());
-                                                deletePaymentProbe(payment.getPaymentHash());
+                                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        ToastUtils.showToast(mContext, payment.getFailureReason().toString());
+                                                        deletePaymentProbe(payment.getPaymentHash());
+                                                    }
+                                                });
                                         }
                                     } catch (InvalidProtocolBufferException e) {
                                         e.printStackTrace();

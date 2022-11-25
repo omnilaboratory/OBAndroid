@@ -302,6 +302,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     public void fetchPaymentsFromLND() {
         LightningOuterClass.ListPaymentsRequest paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
                 .setAssetId((int) assetId)
+                .setIsQueryAsset(true)
                 .setIncludeIncomplete(false)
                 .build();
         Obdmobile.listPayments(paymentsRequest.toByteArray(), new Callback() {
@@ -542,7 +543,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.iv_token_info)
     public void clickTokenInfo() {
         mTokenInfoPopupWindow = new TokenInfoPopupWindow(mContext);
-        mTokenInfoPopupWindow.show(mParentLayout);
+        mTokenInfoPopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
     }
 
 

@@ -53,7 +53,7 @@ public class CreateChannelStepOnePopupWindow {
     TextView channelFeeTv;
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetUnitPopupWindow mSelectAssetUnitPopupWindow;
-    String nodePubkey;
+    String nodePubkey = "02b49967df27dfe5a3615f48c8b11621f64bd04f39e71b91e88121be4704a791ef";
     long assetId;
     int time;
     long feeStr;
@@ -187,17 +187,23 @@ public class CreateChannelStepOnePopupWindow {
                             case R.id.tv_slow:
                                 speedButton.setText(R.string.slow);
                                 time = 1; // 10 Minutes
-                                estimateOnChainFee(Long.parseLong(channelAmountEdit.getText().toString()), time);
+                                if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
+                                    estimateOnChainFee(Long.parseLong(channelAmountEdit.getText().toString()), time);
+                                }
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
                                 time = 6 * 6; // 6 Hours
-                                estimateOnChainFee(Long.parseLong(channelAmountEdit.getText().toString()), time);
+                                if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
+                                    estimateOnChainFee(Long.parseLong(channelAmountEdit.getText().toString()), time);
+                                }
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
                                 time = 6 * 24; // 24 Hours
-                                estimateOnChainFee(Long.parseLong(channelAmountEdit.getText().toString()), time);
+                                if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
+                                    estimateOnChainFee(Long.parseLong(channelAmountEdit.getText().toString()), time);
+                                }
                                 break;
                         }
                     }
@@ -348,6 +354,9 @@ public class CreateChannelStepOnePopupWindow {
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
@@ -616,7 +625,7 @@ public class CreateChannelStepOnePopupWindow {
                             try {
                                 LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
                                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
-                                assetBalanceMax = resp.getTotalBalance() + "";
+                                assetBalanceMax = resp.getConfirmedBalance() + "";
                             } catch (InvalidProtocolBufferException e) {
                                 e.printStackTrace();
                             }

@@ -102,7 +102,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         mLoadingDialog = new LoadingDialog(mContext);
         initRecyclerView();
         // TODO: 2022/11/21 待修改
-        User.getInstance().setWalletAddress(mContext, "n3rv5CCjPz6iuWjnR1gcAeW5fWMwB1nQdH");
+        User.getInstance().setWalletAddress(mContext, "mzpakRnjBwicqW79AqCQH4BpjPrKL3FpRx");
     }
 
     /**
@@ -170,10 +170,16 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-        /**
-         * Get wallet related information
-         * 获取钱包相关信息
-         */
+        getInfo();
+        getAssetAndBtcData();
+        setDefaultAddress();
+    }
+
+    /**
+     * Get wallet related information
+     * 获取钱包相关信息
+     */
+    private void getInfo() {
         Obdmobile.getInfo(LightningOuterClass.GetInfoRequest.newBuilder().build().toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
@@ -195,13 +201,188 @@ public class AccountLightningActivity extends AppBaseActivity {
                 }
             }
         });
-        getAssetAndBtcData();
-        /**
-         * Set the created new wallet address as the default wallet address
-         * 将创建新的钱包地址设置为默认钱包地址
-         */
+    }
+
+    /**
+     * Create a new wallet address first, and then request the interface of each asset balance list
+     * 先创建新的钱包地址后再去请求各资产余额列表的接口
+     */
+    private void getAssetAndBtcData() {
+        allData.clear();
+        LightningOuterClass.NewAddressRequest asyncNewAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder()
+                .setTypeValue(2)
+                .build();
+        Obdmobile.newAddress(asyncNewAddressRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------newAddressOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
+                    mWalletAddressTv.setText(addressResp.getAddress());
+                    LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
+                    LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
+                            .setAddress("mzpakRnjBwicqW79AqCQH4BpjPrKL3FpRx")
+                            .build();
+                    Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
+                            try {
+                                LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mBalanceValueTv.setText("$ " + resp.getConfirmedBalance());
+                                        balanceAmount = resp.getConfirmedBalance();
+                                        mBalanceAmountTv.setText("My account " + balanceAmount + " balance");
+                                        blockData.clear();
+                                        ListAssetItemEntity entity = new ListAssetItemEntity();
+                                        entity.setAmount(resp.getConfirmedBalance());
+                                        entity.setPropertyid(0);
+                                        entity.setType(1);
+                                        blockData.add(entity);
+                                        allData.addAll(blockData);
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mAdapter.notifyDataSetChanged();
+                                            }
+                                        });
+                                    }
+                                });
+                                /**
+                                 * request the interface of each asset balance list
+                                 * 请求各资产余额列表的接口
+                                 */
+                                LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
+                                        .setAddress("mzpakRnjBwicqW79AqCQH4BpjPrKL3FpRx")
+                                        .build();
+                                Obdmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
+                                    @Override
+                                    public void onError(Exception e) {
+                                        LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
+                                    }
+
+                                    @Override
+                                    public void onResponse(byte[] bytes) {
+                                        if (bytes == null) {
+                                            return;
+                                        }
+                                        try {
+                                            LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
+                                            LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
+                                            blockData.clear();
+                                            for (int i = 0; i < resp.getListList().size(); i++) {
+                                                ListAssetItemEntity entity = new ListAssetItemEntity();
+                                                entity.setAmount(resp.getListList().get(i).getBalance());
+                                                entity.setPropertyid(resp.getListList().get(i).getPropertyid());
+                                                entity.setType(1);
+                                                blockData.add(entity);
+                                                getChannelBalance(resp.getListList().get(i).getPropertyid());
+                                            }
+                                            allData.addAll(blockData);
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    mAdapter.notifyDataSetChanged();
+                                                }
+                                            });
+                                        } catch (InvalidProtocolBufferException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * get Channel Balance
+     * 查询通道余额
+     *
+     * @param propertyid
+     */
+    private void getChannelBalance(long propertyid) {
+        LightningOuterClass.ChannelBalanceRequest channelBalanceRequest = LightningOuterClass.ChannelBalanceRequest.newBuilder()
+                .setAssetId((int) propertyid)
+                .build();
+        Obdmobile.channelBalance(channelBalanceRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    lightningData = null;
+                    allData.addAll(lightningData);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    return;
+                }
+                try {
+                    LightningOuterClass.ChannelBalanceResponse resp = LightningOuterClass.ChannelBalanceResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            lightningData.clear();
+                            ListAssetItemEntity entity = new ListAssetItemEntity();
+                            entity.setAmount(resp.getLocalBalance().getMsat());
+                            entity.setPropertyid(propertyid);
+                            entity.setType(2);
+                            lightningData.add(entity);
+                            allData.addAll(lightningData);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                            });
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * Set the created new wallet address as the default wallet address
+     * 将创建新的钱包地址设置为默认钱包地址
+     */
+    private void setDefaultAddress() {
         LightningOuterClass.SetDefaultAddressRequest setDefaultAddressRequest = LightningOuterClass.SetDefaultAddressRequest.newBuilder()
-                .setAddress("n3rv5CCjPz6iuWjnR1gcAeW5fWMwB1nQdH")
+                .setAddress("mzpakRnjBwicqW79AqCQH4BpjPrKL3FpRx")
                 .build();
         Obdmobile.setDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
             @Override
@@ -224,121 +405,6 @@ public class AccountLightningActivity extends AppBaseActivity {
         });
     }
 
-    private void getAssetAndBtcData() {
-        allData.clear();
-        /**
-         * Create a new wallet address first, and then request the interface of each asset balance list
-         * 先创建新的钱包地址后再去请求各资产余额列表的接口
-         */
-        LightningOuterClass.NewAddressRequest asyncNewAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder()
-                .setTypeValue(2)
-                .build();
-        Obdmobile.newAddress(asyncNewAddressRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------newAddressOnError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                if (bytes == null) {
-                    return;
-                }
-                try {
-                    addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
-                    mWalletAddressTv.setText(addressResp.getAddress());
-                    LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
-                    LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                            .setAddress("n3rv5CCjPz6iuWjnR1gcAeW5fWMwB1nQdH")
-                            .build();
-                    Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
-                        @Override
-                        public void onError(Exception e) {
-                            LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());
-                        }
-
-                        @Override
-                        public void onResponse(byte[] bytes) {
-                            if (bytes == null) {
-                                return;
-                            }
-                            try {
-                                LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
-                                LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mBalanceValueTv.setText("$ " + resp.getTotalBalance());
-                                        balanceAmount = resp.getTotalBalance();
-                                        mBalanceAmountTv.setText("My account " + balanceAmount + " balance");
-                                        blockData.clear();
-                                        ListAssetItemEntity entity = new ListAssetItemEntity();
-                                        entity.setAmount(resp.getTotalBalance());
-                                        entity.setPropertyid(0);
-                                        entity.setType(1);
-                                        blockData.add(entity);
-                                        allData.addAll(blockData);
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                mAdapter.notifyDataSetChanged();
-                                            }
-                                        });
-                                    }
-                                });
-                            } catch (InvalidProtocolBufferException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        /**
-         * request the interface of each asset balance list
-         * 请求各资产余额列表的接口
-         */
-        LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
-                .setAddress("n3rv5CCjPz6iuWjnR1gcAeW5fWMwB1nQdH")
-                .build();
-        Obdmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                if (bytes == null) {
-                    return;
-                }
-                try {
-                    LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
-                    lightningData.clear();
-                    for (int i = 0; i < resp.getListList().size(); i++) {
-                        ListAssetItemEntity entity = new ListAssetItemEntity();
-                        entity.setAmount(resp.getListList().get(i).getBalance());
-                        entity.setPropertyid(resp.getListList().get(i).getPropertyid());
-                        entity.setType(2);
-                        lightningData.add(entity);
-                    }
-                    allData.addAll(lightningData);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    });
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
     /**
      * 资产列表适配器
      * The adapter for assets list
@@ -352,7 +418,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final int position, final ListAssetItemEntity item) {
-            if (position == 0) {
+            if (position == blockData.size() && item.getType() == 1) {
                 LinearLayout lvContent = holder.getView(R.id.lv_item_content);
                 lvContent.setPadding(0, 0, 0, 100);
             }

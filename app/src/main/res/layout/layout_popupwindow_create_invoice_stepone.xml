@@ -220,9 +220,10 @@
                         </LinearLayout>
 
                         <TextView
+                            android:id="@+id/tv_can_send"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="100.00"
+                            android:text="0"
                             android:textColor="@color/color_06d78f"
                             android:textSize="@dimen/text_14"/>
                     </LinearLayout>
@@ -255,10 +256,11 @@
                         </LinearLayout>
 
                         <TextView
+                            android:id="@+id/tv_can_receive"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="right"
-                            android:text="500.00"
+                            android:text="0"
                             android:textColor="@color/color_4C49F4"
                             android:textSize="@dimen/text_14"/>
                     </LinearLayout>
@@ -304,23 +306,24 @@
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="@dimen/main_179"
                     android:layout_height="@dimen/main_32"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/bg_black_rectangle_round_0_thin"
-                    android:gravity="center_vertical|right"
-                    android:orientation="horizontal">
+                    android:background="@drawable/bg_black_rectangle_round_0_thin">
 
                     <EditText
                         android:id="@+id/edit_amount"
                         android:background="@null"
                         android:textColorHint="@color/color_99_transparent"
                         android:hint="0"
+                        android:inputType="number"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/main_50"
+                        android:layout_centerVertical="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/main_55"
                         android:textColor="@color/color_99_transparent"
                         android:textSize="@dimen/text_16"/>
 
@@ -328,12 +331,14 @@
                         android:id="@+id/tv_amount_unit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/main_5"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginRight="@dimen/main_5"
+                        android:inputType="number"
                         android:text="USDT"
                         android:textColor="@color/color_99_transparent"
                         android:textSize="@dimen/text_16"/>
-                </LinearLayout>
+                </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout
