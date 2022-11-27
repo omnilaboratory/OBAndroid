@@ -102,7 +102,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         mLoadingDialog = new LoadingDialog(mContext);
         initRecyclerView();
         // TODO: 2022/11/21 待修改
-        User.getInstance().setWalletAddress(mContext, "ms2jYJZ1rXrijU4nEaMbUmH9mNXjfPHFRf");
+        User.getInstance().setWalletAddress(mContext, "mqztMoe8LpFrkpZDKMm4kzVTSDr1vUvJXZ");
     }
 
     /**
@@ -228,7 +228,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     mWalletAddressTv.setText(addressResp.getAddress());
                     LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
                     LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                            .setAddress("ms2jYJZ1rXrijU4nEaMbUmH9mNXjfPHFRf")
+                            .setAddress("mqztMoe8LpFrkpZDKMm4kzVTSDr1vUvJXZ")
                             .build();
                     Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
                         @Override
@@ -270,7 +270,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                                  * 请求各资产余额列表的接口
                                  */
                                 LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
-                                        .setAddress("ms2jYJZ1rXrijU4nEaMbUmH9mNXjfPHFRf")
+                                        .setAddress("mqztMoe8LpFrkpZDKMm4kzVTSDr1vUvJXZ")
                                         .build();
                                 Obdmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
                                     @Override
@@ -382,7 +382,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     private void setDefaultAddress() {
         LightningOuterClass.SetDefaultAddressRequest setDefaultAddressRequest = LightningOuterClass.SetDefaultAddressRequest.newBuilder()
-                .setAddress("ms2jYJZ1rXrijU4nEaMbUmH9mNXjfPHFRf")
+                .setAddress("mqztMoe8LpFrkpZDKMm4kzVTSDr1vUvJXZ")
                 .build();
         Obdmobile.setDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
             @Override

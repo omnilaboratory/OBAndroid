@@ -363,6 +363,7 @@
                     android:layout_height="@dimen/main_32"
                     android:background="@drawable/bg_black_rectangle_round_0"
                     android:singleLine="true"
+                    android:inputType="number"
                     android:textColor="@color/color_99_transparent"
                     android:textSize="@dimen/text_16"/>
 

@@ -345,6 +345,7 @@
                         android:layout_marginLeft="@dimen/main_10"
                         android:layout_weight="1"
                         android:text="0"
+                        android:inputType="number"
                         android:gravity="right"
                         android:textColor="@color/color_99_transparent"
                         android:background="@null"

@@ -26,6 +26,7 @@ import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
+import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
@@ -33,6 +34,10 @@ import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -240,6 +245,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
         initTransactionsData();
         initToBePaidData();
         initMyInvoicesData();
@@ -509,6 +515,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Invoice item) {
             holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
             holder.setText(R.id.tv_amount, item.getValueMsat() + "");
+            holder.setText(R.id.tv_memo, item.getMemo());
             if (StringUtils.isEmpty(String.valueOf(item.getState()))) {
                 holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
             } else {
@@ -765,9 +772,19 @@ public class BalanceDetailActivity extends AppBaseActivity {
         mRootBothParentLayout.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * 创建发票后的消息通知监听
+     * Message notification monitoring after create invoice
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCreateInvoiceEvent(CreateInvoiceEvent event) {
+        fetchInvoicesFromLND(100);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         if (mPayInvoiceStepOnePopupWindow != null) {
             mPayInvoiceStepOnePopupWindow.release();
         }

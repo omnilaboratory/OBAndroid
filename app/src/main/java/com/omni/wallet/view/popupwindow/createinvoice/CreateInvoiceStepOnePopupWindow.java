@@ -22,11 +22,14 @@ import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.ListAssetItemEntity;
+import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.UriUtil;
-import com.omni.wallet.view.popupwindow.SelectAssetPopupWindow;
+import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
 import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
+
+import org.greenrobot.eventbus.EventBus;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -46,7 +49,7 @@ public class CreateInvoiceStepOnePopupWindow {
     TextView mCanSendTv;
     TextView mCanReceiveTv;
     ProgressBar mProgressBar;
-    SelectAssetPopupWindow mSelectAssetPopupWindow;
+    SelectChannelBalancePopupWindow mSelectChannelBalancePopupWindow;
     SelectTimePopupWindow mSelectTimePopupWindow;
     String mAddress;
     long mAssetId;
@@ -128,8 +131,8 @@ public class CreateInvoiceStepOnePopupWindow {
         selectAssetLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSelectAssetPopupWindow = new SelectAssetPopupWindow(mContext);
-                mSelectAssetPopupWindow.setOnItemClickCallback(new SelectAssetPopupWindow.ItemCleckListener() {
+                mSelectChannelBalancePopupWindow = new SelectChannelBalancePopupWindow(mContext);
+                mSelectChannelBalancePopupWindow.setOnItemClickCallback(new SelectChannelBalancePopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
                         if (item.getPropertyid() == 0) {
@@ -146,7 +149,7 @@ public class CreateInvoiceStepOnePopupWindow {
                         assetMaxTv.setText(assetBalanceMax + "");
                     }
                 });
-                mSelectAssetPopupWindow.show(v);
+                mSelectChannelBalancePopupWindow.show(v);
             }
         });
         amountMaxTv.setOnClickListener(new View.OnClickListener() {
@@ -218,7 +221,7 @@ public class CreateInvoiceStepOnePopupWindow {
                 LightningOuterClass.Invoice asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                         .setAssetId((int) mAssetId)
                         .setAmount(Long.parseLong(amountEdit.getText().toString()))
-                        .setMemo("暂无")
+                        .setMemo("unknown")
                         .setExpiry(Long.parseLong("86400")) // in seconds
                         .setPrivate(false)
                         .build();
@@ -249,6 +252,7 @@ public class CreateInvoiceStepOnePopupWindow {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    EventBus.getDefault().post(new CreateInvoiceEvent());
                                     qrCodeUrl = UriUtil.generateLightningUri(resp.getPaymentRequest());
                                     rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.GONE);
                                     rootView.findViewById(R.id.lv_create_invoice_success).setVisibility(View.VISIBLE);
