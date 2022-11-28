@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -32,6 +33,7 @@ import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.PaymentRequestUtil;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
@@ -51,11 +53,6 @@ import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
-import static lnrpc.LightningOuterClass.Invoice.InvoiceState.ACCEPTED;
-import static lnrpc.LightningOuterClass.Invoice.InvoiceState.CANCELED;
-import static lnrpc.LightningOuterClass.Invoice.InvoiceState.OPEN;
-import static lnrpc.LightningOuterClass.Invoice.InvoiceState.SETTLED;
-import static lnrpc.LightningOuterClass.Invoice.InvoiceState.UNRECOGNIZED;
 import static lnrpc.LightningOuterClass.Payment.PaymentStatus.SUCCEEDED;
 
 public class BalanceDetailActivity extends AppBaseActivity {
@@ -292,7 +289,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     LightningOuterClass.ListPaymentsResponse resp = LightningOuterClass.ListPaymentsResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------paymentsOnResponse-----------------" + resp);
                     mTransactionsData.clear();
-                    mTransactionsData.addAll(resp.getPaymentsList());
+                    mTransactionsData.addAll(Lists.reverse(resp.getPaymentsList()));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -402,7 +399,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     LogUtils.e(TAG, "------------------invoiceOnResponse-----------------" + resp);
                     if (resp.getLastIndexOffset() < lastIndex) {
                         mMyInvoicesData.clear();
-                        mMyInvoicesData.addAll(resp.getInvoicesList());
+                        mMyInvoicesData.addAll(Lists.reverse(resp.getInvoicesList()));
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -438,7 +435,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 @Override
                 public void onClick(View v) {
                     mTransactionsDetailsPopupWindow = new TransactionsDetailsPopupWindow(mContext);
-                    mTransactionsDetailsPopupWindow.show(mParentLayout);
+                    mTransactionsDetailsPopupWindow.show(mParentLayout, item);
                 }
             });
         }
@@ -458,7 +455,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Payment item) {
             holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
             holder.setText(R.id.tv_amount, item.getValueMsat() + "");
-            holder.setText(R.id.tv_receiver, "unknown");
+            if (item.getPaymentRequest() != null && !item.getPaymentRequest().isEmpty()) {
+                holder.setText(R.id.tv_receiver, PaymentRequestUtil.getMemo(item.getPaymentRequest()));
+            } else {
+                holder.setText(R.id.tv_receiver, "unknown");
+            }
             final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_to_be_paid_list_swipe_menu);
             holder.getView(R.id.tv_to_be_paid_delete).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -517,21 +518,43 @@ public class BalanceDetailActivity extends AppBaseActivity {
         @Override
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Invoice item) {
             holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
-            holder.setText(R.id.tv_amount, item.getValueMsat() + "");
-            holder.setText(R.id.tv_memo, item.getMemo());
-            if (StringUtils.isEmpty(String.valueOf(item.getState()))) {
-                holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
+            holder.setText(R.id.tv_memo, StringUtils.cleanString(item.getMemo()));
+            Long amt = item.getValueMsat();
+            Long amtPayed = item.getAmtPaidMsat();
+
+            if (amt.equals(0L)) {
+                // if no specific value was requested
+                if (!amtPayed.equals(0L)) {
+                    // The invoice has been payed
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
+                    holder.setText(R.id.tv_amount, amtPayed + "");
+                } else {
+                    // The invoice has not been payed yet
+                    holder.setText(R.id.tv_amount, "0");
+                    if (isInvoiceExpired(item)) {
+                        // The invoice has expired
+                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
+                    } else {
+                        // The invoice has not yet expired
+                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                    }
+                }
             } else {
-                if (item.getState() == OPEN) {
+                // if a specific value was requested
+                if (isInvoicePayed(item)) {
+                    // The invoice has been payed
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
-                } else if (item.getState() == SETTLED) {
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
-                } else if (item.getState() == CANCELED) {
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
-                } else if (item.getState() == ACCEPTED) {
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
-                } else if (item.getState() == UNRECOGNIZED) {
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                    holder.setText(R.id.tv_amount, amtPayed + "");
+                } else {
+                    // The invoice has not been payed yet
+                    holder.setText(R.id.tv_amount, amt + "");
+                    if (isInvoiceExpired(item)) {
+                        // The invoice has expired
+                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
+                    } else {
+                        // The invoice has not yet expired
+                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                    }
                 }
             }
             final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_my_invoices_list_swipe_menu);
@@ -547,6 +570,33 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 }
             });
         }
+    }
+
+    /**
+     * Returns if the invoice has been payed already.
+     *
+     * @param invoice
+     * @return
+     */
+    public boolean isInvoicePayed(LightningOuterClass.Invoice invoice) {
+        boolean payed;
+        if (invoice.getValueMsat() == 0) {
+            payed = invoice.getAmtPaidMsat() != 0;
+        } else {
+            payed = invoice.getValueMsat() <= invoice.getAmtPaidMsat();
+        }
+        return payed;
+    }
+
+    /**
+     * Returns if the invoice has been expired. This function just checks if the expiration date is in the past.
+     * It will also return expired for already payed invoices.
+     *
+     * @param invoice
+     * @return
+     */
+    public boolean isInvoiceExpired(LightningOuterClass.Invoice invoice) {
+        return invoice.getCreationDate() + invoice.getExpiry() < System.currentTimeMillis() / 1000;
     }
 
     /**

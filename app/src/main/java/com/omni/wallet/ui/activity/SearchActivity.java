@@ -137,8 +137,8 @@ public class SearchActivity extends AppBaseActivity {
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mTransactionsDetailsPopupWindow = new TransactionsDetailsPopupWindow(mContext);
-                    mTransactionsDetailsPopupWindow.show(mParentLayout);
+//                    mTransactionsDetailsPopupWindow = new TransactionsDetailsPopupWindow(mContext);
+//                    mTransactionsDetailsPopupWindow.show(mParentLayout, item);
                 }
             });
         }

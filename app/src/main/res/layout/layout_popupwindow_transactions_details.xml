@@ -62,6 +62,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -89,12 +90,13 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_nonce"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:gravity="right"
-                        android:text="49"
+                        android:text="0"
                         android:textColor="@color/color_99_transparent"
                         android:textSize="@dimen/text_16"/>
                 </RelativeLayout>
@@ -116,10 +118,13 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tv_from_address"
+                        android:layout_width="@dimen/main_135"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
+                        android:singleLine="true"
+                        android:ellipsize="middle"
                         android:gravity="right"
                         android:text="1mn838.....534gy7"
                         android:textColor="@color/color_99_transparent"
@@ -149,6 +154,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tv_to_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="StarBucks"
@@ -156,13 +162,16 @@
                             android:textSize="@dimen/text_16"/>
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/tv_to_address"
+                            android:layout_width="@dimen/main_135"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
+                            android:singleLine="true"
+                            android:ellipsize="middle"
                             android:gravity="right"
                             android:text="1mn838.....534gy7"
                             android:textColor="@color/color_99_transparent"
-                            android:textSize="@dimen/text_16"/>
+                            android:textSize="@dimen/text_16" />
                     </LinearLayout>
                 </RelativeLayout>
 
@@ -183,10 +192,13 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tv_txid"
+                        android:layout_width="@dimen/main_135"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
+                        android:singleLine="true"
+                        android:ellipsize="middle"
                         android:gravity="right"
                         android:text="32Hju.......G66jgTH"
                         android:textColor="@color/color_99_transparent"
@@ -217,11 +229,13 @@
                         android:orientation="horizontal">
 
                         <ImageView
+                            android:id="@+id/iv_asset_type"
                             android:layout_width="@dimen/main_20"
                             android:layout_height="@dimen/main_20"
                             android:src="@mipmap/icon_usdt_logo_small"/>
 
                         <TextView
+                            android:id="@+id/tv_asset_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
@@ -255,13 +269,15 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="100.00"
+                            android:text="0"
                             android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16"/>
 
                         <TextView
+                            android:id="@+id/tv_amount_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
@@ -308,18 +324,20 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tv_fee"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="100"
+                            android:text="0"
                             android:textColor="@color/color_80p_transparent"
                             android:textSize="@dimen/text_16"/>
 
                         <TextView
+                            android:id="@+id/tv_fee_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
                             android:gravity="center"
-                            android:text="satoshis"
+                            android:text="unit"
                             android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16"/>
                     </LinearLayout>
@@ -356,9 +374,10 @@
                             android:textSize="@dimen/text_16"/>
 
                         <TextView
+                            android:id="@+id/tv_total_amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="112.105.6"
+                            android:text="0"
                             android:textColor="@color/color_black"
                             android:textSize="@dimen/text_16"/>
 
