@@ -74,13 +74,13 @@ public class SelectAssetPopupWindow {
      * 先创建新的钱包地址后再去请求各资产余额列表的接口
      */
     public void fetchWalletBalance() {
-        LightningOuterClass.NewAddressRequest asyncNewAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder()
-                .setTypeValue(2)
+        LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
+                .setAddress(User.getInstance().getWalletAddress(mContext))
                 .build();
-        Obdmobile.newAddress(asyncNewAddressRequest.toByteArray(), new Callback() {
+        Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------newAddressOnError------------------" + e.getMessage());
+                LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());
             }
 
             @Override
@@ -89,41 +89,19 @@ public class SelectAssetPopupWindow {
                     return;
                 }
                 try {
-                    LightningOuterClass.NewAddressResponse addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
-                    LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                            .setAddress(User.getInstance().getWalletAddress(mContext))
-                            .build();
-                    Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
+                    LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
+                    blockData.clear();
+                    ListAssetItemEntity entity = new ListAssetItemEntity();
+                    entity.setAmount(resp.getConfirmedBalance());
+                    entity.setPropertyid(0);
+                    entity.setType(1);
+                    blockData.add(entity);
+                    allData.addAll(blockData);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
-                        public void onError(Exception e) {
-                            LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());
-                        }
-
-                        @Override
-                        public void onResponse(byte[] bytes) {
-                            if (bytes == null) {
-                                return;
-                            }
-                            try {
-                                LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
-                                LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
-                                blockData.clear();
-                                ListAssetItemEntity entity = new ListAssetItemEntity();
-                                entity.setAmount(resp.getConfirmedBalance());
-                                entity.setPropertyid(0);
-                                entity.setType(1);
-                                blockData.add(entity);
-                                allData.addAll(blockData);
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mAdapter.notifyDataSetChanged();
-                                    }
-                                });
-                            } catch (InvalidProtocolBufferException e) {
-                                e.printStackTrace();
-                            }
+                        public void run() {
+                            mAdapter.notifyDataSetChanged();
                         }
                     });
                 } catch (InvalidProtocolBufferException e) {

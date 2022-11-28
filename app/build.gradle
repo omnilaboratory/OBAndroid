@@ -145,9 +145,6 @@ dependencies {
     implementation project(':baselibrary')
     implementation project(':framelibrary')
     implementation project(':thirdsupport')
-    // 内存泄漏监测
-    debugImplementation dependencies.debugLeakcanary
-    releaseImplementation dependencies.releaseLeakcanary
     // ARouter
     annotationProcessor dependencies.ArouterAnnotation
     // butterKnife

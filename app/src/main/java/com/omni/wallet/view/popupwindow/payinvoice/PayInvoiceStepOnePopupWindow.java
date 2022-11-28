@@ -20,8 +20,12 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
+import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
 import com.omni.wallet.utils.RefConstants;
 import com.omni.wallet.utils.UriUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -276,6 +280,7 @@ public class PayInvoiceStepOnePopupWindow {
                             LightningOuterClass.HTLCAttempt htlcAttempt = LightningOuterClass.HTLCAttempt.parseFrom(bytes);
                             switch (htlcAttempt.getStatus()) {
                                 case SUCCEEDED:
+                                    EventBus.getDefault().post(new PayInvoiceSuccessEvent());
                                     // updated the history, so it is shown the next time the user views it
                                     rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
                                     rootView.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);
@@ -303,6 +308,7 @@ public class PayInvoiceStepOnePopupWindow {
                                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                         @Override
                                                         public void run() {
+                                                            EventBus.getDefault().post(new PayInvoiceFailedEvent());
                                                             rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
                                                             rootView.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
                                                             rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
@@ -324,12 +330,14 @@ public class PayInvoiceStepOnePopupWindow {
                                                                 LightningOuterClass.Payment resp = LightningOuterClass.Payment.parseFrom(bytes);
                                                                 LogUtils.e(TAG, "------------------sendPaymentOnResponse-----------------" + resp);
                                                                 if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.SUCCEEDED) {
+                                                                    EventBus.getDefault().post(new PayInvoiceSuccessEvent());
                                                                     rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
                                                                     rootView.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);
                                                                     rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
                                                                     rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
                                                                     showStepSuccess(rootView);
                                                                 } else if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.FAILED) {
+                                                                    EventBus.getDefault().post(new PayInvoiceFailedEvent());
                                                                     rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
                                                                     rootView.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
                                                                     rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);

@@ -27,6 +27,9 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
+import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
+import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
@@ -199,7 +202,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     protected void initView() {
         if (network.equals("lightning")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_vector);
-            mNetworkTypeTv.setText(R.string.lightning);
+            mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
             mNetworkTv.setText("USDT lightning network");
             mLightningNetworkLayout.setVisibility(View.VISIBLE);
             mLinkNetworkLayout.setVisibility(View.GONE);
@@ -212,7 +215,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mRootMyInvoicesLayout.setVisibility(View.VISIBLE);
         } else if (network.equals("link")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_link_black);
-            mNetworkTypeTv.setText(R.string.mainnet);
+            mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
             mNetworkTv.setText("Omnilayer Mainnet");
             mLightningNetworkLayout.setVisibility(View.GONE);
             mLinkNetworkLayout.setVisibility(View.VISIBLE);
@@ -770,6 +773,24 @@ public class BalanceDetailActivity extends AppBaseActivity {
         mMyInvoicesLayout.startAnimation(animation);
         mRootChannelActivitiesLayout.setVisibility(View.VISIBLE);
         mRootBothParentLayout.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 支付发票成功的消息通知监听
+     * Message notification monitoring after pay invoice success
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPayInvoiceSuccessEvent(PayInvoiceSuccessEvent event) {
+        fetchTransactionsFromLND();
+    }
+
+    /**
+     * 支付发票失败的消息通知监听
+     * Message notification monitoring after pay invoice failed
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPayInvoiceFailedEvent(PayInvoiceFailedEvent event) {
+        fetchPaymentsFromLND();
     }
 
     /**

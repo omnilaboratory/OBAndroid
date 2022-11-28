@@ -22,6 +22,7 @@
             android:id="@+id/lv_network_title_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:layout_marginLeft="@dimen/main_20">
@@ -31,7 +32,9 @@
                 android:layout_height="@dimen/main_30"
                 android:layout_centerVertical="true"
                 android:src="@mipmap/icon_lightning_logo"/>
+
             <TextView
+                android:id="@+id/tv_network_type"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -40,7 +43,6 @@
                 android:textColor="@color/color_A6_transparent"
                 android:textSize="@dimen/text_24"
                 android:gravity="center"/>
-
         </LinearLayout>
 
         <ImageView
@@ -91,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_30"
                 android:layout_marginRight="@dimen/main_32"
-                android:layout_marginTop="@dimen/main_15">
+                android:layout_marginTop="@dimen/main_10">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -107,6 +109,7 @@
                             android:id="@+id/tv_balance_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/main_10"
                             android:shadowColor="#40000000"
                             android:shadowDx="0"
                             android:shadowDy="4"
@@ -118,7 +121,6 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="-10dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 

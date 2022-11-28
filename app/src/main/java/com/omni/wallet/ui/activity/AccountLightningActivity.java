@@ -54,6 +54,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     LinearLayout mParentLayout;
     @BindView(R.id.view_top)
     View mTopView;
+    @BindView(R.id.tv_network_type)
+    TextView mNetworkTypeTv;
     @BindView(R.id.iv_menu)
     ImageView mMenuIv;
     @BindView(R.id.tv_balance_value)
@@ -195,6 +197,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     LightningOuterClass.GetInfoResponse resp = LightningOuterClass.GetInfoResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------getInfoOnResponse-----------------" + resp);
                     pubkey = resp.getIdentityPubkey();
+                    mNetworkTypeTv.setText(resp.getChains(0).getNetwork());
                     User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();

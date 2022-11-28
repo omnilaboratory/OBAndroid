@@ -13,8 +13,6 @@ import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.utils.Wallet;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
 
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 import obdmobile.Callback;
@@ -25,7 +23,6 @@ import obdmobile.Obdmobile;
  */
 public class AppApplication extends BaseApplication {
     private static final String TAG = AppApplication.class.getSimpleName();
-    private RefWatcher mRefWatcher;
     private static AppApplication mContext;
 
     public AppApplication() {
@@ -51,11 +48,6 @@ public class AppApplication extends BaseApplication {
          * @desc: Remove the warning pop-up window when Android P starts
          */
         AppUtils.closeAndroidPDialog();
-        /**
-         * @描述： 去掉安卓P启动时候的警告弹窗
-         * @desc: Detect memory leak correlation
-         */
-        mRefWatcher = LeakCanary.install(this);
         /**
          * @描述： 注册全局的异常处理类
          * @desc: Register global exception handling classes
