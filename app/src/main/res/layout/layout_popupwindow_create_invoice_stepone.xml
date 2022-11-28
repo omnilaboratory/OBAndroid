@@ -399,6 +399,7 @@
                         <EditText
                             android:id="@+id/edit_time"
                             android:hint="0"
+                            android:inputType="number"
                             android:textColorHint="@color/color_80p_transparent"
                             android:background="@null"
                             android:layout_width="wrap_content"
