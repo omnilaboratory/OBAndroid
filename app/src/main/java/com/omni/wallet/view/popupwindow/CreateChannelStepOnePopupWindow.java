@@ -50,10 +50,12 @@ public class CreateChannelStepOnePopupWindow {
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
+    TextView localEdit;
     TextView channelFeeTv;
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetUnitPopupWindow mSelectAssetUnitPopupWindow;
-    String nodePubkey = "02b49967df27dfe5a3615f48c8b11621f64bd04f39e71b91e88121be4704a791ef";
+    //    String nodePubkey = "02b49967df27dfe5a3615f48c8b11621f64bd04f39e71b91e88121be4704a791ef";
+    String nodePubkey;
     long assetId;
     int time;
     long feeStr;
@@ -71,6 +73,7 @@ public class CreateChannelStepOnePopupWindow {
         if (mBasePopWindow == null) {
             mBalanceAmount = balanceAmount;
             mWalletAddress = walletAddress;
+            nodePubkey = pubKey;
 
             mBasePopWindow = new BasePopWindow(mContext);
             final View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_channel_stepone);
@@ -79,9 +82,15 @@ public class CreateChannelStepOnePopupWindow {
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
-            getListPeers();
             fetchWalletBalance();
-            showStepOne(rootView);
+            if (!StringUtils.isEmpty(pubKey)) {
+                rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
+                rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
+                showStepTwo(rootView);
+            } else {
+                getListPeers();
+                showStepOne(rootView);
+            }
             /**
              * @描述： 点击 cancel
              * @desc: click cancel button
@@ -100,12 +109,24 @@ public class CreateChannelStepOnePopupWindow {
     }
 
     private void showStepOne(View rootView) {
-        EditText localEdit = rootView.findViewById(R.id.edit_local);
+        localEdit = rootView.findViewById(R.id.edit_local);
         EditText waterDripEdit = rootView.findViewById(R.id.edit_water_drip);
         EditText remoteEdit = rootView.findViewById(R.id.edit_remote);
-        localEdit.setText(nodePubkey);
         waterDripEdit.setText(nodePubkey);
         remoteEdit.setText(nodePubkey);
+        /**
+         * 点击默认节点
+         * @desc: click default addr
+         */
+        rootView.findViewById(R.id.layout_defaylt_addr).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
+                rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
+                nodePubkey = localEdit.getText().toString();
+                showStepTwo(rootView);
+            }
+        });
         /**
          * @描述： 扫描二维码
          * @desc: scan qrcode
@@ -142,6 +163,7 @@ public class CreateChannelStepOnePopupWindow {
             public void onClick(View v) {
                 rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
                 rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
+                nodePubkey = "";
                 showStepTwo(rootView);
             }
         });
@@ -364,6 +386,7 @@ public class CreateChannelStepOnePopupWindow {
                             LightningOuterClass.ListPeersResponse resp = LightningOuterClass.ListPeersResponse.parseFrom(bytes);
                             LogUtils.e(TAG, "------------------listPeersonResponse------------------" + resp.toString());
                             nodePubkey = resp.getPeers(0).getPubKey();
+                            localEdit.setText(nodePubkey);
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
                         }

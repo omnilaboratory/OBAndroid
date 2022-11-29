@@ -72,7 +72,7 @@ public class SendStepTwoPopupWindow {
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
                     mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
-                    mSendStepOnePopupWindow.show(view);
+                    mSendStepOnePopupWindow.show(view, "");
                 }
             });
             // 点击next

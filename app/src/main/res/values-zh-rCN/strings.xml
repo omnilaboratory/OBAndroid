@@ -76,6 +76,7 @@
     <string name="channel_manage">Channel Manage</string>
     <string name="profile">Profile</string>
     <string name="preference">Preference</string>
+    <string name="node_info">Node Info</string>
     <string name="disconnect">Disconnect</string>
     <string name="lock">Lock</string>
     <string name="settings">SETTINGS</string>
@@ -148,6 +149,7 @@
     <string name="lightning">lightning</string>
     <string name="mainnet">mainnet</string>
     <string name="omnilayer_mainnet">Omnilayer Mainnet</string>
+    <string name="testnet">Testnet</string>
     <string name="regtest">Regtest</string>
     <string name="error_code">Error Code: </string>
     <string name="try_again">TRY AGAIN</string>
@@ -235,6 +237,12 @@
     <string name="error_payment_no_route">No route could be found for the desired payment. Opening new lightning channels might solve the problem.</string>
     <string name="error_payment_insufficient_balance">The amount to pay is bigger than what you can send over lightning with your current open channels.</string>
     <string name="error_payment_keysend_not_enabled_on_remote">Please make sure the recipient has enabled the keysend feature.</string>
+    <string name="memo">Memo</string>
+    <string name="online">Online</string>
+    <string name="alias">Alias</string>
+    <string name="version">Version</string>
+    <string name="backend">Backend</string>
+    <string name="mode">Mode</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

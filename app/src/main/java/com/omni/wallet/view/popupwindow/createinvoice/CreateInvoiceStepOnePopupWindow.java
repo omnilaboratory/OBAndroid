@@ -117,6 +117,7 @@ public class CreateInvoiceStepOnePopupWindow {
         TextView amountUnitTv = rootView.findViewById(R.id.tv_amount_unit);
         Button timeButton = rootView.findViewById(R.id.btn_time);
         EditText amountTimeEdit = rootView.findViewById(R.id.edit_time);
+        EditText memoEdit = rootView.findViewById(R.id.edit_memo);
         if (mAssetId == 0) {
             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeTv.setText("BTC");
@@ -221,7 +222,7 @@ public class CreateInvoiceStepOnePopupWindow {
                 LightningOuterClass.Invoice asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                         .setAssetId((int) mAssetId)
                         .setAmount(Long.parseLong(amountEdit.getText().toString()))
-                        .setMemo("unknown")
+                        .setMemo(memoEdit.getText().toString())
                         .setExpiry(Long.parseLong("86400")) // in seconds
                         .setPrivate(false)
                         .build();

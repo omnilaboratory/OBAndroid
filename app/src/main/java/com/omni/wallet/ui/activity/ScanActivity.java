@@ -1,5 +1,6 @@
 package com.omni.wallet.ui.activity;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -14,10 +15,17 @@ import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StatusBarUtil;
 import com.omni.wallet.baselibrary.utils.StringUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.lightning.LightningNodeUri;
+import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.thirdsupport.zxing.CaptureHelper;
 import com.omni.wallet.thirdsupport.zxing.OnCaptureCallback;
 import com.omni.wallet.thirdsupport.zxing.ViewfinderView;
 import com.omni.wallet.thirdsupport.zxing.camera.CameraConfig;
+import com.omni.wallet.utils.Bech32;
+import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
+import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
+import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -31,6 +39,8 @@ import butterknife.OnClick;
 public class ScanActivity extends AppBaseActivity {
     private static final String TAG = ScanActivity.class.getSimpleName();
 
+    @BindView(R.id.layout_parent)
+    RelativeLayout mParentLayout;
     @BindView(R.id.view_scan_page_top)
     public View mTopView;
     @BindView(R.id.surface_view_scan)
@@ -44,6 +54,18 @@ public class ScanActivity extends AppBaseActivity {
     public ImageView mLightIv;// 手电筒的图标
 
     private CaptureHelper mCaptureHelper;
+
+
+    public static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";
+    public static final String KEY_WALLET_ADDRESS = "walletAddressKey";
+    long balanceAmount;
+    String walletAddress;
+
+    @Override
+    protected void getBundleData(Bundle bundle) {
+        balanceAmount = bundle.getLong(KEY_BALANCE_AMOUNT);
+        walletAddress = bundle.getString(KEY_WALLET_ADDRESS);
+    }
 
     @Override
     protected int getContentView() {
@@ -146,8 +168,27 @@ public class ScanActivity extends AppBaseActivity {
         public boolean onResultCallback(String result) {
             LogUtils.e(TAG, "========扫码获取的值为===========>" + result);
             if (!StringUtils.isEmpty(result)) {
-
+                LightningNodeUri nodeUri = LightningParser.parseNodeUri(result);
+                byte[] decodedBech32 = null;
+                try {
+                    decodedBech32 = Bech32.bech32Decode(result, false).second;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (result.startsWith("lightning:") || result.contains("obort")) { //支付发票
+                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
+                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, walletAddress, 2147483651L, result);
+                } else if (nodeUri != null) { //开通通道
+                    CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+                    mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, result);
+                } else if (decodedBech32 != null) { //Bech32地址
+                    ToastUtils.showToast(mContext, "Please scan the correct QR code");
+                } else { //链上支付
+                    SendStepOnePopupWindow mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
+                    mSendStepOnePopupWindow.show(mParentLayout, result);
+                }
             } else {
+                ToastUtils.showToast(mContext, "Please scan the correct QR code");
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

@@ -141,7 +141,7 @@ public class ChannelDetailsPopupWindow {
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
                     mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-                    mCreateChannelStepOnePopupWindow.show(view, balanceAmount, walletAddress, pubKey);
+                    mCreateChannelStepOnePopupWindow.show(view, balanceAmount, walletAddress, "");
                 }
             });
             //click close button at bottom

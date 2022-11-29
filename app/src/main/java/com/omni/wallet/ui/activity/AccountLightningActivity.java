@@ -571,7 +571,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @OnClick(R.id.iv_send)
     public void clickSend() {
         mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
-        mSendStepOnePopupWindow.show(mParentLayout);
+        mSendStepOnePopupWindow.show(mParentLayout, "");
     }
 
     /**
@@ -613,7 +613,10 @@ public class AccountLightningActivity extends AppBaseActivity {
         PermissionUtils.launchCamera(this, new PermissionUtils.PermissionCallback() {
             @Override
             public void onRequestPermissionSuccess() {
-                switchActivity(ScanActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putLong(ScanActivity.KEY_BALANCE_AMOUNT, balanceAmount);
+                bundle.putString(ScanActivity.KEY_WALLET_ADDRESS, addressResp.getAddress());
+                switchActivity(ScanActivity.class, bundle);
             }
 
             @Override
@@ -645,7 +648,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @OnClick(R.id.layout_create_channel)
     public void clickCreateChannel() {
         mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, addressResp.getAddress(), pubkey);
+        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, addressResp.getAddress(), "");
     }
 
 

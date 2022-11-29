@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/layout_son"
         android:layout_width="@dimen/main_260"
-        android:layout_height="@dimen/main_550"
+        android:layout_height="@dimen/main_560"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/main_10"
         android:layout_marginTop="@dimen/main_10"
@@ -36,21 +36,22 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_37"
             android:layout_marginRight="@dimen/main_17"
-            android:layout_marginTop="@dimen/main_17">
+            android:layout_marginTop="@dimen/main_15">
 
             <ImageView
-                android:id="@+id/iv_network_vector_1"
+                android:id="@+id/iv_network_vector_mainnet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:src="@mipmap/icon_network_vector_small"/>
 
             <ImageView
+                android:id="@+id/iv_network_mainnet"
                 android:layout_width="@dimen/main_12"
                 android:layout_height="@dimen/main_12"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/main_10"
-                android:layout_toRightOf="@+id/iv_network_vector_1"
+                android:layout_toRightOf="@+id/iv_network_vector_mainnet"
                 android:src="@drawable/bg_btn_round_06d78f_25"/>
 
             <TextView
@@ -69,10 +70,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_37"
             android:layout_marginRight="@dimen/main_17"
-            android:layout_marginTop="@dimen/main_9">
+            android:layout_marginTop="@dimen/main_10">
 
             <ImageView
-                android:id="@+id/iv_network_vector_2"
+                android:id="@+id/iv_network_vector_testnet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -80,11 +81,47 @@
                 android:visibility="invisible"/>
 
             <ImageView
+                android:id="@+id/iv_network_testnet"
                 android:layout_width="@dimen/main_12"
                 android:layout_height="@dimen/main_12"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/main_10"
-                android:layout_toRightOf="@+id/iv_network_vector_2"
+                android:layout_toRightOf="@+id/iv_network_vector_testnet"
+                android:src="@drawable/bg_btn_round_d9d9d9_25"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:letterSpacing="0.05"
+                android:text="@string/testnet"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/text_16"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_37"
+            android:layout_marginRight="@dimen/main_17"
+            android:layout_marginTop="@dimen/main_10">
+
+            <ImageView
+                android:id="@+id/iv_network_vector_regtest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/icon_network_vector_small"
+                android:visibility="invisible"/>
+
+            <ImageView
+                android:id="@+id/iv_network_regtest"
+                android:layout_width="@dimen/main_12"
+                android:layout_height="@dimen/main_12"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/main_10"
+                android:layout_toRightOf="@+id/iv_network_vector_regtest"
                 android:src="@drawable/bg_btn_round_d9d9d9_25"/>
 
             <TextView
@@ -98,12 +135,20 @@
                 android:textSize="@dimen/text_16"/>
         </RelativeLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_1"
+            android:layout_marginTop="@dimen/main_10"
+            android:layout_marginLeft="@dimen/main_37"
+            android:layout_marginRight="@dimen/main_17"
+            android:background="@color/color_black"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_40"
-            android:layout_marginTop="@dimen/main_25"
-            android:letterSpacing="0.25"
+            android:layout_marginTop="@dimen/main_5"
+            android:letterSpacing="0.1"
             android:text="@string/menu"
             android:textColor="@color/color_black"
             android:textSize="@dimen/text_18"/>
@@ -114,7 +159,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_40"
             android:layout_marginRight="@dimen/main_17"
-            android:layout_marginTop="@dimen/main_19">
+            android:layout_marginTop="@dimen/main_10">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -141,7 +186,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_40"
             android:layout_marginRight="@dimen/main_17"
-            android:layout_marginTop="@dimen/main_16">
+            android:layout_marginTop="@dimen/main_15">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -163,12 +208,12 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/layout_preference"
+            android:id="@+id/layout_node_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_40"
             android:layout_marginRight="@dimen/main_17"
-            android:layout_marginTop="@dimen/main_16">
+            android:layout_marginTop="@dimen/main_15">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -177,7 +222,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/main_38"
                 android:letterSpacing="0.05"
-                android:text="@string/preference"
+                android:text="@string/node_info"
                 android:textColor="@color/color_black"
                 android:textSize="@dimen/text_16"/>
 
@@ -195,7 +240,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_40"
             android:layout_marginRight="@dimen/main_17"
-            android:layout_marginTop="@dimen/main_16">
+            android:layout_marginTop="@dimen/main_15">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -222,7 +267,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_40"
             android:layout_marginRight="@dimen/main_17"
-            android:layout_marginTop="@dimen/main_16">
+            android:layout_marginTop="@dimen/main_15">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -243,18 +288,26 @@
                 android:src="@mipmap/icon_menu_unlock"/>
         </RelativeLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_1"
+            android:layout_marginTop="@dimen/main_15"
+            android:layout_marginLeft="@dimen/main_37"
+            android:layout_marginRight="@dimen/main_17"
+            android:background="@color/color_black"/>
+
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_40"
             android:layout_marginRight="@dimen/main_17"
-            android:layout_marginTop="@dimen/main_25">
+            android:layout_marginTop="@dimen/main_10">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:letterSpacing="0.25"
+                android:letterSpacing="0.1"
                 android:text="@string/settings"
                 android:textColor="@color/color_black"
                 android:textSize="@dimen/text_18"/>
@@ -266,7 +319,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_40"
             android:layout_marginRight="@dimen/main_17"
-            android:layout_marginTop="@dimen/main_16">
+            android:layout_marginTop="@dimen/main_15">
 
             <TextView
                 android:layout_width="wrap_content"

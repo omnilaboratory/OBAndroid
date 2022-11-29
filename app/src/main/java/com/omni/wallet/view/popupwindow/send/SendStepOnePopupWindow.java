@@ -30,8 +30,6 @@ import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.listItems.Friend;
-import com.omni.wallet.listItems.FriendGroup;
 import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.SendSuccessDialog;
@@ -59,8 +57,7 @@ public class SendStepOnePopupWindow {
     private List<LightningOuterClass.Transaction> mData = new ArrayList<>();
     private MyAdapter mAdapter;
     View mView;
-    private List<FriendGroup> friendGroups = new ArrayList<>();
-    String selectAddress = "mhHHDCmkceKKXCFYCk7gRo5UaJmCi6rCk8";
+    String selectAddress;
     int time = 1;
     long feeStr;
     long assetId = 0;
@@ -68,7 +65,7 @@ public class SendStepOnePopupWindow {
     String assetBalanceMax;
     private LoadingDialog mLoadingDialog;
     // 初始数据（Initial data）
-    String toFriendName = "Alice";
+    String toFriendName = "unname";
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetPopupWindow mSelectAssetPopupWindow;
     SendSuccessDialog mSendSuccessDialog;
@@ -77,44 +74,10 @@ public class SendStepOnePopupWindow {
         this.mContext = context;
     }
 
-    /**
-     * @描述： 测试使用数据
-     * @description: data for test
-     */
-    public void friendGroupsData() {
-        Friend alice = new Friend("Alice", "1mn8382odjd.........34gy7");
-        Friend abbe = new Friend("Abbe", "2nm8382odjd.........dfe689");
-        List<Friend> groupA = new ArrayList<Friend>();
-        groupA.add(alice);
-        groupA.add(abbe);
-        FriendGroup friendGroupA = new FriendGroup("A", groupA);
-
-        Friend bob = new Friend("Bob", "1mn8382odjd.........34gy7");
-        Friend bill = new Friend("Bill", "2nm8382odjd.........dfe689");
-        Friend boss = new Friend("Boss", "2nm8382odjd.........dfe689");
-        List<Friend> groupB = new ArrayList<Friend>();
-        groupB.add(bob);
-        groupB.add(bill);
-        groupB.add(boss);
-        groupB.add(bob);
-        groupB.add(bill);
-        groupB.add(boss);
-        FriendGroup friendGroupB = new FriendGroup("B", groupB);
-
-        Friend charli = new Friend("Charli", "1mn8382odjd.........34gy7");
-        List<Friend> groupC = new ArrayList<Friend>();
-        groupC.add(charli);
-        FriendGroup friendGroupC = new FriendGroup("C", groupC);
-
-        friendGroups.add(friendGroupA);
-        friendGroups.add(friendGroupB);
-        friendGroups.add(friendGroupC);
-    }
-
-
-    public void show(final View view) {
+    public void show(final View view, String payAddr) {
         if (mBasePopWindow == null) {
             mView = view;
+            selectAddress = payAddr;
             mBasePopWindow = new BasePopWindow(mContext);
             final View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_send_stepone);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
@@ -122,9 +85,14 @@ public class SendStepOnePopupWindow {
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
             mLoadingDialog = new LoadingDialog(mContext);
-            friendGroupsData();
             fetchWalletBalance();
-            showStepOne(rootView);
+            if (!StringUtils.isEmpty(payAddr)) {
+                mBasePopWindow.getContentView().findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
+                mBasePopWindow.getContentView().findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
+                showStepTwo(rootView);
+            } else {
+                showStepOne(rootView);
+            }
             /**
              * @备注： 点击cancel 按钮
              * @description: Click cancel button
@@ -156,6 +124,7 @@ public class SendStepOnePopupWindow {
             public void onClick(View v) {
                 mBasePopWindow.getContentView().findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
                 mBasePopWindow.getContentView().findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
+                selectAddress = recentsAddressTv.getText().toString();
                 showStepTwo(view);
             }
         });
@@ -180,7 +149,11 @@ public class SendStepOnePopupWindow {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            recentsAddressTv.setText(resp.getTransactions(0).getDestAddresses(0));
+                            if (resp.getTransactions(0).getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext))) {
+                                recentsAddressTv.setText(resp.getTransactions(0).getDestAddresses(1));
+                            } else if (resp.getTransactions(0).getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                                recentsAddressTv.setText(resp.getTransactions(0).getDestAddresses(0));
+                            }
                             mData.clear();
                             mData.addAll(resp.getTransactionsList());
                             mAdapter = new MyAdapter(mContext, mData, R.layout.layout_item_send_list);
@@ -696,10 +669,18 @@ public class SendStepOnePopupWindow {
                 public void onClick(View v) {
                     mBasePopWindow.getContentView().findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
                     mBasePopWindow.getContentView().findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
-                    selectAddress = item.getDestAddresses(0);
+                    if (item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext))) {
+                        selectAddress = item.getDestAddresses(1);
+                    } else if (item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                        selectAddress = item.getDestAddresses(0);
+                    }
                 }
             });
-            holder.setText(R.id.tv_send_list_address, item.getDestAddresses(0));
+            if (item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext))) {
+                holder.setText(R.id.tv_send_list_address, item.getDestAddresses(1));
+            } else if (item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                holder.setText(R.id.tv_send_list_address, item.getDestAddresses(0));
+            }
         }
     }
 

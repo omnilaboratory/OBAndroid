@@ -692,7 +692,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.layout_pay_invoice)
     public void clickPayInvoice() {
         mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-        mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId);
+        mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, "");
     }
 
     /**
@@ -712,7 +712,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.layout_send_invoice)
     public void clickSendInvoice() {
         mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
-        mSendStepOnePopupWindow.show(mParentLayout);
+        mSendStepOnePopupWindow.show(mParentLayout, "");
     }
 
     /**

@@ -221,7 +221,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     @OnClick(R.id.iv_create_channel)
     public void clickcCreateChannel() {
         mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, pubkey);
+        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, "");
     }
 
     /**

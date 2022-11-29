@@ -62,7 +62,7 @@ public class PayInvoiceStepOnePopupWindow {
         this.mContext = context;
     }
 
-    public void show(final View view, String address, long assetId) {
+    public void show(final View view, String address, long assetId, String invoiceAddr) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
             final View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_pay_invoice_stepone);
@@ -72,7 +72,7 @@ public class PayInvoiceStepOnePopupWindow {
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
             mAddress = address;
             mAssetId = assetId;
-            showStepOne(rootView);
+            showStepOne(rootView, invoiceAddr);
 
             /**
              * @备注： 点击cancel 按钮
@@ -102,10 +102,13 @@ public class PayInvoiceStepOnePopupWindow {
         }
     }
 
-    private void showStepOne(View rootView) {
+    private void showStepOne(View rootView, String invoiceAddr) {
         TextView fromNodeAddressTv = rootView.findViewById(R.id.tv_from_node_address);
         TextView fromNodeNameTv = rootView.findViewById(R.id.tv_from_node_name);
         EditText invoiceEdit = rootView.findViewById(R.id.edit_invoice);
+        if (!StringUtils.isEmpty(invoiceAddr)) {
+            invoiceEdit.setText(invoiceAddr);
+        }
         fromNodeAddressTv.setText(StringUtils.encodePubkey(mAddress));
         /**
          * @备注： 点击back关闭pay invoice 窗口
@@ -163,7 +166,12 @@ public class PayInvoiceStepOnePopupWindow {
                                         return;
                                     }
                                     LogUtils.e(TAG, "-------------routerSendPaymentV20nError-----------" + e.getMessage());
-                                    ToastUtils.showToast(mContext, e.getMessage());
+                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ToastUtils.showToast(mContext, e.getMessage());
+                                        }
+                                    });
                                 }
 
                                 @Override
@@ -197,6 +205,7 @@ public class PayInvoiceStepOnePopupWindow {
                                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                     @Override
                                                     public void run() {
+                                                        ToastUtils.showToast(mContext, mContext.getResources().getString(R.string.error_payment_no_route));
                                                         deletePaymentProbe(payment.getPaymentHash());
                                                     }
                                                 });
@@ -280,13 +289,17 @@ public class PayInvoiceStepOnePopupWindow {
                             LightningOuterClass.HTLCAttempt htlcAttempt = LightningOuterClass.HTLCAttempt.parseFrom(bytes);
                             switch (htlcAttempt.getStatus()) {
                                 case SUCCEEDED:
-                                    EventBus.getDefault().post(new PayInvoiceSuccessEvent());
-                                    // updated the history, so it is shown the next time the user views it
-                                    rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);
-                                    rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                    showStepSuccess(rootView);
+                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            EventBus.getDefault().post(new PayInvoiceSuccessEvent());
+                                            // updated the history, so it is shown the next time the user views it
+                                            rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
+                                            rootView.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);
+                                            rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                            rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                            showStepSuccess(rootView);                                        }
+                                    });
                                     break;
                                 case FAILED:
                                     switch (htlcAttempt.getFailure().getCode()) {
