@@ -82,7 +82,7 @@
                     android:id="@+id/qr_image"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:src="@mipmap/img_qr_code_exam_black"/>
+                    android:src="@mipmap/icon_lock_qr"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -209,7 +209,7 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/my_process_outer"
+                android:id="@+id/progress_bar_outer"
                 android:layout_width="300dp"
                 android:layout_height="8dp"
                 android:background="@drawable/bg_process_out"
