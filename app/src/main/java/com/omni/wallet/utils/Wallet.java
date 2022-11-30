@@ -29,6 +29,8 @@ public class Wallet {
 
     private static Wallet mInstance = null;
     private final Set<ChannelsUpdatedSubscriptionListener> mChannelsUpdatedSubscriptionListeners = new HashSet<>();
+    private final Set<ScanChannelListener> mScanChannelListeners = new HashSet<>();
+    private final Set<ScanSendListener> mScanSendListeners = new HashSet<>();
 
     public List<LightningOuterClass.Channel> mOpenChannelsList;
     public List<LightningOuterClass.PendingChannelsResponse.PendingOpenChannel> mPendingOpenChannelsList;
@@ -407,6 +409,49 @@ public class Wallet {
         void onChannelsUpdated();
     }
 
+    /**
+     * Notify all listeners that scan channel have been updated.
+     * @param result
+     */
+    public void broadcastScanChannelUpdated(String result) {
+        for (ScanChannelListener listener : mScanChannelListeners) {
+            listener.onScanChannelUpdated(result);
+        }
+    }
+
+    public void registerScanChannelListener(ScanChannelListener listener) {
+        mScanChannelListeners.add(listener);
+    }
+
+    public void unregisterScanChannelListener(ScanChannelListener listener) {
+        mScanChannelListeners.remove(listener);
+    }
+
+    public interface ScanChannelListener {
+        void onScanChannelUpdated(String result);
+    }
+
+    /**
+     * Notify all listeners that scan send have been updated.
+     * @param result
+     */
+    public void broadcastScanSendUpdated(String result) {
+        for (ScanSendListener listener : mScanSendListeners) {
+            listener.onScanSendUpdated(result);
+        }
+    }
+
+    public void registerScanSendListener(ScanSendListener listener) {
+        mScanSendListeners.add(listener);
+    }
+
+    public void unregisterScanSendListener(ScanSendListener listener) {
+        mScanSendListeners.remove(listener);
+    }
+
+    public interface ScanSendListener {
+        void onScanSendUpdated(String result);
+    }
 }
 
 

@@ -28,7 +28,7 @@ import com.omni.wallet.entity.event.OpenChannelEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.lightning.LightningNodeUri;
 import com.omni.wallet.lightning.LightningParser;
-import com.omni.wallet.ui.activity.ScanActivity;
+import com.omni.wallet.ui.activity.ScanChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.Wallet;
 
@@ -45,7 +45,7 @@ import obdmobile.RecvStream;
 /**
  * CreateChannelStepOne的弹窗
  */
-public class CreateChannelStepOnePopupWindow {
+public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListener {
     private static final String TAG = CreateChannelStepOnePopupWindow.class.getSimpleName();
 
     private Context mContext;
@@ -56,6 +56,7 @@ public class CreateChannelStepOnePopupWindow {
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetUnitPopupWindow mSelectAssetUnitPopupWindow;
     //    String nodePubkey = "02b49967df27dfe5a3615f48c8b11621f64bd04f39e71b91e88121be4704a791ef";
+    View rootView;
     String nodePubkey;
     long assetId;
     int time;
@@ -75,9 +76,10 @@ public class CreateChannelStepOnePopupWindow {
             mBalanceAmount = balanceAmount;
             mWalletAddress = walletAddress;
             nodePubkey = pubKey;
+            Wallet.getInstance().registerScanChannelListener(this);
 
             mBasePopWindow = new BasePopWindow(mContext);
-            final View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_channel_stepone);
+            rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_channel_stepone);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
@@ -137,8 +139,8 @@ public class CreateChannelStepOnePopupWindow {
                 PermissionUtils.launchCamera((Activity) mContext, new PermissionUtils.PermissionCallback() {
                     @Override
                     public void onRequestPermissionSuccess() {
-                        mBasePopWindow.dismiss();
-                        Intent intent = new Intent(mContext, ScanActivity.class);
+//                        mBasePopWindow.dismiss();
+                        Intent intent = new Intent(mContext, ScanChannelActivity.class);
                         mContext.startActivity(intent);
                     }
 
@@ -646,7 +648,16 @@ public class CreateChannelStepOnePopupWindow {
         });
     }
 
+    @Override
+    public void onScanChannelUpdated(String result) {
+        rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
+        rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
+        nodePubkey = result;
+        showStepTwo(rootView);
+    }
+
     public void release() {
+        Wallet.getInstance().unregisterScanChannelListener(this);
         if (mBasePopWindow != null) {
             mBasePopWindow.dismiss();
             mBasePopWindow = null;

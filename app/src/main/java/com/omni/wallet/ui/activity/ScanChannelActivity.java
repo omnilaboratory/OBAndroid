@@ -16,27 +16,24 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StatusBarUtil;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
-import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.lightning.LightningNodeUri;
 import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.thirdsupport.zxing.CaptureHelper;
 import com.omni.wallet.thirdsupport.zxing.OnCaptureCallback;
 import com.omni.wallet.thirdsupport.zxing.ViewfinderView;
 import com.omni.wallet.thirdsupport.zxing.camera.CameraConfig;
-import com.omni.wallet.utils.Bech32;
-
-import org.greenrobot.eventbus.EventBus;
+import com.omni.wallet.utils.Wallet;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
- * 汉: 扫描二维码的页面
- * En: Scan QRCode Page
+ * 汉: 扫描通道二维码的页面
+ * En: ScanChannelActivity
  * author: guoyalei
- * date: 2022/10/13
+ * date: 2022/11/30
  */
-public class ScanActivity extends AppBaseActivity {
+public class ScanChannelActivity extends AppBaseActivity {
     private static final String TAG = ScanActivity.class.getSimpleName();
 
     @BindView(R.id.layout_parent)
@@ -166,27 +163,10 @@ public class ScanActivity extends AppBaseActivity {
             LogUtils.e(TAG, "========扫码获取的值为===========>" + result);
             if (!StringUtils.isEmpty(result)) {
                 LightningNodeUri nodeUri = LightningParser.parseNodeUri(result);
-                byte[] decodedBech32 = null;
-                try {
-                    decodedBech32 = Bech32.bech32Decode(result, false).second;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (result.startsWith("lightning:") || result.contains("obort")) { //支付发票
-                    ScanResultEvent event = new ScanResultEvent();
-                    event.setCode(scanCode);
-                    event.setType("payInvoice");
-                    event.setData(result);
-                    EventBus.getDefault().post(event);
+                if (nodeUri != null) { //开通通道
+                    Wallet.getInstance().broadcastScanChannelUpdated(result);
                     finish();
-                } else if (nodeUri != null) { //开通通道
-                    ScanResultEvent event = new ScanResultEvent();
-                    event.setCode(scanCode);
-                    event.setType("openChannel");
-                    event.setData(result);
-                    EventBus.getDefault().post(event);
-                    finish();
-                } else if (decodedBech32 != null) { //Bech32地址
+                } else {
                     ToastUtils.showToast(mContext, "Please scan the correct QR code");
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -194,13 +174,6 @@ public class ScanActivity extends AppBaseActivity {
                             mCaptureHelper.restartPreviewAndDecode();
                         }
                     }, 2500);
-                } else { //链上支付
-                    ScanResultEvent event = new ScanResultEvent();
-                    event.setCode(scanCode);
-                    event.setType("send");
-                    event.setData(result);
-                    EventBus.getDefault().post(event);
-                    finish();
                 }
             } else {
                 ToastUtils.showToast(mContext, "Please scan the correct QR code");

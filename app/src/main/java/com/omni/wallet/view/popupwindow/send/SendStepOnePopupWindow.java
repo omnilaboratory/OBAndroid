@@ -30,7 +30,8 @@ import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.ui.activity.ScanActivity;
+import com.omni.wallet.ui.activity.ScanSendActivity;
+import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.SendSuccessDialog;
 import com.omni.wallet.view.popupwindow.SelectAssetPopupWindow;
@@ -48,7 +49,7 @@ import obdmobile.Obdmobile;
 /**
  * SendStepOne的弹窗
  */
-public class SendStepOnePopupWindow {
+public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
     private static final String TAG = SendStepOnePopupWindow.class.getSimpleName();
 
     private Context mContext;
@@ -80,6 +81,8 @@ public class SendStepOnePopupWindow {
         if (mBasePopWindow == null) {
             mView = view;
             selectAddress = payAddr;
+            Wallet.getInstance().registerScanSendListener(this);
+
             mBasePopWindow = new BasePopWindow(mContext);
             rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_send_stepone);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
@@ -177,8 +180,8 @@ public class SendStepOnePopupWindow {
                 PermissionUtils.launchCamera((Activity) mContext, new PermissionUtils.PermissionCallback() {
                     @Override
                     public void onRequestPermissionSuccess() {
-                        mBasePopWindow.dismiss();
-                        Intent intent = new Intent(mContext, ScanActivity.class);
+//                        mBasePopWindow.dismiss();
+                        Intent intent = new Intent(mContext, ScanSendActivity.class);
                         mContext.startActivity(intent);
                     }
 
@@ -766,7 +769,16 @@ public class SendStepOnePopupWindow {
         });
     }
 
+    @Override
+    public void onScanSendUpdated(String result) {
+        rootView.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
+        rootView.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
+        selectAddress = result;
+        showStepTwo(rootView);
+    }
+
     public void release() {
+        Wallet.getInstance().unregisterScanSendListener(this);
         if (mBasePopWindow != null) {
             mBasePopWindow.dismiss();
             mBasePopWindow = null;

@@ -127,6 +127,16 @@
             android:name=".ui.activity.SearchActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
+        <!-- ScanQRCode Channel页面 -->
+        <activity
+            android:name=".ui.activity.ScanChannelActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <!-- ScanQRCode Send页面 -->
+        <activity
+            android:name=".ui.activity.ScanSendActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
