@@ -169,7 +169,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
     public void clickForward() {
         String seedsString ="";
         for (int i = 0; i<list.size();i++){
-            seedsString = seedsString + list.get(i).getText() + "";
+            seedsString = seedsString + list.get(i).getText() + " ";
         }
         /**
          * 使用SharedPreferences 对象，在生成seeds时候将seeds备份到本地文件
