@@ -1,7 +1,7 @@
 # OBAndroid
 
 
-OBAndroid is an [OmniBOLT](https://github.com/omnilaboratory/obd) Lightning wallet for android devices. It provides a platform for simple, instantaneous Bitcoin/Omnilayer asset payments. OBAndroid is now in developer beta, and will be in public beta in Nov/Dec 2022, available on Android only.  
+OBAndroid is a self-custodial [OmniBOLT](https://github.com/omnilaboratory/obd) Lightning wallet for android devices. It provides a platform for simple, instantaneous Bitcoin/Omnilayer asset payments. OBAndroid is now in developer beta, and will be in public beta in Nov/Dec 2022, available on Android only.  
 
 <p align="center">
   <img width="500" alt="obwallet screenshots" src="https://github.com/omnilaboratory/obd/blob/master/docs/prototype/obwalletscreenshots.png">
@@ -9,7 +9,8 @@ OBAndroid is an [OmniBOLT](https://github.com/omnilaboratory/obd) Lightning wall
 
 ## Features
 
-- [x] obd-lnd on Android and cloud
+- [x] Self-custodial
+- [x] obd-lnd on Android
 - [x] Mainnet, testnet, regtest
 - [x] Bitcoin/Omnilayer wallet(layer 1): store, pay, receive, backup, restore
 - [x] Bitcoin lightning payment(layer 2)  
