@@ -53,10 +53,12 @@ public class SendStepOnePopupWindow {
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
+    TextView assetsBalanceTv;
     private TextView sendFeeTv;
     private List<LightningOuterClass.Transaction> mData = new ArrayList<>();
     private MyAdapter mAdapter;
     View mView;
+    View rootView;
     String selectAddress;
     int time = 1;
     long feeStr;
@@ -79,13 +81,12 @@ public class SendStepOnePopupWindow {
             mView = view;
             selectAddress = payAddr;
             mBasePopWindow = new BasePopWindow(mContext);
-            final View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_send_stepone);
+            rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_send_stepone);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
             mLoadingDialog = new LoadingDialog(mContext);
-            fetchWalletBalance();
             if (!StringUtils.isEmpty(payAddr)) {
                 mBasePopWindow.getContentView().findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
                 mBasePopWindow.getContentView().findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
@@ -206,7 +207,7 @@ public class SendStepOnePopupWindow {
         ImageView assetTypeIv = view.findViewById(R.id.iv_asset_type);
         TextView assetTypeTv = view.findViewById(R.id.tv_asset_type);
         TextView amountTypeTv = view.findViewById(R.id.tv_amount_type);
-        TextView assetsBalanceTv = view.findViewById(R.id.tv_asset_balance);
+        assetsBalanceTv = view.findViewById(R.id.tv_asset_balance);
         if (assetId == 0) {
             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeTv.setText("BTC");
@@ -216,10 +217,10 @@ public class SendStepOnePopupWindow {
             assetTypeTv.setText("USDT");
             amountTypeTv.setText("USDT");
         }
-        assetsBalanceTv.setText(assetBalanceMax);
         sendFeeTv = view.findViewById(R.id.tv_send_fee);
         TextView sendFeeExchangeTv = view.findViewById(R.id.tv_send_fee_exchange);
         sendFeeExchangeTv.setText("0");
+        fetchWalletBalance();
         LinearLayout assetLayout = view.findViewById(R.id.layout_asset);
         assetLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -674,6 +675,7 @@ public class SendStepOnePopupWindow {
                     } else if (item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
                         selectAddress = item.getDestAddresses(0);
                     }
+                    showStepTwo(rootView);
                 }
             });
             if (item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext))) {
@@ -750,7 +752,13 @@ public class SendStepOnePopupWindow {
                 try {
                     LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
-                    assetBalanceMax = resp.getConfirmedBalance() + "";
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            assetBalanceMax = resp.getConfirmedBalance() + "";
+                            assetsBalanceTv.setText(assetBalanceMax);
+                        }
+                    });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }

@@ -16,6 +16,7 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StatusBarUtil;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.lightning.LightningNodeUri;
 import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.thirdsupport.zxing.CaptureHelper;
@@ -23,9 +24,8 @@ import com.omni.wallet.thirdsupport.zxing.OnCaptureCallback;
 import com.omni.wallet.thirdsupport.zxing.ViewfinderView;
 import com.omni.wallet.thirdsupport.zxing.camera.CameraConfig;
 import com.omni.wallet.utils.Bech32;
-import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
-import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
-import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -56,15 +56,12 @@ public class ScanActivity extends AppBaseActivity {
     private CaptureHelper mCaptureHelper;
 
 
-    public static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";
-    public static final String KEY_WALLET_ADDRESS = "walletAddressKey";
-    long balanceAmount;
-    String walletAddress;
+    public static final String KEY_SCAN_CODE = "balanceAmountKey";
+    int scanCode;
 
     @Override
     protected void getBundleData(Bundle bundle) {
-        balanceAmount = bundle.getLong(KEY_BALANCE_AMOUNT);
-        walletAddress = bundle.getString(KEY_WALLET_ADDRESS);
+        scanCode = bundle.getInt(KEY_SCAN_CODE);
     }
 
     @Override
@@ -176,16 +173,28 @@ public class ScanActivity extends AppBaseActivity {
                     e.printStackTrace();
                 }
                 if (result.startsWith("lightning:") || result.contains("obort")) { //支付发票
-                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, walletAddress, 2147483651L, result);
+                    ScanResultEvent event = new ScanResultEvent();
+                    event.setCode(scanCode);
+                    event.setType("payInvoice");
+                    event.setData(result);
+                    EventBus.getDefault().post(event);
+                    finish();
                 } else if (nodeUri != null) { //开通通道
-                    CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-                    mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, result);
+                    ScanResultEvent event = new ScanResultEvent();
+                    event.setCode(scanCode);
+                    event.setType("openChannel");
+                    event.setData(result);
+                    EventBus.getDefault().post(event);
+                    finish();
                 } else if (decodedBech32 != null) { //Bech32地址
                     ToastUtils.showToast(mContext, "Please scan the correct QR code");
                 } else { //链上支付
-                    SendStepOnePopupWindow mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
-                    mSendStepOnePopupWindow.show(mParentLayout, result);
+                    ScanResultEvent event = new ScanResultEvent();
+                    event.setCode(scanCode);
+                    event.setType("send");
+                    event.setData(result);
+                    EventBus.getDefault().post(event);
+                    finish();
                 }
             } else {
                 ToastUtils.showToast(mContext, "Please scan the correct QR code");

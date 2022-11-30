@@ -51,6 +51,7 @@ public class CreateChannelStepOnePopupWindow {
     private Context mContext;
     private BasePopWindow mBasePopWindow;
     TextView localEdit;
+    TextView channelAmountTv;
     TextView channelFeeTv;
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetUnitPopupWindow mSelectAssetUnitPopupWindow;
@@ -82,7 +83,6 @@ public class CreateChannelStepOnePopupWindow {
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
-            fetchWalletBalance();
             if (!StringUtils.isEmpty(pubKey)) {
                 rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
                 rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
@@ -173,14 +173,14 @@ public class CreateChannelStepOnePopupWindow {
         EditText vaildPubkeyEdit = rootView.findViewById(R.id.edit_vaild_pubkey);
         TextView nodeNameTv = rootView.findViewById(R.id.tv_node_name);
         EditText channelAmountEdit = rootView.findViewById(R.id.edit_channel_amount);
-        TextView channelAmountTv = rootView.findViewById(R.id.tv_channel_amount);
+        channelAmountTv = rootView.findViewById(R.id.tv_channel_amount);
         channelFeeTv = rootView.findViewById(R.id.tv_channel_fee);
         Button amountUnitButton = rootView.findViewById(R.id.btn_amount_unit);
         Button speedButton = rootView.findViewById(R.id.btn_speed);
 
         vaildPubkeyEdit.setText(nodePubkey);
         nodeNameTv.setText(Wallet.getInstance().getNodeAliasFromPubKey(nodePubkey, mContext));
-        channelAmountTv.setText(assetBalanceMax);
+        fetchWalletBalance();
         channelAmountEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -262,6 +262,7 @@ public class CreateChannelStepOnePopupWindow {
             public void onClick(View v) {
                 rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.VISIBLE);
                 rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.GONE);
+                showStepOne(rootView);
             }
         });
         /**
@@ -631,7 +632,13 @@ public class CreateChannelStepOnePopupWindow {
                 try {
                     LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
-                    assetBalanceMax = resp.getConfirmedBalance() + "";
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            assetBalanceMax = resp.getConfirmedBalance() + "";
+                            channelAmountTv.setText(assetBalanceMax);
+                        }
+                    });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }

@@ -30,10 +30,12 @@ import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
+import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.PaymentRequestUtil;
+import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
@@ -169,7 +171,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     CreateInvoiceStepOnePopupWindow mCreateInvoiceStepOnePopupWindow;
     TransactionsDetailsPopupWindow mTransactionsDetailsPopupWindow;
     TokenInfoPopupWindow mTokenInfoPopupWindow;
-
+    CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     @Override
     protected void getBundleData(Bundle bundle) {
         balanceAmount = bundle.getLong(KEY_BALANCE_AMOUNT);
@@ -657,7 +659,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
         PermissionUtils.launchCamera(this, new PermissionUtils.PermissionCallback() {
             @Override
             public void onRequestPermissionSuccess() {
-                switchActivity(ScanActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt(ScanActivity.KEY_SCAN_CODE, 2);
+                switchActivity(ScanActivity.class, bundle);
             }
 
             @Override
@@ -826,6 +830,26 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * 扫码后的消息通知监听
+     * Message notification monitoring after Scan qrcode
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onScanResultEvent(ScanResultEvent event) {
+        if (event.getCode() == 2) {
+            if (event.getType().equals("payInvoice")) {
+                mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
+                mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, event.getData());
+            } else if (event.getType().equals("openChannel")) {
+                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, event.getData());
+            } else if (event.getType().equals("send")) {
+                mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
+                mSendStepOnePopupWindow.show(mParentLayout, event.getData());
+            }
+        }
+    }
+
+    /**
      * 支付发票成功的消息通知监听
      * Message notification monitoring after pay invoice success
      */
@@ -861,6 +885,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
         }
         if (mSendStepOnePopupWindow != null) {
             mSendStepOnePopupWindow.release();
+        }
+        if (mCreateChannelStepOnePopupWindow != null) {
+            mCreateChannelStepOnePopupWindow.release();
         }
     }
 }

@@ -11,18 +11,23 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.entity.event.CloseChannelEvent;
+import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.popupwindow.ChannelDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
+import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
+import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,6 +39,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import lnrpc.LightningOuterClass;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 public class ChannelsActivity extends AppBaseActivity implements ChannelSelectListener, Wallet.ChannelsUpdatedSubscriptionListener {
     private static final String TAG = ChannelsActivity.class.getSimpleName();
@@ -59,6 +66,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     ChannelDetailsPopupWindow mChannelDetailsPopupWindow;
     SelectNodePopupWindow mSelectNodePopupWindow;
+    SendStepOnePopupWindow mSendStepOnePopupWindow;
 
     public static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";
     public static final String KEY_WALLET_ADDRESS = "walletAddressKey";
@@ -184,7 +192,9 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
         PermissionUtils.launchCamera(this, new PermissionUtils.PermissionCallback() {
             @Override
             public void onRequestPermissionSuccess() {
-                switchActivity(ScanActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt(ScanActivity.KEY_SCAN_CODE, 3);
+                switchActivity(ScanActivity.class, bundle);
             }
 
             @Override
@@ -251,6 +261,53 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     }
 
     /**
+     * 扫码后的消息通知监听
+     * Message notification monitoring after Scan qrcode
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onScanResultEvent(ScanResultEvent event) {
+        if (event.getCode() == 3) {
+            if (event.getType().equals("payInvoice")) {
+                LightningOuterClass.PayReqString decodePaymentRequest = LightningOuterClass.PayReqString.newBuilder()
+                        .setPayReq(UriUtil.removeURI(event.getData().toLowerCase()))
+                        .build();
+                Obdmobile.decodePayReq(decodePaymentRequest.toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        LogUtils.e(TAG, "------------------decodePaymentOnError------------------" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        if (bytes == null) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
+                                    LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
+                                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
+                                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, resp.getAssetId(), event.getData());
+                                } catch (InvalidProtocolBufferException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                });
+            } else if (event.getType().equals("openChannel")) {
+                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, event.getData());
+            } else if (event.getType().equals("send")) {
+                mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
+                mSendStepOnePopupWindow.show(mParentLayout, event.getData());
+            }
+        }
+    }
+
+    /**
      * 关闭通道后的消息通知监听
      * Message notification monitoring after open channel
      */
@@ -273,6 +330,9 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
         }
         if (mChannelDetailsPopupWindow != null) {
             mChannelDetailsPopupWindow.release();
+        }
+        if (mSendStepOnePopupWindow != null) {
+            mSendStepOnePopupWindow.release();
         }
     }
 }

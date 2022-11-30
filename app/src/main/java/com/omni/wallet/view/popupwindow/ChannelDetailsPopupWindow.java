@@ -330,5 +330,8 @@ public class ChannelDetailsPopupWindow {
             mBasePopWindow.dismiss();
             mBasePopWindow = null;
         }
+        if (mCreateChannelStepOnePopupWindow != null) {
+            mCreateChannelStepOnePopupWindow.release();
+        }
     }
 }

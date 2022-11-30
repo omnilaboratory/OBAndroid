@@ -21,17 +21,20 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.OpenChannelEvent;
+import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.entity.event.SelectAccountEvent;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.AccountManagePopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
+import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
@@ -614,8 +617,7 @@ public class AccountLightningActivity extends AppBaseActivity {
             @Override
             public void onRequestPermissionSuccess() {
                 Bundle bundle = new Bundle();
-                bundle.putLong(ScanActivity.KEY_BALANCE_AMOUNT, balanceAmount);
-                bundle.putString(ScanActivity.KEY_WALLET_ADDRESS, addressResp.getAddress());
+                bundle.putInt(ScanActivity.KEY_SCAN_CODE, 1);
                 switchActivity(ScanActivity.class, bundle);
             }
 
@@ -651,6 +653,52 @@ public class AccountLightningActivity extends AppBaseActivity {
         mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, addressResp.getAddress(), "");
     }
 
+    /**
+     * 扫码后的消息通知监听
+     * Message notification monitoring after Scan qrcode
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onScanResultEvent(ScanResultEvent event) {
+        if (event.getCode() == 1) {
+            if (event.getType().equals("payInvoice")) {
+                LightningOuterClass.PayReqString decodePaymentRequest = LightningOuterClass.PayReqString.newBuilder()
+                        .setPayReq(UriUtil.removeURI(event.getData().toLowerCase()))
+                        .build();
+                Obdmobile.decodePayReq(decodePaymentRequest.toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        LogUtils.e(TAG, "------------------decodePaymentOnError------------------" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        if (bytes == null) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
+                                    LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
+                                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
+                                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, resp.getAssetId(), event.getData());
+                                } catch (InvalidProtocolBufferException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                });
+            } else if (event.getType().equals("openChannel")) {
+                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, addressResp.getAddress(), event.getData());
+            } else if (event.getType().equals("send")) {
+                mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
+                mSendStepOnePopupWindow.show(mParentLayout, event.getData());
+            }
+        }
+    }
 
     /**
      * 选择钱包地址后的消息通知监听

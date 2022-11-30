@@ -242,6 +242,10 @@
     <string name="version">Version</string>
     <string name="backend">Backend</string>
     <string name="mode">Mode</string>
+    <string name="network_first_upper">Network</string>
+    <string name="rpchost">rpcHost</string>
+    <string name="ports">Ports</string>
+    <string name="reboot_upper">REBOOT</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

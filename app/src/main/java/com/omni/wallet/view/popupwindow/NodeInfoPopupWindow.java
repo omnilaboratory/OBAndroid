@@ -6,7 +6,6 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -14,6 +13,7 @@ import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CopyUtil;
 
 import lnrpc.LightningOuterClass;
@@ -32,7 +32,6 @@ public class NodeInfoPopupWindow {
     private Context mContext;
     private BasePopWindow mBasePopWindow;
     TextView nameTv;
-    TextView amountTv;
 
     public NodeInfoPopupWindow(Context context) {
         this.mContext = context;
@@ -48,16 +47,10 @@ public class NodeInfoPopupWindow {
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
             nameTv = rootView.findViewById(R.id.tv_node_name);
-            amountTv = rootView.findViewById(R.id.tv_node_amount);
+            TextView netWorkTv = rootView.findViewById(R.id.tv_node_network);
+            netWorkTv.setText(User.getInstance().getNetwork(mContext));
             getNodeInfo(pubKey);
 
-            RelativeLayout shareLayout = rootView.findViewById(R.id.layout_share);
-            rootView.findViewById(R.id.layout_parent).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    shareLayout.setVisibility(View.GONE);
-                }
-            });
             // 点击copy
             rootView.findViewById(R.id.layout_copy).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -72,29 +65,14 @@ public class NodeInfoPopupWindow {
                     mBasePopWindow.dismiss();
                 }
             });
-            // 点击share to
-            rootView.findViewById(R.id.layout_share_to).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    shareLayout.setVisibility(View.VISIBLE);
-                }
-            });
-            // 点击facebook
-            rootView.findViewById(R.id.iv_facebook_share).setOnClickListener(new View.OnClickListener() {
+            // 点击reboot
+            rootView.findViewById(R.id.layout_reboot).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
-                    shareLayout.setVisibility(View.GONE);
                 }
             });
-            // 点击twitter
-            rootView.findViewById(R.id.iv_twitter_share).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mBasePopWindow.dismiss();
-                    shareLayout.setVisibility(View.GONE);
-                }
-            });
+
             // 点击底部close
             rootView.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -131,7 +109,6 @@ public class NodeInfoPopupWindow {
                             LightningOuterClass.NodeInfo nodeInfo = LightningOuterClass.NodeInfo.parseFrom(bytes);
                             LogUtils.e(TAG, "------------------nodeInfoOnResponse-----------------" + nodeInfo);
                             nameTv.setText(StringUtils.cleanString(nodeInfo.getNode().getAlias()));
-                            amountTv.setText(nodeInfo.getTotalCapacity() + "");
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
                         }
