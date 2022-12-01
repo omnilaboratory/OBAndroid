@@ -39,6 +39,7 @@ import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
+import com.omni.wallet.view.popupwindow.createinvoice.CreateLuckyPacketPopupWindow;
 import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
 
@@ -169,9 +170,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
     PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow;
     SendStepOnePopupWindow mSendStepOnePopupWindow;
     CreateInvoiceStepOnePopupWindow mCreateInvoiceStepOnePopupWindow;
+    CreateLuckyPacketPopupWindow mCreateLuckyPacketPopupWindow;
     TransactionsDetailsPopupWindow mTransactionsDetailsPopupWindow;
     TokenInfoPopupWindow mTokenInfoPopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
+
     @Override
     protected void getBundleData(Bundle bundle) {
         balanceAmount = bundle.getLong(KEY_BALANCE_AMOUNT);
@@ -710,6 +713,17 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click lucky packet button
+     * 点击Create lucky packet按钮
+     */
+    @OnClick(R.id.layout_lucky_packet)
+    public void clickLuckyPacket() {
+        mCreateLuckyPacketPopupWindow = new CreateLuckyPacketPopupWindow(mContext);
+        mCreateLuckyPacketPopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
+    }
+
+
+    /**
      * click send button
      * 点击Send按钮
      */
@@ -885,6 +899,18 @@ public class BalanceDetailActivity extends AppBaseActivity {
         }
         if (mSendStepOnePopupWindow != null) {
             mSendStepOnePopupWindow.release();
+        }
+        if (mCreateInvoiceStepOnePopupWindow != null) {
+            mCreateInvoiceStepOnePopupWindow.release();
+        }
+        if (mCreateLuckyPacketPopupWindow != null) {
+            mCreateLuckyPacketPopupWindow.release();
+        }
+        if (mTransactionsDetailsPopupWindow != null) {
+            mTransactionsDetailsPopupWindow.release();
+        }
+        if (mTokenInfoPopupWindow != null) {
+            mTokenInfoPopupWindow.release();
         }
         if (mCreateChannelStepOnePopupWindow != null) {
             mCreateChannelStepOnePopupWindow.release();

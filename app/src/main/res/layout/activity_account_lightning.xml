@@ -243,7 +243,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/main_416"
-                android:layout_marginLeft="@dimen/main_10"
+                android:layout_marginLeft="@dimen/main_5"
                 android:layout_marginTop="@dimen/main_21"
                 android:background="@mipmap/img_rectangle_white_bg"
                 android:orientation="vertical">
@@ -251,8 +251,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_11"
-                    android:layout_marginTop="@dimen/main_10"
+                    android:layout_marginLeft="@dimen/main_24"
+                    android:layout_marginTop="@dimen/main_20"
                     android:letterSpacing="0.25"
                     android:text="@string/assets"
                     android:textColor="@color/color_4A92FF"
@@ -261,7 +261,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_10"
+                    android:layout_marginLeft="@dimen/main_24"
                     android:layout_marginRight="@dimen/main_40"
                     android:layout_marginTop="@dimen/main_10">
 
@@ -327,7 +327,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/main_40"
-                    android:layout_marginLeft="@dimen/main_10"
+                    android:layout_marginLeft="@dimen/main_24"
                     android:layout_marginRight="@dimen/main_40"
                     android:layout_marginTop="@dimen/main_10"
                     android:layout_weight="1"/>

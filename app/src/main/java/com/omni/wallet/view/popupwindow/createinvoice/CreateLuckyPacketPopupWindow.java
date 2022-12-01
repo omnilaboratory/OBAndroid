@@ -36,13 +36,13 @@ import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
 /**
- * 汉: 创建发票的步骤一弹窗
- * En: CreateInvoiceStepOnePopupWindow
+ * 汉: 创建红包的弹窗
+ * En: CreateLuckyPacketPopupWindow
  * author: guoyalei
- * date: 2022/10/9
+ * date: 2022/12/1
  */
-public class CreateInvoiceStepOnePopupWindow {
-    private static final String TAG = CreateInvoiceStepOnePopupWindow.class.getSimpleName();
+public class CreateLuckyPacketPopupWindow {
+    private static final String TAG = CreateLuckyPacketPopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
@@ -57,16 +57,17 @@ public class CreateInvoiceStepOnePopupWindow {
     String amountInput;
     String timeInput;
     String timeType;
+    String numberInput;
     String qrCodeUrl;
 
-    public CreateInvoiceStepOnePopupWindow(Context context) {
+    public CreateLuckyPacketPopupWindow(Context context) {
         this.mContext = context;
     }
 
     public void show(final View view, String address, long assetId, long balanceAccount) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
-            final View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_invoice_stepone);
+            final View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_lucky_packet);
             mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
@@ -117,7 +118,7 @@ public class CreateInvoiceStepOnePopupWindow {
         TextView amountUnitTv = rootView.findViewById(R.id.tv_amount_unit);
         Button timeButton = rootView.findViewById(R.id.btn_time);
         EditText amountTimeEdit = rootView.findViewById(R.id.edit_time);
-        EditText memoEdit = rootView.findViewById(R.id.edit_memo);
+        EditText numberEdit = rootView.findViewById(R.id.edit_number);
         if (mAssetId == 0) {
             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeTv.setText("BTC");
@@ -201,6 +202,7 @@ public class CreateInvoiceStepOnePopupWindow {
             public void onClick(View v) {
                 amountInput = amountEdit.getText().toString();
                 timeInput = amountTimeEdit.getText().toString();
+                numberInput = numberEdit.getText().toString();
                 timeType = timeButton.getText().toString();
                 if (StringUtils.isEmpty(amountInput)) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
@@ -215,6 +217,10 @@ public class CreateInvoiceStepOnePopupWindow {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
                     return;
                 }
+                if (StringUtils.isEmpty(numberInput)) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_number));
+                    return;
+                }
                 if (StringUtils.isEmpty(timeInput)) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
                     return;
@@ -222,7 +228,7 @@ public class CreateInvoiceStepOnePopupWindow {
                 LightningOuterClass.Invoice asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                         .setAssetId((int) mAssetId)
                         .setAmount(Long.parseLong(amountEdit.getText().toString()))
-                        .setMemo(memoEdit.getText().toString())
+                        .setMemo(numberEdit.getText().toString())
                         .setExpiry(Long.parseLong("86400")) // in seconds
                         .setPrivate(false)
                         .build();
@@ -233,8 +239,8 @@ public class CreateInvoiceStepOnePopupWindow {
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.GONE);
-                                rootView.findViewById(R.id.lv_create_invoice_failed).setVisibility(View.VISIBLE);
+                                rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
+                                rootView.findViewById(R.id.lv_lucky_packet_failed).setVisibility(View.VISIBLE);
                                 rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
                                 rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
                                 showStepFailed(rootView, e.getMessage());
@@ -255,8 +261,8 @@ public class CreateInvoiceStepOnePopupWindow {
                                 public void run() {
                                     EventBus.getDefault().post(new CreateInvoiceEvent());
                                     qrCodeUrl = UriUtil.generateLightningUri(resp.getPaymentRequest());
-                                    rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.lv_create_invoice_success).setVisibility(View.VISIBLE);
+                                    rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
+                                    rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.VISIBLE);
                                     rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
                                     rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
                                     showStepSuccess(rootView);
@@ -277,6 +283,7 @@ public class CreateInvoiceStepOnePopupWindow {
         TextView assetTypeSuccessTv = rootView.findViewById(R.id.tv_asset_type_success);
         TextView amountSuccessTv = rootView.findViewById(R.id.tv_amount_success);
         TextView amountUnitSuccessTv = rootView.findViewById(R.id.tv_amount_unit_success);
+        TextView numberSuccessTv = rootView.findViewById(R.id.tv_number_success);
         TextView timeSuccessTv = rootView.findViewById(R.id.tv_time_success);
         TextView timeUnitSuccessTv = rootView.findViewById(R.id.tv_time_unit_success);
         ImageView qrCodeIv = rootView.findViewById(R.id.iv_success_qrcode);
@@ -292,6 +299,7 @@ public class CreateInvoiceStepOnePopupWindow {
             amountUnitSuccessTv.setText("USDT");
         }
         amountSuccessTv.setText(amountInput);
+        numberSuccessTv.setText(numberInput);
         timeSuccessTv.setText(timeInput);
         timeUnitSuccessTv.setText(timeType);
         paymentSuccessTv.setText(qrCodeUrl);
@@ -317,8 +325,8 @@ public class CreateInvoiceStepOnePopupWindow {
         rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.lv_create_invoice_success).setVisibility(View.GONE);
+                rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.GONE);
                 rootView.findViewById(R.id.layout_cancel).setVisibility(View.VISIBLE);
                 rootView.findViewById(R.id.layout_close).setVisibility(View.GONE);
                 showStepOne(rootView);
@@ -373,6 +381,7 @@ public class CreateInvoiceStepOnePopupWindow {
         TextView assetTypeFailedTv = rootView.findViewById(R.id.tv_asset_type_failed);
         TextView amountFailedTv = rootView.findViewById(R.id.tv_amount_failed);
         TextView amountUnitFailedTv = rootView.findViewById(R.id.tv_amount_unit_failed);
+        TextView numberFailedTv = rootView.findViewById(R.id.tv_number_failed);
         TextView timeFailedTv = rootView.findViewById(R.id.tv_time_failed);
         TextView timeUnitFailedTv = rootView.findViewById(R.id.tv_time_unit_failed);
         if (mAssetId == 0) {
@@ -385,6 +394,7 @@ public class CreateInvoiceStepOnePopupWindow {
             amountUnitFailedTv.setText("USDT");
         }
         amountFailedTv.setText(amountInput);
+        numberFailedTv.setText(numberInput);
         timeFailedTv.setText(timeInput);
         timeUnitFailedTv.setText(timeType);
         TextView messageFailedTv = rootView.findViewById(R.id.tv_failed_message);
@@ -396,8 +406,8 @@ public class CreateInvoiceStepOnePopupWindow {
         rootView.findViewById(R.id.layout_back_to_one).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.lv_create_invoice_failed).setVisibility(View.GONE);
+                rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.lv_lucky_packet_failed).setVisibility(View.GONE);
                 rootView.findViewById(R.id.layout_cancel).setVisibility(View.VISIBLE);
                 rootView.findViewById(R.id.layout_close).setVisibility(View.GONE);
                 showStepOne(rootView);

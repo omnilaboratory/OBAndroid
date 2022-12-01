@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -55,6 +58,8 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     TextView mBalanceAmountTv;
     @BindView(R.id.tv_wallet_address)
     TextView mWalletAddressTv;
+    @BindView(R.id.edit_search)
+    EditText mSearchEdit;
 
     @BindView(R.id.recycler_channels_list)
     public RecyclerView mRecyclerView;// 通道列表的RecyclerView
@@ -74,6 +79,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     long balanceAmount;
     String walletAddress;
     private String pubkey;
+    private String mCurrentSearchString = "";
 
     @Override
     protected void getBundleData(Bundle bundle) {
@@ -101,6 +107,25 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     protected void initView() {
         mBalanceAmountTv.setText("My account " + balanceAmount);
         mWalletAddressTv.setText(walletAddress);
+        mSearchEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mCurrentSearchString = s.toString();
+                final List<ChannelListItem> filteredChannelList = filter(mChannelItems, s.toString());
+                mAdapter.replaceAll(filteredChannelList);
+                mRecyclerView.scrollToPosition(0);
+            }
+        });
         Wallet.getInstance().registerChannelsUpdatedSubscriptionListener(this);
         initRecyclerView();
         Wallet.getInstance().fetchChannelsFromLND();
@@ -166,7 +191,13 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
         }
         // Show offline channels at the bottom
         mChannelItems.addAll(offlineChannels);
-        mAdapter.replaceAll(mChannelItems);
+        // Update the view
+        if (mCurrentSearchString.isEmpty()) {
+            mAdapter.replaceAll(mChannelItems);
+        } else {
+            final List<ChannelListItem> filteredChannelList = filter(mChannelItems, mCurrentSearchString);
+            mAdapter.replaceAll(filteredChannelList);
+        }
     }
 
 
@@ -181,6 +212,46 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     @Override
     public void onChannelsUpdated() {
         runOnUiThread(this::updateChannelsDisplayList);
+    }
+
+    private List<ChannelListItem> filter(List<ChannelListItem> items, String query) {
+        final String lowerCaseQuery = query.toLowerCase();
+
+        final List<ChannelListItem> filteredItemList = new ArrayList<>();
+        for (ChannelListItem item : items) {
+            String text;
+            String pubkey;
+
+            switch (item.getType()) {
+                case ChannelListItem.TYPE_OPEN_CHANNEL:
+                    pubkey = ((OpenChannelItem) item).getChannel().getRemotePubkey();
+                    text = pubkey + Wallet.getInstance().getNodeAliasFromPubKey(pubkey, ChannelsActivity.this);
+                    break;
+                case ChannelListItem.TYPE_PENDING_OPEN_CHANNEL:
+                    pubkey = ((PendingOpenChannelItem) item).getChannel().getChannel().getRemoteNodePub();
+                    text = pubkey + Wallet.getInstance().getNodeAliasFromPubKey(pubkey, ChannelsActivity.this);
+                    break;
+                case ChannelListItem.TYPE_PENDING_CLOSING_CHANNEL:
+                    pubkey = ((PendingClosingChannelItem) item).getChannel().getChannel().getRemoteNodePub();
+                    text = pubkey + Wallet.getInstance().getNodeAliasFromPubKey(pubkey, ChannelsActivity.this);
+                    break;
+                case ChannelListItem.TYPE_PENDING_FORCE_CLOSING_CHANNEL:
+                    pubkey = ((PendingForceClosingChannelItem) item).getChannel().getChannel().getRemoteNodePub();
+                    text = pubkey + Wallet.getInstance().getNodeAliasFromPubKey(pubkey, ChannelsActivity.this);
+                    break;
+                case ChannelListItem.TYPE_WAITING_CLOSE_CHANNEL:
+                    pubkey = ((WaitingCloseChannelItem) item).getChannel().getChannel().getRemoteNodePub();
+                    text = pubkey + Wallet.getInstance().getNodeAliasFromPubKey(pubkey, ChannelsActivity.this);
+                    break;
+                default:
+                    text = "";
+            }
+
+            if (text.toLowerCase().contains(lowerCaseQuery)) {
+                filteredItemList.add(item);
+            }
+        }
+        return filteredItemList;
     }
 
     /**

@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/lv_create_invoice_step_one"
+            android:id="@+id/lv_lucky_packet_step_one"
             android:layout_width="@dimen/main_320"
             android:layout_height="@dimen/main_540"
             android:background="@drawable/bg_white_rectangle_round_20"
@@ -25,16 +25,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/main_20"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/main_25"
                 android:letterSpacing="0.25"
-                android:text="@string/create_invoice"
+                android:text="@string/create_lucky_packet_upper"
                 android:textColor="@color/color_black"
                 android:textSize="@dimen/text_18"/>
 
             <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/main_20"
+                android:layout_marginTop="@dimen/main_15"
                 android:layout_weight="10000">
 
                 <LinearLayout
@@ -86,16 +87,38 @@
                             android:layout_marginBottom="@dimen/main_15"
                             android:layout_marginLeft="@dimen/main_40"
                             android:layout_marginRight="@dimen/main_40"
-                            android:layout_marginTop="@dimen/main_15"
+                            android:layout_marginTop="@dimen/main_5"
                             android:text="02e56dkcasdasdasdasdasdasddwqqffqwdqwdqxcs"
                             android:textColor="@color/color_black"
+                            android:textSize="@dimen/text_16"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/main_29"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="@dimen/main_24"
+                            android:layout_height="@dimen/main_24"
+                            android:src="@mipmap/icon_lucky_packet_red"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/main_17"
+                            android:text="@string/send_gifts_of_money"
+                            android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16"/>
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/main_0.2"
-                        android:layout_marginTop="@dimen/main_17"
+                        android:layout_marginTop="@dimen/main_9"
                         android:background="@color/color_black"/>
 
                     <RelativeLayout
@@ -103,7 +126,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_20"
                         android:layout_marginRight="@dimen/main_20"
-                        android:layout_marginTop="@dimen/main_10">
+                        android:layout_marginTop="@dimen/main_5">
 
                         <TextView
                             android:layout_marginTop="@dimen/main_10"
@@ -359,6 +382,37 @@
                         android:layout_marginRight="@dimen/main_20"
                         android:layout_marginTop="@dimen/main_20">
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/number_first_upper"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_16"/>
+
+                        <EditText
+                            android:id="@+id/edit_number"
+                            android:layout_width="@dimen/main_81"
+                            android:layout_height="@dimen/main_25"
+                            android:paddingRight="@dimen/main_10"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center_vertical|right"
+                            android:inputType="number"
+                            android:text="10"
+                            android:textColorHint="@color/color_80p_transparent"
+                            android:background="@drawable/bg_black_rectangle_round_0_thin"
+                            android:textColor="@color/color_80p_transparent"
+                            android:textSize="@dimen/text_16"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_20"
+                        android:layout_marginRight="@dimen/main_20"
+                        android:layout_marginTop="@dimen/main_15">
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -414,34 +468,6 @@
                                 android:textColor="@color/color_80p_transparent"
                                 android:textSize="@dimen/text_16"/>
                         </RelativeLayout>
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/main_20"
-                        android:layout_marginRight="@dimen/main_20"
-                        android:layout_marginTop="@dimen/main_10">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="@string/memo"
-                            android:textColor="@color/color_99_transparent"
-                            android:textSize="@dimen/text_16"/>
-
-                        <EditText
-                            android:id="@+id/edit_memo"
-                            android:layout_width="@dimen/main_179"
-                            android:layout_height="@dimen/main_32"
-                            android:background="@drawable/bg_black_rectangle_round_0_thin"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:gravity="center_vertical|right"
-                            android:singleLine="true"
-                            android:textColor="@color/color_99_transparent"
-                            android:textSize="@dimen/text_16"/>
                     </RelativeLayout>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
@@ -502,7 +528,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/lv_create_invoice_failed"
+            android:id="@+id/lv_lucky_packet_failed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -526,7 +552,7 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="@dimen/main_25"
                         android:letterSpacing="0.25"
-                        android:text="@string/omnibolt_11_invoice"
+                        android:text="@string/lucky_packet_upper"
                         android:textColor="@color/color_black"
                         android:textSize="@dimen/text_18" />
 
@@ -534,7 +560,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/main_25"
+                        android:layout_marginTop="@dimen/main_15"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -557,7 +583,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_60"
                         android:layout_marginRight="@dimen/main_60"
-                        android:layout_marginTop="@dimen/main_11">
+                        android:layout_marginTop="@dimen/main_10">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -641,6 +667,39 @@
                         android:layout_marginRight="@dimen/main_60"
                         android:layout_marginTop="@dimen/main_10">
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/number_first_upper"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_16"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_number_failed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="10"
+                                android:textColor="@color/color_99_transparent"
+                                android:textSize="@dimen/text_16"/>
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_60"
+                        android:layout_marginRight="@dimen/main_60"
+                        android:layout_marginTop="@dimen/main_10">
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -693,7 +752,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/main_0.2"
-                        android:layout_marginTop="@dimen/main_40"
+                        android:layout_marginTop="@dimen/main_7"
                         android:background="@color/color_black"/>
 
                     <TextView
@@ -766,7 +825,7 @@
         </LinearLayout>
 
         <RelativeLayout
-            android:id="@+id/lv_create_invoice_success"
+            android:id="@+id/lv_lucky_packet_success"
             android:layout_width="@dimen/main_320"
             android:layout_height="@dimen/main_540"
             android:layout_centerInParent="true"
@@ -786,7 +845,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/main_25"
                     android:letterSpacing="0.25"
-                    android:text="@string/omnibolt_11_invoice"
+                    android:text="@string/lucky_packet_upper"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_18" />
 
@@ -794,7 +853,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/main_30"
+                    android:layout_marginTop="@dimen/main_15"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -814,7 +873,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_7"
-                        android:text="@string/invoice_created"
+                        android:text="@string/created_first_upper"
                         android:textColor="@color/color_4A92FF"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>
@@ -908,6 +967,39 @@
                     android:layout_marginRight="@dimen/main_60"
                     android:layout_marginTop="@dimen/main_10">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/number_first_upper"
+                        android:textColor="@color/color_99_transparent"
+                        android:textSize="@dimen/text_16"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_number_success"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="10"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_16"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_60"
+                    android:layout_marginRight="@dimen/main_60"
+                    android:layout_marginTop="@dimen/main_10">
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -960,7 +1052,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/main_0.2"
-                    android:layout_marginTop="@dimen/main_7"
+                    android:layout_marginTop="@dimen/main_5"
                     android:background="@color/color_black"/>
 
                 <ImageView
@@ -968,7 +1060,7 @@
                     android:layout_width="@dimen/main_100"
                     android:layout_height="@dimen/main_100"
                     android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/main_15"
+                    android:layout_marginTop="@dimen/main_8"
                     android:src="@mipmap/icon_qr_code_default"/>
 
                 <RelativeLayout

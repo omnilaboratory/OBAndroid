@@ -214,6 +214,7 @@
     <string name="maximum_input">Maximum input 16777215</string>
     <string name="credit_is_running_low">Sorry, your credit is running low</string>
     <string name="enter_the_time">Please enter the time</string>
+    <string name="enter_the_number">Please enter the number</string>
     <string name="error_get_peers">Could not fetch peers list.</string>
     <string name="error_get_peers_timeout">Peers could not be fetched within deadline.</string>
     <string name="error_connect_peer">Could not establish connection to peer node.</string>
@@ -247,6 +248,14 @@
     <string name="rpchost">rpcHost</string>
     <string name="ports">Ports</string>
     <string name="reboot_upper">REBOOT</string>
+    <string name="invoice_first_upper">Invoice</string>
+    <string name="lucky_first_upper">Lucky</string>
+    <string name="create_first_upper">Create</string>
+    <string name="create_lucky_packet_upper">CREATE\nLUCKY PACKET</string>
+    <string name="send_gifts_of_money">Send gifts of money</string>
+    <string name="number_first_upper">Number</string>
+    <string name="lucky_packet_upper">LUCKY PACKET</string>
+    <string name="created_first_upper">Created</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

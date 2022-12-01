@@ -79,7 +79,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/main_10"
+        android:layout_marginLeft="@dimen/main_5"
         android:layout_marginTop="@dimen/main_20"
         android:background="@mipmap/img_channels_bg"
         android:orientation="vertical">
@@ -87,9 +87,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/main_20"
+            android:layout_marginLeft="@dimen/main_29"
             android:layout_marginRight="@dimen/main_35"
-            android:layout_marginTop="@dimen/main_20">
+            android:layout_marginTop="@dimen/main_25">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -143,15 +143,15 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/main_1"
-            android:layout_marginLeft="@dimen/main_5"
-            android:layout_marginRight="@dimen/main_19"
+            android:layout_marginLeft="@dimen/main_13.5"
+            android:layout_marginRight="@dimen/main_18"
             android:layout_marginTop="@dimen/main_10"
             android:background="@color/color_80p_transparent"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/main_15"
+            android:layout_marginLeft="@dimen/main_25"
             android:layout_marginRight="@dimen/main_40"
             android:layout_marginTop="@dimen/main_20">
 
@@ -164,6 +164,7 @@
                 android:orientation="horizontal">
 
                 <EditText
+                    android:id="@+id/edit_search"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/main_2"
@@ -208,8 +209,8 @@
             android:id="@+id/recycler_channels_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/main_22"
-            android:layout_marginRight="@dimen/main_35"
+            android:layout_marginLeft="@dimen/main_31"
+            android:layout_marginRight="@dimen/main_40"
             android:layout_marginTop="@dimen/main_25"/>
     </LinearLayout>
 </LinearLayout>
