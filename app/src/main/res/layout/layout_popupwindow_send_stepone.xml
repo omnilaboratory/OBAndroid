@@ -32,18 +32,21 @@
                 android:textColor="@color/color_black"
                 android:textSize="@dimen/text_18" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/main_32"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/main_20"
                 android:layout_marginTop="@dimen/main_25"
-                android:layout_marginRight="@dimen/main_20">
+                android:layout_marginRight="@dimen/main_20"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
                 <EditText
-                    android:layout_width="@dimen/main_238"
+                    android:id="@+id/edit_search"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/main_28"
-                    android:layout_centerVertical="true"
+                    android:layout_weight="1000"
                     android:background="@drawable/bg_black_rectangle_round_0_thin"
                     android:drawableLeft="@mipmap/icon_search_black"
                     android:drawablePadding="@dimen/main_10"
@@ -61,7 +64,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:src="@mipmap/icon_scan_gray" />
-            </RelativeLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"

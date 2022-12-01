@@ -1,6 +1,7 @@
 package com.omni.wallet.view.popupwindow;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
@@ -12,9 +13,12 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.ui.activity.UnlockActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -32,6 +36,7 @@ public class NodeInfoPopupWindow {
     private Context mContext;
     private BasePopWindow mBasePopWindow;
     TextView nameTv;
+    LoadingDialog mLoadingDialog;
 
     public NodeInfoPopupWindow(Context context) {
         this.mContext = context;
@@ -46,6 +51,7 @@ public class NodeInfoPopupWindow {
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
+            mLoadingDialog = new LoadingDialog(mContext);
             nameTv = rootView.findViewById(R.id.tv_node_name);
             TextView netWorkTv = rootView.findViewById(R.id.tv_node_network);
             netWorkTv.setText(User.getInstance().getNetwork(mContext));
@@ -69,7 +75,43 @@ public class NodeInfoPopupWindow {
             rootView.findViewById(R.id.layout_reboot).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mBasePopWindow.dismiss();
+                    mLoadingDialog.show();
+                    LightningOuterClass.DisconnectPeerRequest disconnectPeerRequest = LightningOuterClass.DisconnectPeerRequest.newBuilder()
+                            .setPubKey(pubKey)
+                            .build();
+                    Obdmobile.disconnectPeer(disconnectPeerRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------disconnectPeerOnError------------------" + e.getMessage());
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mBasePopWindow.dismiss();
+                                    mLoadingDialog.dismiss();
+                                    ToastUtils.showToast(mContext, e.getMessage());
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            try {
+                                LightningOuterClass.DisconnectPeerResponse resp = LightningOuterClass.DisconnectPeerResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------disconnectPeerOnResponse-----------------" + resp);
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mBasePopWindow.dismiss();
+                                        mLoadingDialog.dismiss();
+                                        Intent intent = new Intent(mContext, UnlockActivity.class);
+                                        mContext.startActivity(intent);
+                                    }
+                                });
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                 }
             });
 

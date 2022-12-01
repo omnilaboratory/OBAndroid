@@ -54,9 +54,13 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
+    EditText searchEdit;
+    TextView recentsAddressTv;
+    RecyclerView mRecyclerView;
     TextView assetsBalanceTv;
     private TextView sendFeeTv;
     private List<LightningOuterClass.Transaction> mData = new ArrayList<>();
+    private List<LightningOuterClass.Transaction> mDataSearch = new ArrayList<>();
     private MyAdapter mAdapter;
     View mView;
     View rootView;
@@ -118,11 +122,8 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
      * send step one
      */
     private void showStepOne(View view) {
-        /**
-         * @description: RecyclerView for send list
-         * @描述： send list 的 RecyclerView
-         */
-        TextView recentsAddressTv = view.findViewById(R.id.tv_recents_address);
+        searchEdit = view.findViewById(R.id.edit_search);
+        recentsAddressTv = view.findViewById(R.id.tv_recents_address);
         recentsAddressTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,10 +133,82 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                 showStepTwo(view);
             }
         });
-        RecyclerView mRecyclerView = view.findViewById(R.id.recycler_send_list);
+        /**
+         * @description: RecyclerView for send list
+         * @描述： send list 的 RecyclerView
+         */
+        mRecyclerView = view.findViewById(R.id.recycler_send_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
+        getTransactions();
+        // Search
+        searchEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mDataSearch.clear();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String searchStr = String.valueOf(s);
+                if (s.length() > 0) {
+                    for (LightningOuterClass.Transaction transaction : mData) {
+                        if (!StringUtils.isEmpty(transaction.getDestAddresses(0)) || !StringUtils.isEmpty(transaction.getDestAddresses(1))) {
+                            if ((transaction.getDestAddresses(0).contains(searchStr)) || (transaction.getDestAddresses(1).contains(searchStr))) {
+                                mDataSearch.add(transaction);
+                            }
+                        }
+                    }
+                    mAdapter = new MyAdapter(mContext, mDataSearch, R.layout.layout_item_send_list);
+                    mRecyclerView.setAdapter(mAdapter);
+                    mAdapter.notifyDataSetChanged();
+                } else if (s == null || s.length() == 0) {
+                    mDataSearch.clear();
+                    getTransactions();
+                }
+            }
+        });
+
+        /**
+         * @description: click scan icon
+         * @描述： 点击scan
+         */
+        view.findViewById(R.id.iv_scan).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PermissionUtils.launchCamera((Activity) mContext, new PermissionUtils.PermissionCallback() {
+                    @Override
+                    public void onRequestPermissionSuccess() {
+//                        mBasePopWindow.dismiss();
+                        Intent intent = new Intent(mContext, ScanSendActivity.class);
+                        mContext.startActivity(intent);
+                    }
+
+                    @Override
+                    public void onRequestPermissionFailure(List<String> permissions) {
+                        LogUtils.e(TAG, "扫码页面摄像头权限拒绝");
+                    }
+
+                    @Override
+                    public void onRequestPermissionFailureWithAskNeverAgain(List<String> permissions) {
+                        LogUtils.e(TAG, "扫码页面摄像头权限拒绝并且勾选不再提示");
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * @description: getTransactions
+     * @描述： 获取链上交易记录
+     */
+    private void getTransactions() {
         Obdmobile.getTransactions(LightningOuterClass.GetTransactionsRequest.newBuilder().build().toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
@@ -168,33 +241,6 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
-            }
-        });
-        /**
-         * @description: click scan icon
-         * @描述： 点击scan
-         */
-        view.findViewById(R.id.iv_scan).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PermissionUtils.launchCamera((Activity) mContext, new PermissionUtils.PermissionCallback() {
-                    @Override
-                    public void onRequestPermissionSuccess() {
-//                        mBasePopWindow.dismiss();
-                        Intent intent = new Intent(mContext, ScanSendActivity.class);
-                        mContext.startActivity(intent);
-                    }
-
-                    @Override
-                    public void onRequestPermissionFailure(List<String> permissions) {
-                        LogUtils.e(TAG, "扫码页面摄像头权限拒绝");
-                    }
-
-                    @Override
-                    public void onRequestPermissionFailureWithAskNeverAgain(List<String> permissions) {
-                        LogUtils.e(TAG, "扫码页面摄像头权限拒绝并且勾选不再提示");
-                    }
-                });
             }
         });
     }
@@ -321,7 +367,8 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
             public void onClick(View v) {
                 view.findViewById(R.id.lv_step_one_content).setVisibility(View.VISIBLE);
                 view.findViewById(R.id.lv_step_two_content).setVisibility(View.GONE);
-                showStepOne(view);
+//                searchEdit.setText("");
+//                showStepOne(view);
             }
         });
         /**

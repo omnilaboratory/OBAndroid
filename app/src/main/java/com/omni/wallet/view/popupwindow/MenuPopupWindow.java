@@ -3,6 +3,8 @@ package com.omni.wallet.view.popupwindow;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -10,9 +12,12 @@ import android.widget.ImageView;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.ui.activity.UnlockActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -27,6 +32,7 @@ public class MenuPopupWindow {
 
     private Context mContext;
     private BasePopWindow mMenuPopWindow;
+    LoadingDialog mLoadingDialog;
 
     public MenuPopupWindow(Context context) {
         this.mContext = context;
@@ -40,6 +46,7 @@ public class MenuPopupWindow {
             mMenuPopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             mMenuPopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 
+            mLoadingDialog = new LoadingDialog(mContext);
             ImageView vectorMainnetIv = rootView.findViewById(R.id.iv_network_vector_mainnet);
             ImageView mainnetIv = rootView.findViewById(R.id.iv_network_mainnet);
             ImageView vectorTestnetIv = rootView.findViewById(R.id.iv_network_vector_testnet);
@@ -116,6 +123,7 @@ public class MenuPopupWindow {
             rootView.findViewById(R.id.layout_disconnect).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    mLoadingDialog.show();
                     LightningOuterClass.DisconnectPeerRequest disconnectPeerRequest = LightningOuterClass.DisconnectPeerRequest.newBuilder()
                             .setPubKey(pubKey)
                             .build();
@@ -123,6 +131,14 @@ public class MenuPopupWindow {
                         @Override
                         public void onError(Exception e) {
                             LogUtils.e(TAG, "------------------disconnectPeerOnError------------------" + e.getMessage());
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mMenuPopWindow.dismiss();
+                                    mLoadingDialog.dismiss();
+                                    ToastUtils.showToast(mContext, e.getMessage());
+                                }
+                            });
                         }
 
                         @Override
@@ -130,6 +146,15 @@ public class MenuPopupWindow {
                             try {
                                 LightningOuterClass.DisconnectPeerResponse resp = LightningOuterClass.DisconnectPeerResponse.parseFrom(bytes);
                                 LogUtils.e(TAG, "------------------disconnectPeerOnResponse-----------------" + resp);
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mMenuPopWindow.dismiss();
+                                        mLoadingDialog.dismiss();
+                                        Intent intent = new Intent(mContext, UnlockActivity.class);
+                                        mContext.startActivity(intent);
+                                    }
+                                });
                             } catch (InvalidProtocolBufferException e) {
                                 e.printStackTrace();
                             }
