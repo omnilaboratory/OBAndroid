@@ -251,46 +251,46 @@ public class AccountLightningActivity extends AppBaseActivity {
                             });
                         }
                     });
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        /**
-         * request the interface of each asset balance list
-         * 请求各资产余额列表的接口
-         */
-        LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
-                .setAddress(User.getInstance().getWalletAddress(mContext))
-                .build();
-        Obdmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                if (bytes == null) {
-                    return;
-                }
-                try {
-                    LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
-                    blockData.clear();
-                    for (int i = 0; i < resp.getListList().size(); i++) {
-                        ListAssetItemEntity entity = new ListAssetItemEntity();
-                        entity.setAmount(resp.getListList().get(i).getBalance());
-                        entity.setPropertyid(resp.getListList().get(i).getPropertyid());
-                        entity.setType(1);
-                        blockData.add(entity);
-                        getChannelBalance(resp.getListList().get(i).getPropertyid());
-                    }
-                    allData.addAll(blockData);
-                    runOnUiThread(new Runnable() {
+                    /**
+                     * request the interface of each asset balance list
+                     * 请求各资产余额列表的接口
+                     */
+                    LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
+                            .setAddress(User.getInstance().getWalletAddress(mContext))
+                            .build();
+                    Obdmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
                         @Override
-                        public void run() {
-                            mAdapter.notifyDataSetChanged();
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
+                            try {
+                                LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
+                                blockData.clear();
+                                for (int i = 0; i < resp.getListList().size(); i++) {
+                                    ListAssetItemEntity entity = new ListAssetItemEntity();
+                                    entity.setAmount(resp.getListList().get(i).getBalance());
+                                    entity.setPropertyid(resp.getListList().get(i).getPropertyid());
+                                    entity.setType(1);
+                                    blockData.add(entity);
+                                    getChannelBalance(resp.getListList().get(i).getPropertyid());
+                                }
+                                allData.addAll(blockData);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                });
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 } catch (InvalidProtocolBufferException e) {
