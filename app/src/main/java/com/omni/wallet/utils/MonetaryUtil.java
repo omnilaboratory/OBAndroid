@@ -23,7 +23,7 @@ public class MonetaryUtil {
     public static final String BTC_UNIT = "BTC";
     public static final String MBTC_UNIT = "mBTC";
     public static final String BIT_UNIT = "bit";
-    public static final String SATOSHI_UNIT = "sat";
+    public static final String SATOSHI_UNIT = "unit";
 
     private static final String LOG_TAG = MonetaryUtil.class.getName();
 
