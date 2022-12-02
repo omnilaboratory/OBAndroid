@@ -97,21 +97,27 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/main_150"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_balance_amount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="My account 1"
+                        android:singleLine="true"
+                        android:ellipsize="end"
                         android:textColor="@color/color_black"
-                        android:textSize="@dimen/text_18"/>
+                        android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_wallet_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/main_6"
+                        android:singleLine="true"
+                        android:ellipsize="middle"
                         android:text="01234e*****bg453123"
                         android:textColor="@color/color_A6_transparent"
                         android:textSize="@dimen/text_16"/>

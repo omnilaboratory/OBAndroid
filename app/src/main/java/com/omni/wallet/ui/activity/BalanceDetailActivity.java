@@ -22,9 +22,11 @@ import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
+import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
@@ -32,6 +34,10 @@ import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +47,13 @@ import butterknife.OnClick;
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
+
+import static lnrpc.LightningOuterClass.Invoice.InvoiceState.ACCEPTED;
+import static lnrpc.LightningOuterClass.Invoice.InvoiceState.CANCELED;
+import static lnrpc.LightningOuterClass.Invoice.InvoiceState.OPEN;
+import static lnrpc.LightningOuterClass.Invoice.InvoiceState.SETTLED;
+import static lnrpc.LightningOuterClass.Invoice.InvoiceState.UNRECOGNIZED;
+import static lnrpc.LightningOuterClass.Payment.PaymentStatus.SUCCEEDED;
 
 public class BalanceDetailActivity extends AppBaseActivity {
     private static final String TAG = AccountLightningActivity.class.getSimpleName();
@@ -109,12 +122,16 @@ public class BalanceDetailActivity extends AppBaseActivity {
     LinearLayout mRootBothParentLayout;
     @BindView(R.id.layout_root_to_be_paid)
     LinearLayout mRootToBePaidLayout;
+    @BindView(R.id.tv_to_be_paid_num)
+    TextView mToBePaidNumTv;
     @BindView(R.id.layout_to_be_paid)
     RelativeLayout mToBePaidLayout;
     @BindView(R.id.recycler_to_be_paid_list)
     RecyclerView mToBePaidRecyclerView;
     @BindView(R.id.layout_root_my_invoices)
     LinearLayout mRootMyInvoicesLayout;
+    @BindView(R.id.tv_my_invoices_num)
+    TextView mMyInvoicesNumTv;
     @BindView(R.id.layout_my_invoices)
     RelativeLayout mMyInvoicesLayout;
     @BindView(R.id.recycler_my_invoices_list)
@@ -127,7 +144,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TextView mToBePaidTitleTv;
     @BindView(R.id.view_line)
     View mLineView;
-    private List<LightningOuterClass.AssetTx> mTransactionsData = new ArrayList<>();
+    private List<LightningOuterClass.Payment> mTransactionsData = new ArrayList<>();
     private TransactionsAdapter mTransactionsAdapter;
     private List<LightningOuterClass.Payment> mToBePaidData = new ArrayList<>();
     private ToBePaidAdapter mToBePaidAdapter;
@@ -199,7 +216,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mNetworkTv.setText("Omnilayer Mainnet");
             mLightningNetworkLayout.setVisibility(View.GONE);
             mLinkNetworkLayout.setVisibility(View.VISIBLE);
-            mChannelActivitiesTv.setText("My Account 1 Activities");
+            mChannelActivitiesTv.setText("My Account Activities");
             mChannelActivitiesTv.setTextColor(Color.parseColor("#000000"));
             mToBePaidTv.setText(R.string.pending_txs);
             mToBePaidTitleTv.setText(R.string.pending_txs);
@@ -228,6 +245,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
         initTransactionsData();
         initToBePaidData();
         initMyInvoicesData();
@@ -251,12 +269,15 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * 请求交易列表各个状态的接口
      */
     public void fetchTransactionsFromLND() {
-        LightningOuterClass.ListTranscationsRequest transcationsRequest = LightningOuterClass.ListTranscationsRequest.newBuilder()
+        LightningOuterClass.ListPaymentsRequest paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
+                .setAssetId((int) assetId)
+                .setIsQueryAsset(true)
+                .setIncludeIncomplete(false)
                 .build();
-        Obdmobile.listTranscations(transcationsRequest.toByteArray(), new Callback() {
+        Obdmobile.listPayments(paymentsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------transcationsOnError------------------" + e.getMessage());
+                LogUtils.e(TAG, "------------------paymentsOnError------------------" + e.getMessage());
             }
 
             @Override
@@ -265,10 +286,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     return;
                 }
                 try {
-                    LightningOuterClass.ListTranscationsResponse resp = LightningOuterClass.ListTranscationsResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------transcationsOnResponse-----------------" + resp);
+                    LightningOuterClass.ListPaymentsResponse resp = LightningOuterClass.ListPaymentsResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------paymentsOnResponse-----------------" + resp);
                     mTransactionsData.clear();
-                    mTransactionsData.addAll(resp.getListList());
+                    mTransactionsData.addAll(resp.getPaymentsList());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -302,12 +323,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
     public void fetchPaymentsFromLND() {
         LightningOuterClass.ListPaymentsRequest paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
                 .setAssetId((int) assetId)
+                .setIsQueryAsset(true)
                 .setIncludeIncomplete(false)
                 .build();
         Obdmobile.listPayments(paymentsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------paymentsOnError------------------" + e.getMessage());
+                LogUtils.e(TAG, "------------------toBePaidPaymentsOnError------------------" + e.getMessage());
             }
 
             @Override
@@ -317,12 +339,17 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 }
                 try {
                     LightningOuterClass.ListPaymentsResponse resp = LightningOuterClass.ListPaymentsResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------paymentsOnResponse-----------------" + resp);
+                    LogUtils.e(TAG, "------------------toBePaidPaymentsOnResponse-----------------" + resp);
                     mToBePaidData.clear();
-                    mToBePaidData.addAll(resp.getPaymentsList());
+                    for (LightningOuterClass.Payment payment : resp.getPaymentsList()) {
+                        if (payment.getStatus() != SUCCEEDED) {
+                            mToBePaidData.add(payment);
+                        }
+                    }
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mToBePaidNumTv.setText(mToBePaidData.size() + "");
                             mToBePaidAdapter.notifyDataSetChanged();
                         }
                     });
@@ -376,6 +403,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                mMyInvoicesNumTv.setText(resp.getInvoicesList().size() + "");
                                 mMyInvoicesAdapter.notifyDataSetChanged();
                             }
                         });
@@ -393,14 +421,16 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * the adapter of activity list
      * 交易列表适配器
      */
-    private class TransactionsAdapter extends CommonRecyclerAdapter<LightningOuterClass.AssetTx> {
+    private class TransactionsAdapter extends CommonRecyclerAdapter<LightningOuterClass.Payment> {
 
-        public TransactionsAdapter(Context context, List<LightningOuterClass.AssetTx> data, int layoutId) {
+        public TransactionsAdapter(Context context, List<LightningOuterClass.Payment> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, final int position, final LightningOuterClass.AssetTx item) {
+        public void convert(ViewHolder holder, final int position, final LightningOuterClass.Payment item) {
+            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
+            holder.setText(R.id.tv_amount, item.getValueMsat() + "");
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -423,6 +453,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Payment item) {
+            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
+            holder.setText(R.id.tv_amount, item.getValueMsat() + "");
+            holder.setText(R.id.tv_receiver, "unknown");
             final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_to_be_paid_list_swipe_menu);
             holder.getView(R.id.tv_to_be_paid_delete).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -481,7 +514,23 @@ public class BalanceDetailActivity extends AppBaseActivity {
         @Override
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Invoice item) {
             holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
-            holder.setText(R.id.tv_amount, item.getAmount() + "");
+            holder.setText(R.id.tv_amount, item.getValueMsat() + "");
+            holder.setText(R.id.tv_memo, item.getMemo());
+            if (StringUtils.isEmpty(String.valueOf(item.getState()))) {
+                holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
+            } else {
+                if (item.getState() == OPEN) {
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
+                } else if (item.getState() == SETTLED) {
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
+                } else if (item.getState() == CANCELED) {
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
+                } else if (item.getState() == ACCEPTED) {
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                } else if (item.getState() == UNRECOGNIZED) {
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                }
+            }
             final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_my_invoices_list_swipe_menu);
             holder.getView(R.id.tv_my_invoices_delete).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -542,7 +591,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.iv_token_info)
     public void clickTokenInfo() {
         mTokenInfoPopupWindow = new TokenInfoPopupWindow(mContext);
-        mTokenInfoPopupWindow.show(mParentLayout);
+        mTokenInfoPopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
     }
 
 
@@ -723,9 +772,19 @@ public class BalanceDetailActivity extends AppBaseActivity {
         mRootBothParentLayout.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * 创建发票后的消息通知监听
+     * Message notification monitoring after create invoice
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCreateInvoiceEvent(CreateInvoiceEvent event) {
+        fetchInvoicesFromLND(100);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         if (mPayInvoiceStepOnePopupWindow != null) {
             mPayInvoiceStepOnePopupWindow.release();
         }

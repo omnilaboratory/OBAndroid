@@ -463,7 +463,7 @@
                             android:textSize="@dimen/text_20"/>
 
                         <TextView
-                            android:id="@+id/tv_amount_pay_fef"
+                            android:id="@+id/tv_amount_pay_fee"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
@@ -769,6 +769,7 @@
                         android:textSize="@dimen/text_20"/>
 
                     <TextView
+                        android:id="@+id/tv_amount_pay_fee_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"

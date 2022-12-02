@@ -45,6 +45,17 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
 
     public void setName(String channelRemotePubKey) {
         mRemoteName.setText(Wallet.getInstance().getNodeAliasFromPubKey(channelRemotePubKey, mContext));
+        mRemotePubkey.setText(channelRemotePubKey);
+    }
+
+    public void setLogo(int assetId) {
+        if (assetId == 0) {
+            mAssetLogo.setImageResource(R.mipmap.icon_btc_logo_small);
+            mAssetUnit.setText("BTC");
+        } else {
+            mAssetLogo.setImageResource(R.mipmap.icon_usdt_logo_small);
+            mAssetUnit.setText("USDT");
+        }
     }
 
     void setBalances(long local, long remote, long capacity) {

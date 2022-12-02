@@ -1,6 +1,8 @@
 package com.omni.wallet.view.popupwindow;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -13,6 +15,7 @@ import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
+import com.omni.wallet.framelibrary.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +92,7 @@ public class SelectAssetPopupWindow {
                     LightningOuterClass.NewAddressResponse addressResp = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------newAddressOnResponse-----------------" + addressResp.getAddress());
                     LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                            .setAddress(addressResp.getAddress())
+                            .setAddress(User.getInstance().getWalletAddress(mContext))
                             .build();
                     Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
                         @Override
@@ -107,12 +110,17 @@ public class SelectAssetPopupWindow {
                                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
                                 blockData.clear();
                                 ListAssetItemEntity entity = new ListAssetItemEntity();
-                                entity.setAmount(resp.getTotalBalance());
+                                entity.setAmount(resp.getConfirmedBalance());
                                 entity.setPropertyid(0);
                                 entity.setType(1);
                                 blockData.add(entity);
                                 allData.addAll(blockData);
-                                mAdapter.notifyDataSetChanged();
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                });
                             } catch (InvalidProtocolBufferException e) {
                                 e.printStackTrace();
                             }
@@ -131,7 +139,7 @@ public class SelectAssetPopupWindow {
      */
     public void fetchAssetsBalanceByAddress() {
         LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
-                .setAddress("mz6keb5sJt4f7AxXTWuz4siYDD48oHUrSs")
+                .setAddress(User.getInstance().getWalletAddress(mContext))
                 .build();
         Obdmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
             @Override
@@ -154,9 +162,14 @@ public class SelectAssetPopupWindow {
                         entity.setPropertyid(resp.getListList().get(i).getPropertyid());
                         entity.setType(2);
                         lightningData.add(entity);
-                        allData.addAll(lightningData);
-//                        mAdapter.notifyDataSetChanged();
                     }
+                    allData.addAll(lightningData);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }

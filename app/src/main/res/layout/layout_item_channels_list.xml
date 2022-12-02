@@ -132,6 +132,7 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:text="03felksw.............xwqwcs985"
+                    android:ellipsize="middle"
                     android:textAlignment="textEnd"
                     android:textColor="#99000000"
                     android:textSize="@dimen/text_16" />

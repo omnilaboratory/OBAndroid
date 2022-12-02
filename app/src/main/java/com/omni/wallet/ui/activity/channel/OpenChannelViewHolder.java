@@ -1,7 +1,5 @@
 package com.omni.wallet.ui.activity.channel;
 
-import android.content.res.ColorStateList;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.omni.wallet.R;
@@ -14,9 +12,9 @@ public class OpenChannelViewHolder extends ChannelViewHolder {
 
     void setState(boolean isActive) {
         if (isActive) {
-            mStatusDot.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.superGreen)));
+            mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_009b19_25);
         } else {
-            mStatusDot.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.gray)));
+            mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_99000000_25);
         }
     }
 
@@ -30,6 +28,9 @@ public class OpenChannelViewHolder extends ChannelViewHolder {
 
         // Set name
         setName(openChannelItem.getChannel().getRemotePubkey());
+
+        // Set Logo
+        setLogo(openChannelItem.getChannel().getAssetId());
 
         setOnRootViewClickListener(openChannelItem, ChannelListItem.TYPE_OPEN_CHANNEL);
     }

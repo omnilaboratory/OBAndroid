@@ -298,7 +298,6 @@
                 android:layout_marginTop="@dimen/main_15"
                 android:background="@drawable/bg_black_rectangle_round_0"
                 android:padding="@dimen/main_10"
-                android:text="02e56dksdjkoo20dsal9cosdasllsdmlladsoaposdo320oaksxcs985"
                 android:textColor="@color/color_99_transparent"
                 android:textSize="@dimen/text_16"/>
 
@@ -364,6 +363,7 @@
                     android:layout_height="@dimen/main_32"
                     android:background="@drawable/bg_black_rectangle_round_0"
                     android:singleLine="true"
+                    android:inputType="number"
                     android:textColor="@color/color_99_transparent"
                     android:textSize="@dimen/text_16"/>
 
@@ -471,7 +471,7 @@
                         android:id="@+id/tv_channel_fee"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="100"
+                        android:text="0"
                         android:textColor="@color/color_80p_transparent"
                         android:textSize="@dimen/text_16"/>
 

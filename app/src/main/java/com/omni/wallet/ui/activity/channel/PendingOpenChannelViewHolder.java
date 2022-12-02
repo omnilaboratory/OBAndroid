@@ -1,5 +1,6 @@
 package com.omni.wallet.ui.activity.channel;
 
+import android.annotation.SuppressLint;
 import android.view.View;
 
 import com.omni.wallet.R;
@@ -10,9 +11,10 @@ public class PendingOpenChannelViewHolder extends PendingChannelViewHolder {
         super(v);
     }
 
+    @SuppressLint("ResourceType")
     @Override
     int getStatusColor() {
-        return R.color.lightningOrange;
+        return R.drawable.bg_btn_round_ec9a1e_25;
     }
 
     void bindPendingOpenChannelItem(PendingOpenChannelItem pendingOpenChannelItem) {
