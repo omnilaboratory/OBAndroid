@@ -21,6 +21,7 @@ import com.omni.wallet.baselibrary.http.HttpUtils;
 import com.omni.wallet.baselibrary.http.callback.EngineCallback;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.ui.activity.AccountLightningActivity;
 import com.omni.wallet.utils.CopyUtil;
@@ -42,9 +43,9 @@ import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
 public class BackupBlockProcessActivity extends AppBaseActivity {
-    
+
     private Context ctx = BackupBlockProcessActivity.this;
-    
+
     List<String> accountList = new ArrayList<>();
     LoadingDialog mLoadingDialog;
     @BindView(R.id.sync_percent)
@@ -65,11 +66,11 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     TextView qrAddressTv;
     @BindView(R.id.qr_image)
     ImageView qrAddressIv;
-    
+
     String newCreatedAddress ="";
     ObdLogFileObserver obdLogFileObserver = null;
     SharedPreferences blockData = null;
-    
+
     @SuppressLint("LongLogTag")
     private final SharedPreferences.OnSharedPreferenceChangeListener currentBlockSharePreferenceChangeListener = (sharedPreferences, key) -> {
         Log.e("--------------------BlockChange-------------------",key);
@@ -86,7 +87,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             }
         }
     };
-    
+
     private void updateSyncDataView(int syncedHeight,int syncHeight){
         double totalHeight =  syncHeight;
         double currentHeight =  syncedHeight;
@@ -98,12 +99,12 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         syncPercentView.setText(percentString + "%");
         RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth,innerHeight);
         rvProcessInner.setLayoutParams(rlInnerParam);
-        
+
         syncedBlockNumView.setText(Integer.toString(syncedHeight));
         commitNumSyncedView.setText(Integer.toString(syncedHeight));
     }
-    
-    
+
+
 
     @Override
     protected Drawable getWindowBackground(){
@@ -114,7 +115,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     protected int getContentView() {
         return R.layout.activity_backup_block_process;
     }
-    
+
     @Override
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
@@ -127,11 +128,11 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
         getTotalBlockHeight();
     }
-    
+
     @Override
     protected void initData() {
     }
-    
+
     /**
     *点击Copy address
     * click Copy Address
@@ -148,7 +149,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             String toastMsg = "Address is copied.";
             CopyUtil.SelfCopy(ctx,newCreatedAddress,toastMsg);
         }
-        
+
     }
 
     /**
@@ -166,9 +167,9 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         }else{
             switchActivity(AccountLightningActivity.class);
         }
-        
+
     }
-    
+
     public void getTotalBlockHeight (){
         String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
         HttpUtils.with(ctx)
@@ -208,10 +209,10 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                                     syncBlockNumView.setText(block);
                                     updateSyncDataView(0,Integer.parseInt(block));
                                     obdLogFileObserver.startWatching();
-                                    
+
                                 }
                             });
-                            
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -265,7 +266,9 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                     SharedPreferences.Editor editor = addressList.edit();
                     editor.putString("accountList",address);
                     editor.commit();
-
+                    // save wallet address to local
+                    // 保存地址到本地
+                    User.getInstance().setWalletAddress(mContext,address);
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
 
