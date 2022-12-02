@@ -304,7 +304,7 @@
 
     <!--common-->
     <string name="aets">≈</string>
-    <string name="example_qr_str">bc1q6e5v0ts86thszdau4efgllx9lq0wxkwhquv7sh</string>
+    <string name="example_qr_str">**********************************</string>
     <string name="copy_upper">COPY</string>
     <string name="paste_upper">PASTE</string>
     <string name="copy_address_upper">COPY ADDRESS</string>

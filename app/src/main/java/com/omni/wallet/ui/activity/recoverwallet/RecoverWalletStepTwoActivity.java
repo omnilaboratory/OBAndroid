@@ -22,6 +22,7 @@ import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
 import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
     public ImageView mConfirmPwdEyeIv;
     private boolean mCanClick = true;
     private boolean mConfirmCanClick = true;
+    LoadingDialog mLoadingDialog;
 
     @Override
     protected Drawable getWindowBackground() {
@@ -58,7 +60,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-
+        mLoadingDialog = new LoadingDialog(mContext);
     }
 
     @Override
@@ -224,6 +226,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
         TextView passwordViewRepeat = findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
+            mLoadingDialog.show();
             String md5String = Md5Util.getMD5Str(password);
             /**
              * 使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
@@ -244,6 +247,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                 Log.e("mnemonicString",mnemonicString);
             }
             initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
+            initWalletRequestBuilder.setRecoveryWindow(1);
 
             Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
             Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
@@ -255,6 +259,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                 @Override
                 public void onResponse(byte[] bytes) {
                     if (bytes == null){
+                        mLoadingDialog.dismiss();
                         return;
                     }
                     try {
@@ -265,9 +270,11 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                         SharedPreferences.Editor macaroonDataEditor = macaroonData.edit();
                         macaroonDataEditor.putString("macaroon", macaroon.toString());
                         macaroonDataEditor.commit();
+                        mLoadingDialog.dismiss();
                         switchActivity(BackupBlockProcessActivity.class);
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();
+                        mLoadingDialog.dismiss();
                     }
                 }
             });

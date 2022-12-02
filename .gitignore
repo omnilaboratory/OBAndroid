@@ -13,6 +13,9 @@
 /captures/
 error.text
 /error.txt
+/*.log
+/libjpeg/build
+
 /hs_err_pid12400.log
 /hs_err_pid14596.log
 /hs_err_pid26872.log

@@ -140,22 +140,9 @@ public class SplashActivity extends AppBaseActivity {
      */
     private void turnToNextPage() {
         if (User.getInstance().isLogin(mContext) & !StringUtils.isEmpty(User.getInstance().getFirstLogin(mContext))) {
-            SharedPreferences secretData = mContext.getSharedPreferences("secretData", MODE_PRIVATE);
-            String localPass = secretData.getString("password","");
-            if(localPass.isEmpty()){
-                switchActivityFinish(SetPwdActivity.class, mBundle);
-            }else{
-                switchActivityFinish(UnlockActivity.class, mBundle);
-            }
-            
+            switchActivityFinish(UnlockActivity.class, mBundle);
         } else {
-            SharedPreferences secretData = mContext.getSharedPreferences("secretData", MODE_PRIVATE);
-            String localPass = secretData.getString("password","");
-            if(localPass.isEmpty()){
-                switchActivityFinish(SetPwdActivity.class, mBundle);
-            }else{
-                switchActivityFinish(UnlockActivity.class, mBundle);
-            }
+            switchActivityFinish(UnlockActivity.class, mBundle);
         }
     }
 

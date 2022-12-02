@@ -282,10 +282,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                         SharedPreferences.Editor macaroonDataEditor = macaroonData.edit();
                         macaroonDataEditor.putString("macaroon", macaroon.toString());
                         macaroonDataEditor.commit();
-                        Log.e("initWallet response",macaroon.toString());
                         switchActivity(BackupBlockProcessActivity.class);
-
-
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();
                         mLoadingDialog.dismiss();
@@ -306,4 +303,6 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
         }
 
     }
+    
+    
 }

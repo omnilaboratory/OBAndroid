@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
+    android:gravity="bottom"
     android:paddingBottom="@dimen/main_40"
     android:background="@drawable/bg_page">
     <RelativeLayout
@@ -99,7 +99,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="39dp"
-                android:layout_marginBottom="@dimen/main_60"
                 >
                 <LinearLayout
                     android:id="@+id/btn_unlock"
@@ -122,12 +121,11 @@
                         android:textColor="@color/color_black"/>
                 </LinearLayout>
             </RelativeLayout>
-<!--
+
             <LinearLayout
                 android:id="@+id/btv_forget_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="30dp">
                 <TextView
@@ -135,7 +133,72 @@
                     android:layout_height="wrap_content"
                     android:text="@string/forgot_pass"
                     android:textColor="@color/color_0066ff"/>
-            </LinearLayout>-->
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom_btn_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="70dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left">
+                <LinearLayout
+                    android:id="@+id/btn_create"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@mipmap/icon_add_green"
+                        android:layout_marginBottom="5dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:text="@string/create_uppre"
+                        android:letterSpacing="0.1"
+                        android:textSize="18sp"
+                        android:textColor="@color/color_black"/>
+                </LinearLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right">
+                <LinearLayout
+                    android:id="@+id/btn_recover"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@mipmap/icon_download_cloud"
+                        android:layout_marginBottom="5dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:text="@string/recover_uppre"
+                        android:letterSpacing="0.1"
+                        android:textSize="18sp"
+                        android:textColor="@color/color_black"/>
+                </LinearLayout>
+            </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

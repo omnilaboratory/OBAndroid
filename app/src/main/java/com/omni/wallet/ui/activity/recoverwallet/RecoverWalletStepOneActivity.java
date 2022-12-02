@@ -99,6 +99,8 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
                 LinearLayout.LayoutParams cellEditTextParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
                 cellEditText.setBackground(null);
                 cellEditText.setHint(getResources().getString(R.string.create_seed_input_hit));
+                cellEditText.setTextColor(getResources().getColor(R.color.color_white));
+                cellEditText.setHintTextColor(getResources().getColor(R.color.color_white));
                 cellEditText.setTextSize(16.0f);
                 cellEditText.setTextColor(getResources().getColor(R.color.color_black));
                 cellEditText.setLayoutParams(cellEditTextParams);
@@ -169,7 +171,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
     public void clickForward() {
         String seedsString ="";
         for (int i = 0; i<list.size();i++){
-            seedsString = seedsString + list.get(i).getText() + "";
+            seedsString = seedsString + list.get(i).getText() + " ";
         }
         /**
          * 使用SharedPreferences 对象，在生成seeds时候将seeds备份到本地文件

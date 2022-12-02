@@ -87,7 +87,19 @@ public class AppApplication extends BaseApplication {
          */
         LogUtils.e(TAG, "------------------getFilesDir------------------" + getApplicationContext().getFilesDir());
         LogUtils.e(TAG, "------------------getExternalCacheDir------------------" + getApplicationContext().getExternalCacheDir());
-        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE_OMNI, new Callback() {
+        /*Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE_OMNI, new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
+            }
+        });*/
+
+        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE_OMNI_WITH_SEED, new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
@@ -98,18 +110,6 @@ public class AppApplication extends BaseApplication {
 //                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
             }
         });
-
-//        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE_OMNI_WITH_SEED, new Callback() {
-//            @Override
-//            public void onError(Exception e) {
-//                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
-//            }
-//
-//            @Override
-//            public void onResponse(byte[] bytes) {
-////                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
-//            }
-//        });
     }
 
     /**
