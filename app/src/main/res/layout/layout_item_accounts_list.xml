@@ -47,7 +47,7 @@
                 android:id="@+id/tv_account_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Home"
+                android:text="unname"
                 android:textSize="@dimen/text_16"
                 android:textColor="@color/color_99000000"
                 android:textStyle="bold"

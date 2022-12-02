@@ -1,19 +1,26 @@
 package com.omni.wallet.view.popupwindow;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.event.SelectAccountEvent;
-import com.omni.wallet.listItems.Account;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -21,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lnrpc.LightningOuterClass;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 
 /**
@@ -35,44 +44,19 @@ public class AccountManagePopupWindow {
 
     private Context accountContext;
     private BasePopWindow accountBasePopWindow;
-    private List<Account> accountData = new ArrayList<Account>();
     private List<LightningOuterClass.RecAddress> addressData = new ArrayList<>();
+    private List<LightningOuterClass.RecAddress> mDataSearch = new ArrayList<>();
     private AccountAdapter accountAdapter;
     View accountView;
+    EditText searchEdit;
     TextView recentsAddressTv;
+    RecyclerView accountRecyclerView;
 
     public AccountManagePopupWindow(Context context) {
         this.accountContext = context;
     }
 
-    public void initAccountData() {
-        Account account_1 = new Account("1mn8382odjd.........34gy7", 1.78, "Home");
-        account_1.setAvatarColor(1);
-        Account account_2 = new Account("2nm8382odjd.........fe689", 10.00, "Wife");
-        account_2.setAvatarColor(3);
-        Account account_3 = new Account("2nmvfergeegd.........efecw", 30.00, "Gift");
-        account_3.setAvatarColor(2);
-        Account account_4 = new Account("1mn8382odjd.........34gy7", 125.00, "Salary");
-        account_4.setAvatarColor(4);
-        Account account_5 = new Account("2nmvfergeegd.........efecw", 125.00, "For Child");
-        account_5.setAvatarColor(3);
-        Account account_6 = new Account("2nm8382odjd.........fe689", 78.04, "Self Gift");
-        account_6.setAvatarColor(4);
-        Account account_7 = new Account("2nmvfergeegd.........efecw", 34.89, "Game");
-        account_7.setAvatarColor(1);
-        Account account_8 = new Account("1mn8382odjd.........34gy7", 1000.78, "Fee");
-        account_8.setAvatarColor(2);
-        accountData.add(account_1);
-        accountData.add(account_2);
-        accountData.add(account_3);
-        accountData.add(account_4);
-        accountData.add(account_5);
-        accountData.add(account_6);
-        accountData.add(account_7);
-        accountData.add(account_8);
-    }
-
-    public void show(final View view, List<LightningOuterClass.RecAddress> addressData) {
+    public void show(final View view) {
         accountView = view;
         if (accountBasePopWindow == null) {
             accountBasePopWindow = new BasePopWindow(accountContext);
@@ -80,6 +64,47 @@ public class AccountManagePopupWindow {
             accountBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             accountBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
             accountBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
+
+            searchEdit = rootView.findViewById(R.id.edit_search);
+            recentsAddressTv = rootView.findViewById(R.id.tv_recents_address);
+            accountRecyclerView = rootView.findViewById(R.id.rv_account_list);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(accountContext);
+            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            accountRecyclerView.setLayoutManager(layoutManager);
+            getListRecAddress();
+            // Search
+            searchEdit.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    mDataSearch.clear();
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    String searchStr = String.valueOf(s);
+                    if (s.length() > 0) {
+                        for (LightningOuterClass.RecAddress recAddress: addressData) {
+                            if (!StringUtils.isEmpty(recAddress.getAddre()) ) {
+                                if ((recAddress.getAddre().contains(searchStr))) {
+                                    mDataSearch.add(recAddress);
+                                }
+                            }
+                        }
+                        accountAdapter = new AccountAdapter(accountContext, mDataSearch, R.layout.layout_item_accounts_list);
+                        accountRecyclerView.setAdapter(accountAdapter);
+                        accountAdapter.notifyDataSetChanged();
+                    } else if (s == null || s.length() == 0) {
+                        mDataSearch.clear();
+                        getListRecAddress();
+                    }
+                }
+            });
+
             /**
              * @description: Click close button then close popup window
              * @描述: 点击 close 按钮关闭弹窗
@@ -109,15 +134,6 @@ public class AccountManagePopupWindow {
                     accountBasePopWindow.dismiss();
                 }
             });
-            recentsAddressTv = rootView.findViewById(R.id.tv_recents_address);
-            recentsAddressTv.setText(addressData.get(0).getAddre());
-            RecyclerView accountRecyclerView = rootView.findViewById(R.id.rv_account_list);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(accountContext);
-            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            accountRecyclerView.setLayoutManager(layoutManager);
-            accountAdapter = new AccountAdapter(accountContext, addressData, R.layout.layout_item_accounts_list);
-            accountRecyclerView.setAdapter(accountAdapter);
-            accountAdapter.notifyDataSetChanged();
 
             if (accountBasePopWindow.isShowing()) {
                 return;
@@ -125,6 +141,45 @@ public class AccountManagePopupWindow {
             accountBasePopWindow.showAtLocation(accountView, Gravity.CENTER, 0, 0);
         }
 
+    }
+
+    /**
+     * @description: getListRecAddress
+     * @描述： 获取多个钱包地址
+     */
+    private void getListRecAddress() {
+        LightningOuterClass.ListRecAddressRequest listRecAddressRequest = LightningOuterClass.ListRecAddressRequest.newBuilder()
+                .build();
+        Obdmobile.listRecAddress(listRecAddressRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------listRecAddressOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.ListRecAddressResponse resp = LightningOuterClass.ListRecAddressResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------listRecAddressOnResponse-----------------" + resp);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            recentsAddressTv.setText(resp.getItems(0).getAddre());
+                            addressData.clear();
+                            addressData.addAll(resp.getItemsList());
+                            accountAdapter = new AccountAdapter(accountContext, addressData, R.layout.layout_item_accounts_list);
+                            accountRecyclerView.setAdapter(accountAdapter);
+                            accountAdapter.notifyDataSetChanged();
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**

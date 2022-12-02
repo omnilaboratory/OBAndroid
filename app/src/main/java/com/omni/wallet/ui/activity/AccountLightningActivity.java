@@ -3,7 +3,6 @@ package com.omni.wallet.ui.activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -84,7 +83,6 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     long balanceAmount;
     private String pubkey;
-    private String address;
 
     @Override
     protected View getStatusBarTopView() {
@@ -500,36 +498,8 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @OnClick(R.id.iv_account_manage)
     public void clickAccount() {
-        LightningOuterClass.ListRecAddressRequest listRecAddressRequest = LightningOuterClass.ListRecAddressRequest.newBuilder()
-                .build();
-        Obdmobile.listRecAddress(listRecAddressRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------listRecAddressOnError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                if (bytes == null) {
-                    return;
-                }
-                try {
-                    LightningOuterClass.ListRecAddressResponse resp = LightningOuterClass.ListRecAddressResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------listRecAddressOnResponse-----------------" + resp);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Looper.prepare();
-                            mAccountManagePopupWindow = new AccountManagePopupWindow(mContext);
-                            mAccountManagePopupWindow.show(mParentLayout, resp.getItemsList());
-                            Looper.loop();
-                        }
-                    }).start();
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        mAccountManagePopupWindow = new AccountManagePopupWindow(mContext);
+        mAccountManagePopupWindow.show(mParentLayout);
     }
 
     /**
@@ -684,7 +654,10 @@ public class AccountLightningActivity extends AppBaseActivity {
         if (event == null) {
             return;
         }
-        address = event.getAddress();
+        User.getInstance().setWalletAddress(mContext,event.getAddress());
+        getInfo();
+        getAssetAndBtcData();
+        setDefaultAddress();
     }
 
     /**
