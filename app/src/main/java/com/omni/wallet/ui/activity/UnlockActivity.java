@@ -1,5 +1,6 @@
 package com.omni.wallet.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -18,9 +19,19 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.http.HttpUtils;
+import com.omni.wallet.baselibrary.http.callback.EngineCallback;
+import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
 import com.omni.wallet.utils.Md5Util;
+import com.omni.wallet.utils.ObdLogFileObserverCheckStarted;
+import com.omni.wallet.view.dialog.LoadingDialog;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -32,6 +43,7 @@ public class UnlockActivity extends AppBaseActivity {
     Context ctx = UnlockActivity.this;
     String localPass ="";
     String localSeed = "";
+    LoadingDialog mLoadingDialog;
 
     @BindView(R.id.password_input)
     public EditText mPwdEdit;
@@ -40,6 +52,26 @@ public class UnlockActivity extends AppBaseActivity {
     private boolean mCanClick = true;
     @BindView(R.id.bottom_btn_group)
     public RelativeLayout bottomBtnGroup;
+    ObdLogFileObserverCheckStarted obdLogFileObserverCheckStarted;
+    SharedPreferences blockData = null;
+
+    @SuppressLint("LongLogTag")
+    private final SharedPreferences.OnSharedPreferenceChangeListener isOpenedSharePreferenceChangeListener = (sharedPreferences, key) -> {
+        Log.e("--------------------BlockChange-------------------",key);
+        if (key == "isOpened"){
+            Boolean isOpened = sharedPreferences.getBoolean("isOpened",false);
+            
+            if(isOpened){
+                SharedPreferences.Editor editor = blockData.edit();
+                editor.putBoolean("isOpened",false);
+                editor.commit();
+                obdLogFileObserverCheckStarted.stopWatching();
+                mLoadingDialog.dismiss();
+                switchActivity(AccountLightningActivity.class);
+            }
+            
+        }
+    };
 
 
     @Override
@@ -59,7 +91,7 @@ public class UnlockActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-
+        mLoadingDialog = new LoadingDialog(mContext);
     }
 
     @Override
@@ -76,7 +108,16 @@ public class UnlockActivity extends AppBaseActivity {
         }else{
             bottomBtnGroup.setVisibility(View.INVISIBLE);
         }
+        blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
+        
     }
+    
+    @Override
+    protected void onDestroy() {
+        blockData.unregisterOnSharedPreferenceChangeListener(isOpenedSharePreferenceChangeListener);
+        super.onDestroy();
+    }
+    
 
     /**
      * click eye icon
@@ -110,6 +151,7 @@ public class UnlockActivity extends AppBaseActivity {
     public void clickUnlock() {
         String passwordString = mPwdEdit.getText().toString();
         String passMd5 = Md5Util.getMD5Str(passwordString);
+        mLoadingDialog.show();
         Log.e("unlock password",passMd5);
         Log.e("unlock localPass",localPass);
         if(localPass.equals(passMd5)){
@@ -124,8 +166,7 @@ public class UnlockActivity extends AppBaseActivity {
 
                 @Override
                 public void onResponse(byte[] bytes) {
-                    switchActivity(AccountLightningActivity.class);
-
+                    getTotalBlockHeight();
                 }
             });
 
@@ -163,5 +204,70 @@ public class UnlockActivity extends AppBaseActivity {
     @OnClick(R.id.btv_forget_button)
     public void clickForgetPass(){
         switchActivity(ForgetPwdActivity.class);
+    }
+
+    public void getTotalBlockHeight (){
+        String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
+        HttpUtils.with(ctx)
+                .postString()
+                .url("http://43.138.107.248:18332")
+                .addContent(jsonStr)
+                .execute(new EngineCallback() {
+
+                    @Override
+                    public void onPreExecute(Context context, Map<String, Object> params) {
+
+                    }
+
+                    @Override
+                    public void onCancel(Context context) {
+
+                    }
+
+                    @Override
+                    public void onError(Context context, String errorCode, String errorMsg) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, String result) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            JSONObject jsonObject1 = new JSONObject(jsonObject.getString("result"));
+                            String block = jsonObject1.getString("block");
+                            int totalBlock = Integer.parseInt(block);
+                            String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/regtest/lnd.log";
+                            obdLogFileObserverCheckStarted = new ObdLogFileObserverCheckStarted(fileLocal,ctx,totalBlock);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    obdLogFileObserverCheckStarted.startWatching();
+                                    blockData.registerOnSharedPreferenceChangeListener(isOpenedSharePreferenceChangeListener);
+
+                                }
+                            });
+                            
+                            
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, byte[] result) {
+
+                    }
+
+                    @Override
+                    public void onProgressInThread(Context context, Progress progress) {
+
+                    }
+
+                    @Override
+                    public void onFileSuccess(Context context, String filePath) {
+
+                    }
+                });
     }
 }
