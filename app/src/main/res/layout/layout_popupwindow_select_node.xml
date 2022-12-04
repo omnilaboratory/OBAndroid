@@ -144,7 +144,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/text_16"
-                            android:text="150,000"
+                            android:text="0"
                             android:textAlignment="textEnd"
                             android:layout_marginRight="@dimen/main_10"/>
                         <TextView

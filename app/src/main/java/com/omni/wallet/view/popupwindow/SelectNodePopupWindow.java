@@ -5,7 +5,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -91,7 +90,7 @@ public class SelectNodePopupWindow {
             if (selectNodeBasePopWindow.isShowing()){
                 return;
             }
-            initNodeGroupData();
+//            initNodeGroupData();
             RecyclerView nodeGroupRecyclerView = rootView.findViewById(R.id.rv_node_group_list);
             LinearLayoutManager layoutManager = new LinearLayoutManager(selectNodeContext);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);

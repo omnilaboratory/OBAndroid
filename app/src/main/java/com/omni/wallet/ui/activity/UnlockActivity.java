@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.http.HttpUtils;
@@ -60,7 +59,7 @@ public class UnlockActivity extends AppBaseActivity {
         Log.e("--------------------BlockChange-------------------",key);
         if (key == "isOpened"){
             Boolean isOpened = sharedPreferences.getBoolean("isOpened",false);
-            
+
             if(isOpened){
                 SharedPreferences.Editor editor = blockData.edit();
                 editor.putBoolean("isOpened",false);
@@ -69,7 +68,7 @@ public class UnlockActivity extends AppBaseActivity {
                 mLoadingDialog.dismiss();
                 switchActivity(AccountLightningActivity.class);
             }
-            
+
         }
     };
 
@@ -109,15 +108,15 @@ public class UnlockActivity extends AppBaseActivity {
             bottomBtnGroup.setVisibility(View.INVISIBLE);
         }
         blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
-        
+
     }
-    
+
     @Override
     protected void onDestroy() {
         blockData.unregisterOnSharedPreferenceChangeListener(isOpenedSharePreferenceChangeListener);
         super.onDestroy();
     }
-    
+
 
     /**
      * click eye icon
@@ -159,6 +158,7 @@ public class UnlockActivity extends AppBaseActivity {
             Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
                 @Override
                 public void onError(Exception e) {
+                    mLoadingDialog.dismiss();
                     Log.e("unlock failed","unlock failed");
                     e.printStackTrace();
 
@@ -172,6 +172,7 @@ public class UnlockActivity extends AppBaseActivity {
 
 //            
         }else{
+            mLoadingDialog.dismiss();
             String toastString = getResources().getString(R.string.toast_unlock_error);
             Toast checkPassToast = Toast.makeText(UnlockActivity.this,toastString,Toast.LENGTH_LONG);
             checkPassToast.setGravity(Gravity.TOP,0,20);
@@ -246,8 +247,8 @@ public class UnlockActivity extends AppBaseActivity {
 
                                 }
                             });
-                            
-                            
+
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();

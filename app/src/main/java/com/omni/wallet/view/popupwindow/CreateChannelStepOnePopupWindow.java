@@ -31,6 +31,7 @@ import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.ui.activity.ScanChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.Wallet;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -66,6 +67,7 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
     // Not necessary
     long mBalanceAmount;
     String mWalletAddress;
+    LoadingDialog mLoadingDialog;
 
     public CreateChannelStepOnePopupWindow(Context context) {
         this.mContext = context;
@@ -85,6 +87,7 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
+            mLoadingDialog = new LoadingDialog(mContext);
             if (!StringUtils.isEmpty(pubKey)) {
                 rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
                 rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
@@ -306,6 +309,7 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
                     ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
                     return;
                 }
+                mLoadingDialog.show();
                 openChannelConnected(mBalanceAmount, mWalletAddress);
 //                Obdmobile.listPeers(LightningOuterClass.ListPeersRequest.newBuilder().build().toByteArray(), new Callback() {
 //                    @Override
@@ -420,6 +424,7 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
+                        mLoadingDialog.dismiss();
                         LogUtils.e(TAG, "Error opening channel: " + e.getMessage());
                         if (e.getMessage().toLowerCase().contains("pending channels exceed maximum")) {
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_pending_max));
@@ -441,6 +446,7 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
                             LightningOuterClass.OpenStatusUpdate resp = LightningOuterClass.OpenStatusUpdate.parseFrom(bytes);
                             LogUtils.e(TAG, "Open channel update: " + resp.getUpdateCase().getNumber());
                             EventBus.getDefault().post(new OpenChannelEvent());
+                            mLoadingDialog.dismiss();
                             mBasePopWindow.dismiss();
                             Bundle bundle = new Bundle();
                             bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);

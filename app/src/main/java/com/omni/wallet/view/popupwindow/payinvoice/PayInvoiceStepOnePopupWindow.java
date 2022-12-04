@@ -24,6 +24,7 @@ import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
 import com.omni.wallet.utils.RefConstants;
 import com.omni.wallet.utils.UriUtil;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -57,6 +58,7 @@ public class PayInvoiceStepOnePopupWindow {
     private static final int PAYMENT_HASH_BYTE_LENGTH = 32;
     LightningOuterClass.Route route;
     String paymentHash;
+    LoadingDialog mLoadingDialog;
 
     public PayInvoiceStepOnePopupWindow(Context context) {
         this.mContext = context;
@@ -70,6 +72,8 @@ public class PayInvoiceStepOnePopupWindow {
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
+
+            mLoadingDialog = new LoadingDialog(mContext);
             mAddress = address;
             mAssetId = assetId;
             showStepOne(rootView, invoiceAddr);
@@ -133,6 +137,7 @@ public class PayInvoiceStepOnePopupWindow {
                     ToastUtils.showToast(mContext, "Length is greater than 11 characters");
                     return;
                 }
+                mLoadingDialog.show();
                 // convert to lower case
                 lnInvoice = data.toLowerCase();
                 // Remove the "lightning:" uri scheme if it is present, LND needs it without uri scheme
@@ -143,6 +148,12 @@ public class PayInvoiceStepOnePopupWindow {
                 Obdmobile.decodePayReq(decodePaymentRequest.toByteArray(), new Callback() {
                     @Override
                     public void onError(Exception e) {
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mLoadingDialog.dismiss();
+                            }
+                        });
                         LogUtils.e(TAG, "------------------decodePaymentOnError------------------" + e.getMessage());
                     }
 
@@ -169,6 +180,7 @@ public class PayInvoiceStepOnePopupWindow {
                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                                         @Override
                                         public void run() {
+                                            mLoadingDialog.dismiss();
                                             ToastUtils.showToast(mContext, e.getMessage());
                                         }
                                     });
@@ -196,6 +208,7 @@ public class PayInvoiceStepOnePopupWindow {
                                                         payAmount = resp.getAmount();
                                                         rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.VISIBLE);
                                                         rootView.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.GONE);
+                                                        mLoadingDialog.dismiss();
                                                         showStepTwo(rootView);
                                                         deletePaymentProbe(payment.getPaymentHash());
                                                     }
@@ -205,6 +218,7 @@ public class PayInvoiceStepOnePopupWindow {
                                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                     @Override
                                                     public void run() {
+                                                        mLoadingDialog.dismiss();
                                                         ToastUtils.showToast(mContext, mContext.getResources().getString(R.string.error_payment_no_route));
                                                         deletePaymentProbe(payment.getPaymentHash());
                                                     }
@@ -214,6 +228,7 @@ public class PayInvoiceStepOnePopupWindow {
                                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                     @Override
                                                     public void run() {
+                                                        mLoadingDialog.dismiss();
                                                         ToastUtils.showToast(mContext, payment.getFailureReason().toString());
                                                         deletePaymentProbe(payment.getPaymentHash());
                                                     }
@@ -272,6 +287,7 @@ public class PayInvoiceStepOnePopupWindow {
         rootView.findViewById(R.id.layout_pay).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mLoadingDialog.show();
                 RouterOuterClass.SendToRouteRequest sendToRouteRequest = RouterOuterClass.SendToRouteRequest.newBuilder()
                         .setPaymentHash(byteStringFromHex(paymentHash))
                         .setRoute(route)
@@ -279,6 +295,12 @@ public class PayInvoiceStepOnePopupWindow {
                 Obdmobile.routerSendToRouteV2(sendToRouteRequest.toByteArray(), new Callback() {
                     @Override
                     public void onError(Exception e) {
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mLoadingDialog.dismiss();
+                            }
+                        });
                         LogUtils.e(TAG, "Exception while executing SendToRoute.");
                         LogUtils.e(TAG, e.getMessage());
                     }
@@ -293,12 +315,14 @@ public class PayInvoiceStepOnePopupWindow {
                                         @Override
                                         public void run() {
                                             EventBus.getDefault().post(new PayInvoiceSuccessEvent());
+                                            mLoadingDialog.dismiss();
                                             // updated the history, so it is shown the next time the user views it
                                             rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
                                             rootView.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);
                                             rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
                                             rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                            showStepSuccess(rootView);                                        }
+                                            showStepSuccess(rootView);
+                                        }
                                     });
                                     break;
                                 case FAILED:
@@ -322,6 +346,7 @@ public class PayInvoiceStepOnePopupWindow {
                                                         @Override
                                                         public void run() {
                                                             EventBus.getDefault().post(new PayInvoiceFailedEvent());
+                                                            mLoadingDialog.dismiss();
                                                             rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
                                                             rootView.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
                                                             rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
@@ -344,6 +369,7 @@ public class PayInvoiceStepOnePopupWindow {
                                                                 LogUtils.e(TAG, "------------------sendPaymentOnResponse-----------------" + resp);
                                                                 if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.SUCCEEDED) {
                                                                     EventBus.getDefault().post(new PayInvoiceSuccessEvent());
+                                                                    mLoadingDialog.dismiss();
                                                                     rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
                                                                     rootView.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);
                                                                     rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
@@ -351,6 +377,7 @@ public class PayInvoiceStepOnePopupWindow {
                                                                     showStepSuccess(rootView);
                                                                 } else if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.FAILED) {
                                                                     EventBus.getDefault().post(new PayInvoiceFailedEvent());
+                                                                    mLoadingDialog.dismiss();
                                                                     rootView.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
                                                                     rootView.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
                                                                     rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);

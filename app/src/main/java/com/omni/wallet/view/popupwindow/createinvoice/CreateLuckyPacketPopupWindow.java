@@ -26,6 +26,7 @@ import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.UriUtil;
+import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
 import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
 
@@ -59,6 +60,7 @@ public class CreateLuckyPacketPopupWindow {
     String timeType;
     String numberInput;
     String qrCodeUrl;
+    LoadingDialog mLoadingDialog;
 
     public CreateLuckyPacketPopupWindow(Context context) {
         this.mContext = context;
@@ -72,6 +74,8 @@ public class CreateLuckyPacketPopupWindow {
             mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
+
+            mLoadingDialog = new LoadingDialog(mContext);
             mAddress = address;
             mAssetId = assetId;
             assetBalanceMax = balanceAccount;
@@ -225,6 +229,7 @@ public class CreateLuckyPacketPopupWindow {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
                     return;
                 }
+                mLoadingDialog.show();
                 LightningOuterClass.Invoice asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                         .setAssetId((int) mAssetId)
                         .setAmount(Long.parseLong(amountEdit.getText().toString()))
@@ -239,6 +244,7 @@ public class CreateLuckyPacketPopupWindow {
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
+                                mLoadingDialog.dismiss();
                                 rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
                                 rootView.findViewById(R.id.lv_lucky_packet_failed).setVisibility(View.VISIBLE);
                                 rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
@@ -261,6 +267,7 @@ public class CreateLuckyPacketPopupWindow {
                                 public void run() {
                                     EventBus.getDefault().post(new CreateInvoiceEvent());
                                     qrCodeUrl = UriUtil.generateLightningUri(resp.getPaymentRequest());
+                                    mLoadingDialog.dismiss();
                                     rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
                                     rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.VISIBLE);
                                     rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
