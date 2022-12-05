@@ -59,12 +59,11 @@ public class UnlockActivity extends AppBaseActivity {
         Log.e("--------------------BlockChange-------------------",key);
         if (key == "isOpened"){
             Boolean isOpened = sharedPreferences.getBoolean("isOpened",false);
-
             if(isOpened){
+                obdLogFileObserverCheckStarted.stopWatching();
                 SharedPreferences.Editor editor = blockData.edit();
                 editor.putBoolean("isOpened",false);
                 editor.commit();
-                obdLogFileObserverCheckStarted.stopWatching();
                 mLoadingDialog.dismiss();
                 switchActivity(AccountLightningActivity.class);
             }

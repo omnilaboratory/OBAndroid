@@ -64,16 +64,26 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
                         if(checkString(oldLine,totalBlock)){
                             String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
                             if(Integer.parseInt(stringHeight)>=totalBlock){
-                                blockDataEditor.putBoolean("isOpened",true);
-                                blockDataEditor.commit();
+                                Boolean isOpen = blockDataSharedPreferences.getBoolean("isOpened",false);
+                                if(!isOpen){
+//                                    Log.e("--------------------isOpenChange-------------------","1");
+                                    blockDataEditor.putBoolean("isOpened",true);
+                                    blockDataEditor.commit();
+                                    
+                                }
                             }
                         }
                     }else{
                         if(checkString(oldLine,totalBlock)){
                             String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
                             if(Integer.parseInt(stringHeight)>=totalBlock){
-                                blockDataEditor.putBoolean("isOpened",true);
-                                blockDataEditor.commit();
+                                Boolean isOpen = blockDataSharedPreferences.getBoolean("isOpened",false);
+                                if(!isOpen){
+//                                    Log.e("--------------------isOpenChange-------------------","2");
+                                    blockDataEditor.putBoolean("isOpened",true);
+                                    blockDataEditor.commit();
+
+                                }
                             }
                         }
                         bfr.close();
