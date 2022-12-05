@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
@@ -27,13 +28,14 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.UriUtil;
+import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
+import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.popupwindow.AccountManagePopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
-import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
@@ -80,6 +82,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     SendStepOnePopupWindow mSendStepOnePopupWindow;
     SelectNodePopupWindow mSelectNodePopupWindow;
     private LoadingDialog mLoadingDialog;
+    CreateChannelDialog mCreateChannelDialog;
+    PayInvoiceDialog mPayInvoiceDialog;
 
     long balanceAmount;
     private String pubkey;
@@ -172,8 +176,13 @@ public class AccountLightningActivity extends AppBaseActivity {
     protected void initData() {
         EventBus.getDefault().register(this);
         getInfo();
-        getAssetAndBtcData();
         setDefaultAddress();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getAssetAndBtcData();
     }
 
     /**
@@ -198,6 +207,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     pubkey = resp.getIdentityPubkey();
                     mNetworkTypeTv.setText(resp.getChains(0).getNetwork());
                     User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
+                    User.getInstance().setNodeVersion(mContext, resp.getVersion());
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -231,9 +241,9 @@ public class AccountLightningActivity extends AppBaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mBalanceValueTv.setText("$ " + resp.getConfirmedBalance());
+                            mBalanceValueTv.setText("$ " + BigDecimalUtils.round(String.valueOf(resp.getConfirmedBalance() / 100000000), 2));
                             balanceAmount = resp.getConfirmedBalance();
-                            mBalanceAmountTv.setText("My account " + balanceAmount + " balance");
+                            mBalanceAmountTv.setText("My account " + BigDecimalUtils.round(String.valueOf(balanceAmount / 100000000), 2) + " balance");
                             blockData.clear();
                             ListAssetItemEntity entity = new ListAssetItemEntity();
                             entity.setAmount(resp.getConfirmedBalance());
@@ -436,8 +446,8 @@ public class AccountLightningActivity extends AppBaseActivity {
             } else {
                 holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_usdt_logo_small);
             }
-            holder.setText(R.id.tv_asset_amount, String.valueOf(item.getAmount()));
-            holder.setText(R.id.tv_asset_value, String.valueOf(item.getAmount()));
+            holder.setText(R.id.tv_asset_amount, BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2));
+            holder.setText(R.id.tv_asset_value, BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2));
             if (item.getType() == 1) {
                 holder.setImageResource(R.id.iv_asset_net, R.mipmap.icon_network_link_black);
                 holder.setOnItemClickListener(new View.OnClickListener() {
@@ -594,8 +604,10 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @OnClick(R.id.layout_create_channel)
     public void clickCreateChannel() {
-        mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, User.getInstance().getWalletAddress(mContext), "");
+        mCreateChannelDialog = new CreateChannelDialog(mContext);
+        mCreateChannelDialog.show(balanceAmount, User.getInstance().getWalletAddress(mContext), "");
+//        mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+//        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, User.getInstance().getWalletAddress(mContext), "");
     }
 
     /**
@@ -626,8 +638,10 @@ public class AccountLightningActivity extends AppBaseActivity {
                                 try {
                                     LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
                                     LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
-                                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-                                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, resp.getAssetId(), event.getData());
+                                    mPayInvoiceDialog = new PayInvoiceDialog(mContext);
+                                    mPayInvoiceDialog.show(pubkey, resp.getAssetId(), event.getData());
+//                                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
+//                                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, resp.getAssetId(), event.getData());
                                 } catch (InvalidProtocolBufferException e) {
                                     e.printStackTrace();
                                 }
@@ -636,8 +650,10 @@ public class AccountLightningActivity extends AppBaseActivity {
                     }
                 });
             } else if (event.getType().equals("openChannel")) {
-                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, User.getInstance().getWalletAddress(mContext), event.getData());
+                mCreateChannelDialog = new CreateChannelDialog(mContext);
+                mCreateChannelDialog.show(balanceAmount, User.getInstance().getWalletAddress(mContext), event.getData());
+//                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+//                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, User.getInstance().getWalletAddress(mContext), event.getData());
             } else if (event.getType().equals("send")) {
                 mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
                 mSendStepOnePopupWindow.show(mParentLayout, event.getData());
@@ -654,7 +670,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         if (event == null) {
             return;
         }
-        User.getInstance().setWalletAddress(mContext,event.getAddress());
+        User.getInstance().setWalletAddress(mContext, event.getAddress());
         getInfo();
         getAssetAndBtcData();
         setDefaultAddress();
@@ -699,6 +715,12 @@ public class AccountLightningActivity extends AppBaseActivity {
         }
         if (mSelectNodePopupWindow != null) {
             mSelectNodePopupWindow.release();
+        }
+        if (mPayInvoiceDialog != null) {
+            mPayInvoiceDialog.release();
+        }
+        if (mCreateChannelDialog != null) {
+            mCreateChannelDialog.release();
         }
     }
 }

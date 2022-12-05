@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.utils.CopyUtil;
 
@@ -54,7 +55,7 @@ public class TokenInfoPopupWindow {
                 tokenUrlTv.setText("tether.io");
             }
             tokenIdTv.setText(assetId + "");
-            tokenAmountTv.setText(balanceAccount + "");
+            tokenAmountTv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
 
             RelativeLayout shareLayout = rootView.findViewById(R.id.layout_share);
             rootView.findViewById(R.id.layout_parent).setOnClickListener(new View.OnClickListener() {

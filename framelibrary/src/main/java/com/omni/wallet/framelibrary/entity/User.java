@@ -53,6 +53,8 @@ public class User {
     private String network;
     // 钱包地址
     private String walletAddress;
+    // 节点版本
+    private String nodeVersion;
 
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
@@ -182,6 +184,17 @@ public class User {
         PreferencesUtils.saveWalletAddressToLocal(context, walletAddress);
         this.walletAddress = walletAddress;
     }
+
+    public String getNodeVersion(Context context) {
+        nodeVersion = PreferencesUtils.getNodeVersionFromLocal(context);
+        return nodeVersion;
+    }
+
+    public void setNodeVersion(Context context, String nodeVersion) {
+        PreferencesUtils.saveNodeVersionToLocal(context, nodeVersion);
+        this.nodeVersion = nodeVersion;
+    }
+
     /**
      * 清空用户登录相关信息
      */

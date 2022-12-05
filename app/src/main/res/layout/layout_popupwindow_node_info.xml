@@ -102,6 +102,7 @@
                                 android:textSize="@dimen/text_16"/>
 
                             <TextView
+                                android:id="@+id/tv_node_version"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -127,6 +128,7 @@
                                 android:textSize="@dimen/text_16"/>
 
                             <TextView
+                                android:id="@+id/tv_node_backend"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -152,6 +154,7 @@
                                 android:textSize="@dimen/text_16"/>
 
                             <TextView
+                                android:id="@+id/tv_node_mode"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -203,6 +206,7 @@
                                 android:textSize="@dimen/text_16"/>
 
                             <TextView
+                                android:id="@+id/tv_node_rpchost"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -211,7 +215,6 @@
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16"/>
                         </RelativeLayout>
-
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -229,6 +232,7 @@
                                 android:textSize="@dimen/text_16"/>
 
                             <TextView
+                                android:id="@+id/tv_node_ports"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
@@ -245,6 +249,28 @@
                             android:layout_marginRight="@dimen/main_26"
                             android:layout_marginTop="@dimen/main_15"
                             android:background="@color/color_black"/>
+
+                        <TextView
+                            android:id="@+id/tv_node_zmqpubrawblock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/main_8"
+                            android:layout_marginLeft="@dimen/main_45"
+                            android:layout_marginRight="@dimen/main_45"
+                            android:layout_gravity="center"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_16"/>
+
+                        <TextView
+                            android:id="@+id/tv_node_zmqpubrawtx"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/main_8"
+                            android:layout_marginLeft="@dimen/main_45"
+                            android:layout_marginRight="@dimen/main_45"
+                            android:layout_gravity="center"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_16"/>
                         </LinearLayout>
                 </android.support.v4.widget.NestedScrollView>
 

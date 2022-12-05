@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
@@ -288,7 +289,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                             amountTypeTv.setText("USDT");
                         }
                         assetId = item.getPropertyid();
-                        assetBalanceMax = item.getAmount() + "";
+                        assetBalanceMax = BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2);
                         assetsBalanceTv.setText(assetBalanceMax);
                     }
                 });
@@ -317,7 +318,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
             public void afterTextChanged(Editable s) {
                 assetBalance = s.toString();
                 if (!StringUtils.isEmpty(s.toString())) {
-                    estimateOnChainFee(Long.parseLong(assetBalance), time);
+                    estimateOnChainFee(Long.parseLong(BigDecimalUtils.round(assetBalance, 0)), time);
                 }
             }
         });
@@ -340,17 +341,17 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                             case R.id.tv_slow:
                                 speedButton.setText(R.string.slow);
                                 time = 1; // 10 Minutes
-                                estimateOnChainFee(Long.parseLong(amountInputView.getText().toString()), time);
+                                estimateOnChainFee(Long.parseLong(BigDecimalUtils.round(amountInputView.getText().toString(), 0)), time);
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
                                 time = 6 * 6; // 6 Hours
-                                estimateOnChainFee(Long.parseLong(amountInputView.getText().toString()), time);
+                                estimateOnChainFee(Long.parseLong(BigDecimalUtils.round(amountInputView.getText().toString(), 0)), time);
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
                                 time = 6 * 24; // 24 Hours
-                                estimateOnChainFee(Long.parseLong(amountInputView.getText().toString()), time);
+                                estimateOnChainFee(Long.parseLong(BigDecimalUtils.round(amountInputView.getText().toString(), 0)), time);
                                 break;
                         }
                     }
@@ -386,7 +387,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
                     return;
                 }
-                if (Long.parseLong(assetBalance) - Long.parseLong(assetBalanceMax) > 0) {
+                if (Long.parseLong(assetBalance) - Long.parseLong(BigDecimalUtils.round(assetBalanceMax, 0)) > 0) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
                     return;
                 }
@@ -805,7 +806,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            assetBalanceMax = resp.getConfirmedBalance() + "";
+                            assetBalanceMax = BigDecimalUtils.round(String.valueOf(resp.getConfirmedBalance() / 100000000), 2);
                             assetsBalanceTv.setText(assetBalanceMax);
                         }
                     });
