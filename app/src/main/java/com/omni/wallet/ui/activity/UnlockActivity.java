@@ -56,14 +56,10 @@ public class UnlockActivity extends AppBaseActivity {
 
     @SuppressLint("LongLogTag")
     private final SharedPreferences.OnSharedPreferenceChangeListener isOpenedSharePreferenceChangeListener = (sharedPreferences, key) -> {
-        Log.e("--------------------BlockChange-------------------",key);
         if (key == "isOpened"){
             Boolean isOpened = sharedPreferences.getBoolean("isOpened",false);
             if(isOpened){
                 obdLogFileObserverCheckStarted.stopWatching();
-                SharedPreferences.Editor editor = blockData.edit();
-                editor.putBoolean("isOpened",false);
-                editor.commit();
                 mLoadingDialog.dismiss();
                 switchActivity(AccountLightningActivity.class);
             }
@@ -107,6 +103,9 @@ public class UnlockActivity extends AppBaseActivity {
             bottomBtnGroup.setVisibility(View.INVISIBLE);
         }
         blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
+        SharedPreferences.Editor editor = blockData.edit();
+        editor.putBoolean("isOpened",false);
+        editor.commit();
 
     }
 
@@ -157,7 +156,9 @@ public class UnlockActivity extends AppBaseActivity {
             Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
                 @Override
                 public void onError(Exception e) {
-                    mLoadingDialog.dismiss();
+                    if(mLoadingDialog.isShowing()){
+                        mLoadingDialog.dismiss();
+                    }
                     Log.e("unlock failed","unlock failed");
                     e.printStackTrace();
 
@@ -238,12 +239,11 @@ public class UnlockActivity extends AppBaseActivity {
                             int totalBlock = Integer.parseInt(block);
                             String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/regtest/lnd.log";
                             obdLogFileObserverCheckStarted = new ObdLogFileObserverCheckStarted(fileLocal,ctx,totalBlock);
+                            blockData.registerOnSharedPreferenceChangeListener(isOpenedSharePreferenceChangeListener);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     obdLogFileObserverCheckStarted.startWatching();
-                                    blockData.registerOnSharedPreferenceChangeListener(isOpenedSharePreferenceChangeListener);
-
                                 }
                             });
 

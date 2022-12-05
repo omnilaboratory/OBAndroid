@@ -30,6 +30,7 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
     SharedPreferences.Editor blockDataEditor;
     String filePath = "";
     int totalBlock = 0;
+    long lastReadLineNum = 0;
     
     public ObdLogFileObserverCheckStarted(String path) {
         super(path);
@@ -43,6 +44,7 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
         this.blockDataEditor = blockDataSharedPreferences.edit();
         this.filePath = path;
         this.totalBlock = totalBlock;
+        this.lastReadLineNum = blockDataSharedPreferences.getLong("lastReadLine",0);
     }
 
     @SuppressLint("LongLogTag")
@@ -51,6 +53,7 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
         if(event == FileObserver.MODIFY){
             BufferedReader bfr;
             try {
+                long readingLineNum = 0;
                 bfr = new BufferedReader(new FileReader(filePath));
                 String line;
                 line = bfr.readLine();
@@ -60,35 +63,39 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
                     sb.append(line);
                     sb.append("\n");
                     line = bfr.readLine();
-                    if(line!=null){
-                        if(checkString(oldLine,totalBlock)){
-                            String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
-                            if(Integer.parseInt(stringHeight)>=totalBlock){
-                                Boolean isOpen = blockDataSharedPreferences.getBoolean("isOpened",false);
-                                if(!isOpen){
-//                                    Log.e("--------------------isOpenChange-------------------","1");
-                                    blockDataEditor.putBoolean("isOpened",true);
-                                    blockDataEditor.commit();
-                                    
-                                }
-                            }
-                        }
-                    }else{
-                        if(checkString(oldLine,totalBlock)){
-                            String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
-                            if(Integer.parseInt(stringHeight)>=totalBlock){
-                                Boolean isOpen = blockDataSharedPreferences.getBoolean("isOpened",false);
-                                if(!isOpen){
-//                                    Log.e("--------------------isOpenChange-------------------","2");
-                                    blockDataEditor.putBoolean("isOpened",true);
-                                    blockDataEditor.commit();
+                    readingLineNum++;
+                    if(readingLineNum>=lastReadLineNum){
+                        if(line!=null){
+                            if(checkString(oldLine,totalBlock)){
+                                String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
+                                if(Integer.parseInt(stringHeight)>=totalBlock){
+                                    Boolean isOpen = blockDataSharedPreferences.getBoolean("isOpened",false);
+                                    if(!isOpen){
+                                        blockDataEditor.putBoolean("isOpened",true);
+                                        blockDataEditor.putLong("lastReadLineNum",readingLineNum);
+                                        blockDataEditor.commit();
 
+                                    }
                                 }
                             }
+                        }else{
+                            if(checkString(oldLine,totalBlock)){
+                                String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
+                                if(Integer.parseInt(stringHeight)>=totalBlock){
+                                    Boolean isOpen = blockDataSharedPreferences.getBoolean("isOpened",false);
+                                    if(!isOpen){
+                                        blockDataEditor.putBoolean("isOpened",true);
+                                        blockDataEditor.putLong("lastReadLineNum",readingLineNum);
+                                        blockDataEditor.commit();
+
+                                    }
+                                }
+                            }
+                            bfr.close();
+                            break;
                         }
-                        bfr.close();
-                        break;
                     }
+                    
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -112,4 +119,6 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
         isMatch = m.matches();
         return isMatch;
     }
+    
+    
 }
