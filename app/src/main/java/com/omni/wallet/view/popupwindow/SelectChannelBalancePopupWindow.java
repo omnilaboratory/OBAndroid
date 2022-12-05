@@ -10,6 +10,7 @@ import android.view.WindowManager;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
@@ -223,7 +224,7 @@ public class SelectChannelBalancePopupWindow {
                 holder.setImageResource(R.id.iv_logo, R.mipmap.icon_usdt_logo_small);
                 holder.setText(R.id.tv_asset, "USDT");
             }
-            holder.setText(R.id.tv_asset_amount, String.valueOf(item.getAmount()));
+            holder.setText(R.id.tv_asset_amount, BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2));
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

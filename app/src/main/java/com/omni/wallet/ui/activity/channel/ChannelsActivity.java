@@ -17,6 +17,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.entity.event.CloseChannelEvent;
@@ -25,11 +26,12 @@ import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.utils.Wallet;
+import com.omni.wallet.view.dialog.CreateChannelDialog;
+import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.popupwindow.ChannelDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
-import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
@@ -81,6 +83,9 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     private String pubkey;
     private String mCurrentSearchString = "";
 
+    PayInvoiceDialog mPayInvoiceDialog;
+    CreateChannelDialog mCreateChannelDialog;
+
     @Override
     protected void getBundleData(Bundle bundle) {
         balanceAmount = bundle.getLong(KEY_BALANCE_AMOUNT);
@@ -105,7 +110,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
 
     @Override
     protected void initView() {
-        mBalanceAmountTv.setText("My account " + balanceAmount);
+        mBalanceAmountTv.setText("My account " + BigDecimalUtils.round(String.valueOf(balanceAmount / 100000000), 2));
         mWalletAddressTv.setText(walletAddress);
         mSearchEdit.addTextChangedListener(new TextWatcher() {
             @Override
@@ -301,8 +306,10 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
 
     @OnClick(R.id.iv_create_channel)
     public void clickcCreateChannel() {
-        mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, "");
+        mCreateChannelDialog = new CreateChannelDialog(mContext);
+        mCreateChannelDialog.show(balanceAmount, walletAddress, "");
+//        mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+//        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, "");
     }
 
     /**
@@ -359,8 +366,10 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
                                 try {
                                     LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
                                     LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
-                                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-                                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, resp.getAssetId(), event.getData());
+                                    mPayInvoiceDialog = new PayInvoiceDialog(mContext);
+                                    mPayInvoiceDialog.show(pubkey, resp.getAssetId(), event.getData());
+//                                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
+//                                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, resp.getAssetId(), event.getData());
                                 } catch (InvalidProtocolBufferException e) {
                                     e.printStackTrace();
                                 }
@@ -369,8 +378,10 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
                     }
                 });
             } else if (event.getType().equals("openChannel")) {
-                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, event.getData());
+                mCreateChannelDialog = new CreateChannelDialog(mContext);
+                mCreateChannelDialog.show(balanceAmount, walletAddress, event.getData());
+//                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+//                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, event.getData());
             } else if (event.getType().equals("send")) {
                 mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
                 mSendStepOnePopupWindow.show(mParentLayout, event.getData());
@@ -404,6 +415,12 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
         }
         if (mSendStepOnePopupWindow != null) {
             mSendStepOnePopupWindow.release();
+        }
+        if (mPayInvoiceDialog != null) {
+            mPayInvoiceDialog.release();
+        }
+        if (mCreateChannelDialog != null) {
+            mCreateChannelDialog.release();
         }
     }
 }

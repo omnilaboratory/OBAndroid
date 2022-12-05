@@ -20,6 +20,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
@@ -35,6 +36,8 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.PaymentRequestUtil;
+import com.omni.wallet.view.dialog.CreateChannelDialog;
+import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
@@ -175,6 +178,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TokenInfoPopupWindow mTokenInfoPopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
 
+    PayInvoiceDialog mPayInvoiceDialog;
+    CreateChannelDialog mCreateChannelDialog;
+
     @Override
     protected void getBundleData(Bundle bundle) {
         balanceAmount = bundle.getLong(KEY_BALANCE_AMOUNT);
@@ -236,16 +242,16 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mAssetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
             mAssetNameTv.setText("USDT");
         }
-        mBalanceAmountTv.setText("My account " + balanceAmount);
+        mBalanceAmountTv.setText("My account " + BigDecimalUtils.round(String.valueOf(balanceAmount / 100000000), 2));
         mWalletAddressTv.setText(walletAddress);
-        mBalanceAccountTv.setText(balanceAccount + "");
-        mBalanceAccountExchangeTv.setText(balanceAccount + "");
-        mBalanceAccount1Tv.setText(balanceAccount + "");
-        mBalanceAccountExchange1Tv.setText(balanceAccount + "");
-        mBalanceAccount2Tv.setText(balanceAccount + "");
-        mBalanceAccountExchange2Tv.setText(balanceAccount + "");
-        mBalanceAccount3Tv.setText(balanceAccount + "");
-        mBalanceAccountExchange3Tv.setText(balanceAccount + "");
+        mBalanceAccountTv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
+        mBalanceAccountExchangeTv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
+        mBalanceAccount1Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
+        mBalanceAccountExchange1Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
+        mBalanceAccount2Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
+        mBalanceAccountExchange2Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
+        mBalanceAccount3Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
+        mBalanceAccountExchange3Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
     }
 
     @Override
@@ -698,8 +704,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @OnClick(R.id.layout_pay_invoice)
     public void clickPayInvoice() {
-        mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-        mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, "");
+        mPayInvoiceDialog = new PayInvoiceDialog(mContext);
+        mPayInvoiceDialog.show(pubkey, assetId, "");
+//        mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
+//        mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, "");
     }
 
     /**
@@ -851,11 +859,15 @@ public class BalanceDetailActivity extends AppBaseActivity {
     public void onScanResultEvent(ScanResultEvent event) {
         if (event.getCode() == 2) {
             if (event.getType().equals("payInvoice")) {
-                mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-                mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, event.getData());
+                mPayInvoiceDialog = new PayInvoiceDialog(mContext);
+                mPayInvoiceDialog.show(pubkey, assetId, event.getData());
+//                mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
+//                mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, event.getData());
             } else if (event.getType().equals("openChannel")) {
-                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, event.getData());
+                mCreateChannelDialog = new CreateChannelDialog(mContext);
+                mCreateChannelDialog.show(balanceAmount, walletAddress, event.getData());
+//                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+//                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, event.getData());
             } else if (event.getType().equals("send")) {
                 mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
                 mSendStepOnePopupWindow.show(mParentLayout, event.getData());
@@ -914,6 +926,12 @@ public class BalanceDetailActivity extends AppBaseActivity {
         }
         if (mCreateChannelStepOnePopupWindow != null) {
             mCreateChannelStepOnePopupWindow.release();
+        }
+        if (mPayInvoiceDialog != null) {
+            mPayInvoiceDialog.release();
+        }
+        if (mCreateChannelDialog != null) {
+            mCreateChannelDialog.release();
         }
     }
 }

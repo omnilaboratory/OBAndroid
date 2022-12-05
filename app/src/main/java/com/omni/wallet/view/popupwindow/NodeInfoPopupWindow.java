@@ -53,8 +53,22 @@ public class NodeInfoPopupWindow {
 
             mLoadingDialog = new LoadingDialog(mContext);
             nameTv = rootView.findViewById(R.id.tv_node_name);
+            TextView versionTv = rootView.findViewById(R.id.tv_node_version);
+            TextView backendTv = rootView.findViewById(R.id.tv_node_backend);
+            TextView modeTv = rootView.findViewById(R.id.tv_node_mode);
             TextView netWorkTv = rootView.findViewById(R.id.tv_node_network);
+            TextView rpchostTv = rootView.findViewById(R.id.tv_node_rpchost);
+            TextView portsTv = rootView.findViewById(R.id.tv_node_ports);
+            TextView zmqpubrawblockTv = rootView.findViewById(R.id.tv_node_zmqpubrawblock);
+            TextView zmqpubrawtxTv = rootView.findViewById(R.id.tv_node_zmqpubrawtx);
+            versionTv.setText(User.getInstance().getNodeVersion(mContext).substring(0, User.getInstance().getNodeVersion(mContext).indexOf(" ")));
+            backendTv.setText("omnicoreproxy");
+            modeTv.setText("SeedBackup");
             netWorkTv.setText(User.getInstance().getNetwork(mContext));
+            rpchostTv.setText("43.138.107.248:18332");
+            portsTv.setText("9735:9735");
+            zmqpubrawblockTv.setText("omnicoreproxy.zmqpubrawblock=tcp://43.138.107.248:28332");
+            zmqpubrawtxTv.setText("omnicoreproxy.zmqpubrawtx=tcp://43.138.107.248:28333");
             getNodeInfo(pubKey);
 
             // 点击copy

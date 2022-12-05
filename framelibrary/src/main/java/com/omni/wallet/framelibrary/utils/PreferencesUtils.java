@@ -26,6 +26,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     /****************************Omni Wallet*********************************/
     private static final String KEY_NETWORK = "networkKey";// 保存网络类型的Key
     private static final String KEY_WALLET_ADDRESS = "walletAddressKey";// 保存钱包地址的Key
+    private static final String KEY_NODE_VERSION = "nodeVersionKey";// 保存节点版本的Key
 
     /**
      * 版本信息本地化
@@ -197,16 +198,29 @@ public class PreferencesUtils extends BasePreferencesUtils {
         putString(SETTINGS, context, KEY_NETWORK, value);
     }
     /**
-     * 获取本地保存的网络类型
+     * 获取本地保存的钱包地址
      */
     public static String getWalletAddressFromLocal(Context context) {
         return getString(SETTINGS, context, KEY_WALLET_ADDRESS);
     }
 
     /**
-     * 网络类型本地化
+     * 钱包地址本地化
      */
     public static void saveWalletAddressToLocal(Context context, String value) {
         putString(SETTINGS, context, KEY_WALLET_ADDRESS, value);
+    }
+    /**
+     * 获取本地保存的节点版本
+     */
+    public static String getNodeVersionFromLocal(Context context) {
+        return getString(SETTINGS, context, KEY_NODE_VERSION);
+    }
+
+    /**
+     * 节点版本本地化
+     */
+    public static void saveNodeVersionToLocal(Context context, String value) {
+        putString(SETTINGS, context, KEY_NODE_VERSION, value);
     }
 }

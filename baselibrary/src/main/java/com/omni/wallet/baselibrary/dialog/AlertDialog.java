@@ -176,6 +176,14 @@ public class AlertDialog extends Dialog {
         }
 
         /**
+         * 设置充满屏幕
+         */
+        public AlertDialog.Builder fullHeight() {
+            P.mHeight = ViewGroup.LayoutParams.MATCH_PARENT;
+            return this;
+        }
+
+        /**
          * 设置是否在底部
          *
          * @param isAnimation 是否显示动画

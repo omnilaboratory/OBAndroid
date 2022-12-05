@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
@@ -54,7 +55,7 @@ public class CreateInvoiceStepOnePopupWindow {
     SelectTimePopupWindow mSelectTimePopupWindow;
     String mAddress;
     long mAssetId;
-    long assetBalanceMax;
+    String assetBalanceMax;
     String amountInput;
     String timeInput;
     String timeType;
@@ -77,7 +78,7 @@ public class CreateInvoiceStepOnePopupWindow {
             mLoadingDialog = new LoadingDialog(mContext);
             mAddress = address;
             mAssetId = assetId;
-            assetBalanceMax = balanceAccount;
+            assetBalanceMax = BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2);
             showStepOne(rootView);
             /**
              * @描述： 点击cancel
@@ -150,7 +151,7 @@ public class CreateInvoiceStepOnePopupWindow {
                             amountUnitTv.setText("USDT");
                         }
                         mAssetId = item.getPropertyid();
-                        assetBalanceMax = item.getAmount();
+                        assetBalanceMax = BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2);
                         assetMaxTv.setText(assetBalanceMax + "");
                     }
                 });
@@ -215,7 +216,7 @@ public class CreateInvoiceStepOnePopupWindow {
                     return;
                 }
                 // TODO: 2022/11/23 最大值最小值的判断需要完善一下
-                if (Long.parseLong(amountInput) - assetBalanceMax > 0) {
+                if (Long.parseLong(amountInput) - Long.parseLong(BigDecimalUtils.round(assetBalanceMax, 0)) > 0) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
                     return;
                 }

@@ -61,7 +61,7 @@ public class UnlockActivity extends AppBaseActivity {
             if(isOpened){
                 obdLogFileObserverCheckStarted.stopWatching();
                 mLoadingDialog.dismiss();
-                switchActivity(AccountLightningActivity.class);
+                switchActivityFinish(AccountLightningActivity.class);
             }
 
         }

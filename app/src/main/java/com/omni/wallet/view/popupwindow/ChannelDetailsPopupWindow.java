@@ -23,6 +23,7 @@ import com.omni.wallet.utils.MonetaryUtil;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UtilFunctions;
 import com.omni.wallet.utils.Wallet;
+import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.SendFailedDialog;
 import com.omni.wallet.view.dialog.SendSuccessDialog;
@@ -68,6 +69,7 @@ public class ChannelDetailsPopupWindow {
     LoadingDialog mLoadingDialog;
     SendSuccessDialog mSendSuccessDialog;
     SendFailedDialog mSendFailedDialog;
+    CreateChannelDialog mCreateChannelDialog;
 
     private String mChannelPoint;
 
@@ -140,8 +142,10 @@ public class ChannelDetailsPopupWindow {
                 @Override
                 public void onClick(View v) {
                     mBasePopWindow.dismiss();
-                    mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-                    mCreateChannelStepOnePopupWindow.show(view, balanceAmount, walletAddress, "");
+                    mCreateChannelDialog = new CreateChannelDialog(mContext);
+                    mCreateChannelDialog.show(balanceAmount, walletAddress, "");
+//                    mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
+//                    mCreateChannelStepOnePopupWindow.show(view, balanceAmount, walletAddress, "");
                 }
             });
             //click close button at bottom
@@ -332,6 +336,9 @@ public class ChannelDetailsPopupWindow {
         }
         if (mCreateChannelStepOnePopupWindow != null) {
             mCreateChannelStepOnePopupWindow.release();
+        }
+        if (mCreateChannelDialog != null) {
+            mCreateChannelDialog.release();
         }
     }
 }

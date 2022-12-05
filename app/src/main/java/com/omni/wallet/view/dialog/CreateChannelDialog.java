@@ -1,4 +1,4 @@
-package com.omni.wallet.view.popupwindow;
+package com.omni.wallet.view.dialog;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,9 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,12 +16,12 @@ import android.widget.TextView;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
-import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.OpenChannelEvent;
 import com.omni.wallet.framelibrary.entity.User;
@@ -32,7 +30,8 @@ import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.ui.activity.ScanChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.Wallet;
-import com.omni.wallet.view.dialog.LoadingDialog;
+import com.omni.wallet.view.popupwindow.SelectAssetUnitPopupWindow;
+import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -45,20 +44,22 @@ import obdmobile.Obdmobile;
 import obdmobile.RecvStream;
 
 /**
- * CreateChannelStepOne的弹窗
+ * 汉: 创建通道的弹窗
+ * En: CreateChannelDialog
+ * author: guoyalei
+ * date: 2022/12/5
  */
-public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListener {
-    private static final String TAG = CreateChannelStepOnePopupWindow.class.getSimpleName();
+public class CreateChannelDialog implements Wallet.ScanChannelListener{
+    private static final String TAG = CreateChannelDialog.class.getSimpleName();
 
     private Context mContext;
-    private BasePopWindow mBasePopWindow;
+    private AlertDialog mAlertDialog;
     TextView localEdit;
     TextView channelAmountTv;
     TextView channelFeeTv;
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetUnitPopupWindow mSelectAssetUnitPopupWindow;
     //    String nodePubkey = "02b49967df27dfe5a3615f48c8b11621f64bd04f39e71b91e88121be4704a791ef";
-    View rootView;
     String nodePubkey;
     long assetId;
     int time;
@@ -70,74 +71,72 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
     String mWalletAddress;
     LoadingDialog mLoadingDialog;
 
-    public CreateChannelStepOnePopupWindow(Context context) {
+    public CreateChannelDialog(Context context) {
         this.mContext = context;
     }
 
-    public void show(final View view, long balanceAmount, String walletAddress, String pubKey) {
-        if (mBasePopWindow == null) {
-            mBalanceAmount = balanceAmount;
-            mWalletAddress = walletAddress;
-            nodePubkey = pubKey;
-            Wallet.getInstance().registerScanChannelListener(this);
-
-            mBasePopWindow = new BasePopWindow(mContext);
-            rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_create_channel_stepone);
-            mBasePopWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
-            mBasePopWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
-//            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
-            mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
-
-            mLoadingDialog = new LoadingDialog(mContext);
-            if (!StringUtils.isEmpty(pubKey)) {
-                rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
-                rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
-                showStepTwo(rootView);
-            } else {
-                getListPeers();
-                showStepOne(rootView);
-            }
-            /**
-             * @描述： 点击 cancel
-             * @desc: click cancel button
-             */
-            rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mBasePopWindow.dismiss();
-                }
-            });
-            if (mBasePopWindow.isShowing()) {
-                return;
-            }
-            mBasePopWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+    public void show(long balanceAmount, String walletAddress, String pubKey) {
+        if (mAlertDialog == null) {
+            mAlertDialog = new AlertDialog.Builder(mContext, R.style.dialog_translucent_theme)
+                    .setContentView(R.layout.layout_popupwindow_create_channel_stepone)
+                    .setAnimation(R.style.popup_anim_style)
+                    .fullWidth()
+                    .fullHeight()
+                    .create();
         }
+        mBalanceAmount = balanceAmount;
+        mWalletAddress = walletAddress;
+        nodePubkey = pubKey;
+        Wallet.getInstance().registerScanChannelListener(this);
+        mLoadingDialog = new LoadingDialog(mContext);
+        if (!StringUtils.isEmpty(pubKey)) {
+            mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
+            mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
+            showStepTwo();
+        } else {
+            getListPeers();
+            showStepOne();
+        }
+        /**
+         * @描述： 点击 cancel
+         * @desc: click cancel button
+         */
+        mAlertDialog.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAlertDialog.dismiss();
+            }
+        });
+        if (mAlertDialog.isShowing()) {
+            mAlertDialog.dismiss();
+        }
+        mAlertDialog.show();
     }
 
-    private void showStepOne(View rootView) {
-        localEdit = rootView.findViewById(R.id.edit_local);
-        EditText waterDripEdit = rootView.findViewById(R.id.edit_water_drip);
-        EditText remoteEdit = rootView.findViewById(R.id.edit_remote);
+    private void showStepOne() {
+        localEdit = mAlertDialog.findViewById(R.id.edit_local);
+        EditText waterDripEdit = mAlertDialog.findViewById(R.id.edit_water_drip);
+        EditText remoteEdit = mAlertDialog.findViewById(R.id.edit_remote);
         waterDripEdit.setText(nodePubkey);
         remoteEdit.setText(nodePubkey);
         /**
          * 点击默认节点
          * @desc: click default addr
          */
-        rootView.findViewById(R.id.layout_defaylt_addr).setOnClickListener(new View.OnClickListener() {
+        mAlertDialog.findViewById(R.id.layout_defaylt_addr).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
-                rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
+                mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
+                mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
                 nodePubkey = localEdit.getText().toString();
-                showStepTwo(rootView);
+                showStepTwo();
             }
         });
         /**
          * @描述： 扫描二维码
          * @desc: scan qrcode
          */
-        rootView.findViewById(R.id.layout_scan_qrcode).setOnClickListener(new View.OnClickListener() {
+        mAlertDialog.findViewById(R.id.layout_scan_qrcode).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PermissionUtils.launchCamera((Activity) mContext, new PermissionUtils.PermissionCallback() {
@@ -164,25 +163,25 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
          * @描述： 手动填写
          * @desc: fill in
          */
-        rootView.findViewById(R.id.layout_fill_in).setOnClickListener(new View.OnClickListener() {
+        mAlertDialog.findViewById(R.id.layout_fill_in).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
-                rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
+                mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
+                mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
                 nodePubkey = "";
-                showStepTwo(rootView);
+                showStepTwo();
             }
         });
     }
 
-    private void showStepTwo(View rootView) {
-        EditText vaildPubkeyEdit = rootView.findViewById(R.id.edit_vaild_pubkey);
-        TextView nodeNameTv = rootView.findViewById(R.id.tv_node_name);
-        EditText channelAmountEdit = rootView.findViewById(R.id.edit_channel_amount);
-        channelAmountTv = rootView.findViewById(R.id.tv_channel_amount);
-        channelFeeTv = rootView.findViewById(R.id.tv_channel_fee);
-        Button amountUnitButton = rootView.findViewById(R.id.btn_amount_unit);
-        Button speedButton = rootView.findViewById(R.id.btn_speed);
+    private void showStepTwo() {
+        EditText vaildPubkeyEdit = mAlertDialog.findViewById(R.id.edit_vaild_pubkey);
+        TextView nodeNameTv = mAlertDialog.findViewById(R.id.tv_node_name);
+        EditText channelAmountEdit = mAlertDialog.findViewById(R.id.edit_channel_amount);
+        channelAmountTv = mAlertDialog.findViewById(R.id.tv_channel_amount);
+        channelFeeTv = mAlertDialog.findViewById(R.id.tv_channel_fee);
+        Button amountUnitButton = mAlertDialog.findViewById(R.id.btn_amount_unit);
+        Button speedButton = mAlertDialog.findViewById(R.id.btn_speed);
 
         vaildPubkeyEdit.setText(nodePubkey);
         nodeNameTv.setText(Wallet.getInstance().getNodeAliasFromPubKey(nodePubkey, mContext));
@@ -263,19 +262,19 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
          * @描述： 点击back
          * @desc: click back button
          */
-        rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
+        mAlertDialog.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.GONE);
-                showStepOne(rootView);
+                mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.VISIBLE);
+                mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.GONE);
+                showStepOne();
             }
         });
         /**
          * @描述： 点击create
          * @desc: click create button
          */
-        rootView.findViewById(R.id.layout_create).setOnClickListener(new View.OnClickListener() {
+        mAlertDialog.findViewById(R.id.layout_create).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // values from LND
@@ -448,7 +447,7 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
                             LogUtils.e(TAG, "Open channel update: " + resp.getUpdateCase().getNumber());
                             EventBus.getDefault().post(new OpenChannelEvent());
                             mLoadingDialog.dismiss();
-                            mBasePopWindow.dismiss();
+                            mAlertDialog.dismiss();
                             Bundle bundle = new Bundle();
                             bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
                             bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
@@ -657,17 +656,17 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
 
     @Override
     public void onScanChannelUpdated(String result) {
-        rootView.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
-        rootView.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
+        mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
+        mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
         nodePubkey = result;
-        showStepTwo(rootView);
+        showStepTwo();
     }
 
     public void release() {
         Wallet.getInstance().unregisterScanChannelListener(this);
-        if (mBasePopWindow != null) {
-            mBasePopWindow.dismiss();
-            mBasePopWindow = null;
+        if (mAlertDialog != null) {
+            mAlertDialog.dismiss();
+            mAlertDialog = null;
         }
     }
 }
