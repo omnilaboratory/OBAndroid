@@ -56,10 +56,16 @@ public class UnlockActivity extends AppBaseActivity {
 
     @SuppressLint("LongLogTag")
     private final SharedPreferences.OnSharedPreferenceChangeListener isOpenedSharePreferenceChangeListener = (sharedPreferences, key) -> {
-        if (key == "isOpened"){
+        if (key.equals("isOpened")){
             Boolean isOpened = sharedPreferences.getBoolean("isOpened",false);
             if(isOpened){
-                obdLogFileObserverCheckStarted.stopWatching();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        obdLogFileObserverCheckStarted.stopWatching();
+                    }
+                }).start();
+                
                 mLoadingDialog.dismiss();
                 switchActivityFinish(AccountLightningActivity.class);
             }

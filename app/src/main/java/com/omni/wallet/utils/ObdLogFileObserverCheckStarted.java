@@ -30,7 +30,6 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
     SharedPreferences.Editor blockDataEditor;
     String filePath = "";
     int totalBlock = 0;
-    long lastReadLineNum = 0;
     
     public ObdLogFileObserverCheckStarted(String path) {
         super(path);
@@ -44,7 +43,6 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
         this.blockDataEditor = blockDataSharedPreferences.edit();
         this.filePath = path;
         this.totalBlock = totalBlock;
-        this.lastReadLineNum = blockDataSharedPreferences.getLong("lastReadLine",0);
     }
 
     @SuppressLint("LongLogTag")
@@ -53,6 +51,7 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
         if(event == FileObserver.MODIFY){
             BufferedReader bfr;
             try {
+                long lastReadLineNum = blockDataSharedPreferences.getLong("lastReadLineNum",0);
                 long readingLineNum = 0;
                 bfr = new BufferedReader(new FileReader(filePath));
                 String line;
@@ -66,6 +65,7 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
                         if(line!=null){
                             readingLineNum++;
                             if(readingLineNum>lastReadLineNum){
+                                Log.e("-------------------------reading,lastReadLineNum----------------------",String.valueOf(readingLineNum)+","+String.valueOf(lastReadLineNum));
                                 if(checkString(oldLine,totalBlock)){
                                     String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
                                     if(Integer.parseInt(stringHeight)>=totalBlock){
