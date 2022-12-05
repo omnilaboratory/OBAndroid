@@ -45,6 +45,7 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
         this.totalBlock = totalBlock;
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void onEvent(int event, @Nullable String path) {
         if(event == FileObserver.MODIFY){
@@ -61,13 +62,19 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
                     line = bfr.readLine();
                     if(line!=null){
                         if(checkString(oldLine,totalBlock)){
-                            blockDataEditor.putBoolean("isOpened",true);
-                            blockDataEditor.commit();
+                            String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
+                            if(Integer.parseInt(stringHeight)>=totalBlock){
+                                blockDataEditor.putBoolean("isOpened",true);
+                                blockDataEditor.commit();
+                            }
                         }
                     }else{
                         if(checkString(oldLine,totalBlock)){
-                            blockDataEditor.putBoolean("isOpened",true);
-                            blockDataEditor.commit();
+                            String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
+                            if(Integer.parseInt(stringHeight)>=totalBlock){
+                                blockDataEditor.putBoolean("isOpened",true);
+                                blockDataEditor.commit();
+                            }
                         }
                         bfr.close();
                         break;
@@ -89,8 +96,7 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
     private Boolean checkString(String logLine,int block){
         Boolean isMatch = false;
         String pattern;
-        pattern = ".*Chain backend is fully synced \\(end_height="+block+"\\)!.*";
-        Log.e("-------------------------backend-----------------",pattern);
+        pattern = ".*Chain backend is fully synced \\(end_height=\\d+\\)!.*";
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(logLine);
         isMatch = m.matches();

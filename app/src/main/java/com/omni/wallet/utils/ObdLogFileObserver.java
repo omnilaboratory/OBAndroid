@@ -52,7 +52,6 @@ public class ObdLogFileObserver extends FileObserver {
                     line = bfr.readLine();
                     if(line!=null){
                         if(checkString(oldLine)){
-                            Log.e("---------------Updated Current Block Height------------------",oldLine);
                             String stringHeight = oldLine.split("height")[1].split(",")[0];
                             int syncingHeight = Integer.parseInt(stringHeight.trim());
                             if(syncingHeight>currentHeight){
@@ -60,8 +59,22 @@ public class ObdLogFileObserver extends FileObserver {
                                 blockDataEditor.commit();
                             }
                         }else if(checkSyncedOver(oldLine)){
-                            Log.e("---------------Updated Current Block Height------------------",oldLine);
                             String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
+                            int syncingHeight = Integer.parseInt(stringHeight.trim());
+                            if(syncingHeight>currentHeight){
+                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                blockDataEditor.commit();
+                            }
+                        }else if(checkRecoverString(oldLine)){
+                            String stringHeight = oldLine.split("blocks")[1].split("-")[0];
+                            int syncingHeight = Integer.parseInt(stringHeight.trim());
+                            if(syncingHeight>currentHeight){
+                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                blockDataEditor.commit();
+                            }
+                        }else if(checkRecoveredStartString(oldLine)){
+                            String stringHeight = oldLine.split("height=")[1].split("hash=")[0];
+                            Log.e("---------------------checkRecoverString-------------------------",stringHeight);
                             int syncingHeight = Integer.parseInt(stringHeight.trim());
                             if(syncingHeight>currentHeight){
                                 blockDataEditor.putInt("currentBlockHeight",syncingHeight);
@@ -70,7 +83,6 @@ public class ObdLogFileObserver extends FileObserver {
                         }
                     }else{
                         if(checkString(oldLine)){
-                            Log.e("---------------Updated Current Block Height------------------",oldLine);
                             String stringHeight = oldLine.split("height")[1].split(",")[0];
                             int syncingHeight = Integer.parseInt(stringHeight.trim());
                             if(syncingHeight>currentHeight){
@@ -78,8 +90,22 @@ public class ObdLogFileObserver extends FileObserver {
                                 blockDataEditor.commit();
                             }
                         }else if(checkSyncedOver(oldLine)){
-                            Log.e("---------------Updated Current Block Height------------------",oldLine);
                             String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
+                            int syncingHeight = Integer.parseInt(stringHeight.trim());
+                            if(syncingHeight>currentHeight){
+                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                blockDataEditor.commit();
+                            }
+                        }else if(checkRecoverString(oldLine)){
+                            String stringHeight = oldLine.split("blocks")[1].split("-")[0];
+                            int syncingHeight = Integer.parseInt(stringHeight.trim());
+                            if(syncingHeight>currentHeight){
+                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                blockDataEditor.commit();
+                            }
+                        }else if(checkRecoveredStartString(oldLine)){
+                            String stringHeight = oldLine.split("height=")[1].split("hash=")[0];
+                            Log.e("---------------------checkRecoverString-------------------------",stringHeight);
                             int syncingHeight = Integer.parseInt(stringHeight.trim());
                             if(syncingHeight>currentHeight){
                                 blockDataEditor.putInt("currentBlockHeight",syncingHeight);
@@ -117,6 +143,24 @@ public class ObdLogFileObserver extends FileObserver {
         Boolean isMatch = false;
         String pattern;
         pattern = ".*Chain backend is fully synced \\(end_height=\\d+\\)!.*";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(logLine);
+        isMatch = m.matches();
+        return isMatch;
+    }
+    private Boolean checkRecoverString(String logLine){
+        Boolean isMatch = false;
+        String pattern;
+        pattern = ".*Recovered addresses from blocks \\d+-+\\d.*";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(logLine);
+        isMatch = m.matches();
+        return isMatch;
+    }
+    private Boolean checkRecoveredStartString(String logLine){
+        Boolean isMatch = false;
+        String pattern;
+        pattern = ".*Seed birthday surpassed, starting recovery of wallet from height=\\d+ hash=\\w+ with recovery-window=\\d.*";
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(logLine);
         isMatch = m.matches();

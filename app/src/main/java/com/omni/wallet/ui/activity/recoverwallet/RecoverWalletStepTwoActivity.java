@@ -255,6 +255,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                 public void onError(Exception e) {
                     Log.e("initWallet Error",e.toString());
                     e.printStackTrace();
+                    mLoadingDialog.dismiss();
                 }
                 @Override
                 public void onResponse(byte[] bytes) {
@@ -270,7 +271,6 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                         SharedPreferences.Editor macaroonDataEditor = macaroonData.edit();
                         macaroonDataEditor.putString("macaroon", macaroon.toString());
                         macaroonDataEditor.commit();
-                        mLoadingDialog.dismiss();
                         switchActivity(BackupBlockProcessActivity.class);
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();

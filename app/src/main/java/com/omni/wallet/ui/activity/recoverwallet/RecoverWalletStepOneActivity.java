@@ -102,7 +102,6 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
                 cellEditText.setTextColor(getResources().getColor(R.color.color_white));
                 cellEditText.setHintTextColor(getResources().getColor(R.color.color_white));
                 cellEditText.setTextSize(16.0f);
-                cellEditText.setTextColor(getResources().getColor(R.color.color_black));
                 cellEditText.setLayoutParams(cellEditTextParams);
 
                 cellInner.addView(noText);
