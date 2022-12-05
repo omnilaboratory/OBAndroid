@@ -149,26 +149,29 @@ public class UnlockActivity extends AppBaseActivity {
         String passwordString = mPwdEdit.getText().toString();
         String passMd5 = Md5Util.getMD5Str(passwordString);
         mLoadingDialog.show();
-        Log.e("unlock password",passMd5);
-        Log.e("unlock localPass",localPass);
         if(localPass.equals(passMd5)){
-            Walletunlocker.UnlockWalletRequest unlockWalletRequest =  Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
-            Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
-                @Override
-                public void onError(Exception e) {
-                    if(mLoadingDialog.isShowing()){
-                        mLoadingDialog.dismiss();
+            if(blockData.getBoolean("isOpened",false)){
+                mLoadingDialog.dismiss();
+                switchActivity(AccountLightningActivity.class);
+            }else{
+                Walletunlocker.UnlockWalletRequest unlockWalletRequest =  Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
+                Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        if(mLoadingDialog.isShowing()){
+                            mLoadingDialog.dismiss();
+                        }
+                        Log.e("unlock failed","unlock failed");
+                        e.printStackTrace();
+
                     }
-                    Log.e("unlock failed","unlock failed");
-                    e.printStackTrace();
 
-                }
-
-                @Override
-                public void onResponse(byte[] bytes) {
-                    getTotalBlockHeight();
-                }
-            });
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        getTotalBlockHeight();
+                    }
+                });
+            }
 
 //            
         }else{
