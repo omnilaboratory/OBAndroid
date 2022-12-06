@@ -123,7 +123,7 @@ public class CreateLuckyPacketPopupWindow {
         Button timeButton = rootView.findViewById(R.id.btn_time);
         EditText amountTimeEdit = rootView.findViewById(R.id.edit_time);
         EditText numberEdit = rootView.findViewById(R.id.edit_number);
-        if (mAssetId == 0) {
+        if (mAssetId == 1) {
             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeTv.setText("BTC");
             amountUnitTv.setText("BTC");
@@ -141,7 +141,7 @@ public class CreateLuckyPacketPopupWindow {
                 mSelectChannelBalancePopupWindow.setOnItemClickCallback(new SelectChannelBalancePopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
-                        if (item.getPropertyid() == 0) {
+                        if (item.getPropertyid() == 1) {
                             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
                             assetTypeTv.setText("BTC");
                             amountUnitTv.setText("BTC");
@@ -296,7 +296,7 @@ public class CreateLuckyPacketPopupWindow {
         ImageView qrCodeIv = rootView.findViewById(R.id.iv_success_qrcode);
         TextView paymentSuccessTv = rootView.findViewById(R.id.tv_success_payment);
         ImageView copyIv = rootView.findViewById(R.id.iv_success_copy);
-        if (mAssetId == 0) {
+        if (mAssetId == 1) {
             assetTypeSuccessIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeSuccessTv.setText("BTC");
             amountUnitSuccessTv.setText("BTC");
@@ -391,7 +391,7 @@ public class CreateLuckyPacketPopupWindow {
         TextView numberFailedTv = rootView.findViewById(R.id.tv_number_failed);
         TextView timeFailedTv = rootView.findViewById(R.id.tv_time_failed);
         TextView timeUnitFailedTv = rootView.findViewById(R.id.tv_time_unit_failed);
-        if (mAssetId == 0) {
+        if (mAssetId == 1) {
             assetTypeFailedIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeFailedTv.setText("BTC");
             amountUnitFailedTv.setText("BTC");

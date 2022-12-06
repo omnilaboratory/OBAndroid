@@ -245,7 +245,7 @@ public class ChannelDetailsPopupWindow {
     private void setBasicInformation(@NonNull int assetId, @NonNull String remoteNodePublicKey, @NonNull String remotePubKey, @NonNull String channelPoint) {
         mRemoteName.setText(Wallet.getInstance().getNodeAliasFromPubKey(remoteNodePublicKey, mContext));
         mRemotePubkey.setText(remotePubKey);
-        if (assetId == 0) {
+        if (assetId == 1) {
             mAssetLogo.setImageResource(R.mipmap.icon_btc_logo_small);
             mAssetUnit.setText("BTC");
         } else {

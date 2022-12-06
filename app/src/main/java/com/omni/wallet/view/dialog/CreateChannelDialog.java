@@ -60,6 +60,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetUnitPopupWindow mSelectAssetUnitPopupWindow;
     //    String nodePubkey = "02b49967df27dfe5a3615f48c8b11621f64bd04f39e71b91e88121be4704a791ef";
+    String centerNodePubkey;
     String nodePubkey;
     long assetId;
     int time;
@@ -245,7 +246,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 mSelectAssetUnitPopupWindow.setOnItemClickCallback(new SelectAssetUnitPopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
-                        if (item.getPropertyid() == 0) {
+                        if (item.getPropertyid() == 1) {
                             amountUnitButton.setText("BTC");
                         } else {
                             amountUnitButton.setText("USDT");
@@ -316,7 +317,12 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     return;
                 }
                 mLoadingDialog.show();
-                openChannelConnected(mBalanceAmount, mWalletAddress);
+                // TODO: 2022/12/6 该逻辑待验证
+                if (nodePubkey.equals(centerNodePubkey)) {
+                    openChannelConnected(mBalanceAmount, mWalletAddress);
+                } else {
+                    connectPeer(mBalanceAmount, mWalletAddress);
+                }
 //                Obdmobile.listPeers(LightningOuterClass.ListPeersRequest.newBuilder().build().toByteArray(), new Callback() {
 //                    @Override
 //                    public void onError(Exception e) {
@@ -399,6 +405,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             LightningOuterClass.ListPeersResponse resp = LightningOuterClass.ListPeersResponse.parseFrom(bytes);
                             LogUtils.e(TAG, "------------------listPeersonResponse------------------" + resp.toString());
                             nodePubkey = resp.getPeers(0).getPubKey();
+                            centerNodePubkey = resp.getPeers(0).getPubKey();
                             localEdit.setText(nodePubkey);
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
@@ -416,15 +423,27 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
      */
     private void openChannelConnected(long balanceAmount, String walletAddress) {
         byte[] nodeKeyBytes = hexStringToByteArray(nodePubkey);
-        LightningOuterClass.OpenChannelRequest openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
-                .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
-                .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
-                .setPrivate(false)
-                .setLocalFundingBtcAmount(20000)
-                .setLocalFundingAssetAmount((long) (Double.parseDouble(assetBalance) * 100000000))
-                .setPushAssetSat((long) ((Double.parseDouble(assetBalance) * 100000000) / 2))
-                .setAssetId((int) assetId)
-                .build();
+        LightningOuterClass.OpenChannelRequest openChannelRequest;
+        if (assetId == 1) {
+            openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
+                    .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
+                    .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
+                    .setPrivate(false)
+                    .setLocalFundingBtcAmount((long) (Double.parseDouble(assetBalance) * 100000000))
+                    .setPushBtcSat((long) ((Double.parseDouble(assetBalance) * 100000000) / 2))
+                    .setAssetId((int) assetId)
+                    .build();
+        } else {
+            openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
+                    .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
+                    .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
+                    .setPrivate(false)
+                    .setLocalFundingBtcAmount(20000)
+                    .setLocalFundingAssetAmount((long) (Double.parseDouble(assetBalance) * 100000000))
+                    .setPushAssetSat((long) ((Double.parseDouble(assetBalance) * 100000000) / 2))
+                    .setAssetId((int) assetId)
+                    .build();
+        }
         Obdmobile.openChannel(openChannelRequest.toByteArray(), new RecvStream() {
             @Override
             public void onError(Exception e) {

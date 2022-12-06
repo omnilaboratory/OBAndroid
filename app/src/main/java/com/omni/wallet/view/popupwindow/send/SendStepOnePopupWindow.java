@@ -68,7 +68,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
     String selectAddress;
     int time = 1;
     long feeStr;
-    long assetId = 0;
+    long assetId = 1;
     String assetBalance = "0";
     String assetBalanceMax;
     private LoadingDialog mLoadingDialog;
@@ -258,7 +258,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
         TextView assetTypeTv = view.findViewById(R.id.tv_asset_type);
         TextView amountTypeTv = view.findViewById(R.id.tv_amount_type);
         assetsBalanceTv = view.findViewById(R.id.tv_asset_balance);
-        if (assetId == 0) {
+        if (assetId == 1) {
             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeTv.setText("BTC");
             amountTypeTv.setText("BTC");
@@ -279,7 +279,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                 mSelectAssetPopupWindow.setOnItemClickCallback(new SelectAssetPopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
-                        if (item.getPropertyid() == 0) {
+                        if (item.getPropertyid() == 1) {
                             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
                             assetTypeTv.setText("BTC");
                             amountTypeTv.setText("BTC");
@@ -421,7 +421,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
         ImageView tokenImage = view.findViewById(R.id.iv_send_token_image);
         TextView tokenTypeView = view.findViewById(R.id.tv_send_token_type);
         TextView tokenTypeView2 = view.findViewById(R.id.tv_send_token_type_2);
-        if (assetId == 0) {
+        if (assetId == 1) {
             tokenImage.setImageResource(R.mipmap.icon_btc_logo_small);
             tokenTypeView.setText("BTC");
             tokenTypeView2.setText("BTC");
@@ -465,7 +465,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                 LogUtils.e(TAG, String.valueOf(time));
                 LogUtils.e(TAG, String.valueOf(assetId));
                 mLoadingDialog.show();
-                if (assetId == 0) {
+                if (assetId == 1) {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAddr(selectAddress)
                             .setFrom(User.getInstance().getWalletAddress(mContext))
@@ -552,7 +552,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
         ImageView assetLogoIv = view.findViewById(R.id.iv_asset_logo);
         TextView assetUnitTv = view.findViewById(R.id.tv_asset_unit);
         TextView failedAmountUnitTv = view.findViewById(R.id.tv_failed_amount_unit);
-        if (assetId == 0) {
+        if (assetId == 1) {
             assetLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetUnitTv.setText("BTC");
             failedAmountUnitTv.setText("BTC");
@@ -576,7 +576,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
             @Override
             public void onClick(View v) {
                 mLoadingDialog.show();
-                if (assetId == 0) {
+                if (assetId == 1) {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAddr(selectAddress)
                             .setFrom(User.getInstance().getWalletAddress(mContext))

@@ -95,7 +95,7 @@ public class SelectAssetPopupWindow {
                     blockData.clear();
                     ListAssetItemEntity entity = new ListAssetItemEntity();
                     entity.setAmount(resp.getConfirmedBalance());
-                    entity.setPropertyid(0);
+                    entity.setPropertyid(1);
                     entity.setType(1);
                     blockData.add(entity);
                     allData.addAll(blockData);
@@ -168,7 +168,7 @@ public class SelectAssetPopupWindow {
 
         @Override
         public void convert(ViewHolder holder, final int position, final ListAssetItemEntity item) {
-            if (item.getPropertyid() == 0) {
+            if (item.getPropertyid() == 1) {
                 holder.setImageResource(R.id.iv_logo, R.mipmap.icon_btc_logo_small);
                 holder.setText(R.id.tv_asset, "BTC");
             } else {

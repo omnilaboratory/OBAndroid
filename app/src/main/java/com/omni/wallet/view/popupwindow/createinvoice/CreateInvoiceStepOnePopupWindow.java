@@ -124,7 +124,7 @@ public class CreateInvoiceStepOnePopupWindow {
         Button timeButton = rootView.findViewById(R.id.btn_time);
         EditText amountTimeEdit = rootView.findViewById(R.id.edit_time);
         EditText memoEdit = rootView.findViewById(R.id.edit_memo);
-        if (mAssetId == 0) {
+        if (mAssetId == 1) {
             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeTv.setText("BTC");
             amountUnitTv.setText("BTC");
@@ -142,7 +142,7 @@ public class CreateInvoiceStepOnePopupWindow {
                 mSelectChannelBalancePopupWindow.setOnItemClickCallback(new SelectChannelBalancePopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
-                        if (item.getPropertyid() == 0) {
+                        if (item.getPropertyid() == 1) {
                             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
                             assetTypeTv.setText("BTC");
                             amountUnitTv.setText("BTC");
@@ -216,7 +216,7 @@ public class CreateInvoiceStepOnePopupWindow {
                     return;
                 }
                 // TODO: 2022/11/23 最大值最小值的判断需要完善一下
-                if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canReceive) * 100000000)  > 0) {
+                if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canReceive) * 100000000) > 0) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
                     return;
                 }
@@ -225,13 +225,24 @@ public class CreateInvoiceStepOnePopupWindow {
                     return;
                 }
                 mLoadingDialog.show();
-                LightningOuterClass.Invoice asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
-                        .setAssetId((int) mAssetId)
-                        .setAmount((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000))
-                        .setMemo(memoEdit.getText().toString())
-                        .setExpiry(Long.parseLong("86400")) // in seconds
-                        .setPrivate(false)
-                        .build();
+                LightningOuterClass.Invoice asyncInvoiceRequest;
+                if (mAssetId == 1) {
+                    asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
+                            .setAssetId((int) mAssetId)
+                            .setValueMsat((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000000L))
+                            .setMemo(memoEdit.getText().toString())
+                            .setExpiry(Long.parseLong("86400")) // in seconds
+                            .setPrivate(false)
+                            .build();
+                } else {
+                    asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
+                            .setAssetId((int) mAssetId)
+                            .setAmount((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000))
+                            .setMemo(memoEdit.getText().toString())
+                            .setExpiry(Long.parseLong("86400")) // in seconds
+                            .setPrivate(false)
+                            .build();
+                }
                 Obdmobile.addInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
                     @Override
                     public void onError(Exception e) {
@@ -290,7 +301,7 @@ public class CreateInvoiceStepOnePopupWindow {
         ImageView qrCodeIv = rootView.findViewById(R.id.iv_success_qrcode);
         TextView paymentSuccessTv = rootView.findViewById(R.id.tv_success_payment);
         ImageView copyIv = rootView.findViewById(R.id.iv_success_copy);
-        if (mAssetId == 0) {
+        if (mAssetId == 1) {
             assetTypeSuccessIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeSuccessTv.setText("BTC");
             amountUnitSuccessTv.setText("BTC");
@@ -383,7 +394,7 @@ public class CreateInvoiceStepOnePopupWindow {
         TextView amountUnitFailedTv = rootView.findViewById(R.id.tv_amount_unit_failed);
         TextView timeFailedTv = rootView.findViewById(R.id.tv_time_failed);
         TextView timeUnitFailedTv = rootView.findViewById(R.id.tv_time_unit_failed);
-        if (mAssetId == 0) {
+        if (mAssetId == 1) {
             assetTypeFailedIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeFailedTv.setText("BTC");
             amountUnitFailedTv.setText("BTC");

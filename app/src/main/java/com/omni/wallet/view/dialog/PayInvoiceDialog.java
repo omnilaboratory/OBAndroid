@@ -256,7 +256,7 @@ public class PayInvoiceDialog {
         TextView amountPayTv = mAlertDialog.findViewById(R.id.tv_amount_pay);
         TextView amountPayExchangeTv = mAlertDialog.findViewById(R.id.tv_amount_pay_exchange);
         TextView amountPayFeeTv = mAlertDialog.findViewById(R.id.tv_amount_pay_fee);
-        if (mAssetId == 0) {
+        if (mAssetId == 1) {
             amountLogoTv.setImageResource(R.mipmap.icon_btc_logo_small);
         } else {
             amountLogoTv.setImageResource(R.mipmap.icon_usdt_logo_small);
@@ -429,7 +429,7 @@ public class PayInvoiceDialog {
         TextView amountPay1Tv = mAlertDialog.findViewById(R.id.tv_amount_pay_1);
         TextView amountPayExchange1Tv = mAlertDialog.findViewById(R.id.tv_amount_pay_exchange_1);
         TextView amountPayFee1Tv = mAlertDialog.findViewById(R.id.tv_amount_pay_fee_1);
-        if (mAssetId == 0) {
+        if (mAssetId == 1) {
             amountLogo1Tv.setImageResource(R.mipmap.icon_btc_logo_small);
         } else {
             amountLogo1Tv.setImageResource(R.mipmap.icon_usdt_logo_small);
@@ -451,7 +451,7 @@ public class PayInvoiceDialog {
         TextView payTimeTv = mAlertDialog.findViewById(R.id.tv_pay_time);
         TextView payTimeUnitTv = mAlertDialog.findViewById(R.id.tv_pay_time_unit);
         TextView failedMessageTv = mAlertDialog.findViewById(R.id.tv_failed_message);
-        if (mAssetId == 0) {
+        if (mAssetId == 1) {
             amountLogo2Tv.setImageResource(R.mipmap.icon_btc_logo_small);
             amountUnitTv.setText("BTC");
             amountUnit1Tv.setText("BTC");

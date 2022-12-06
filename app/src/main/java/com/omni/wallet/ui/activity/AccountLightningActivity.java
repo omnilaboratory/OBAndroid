@@ -251,7 +251,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                                 mBalanceValueTv.setText("$ " + df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000));
                                 balanceAmount = resp.getConfirmedBalance();
                                 mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
-                            }else{
+                            } else {
                                 DecimalFormat df = new DecimalFormat("0.00000000");
                                 mBalanceValueTv.setText("$ " + df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000));
                                 balanceAmount = resp.getConfirmedBalance();
@@ -260,7 +260,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                             blockData.clear();
                             ListAssetItemEntity entity = new ListAssetItemEntity();
                             entity.setAmount(resp.getConfirmedBalance());
-                            entity.setPropertyid(0);
+                            entity.setPropertyid(1);
                             entity.setType(1);
                             blockData.add(entity);
                             allData.addAll(blockData);
@@ -358,7 +358,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                         public void run() {
                             lightningData.clear();
                             ListAssetItemEntity entity = new ListAssetItemEntity();
-                            entity.setAmount(resp.getLocalBalance().getMsat());
+                            entity.setAmount(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat());
                             entity.setPropertyid(propertyid);
                             entity.setType(2);
                             lightningData.add(entity);
@@ -454,7 +454,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 //                });
 //            }
             // TODO: 2022/11/14 暂定待修改与完善
-            if (item.getPropertyid() == 0) {
+            if (item.getPropertyid() == 1) {
                 holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_btc_logo_small);
             } else {
                 holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_usdt_logo_small);

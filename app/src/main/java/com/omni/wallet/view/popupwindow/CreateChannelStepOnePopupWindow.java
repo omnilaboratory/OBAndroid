@@ -246,7 +246,7 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
                 mSelectAssetUnitPopupWindow.setOnItemClickCallback(new SelectAssetUnitPopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
-                        if (item.getPropertyid() == 0) {
+                        if (item.getPropertyid() == 1) {
                             amountUnitButton.setText("BTC");
                         } else {
                             amountUnitButton.setText("USDT");

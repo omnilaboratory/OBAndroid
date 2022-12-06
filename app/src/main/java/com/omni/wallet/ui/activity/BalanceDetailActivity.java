@@ -237,7 +237,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mLineView.setVisibility(View.GONE);
             mRootMyInvoicesLayout.setVisibility(View.GONE);
         }
-        if (assetId == 0) {
+        if (assetId == 1) {
             mAssetLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
             mAssetNameTv.setText("BTC");
             mBalanceUnitTv.setText("BTC");

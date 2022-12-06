@@ -54,7 +54,7 @@ public class TokenInfoPopupWindow {
             TextView dateTv = rootView.findViewById(R.id.tv_token_date);
             TextView tokenUrlTv = rootView.findViewById(R.id.tv_token_url);
             TextView divisibleTv = rootView.findViewById(R.id.tv_token_divisible);
-            if (assetId == 0) {
+            if (assetId == 1) {
                 tokenLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
                 tokenTypeTv.setText("BTC");
             } else {
