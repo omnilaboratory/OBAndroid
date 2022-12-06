@@ -1,6 +1,8 @@
 package com.omni.wallet.view.popupwindow;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -8,10 +10,15 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
-import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
+import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.utils.CopyUtil;
+
+import lnrpc.LightningOuterClass;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 /**
  * 汉: 代币详情的弹窗
@@ -43,19 +50,49 @@ public class TokenInfoPopupWindow {
             TextView tokenTypeTv = rootView.findViewById(R.id.tv_token_type);
             TextView tokenIdTv = rootView.findViewById(R.id.tv_token_id);
             TextView tokenAmountTv = rootView.findViewById(R.id.tv_token_amount);
+            TextView categoryTv = rootView.findViewById(R.id.tv_token_category);
+            TextView dateTv = rootView.findViewById(R.id.tv_token_date);
             TextView tokenUrlTv = rootView.findViewById(R.id.tv_token_url);
-            tokenPubkeyTv.setText(address);
+            TextView divisibleTv = rootView.findViewById(R.id.tv_token_divisible);
             if (assetId == 0) {
                 tokenLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
                 tokenTypeTv.setText("BTC");
-                tokenUrlTv.setText("btc.io");
             } else {
                 tokenLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
                 tokenTypeTv.setText("USDT");
-                tokenUrlTv.setText("tether.io");
             }
             tokenIdTv.setText(assetId + "");
-            tokenAmountTv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
+
+            LightningOuterClass.GetAssetInfoRequest getAssetInfoRequest = LightningOuterClass.GetAssetInfoRequest.newBuilder()
+                    .setAssetId(assetId)
+                    .build();
+            Obdmobile.getAssetInfo(getAssetInfoRequest.toByteArray(), new Callback() {
+                @Override
+                public void onError(Exception e) {
+                    LogUtils.e(TAG, "------------------getAssetInfoOnError------------------" + e.getMessage());
+                }
+
+                @Override
+                public void onResponse(byte[] bytes) {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                LightningOuterClass.GetAssetInfoResponse resp = LightningOuterClass.GetAssetInfoResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------getAssetInfoOnResponse-----------------" + resp);
+                                tokenPubkeyTv.setText(resp.getIssuer());
+                                tokenAmountTv.setText(resp.getTotaltokens());
+                                categoryTv.setText(resp.getCategory());
+                                dateTv.setText("");
+                                tokenUrlTv.setText(resp.getUrl());
+                                divisibleTv.setText(resp.getDivisible() + "");
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
 
             RelativeLayout shareLayout = rootView.findViewById(R.id.layout_share);
             rootView.findViewById(R.id.layout_parent).setOnClickListener(new View.OnClickListener() {
@@ -70,7 +107,7 @@ public class TokenInfoPopupWindow {
                 public void onClick(View v) {
                     //接收需要复制到粘贴板的地址
                     //Get the address which will copy to clipboard
-                    String toCopyAddress = address;
+                    String toCopyAddress = tokenPubkeyTv.getText().toString();
                     //接收需要复制成功的提示语
                     //Get the notice when you copy success
                     String toastString = mContext.getResources().getString(R.string.toast_copy_address);

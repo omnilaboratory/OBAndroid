@@ -20,7 +20,6 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
@@ -50,6 +49,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +82,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
     ImageView mAssetLogoIv;
     @BindView(R.id.tv_asset_name)
     TextView mAssetNameTv;
+    @BindView(R.id.iv_token_info)
+    ImageView mTokenInfoIv;
     @BindView(R.id.tv_balance_account)
     TextView mBalanceAccountTv;
     @BindView(R.id.tv_balance_unit)
@@ -238,20 +240,49 @@ public class BalanceDetailActivity extends AppBaseActivity {
         if (assetId == 0) {
             mAssetLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
             mAssetNameTv.setText("BTC");
+            mBalanceUnitTv.setText("BTC");
+            mBalanceUnit1Tv.setText("BTC");
+            mBalanceUnit2Tv.setText("BTC");
+            mBalanceUnit3Tv.setText("BTC");
+            mTokenInfoIv.setVisibility(View.GONE);
         } else {
             mAssetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
             mAssetNameTv.setText("USDT");
+            mBalanceUnitTv.setText("USDT");
+            mBalanceUnit1Tv.setText("USDT");
+            mBalanceUnit2Tv.setText("USDT");
+            mBalanceUnit3Tv.setText("USDT");
+            mTokenInfoIv.setVisibility(View.VISIBLE);
         }
-        mBalanceAmountTv.setText("My account " + BigDecimalUtils.round(String.valueOf(balanceAmount / 100000000), 2));
+        if (balanceAmount == 0) {
+            DecimalFormat df = new DecimalFormat("0.00");
+            mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));
+        } else {
+            DecimalFormat df = new DecimalFormat("0.00000000");
+            mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));
+        }
         mWalletAddressTv.setText(walletAddress);
-        mBalanceAccountTv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
-        mBalanceAccountExchangeTv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
-        mBalanceAccount1Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
-        mBalanceAccountExchange1Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
-        mBalanceAccount2Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
-        mBalanceAccountExchange2Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
-        mBalanceAccount3Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
-        mBalanceAccountExchange3Tv.setText(BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2));
+        if (balanceAccount == 0) {
+            DecimalFormat df = new DecimalFormat("0.00");
+            mBalanceAccountTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccountExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccount1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccountExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccount2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccountExchange2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccount3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccountExchange3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+        } else {
+            DecimalFormat df = new DecimalFormat("0.00000000");
+            mBalanceAccountTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccountExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccount1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccountExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccount2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccountExchange2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccount3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccountExchange3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+        }
     }
 
     @Override
@@ -538,10 +569,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 if (!amtPayed.equals(0L)) {
                     // The invoice has been payed
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
-                    holder.setText(R.id.tv_amount, amtPayed + "");
+                    DecimalFormat df = new DecimalFormat("0.00000000");
+                    holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed)) / 100000000));
                 } else {
                     // The invoice has not been payed yet
-                    holder.setText(R.id.tv_amount, "0");
+                    holder.setText(R.id.tv_amount, "0.00");
                     if (isInvoiceExpired(item)) {
                         // The invoice has expired
                         holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
@@ -555,10 +587,12 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 if (isInvoicePayed(item)) {
                     // The invoice has been payed
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
-                    holder.setText(R.id.tv_amount, amtPayed + "");
+                    DecimalFormat df = new DecimalFormat("0.00000000");
+                    holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed)) / 100000000));
                 } else {
                     // The invoice has not been payed yet
-                    holder.setText(R.id.tv_amount, amt + "");
+                    DecimalFormat df = new DecimalFormat("0.00000000");
+                    holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amt)) / 100000000));
                     if (isInvoiceExpired(item)) {
                         // The invoice has expired
                         holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);

@@ -100,7 +100,7 @@
     <string name="amount">Amount</string>
     <string name="fee">Fee</string>
     <string name="slow">SLOW</string>
-    <string name="satoshi_per_byte">satoshi per byte</string>
+    <string name="unit_per_byte">unit per byte</string>
     <string name="pay_invoice">PAY INVOICE</string>
     <string name="fill_invoice">Fill invoice</string>
     <string name="check_pay">Check &#038; Pay</string>

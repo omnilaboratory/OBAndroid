@@ -211,7 +211,6 @@
                                 android:id="@+id/tv_local_amount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginRight="@dimen/main_5"
                                 android:text="100"
                                 android:textColor="@color/color_9906d78f"
                                 android:textSize="@dimen/text_16"/>
@@ -220,9 +219,11 @@
                                 android:id="@+id/tv_local_amount_unit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
+                                android:layout_marginLeft="@dimen/main_5"
                                 android:text="USDT"
                                 android:textColor="@color/color_99_transparent"
-                                android:textSize="@dimen/text_16" />
+                                android:textSize="@dimen/text_16"
+                                android:visibility="gone"/>
                         </LinearLayout>
                     </RelativeLayout>
 
@@ -253,7 +254,6 @@
                                 android:id="@+id/tv_remote_amount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginRight="@dimen/main_5"
                                 android:text="600"
                                 android:textColor="@color/color_994C49F4"
                                 android:textSize="@dimen/text_16"/>
@@ -262,9 +262,11 @@
                                 android:id="@+id/tv_remote_amount_unit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/main_5"
                                 android:text="USDT"
                                 android:textColor="@color/color_99_transparent"
-                                android:textSize="@dimen/text_16"/>
+                                android:textSize="@dimen/text_16"
+                                android:visibility="gone"/>
                         </LinearLayout>
                     </RelativeLayout>
 

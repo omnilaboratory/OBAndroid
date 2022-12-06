@@ -231,7 +231,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
-                        android:text="@string/satoshi_per_byte"
+                        android:text="@string/unit_per_byte"
                         android:textColor="@color/color_80p_transparent"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>

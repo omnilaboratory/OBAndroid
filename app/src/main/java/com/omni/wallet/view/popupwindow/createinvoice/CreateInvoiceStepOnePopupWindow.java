@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
-import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
@@ -33,6 +32,8 @@ import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.text.DecimalFormat;
+
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -48,6 +49,7 @@ public class CreateInvoiceStepOnePopupWindow {
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
+    TextView assetMaxTv;
     TextView mCanSendTv;
     TextView mCanReceiveTv;
     ProgressBar mProgressBar;
@@ -56,6 +58,7 @@ public class CreateInvoiceStepOnePopupWindow {
     String mAddress;
     long mAssetId;
     String assetBalanceMax;
+    String canReceive;
     String amountInput;
     String timeInput;
     String timeType;
@@ -78,7 +81,6 @@ public class CreateInvoiceStepOnePopupWindow {
             mLoadingDialog = new LoadingDialog(mContext);
             mAddress = address;
             mAssetId = assetId;
-            assetBalanceMax = BigDecimalUtils.round(String.valueOf(balanceAccount / 100000000), 2);
             showStepOne(rootView);
             /**
              * @描述： 点击cancel
@@ -112,8 +114,7 @@ public class CreateInvoiceStepOnePopupWindow {
         addressTv.setText(StringUtils.encodePubkey(mAddress));
         ImageView assetTypeIv = rootView.findViewById(R.id.iv_asset_type);
         TextView assetTypeTv = rootView.findViewById(R.id.tv_asset_type);
-        TextView assetMaxTv = rootView.findViewById(R.id.tv_asset_max);
-        assetMaxTv.setText(assetBalanceMax + "");
+        assetMaxTv = rootView.findViewById(R.id.tv_asset_max);
         mCanSendTv = rootView.findViewById(R.id.tv_can_send);
         mCanReceiveTv = rootView.findViewById(R.id.tv_can_receive);
         mProgressBar = rootView.findViewById(R.id.progressbar);
@@ -151,8 +152,7 @@ public class CreateInvoiceStepOnePopupWindow {
                             amountUnitTv.setText("USDT");
                         }
                         mAssetId = item.getPropertyid();
-                        assetBalanceMax = BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2);
-                        assetMaxTv.setText(assetBalanceMax + "");
+                        getChannelBalance(mAssetId);
                     }
                 });
                 mSelectChannelBalancePopupWindow.show(v);
@@ -161,7 +161,7 @@ public class CreateInvoiceStepOnePopupWindow {
         amountMaxTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                amountEdit.setText(assetBalanceMax + "");
+                amountEdit.setText(assetBalanceMax);
             }
         });
         timeButton.setOnClickListener(new View.OnClickListener() {
@@ -216,7 +216,7 @@ public class CreateInvoiceStepOnePopupWindow {
                     return;
                 }
                 // TODO: 2022/11/23 最大值最小值的判断需要完善一下
-                if (Long.parseLong(amountInput) - Long.parseLong(BigDecimalUtils.round(assetBalanceMax, 0)) > 0) {
+                if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canReceive) * 100000000)  > 0) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
                     return;
                 }
@@ -227,7 +227,7 @@ public class CreateInvoiceStepOnePopupWindow {
                 mLoadingDialog.show();
                 LightningOuterClass.Invoice asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                         .setAssetId((int) mAssetId)
-                        .setAmount(Long.parseLong(amountEdit.getText().toString()))
+                        .setAmount((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000))
                         .setMemo(memoEdit.getText().toString())
                         .setExpiry(Long.parseLong("86400")) // in seconds
                         .setPrivate(false)
@@ -299,7 +299,7 @@ public class CreateInvoiceStepOnePopupWindow {
             assetTypeSuccessTv.setText("USDT");
             amountUnitSuccessTv.setText("USDT");
         }
-        amountSuccessTv.setText(amountInput);
+        amountSuccessTv.setText((long) (Double.parseDouble(amountInput) * 100000000) + "");
         timeSuccessTv.setText(timeInput);
         timeUnitSuccessTv.setText(timeType);
         paymentSuccessTv.setText(qrCodeUrl);
@@ -392,7 +392,7 @@ public class CreateInvoiceStepOnePopupWindow {
             assetTypeFailedTv.setText("USDT");
             amountUnitFailedTv.setText("USDT");
         }
-        amountFailedTv.setText(amountInput);
+        amountFailedTv.setText((long) (Double.parseDouble(amountInput) * 100000000) + "");
         timeFailedTv.setText(timeInput);
         timeUnitFailedTv.setText(timeType);
         TextView messageFailedTv = rootView.findViewById(R.id.tv_failed_message);
@@ -447,8 +447,29 @@ public class CreateInvoiceStepOnePopupWindow {
                         try {
                             LightningOuterClass.ChannelBalanceResponse resp = LightningOuterClass.ChannelBalanceResponse.parseFrom(bytes);
                             LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
-                            mCanSendTv.setText(resp.getLocalBalance().getMsat() + "");
-                            mCanReceiveTv.setText(resp.getRemoteBalance().getMsat() + "");
+                            if (resp.getLocalBalance().getMsat() == 0) {
+                                DecimalFormat df = new DecimalFormat("0.00");
+                                mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat())) / 100000000));
+                            } else {
+                                DecimalFormat df = new DecimalFormat("0.00000000");
+                                mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat())) / 100000000));
+                            }
+                            if (resp.getRemoteBalance().getMsat() == 0) {
+                                DecimalFormat df = new DecimalFormat("0.00");
+                                canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
+                            } else {
+                                DecimalFormat df = new DecimalFormat("0.00000000");
+                                canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
+                            }
+                            mCanReceiveTv.setText(canReceive);
+                            if (resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat() == 0) {
+                                DecimalFormat df = new DecimalFormat("0.00");
+                                assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat())) / 100000000);
+                            } else {
+                                DecimalFormat df = new DecimalFormat("0.00000000");
+                                assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat())) / 100000000);
+                            }
+                            assetMaxTv.setText(assetBalanceMax);
                             /**
                              * @描述： 设置进度条
                              * @desc: set progress bar

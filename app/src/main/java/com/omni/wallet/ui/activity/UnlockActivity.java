@@ -164,9 +164,13 @@ public class UnlockActivity extends AppBaseActivity {
                 Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
                     @Override
                     public void onError(Exception e) {
-                        if(mLoadingDialog.isShowing()){
-                            mLoadingDialog.dismiss();
-                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(mLoadingDialog.isShowing()){
+                                    mLoadingDialog.dismiss();
+                                }                            }
+                        });
                         Log.e("unlock failed","unlock failed");
                         e.printStackTrace();
 

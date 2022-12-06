@@ -15,12 +15,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
-import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
@@ -40,6 +39,7 @@ import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -271,7 +271,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
         TextView sendFeeExchangeTv = view.findViewById(R.id.tv_send_fee_exchange);
         sendFeeExchangeTv.setText("0");
         fetchWalletBalance();
-        LinearLayout assetLayout = view.findViewById(R.id.layout_asset);
+        RelativeLayout assetLayout = view.findViewById(R.id.layout_asset);
         assetLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -289,7 +289,13 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                             amountTypeTv.setText("USDT");
                         }
                         assetId = item.getPropertyid();
-                        assetBalanceMax = BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2);
+                        if (item.getAmount() == 0) {
+                            DecimalFormat df = new DecimalFormat("0.00");
+                            assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
+                        } else {
+                            DecimalFormat df = new DecimalFormat("0.00000000");
+                            assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
+                        }
                         assetsBalanceTv.setText(assetBalanceMax);
                     }
                 });
@@ -318,7 +324,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
             public void afterTextChanged(Editable s) {
                 assetBalance = s.toString();
                 if (!StringUtils.isEmpty(s.toString())) {
-                    estimateOnChainFee(Long.parseLong(BigDecimalUtils.round(assetBalance, 0)), time);
+                    estimateOnChainFee((long) (Double.parseDouble(assetBalance) * 100000000), time);
                 }
             }
         });
@@ -341,17 +347,17 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                             case R.id.tv_slow:
                                 speedButton.setText(R.string.slow);
                                 time = 1; // 10 Minutes
-                                estimateOnChainFee(Long.parseLong(BigDecimalUtils.round(amountInputView.getText().toString(), 0)), time);
+                                estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
                                 time = 6 * 6; // 6 Hours
-                                estimateOnChainFee(Long.parseLong(BigDecimalUtils.round(amountInputView.getText().toString(), 0)), time);
+                                estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
                                 time = 6 * 24; // 24 Hours
-                                estimateOnChainFee(Long.parseLong(BigDecimalUtils.round(amountInputView.getText().toString(), 0)), time);
+                                estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
                                 break;
                         }
                     }
@@ -387,7 +393,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
                     return;
                 }
-                if (Long.parseLong(assetBalance) - Long.parseLong(BigDecimalUtils.round(assetBalanceMax, 0)) > 0) {
+                if ((Double.parseDouble(assetBalance) * 100000000) - (Double.parseDouble(assetBalanceMax) * 100000000) > 0) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
                     return;
                 }
@@ -425,16 +431,16 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
             tokenTypeView2.setText("USDT");
         }
         TextView sendAmountView = view.findViewById(R.id.tv_send_amount);
-        sendAmountView.setText(assetBalance);
+        sendAmountView.setText((long) (Double.parseDouble(assetBalance) * 100000000) + "");
         TextView sendAmountValueView = view.findViewById(R.id.tv_send_amount_value);
-        sendAmountValueView.setText(assetBalance);
+        sendAmountValueView.setText((long) (Double.parseDouble(assetBalance) * 100000000) + "");
         TextView feeAmountView = view.findViewById(R.id.tv_send_gas_fee_amount);
         feeAmountView.setText(feeStr + "");
         TextView feeAmountValueView = view.findViewById(R.id.tv_send_gas_fee_amount_value);
         feeAmountValueView.setText("0");
         TextView sendUsedValueView = view.findViewById(R.id.tv_send_used_value);
-        long sendUsedValue = Long.parseLong(assetBalance) + feeStr;
-        sendUsedValueView.setText(sendUsedValue + "");
+        String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
+        sendUsedValueView.setText(sendUsedValue);
         /**
          * @desc: Click back button then back to step two
          * @描述： 点击back显示step two
@@ -463,7 +469,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAddr(selectAddress)
                             .setFrom(User.getInstance().getWalletAddress(mContext))
-                            .setAmount(Long.parseLong(assetBalance))
+                            .setAmount((long) (Double.parseDouble(assetBalance) * 100000000))
                             .setTargetConf(time)
                             .build();
                     Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
@@ -499,7 +505,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                             .setAssetId((int) assetId)
                             .setAddr(selectAddress)
                             .setFrom(User.getInstance().getWalletAddress(mContext))
-                            .setAssetAmount(Long.parseLong(assetBalance))
+                            .setAssetAmount((long) (Double.parseDouble(assetBalance) * 100000000))
                             .setTargetConf(time)
                             .build();
                     Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
@@ -556,12 +562,12 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
             failedAmountUnitTv.setText("USDT");
         }
         TextView failedAmountTv = view.findViewById(R.id.tv_failed_amount);
-        failedAmountTv.setText(assetBalance);
+        failedAmountTv.setText((long) (Double.parseDouble(assetBalance) * 100000000) + "");
         TextView failedGasFeeTv = view.findViewById(R.id.tv_failed_gas_fee);
         failedGasFeeTv.setText(feeStr + "");
         TextView failedTotalValueTv = view.findViewById(R.id.tv_failed_total_value);
-        long totalValue = Long.parseLong(assetBalance) + feeStr;
-        failedTotalValueTv.setText(totalValue + "");
+        String totalValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
+        failedTotalValueTv.setText(totalValue);
         TextView failedMessageTv = view.findViewById(R.id.tv_failed_message);
         failedMessageTv.setText(message);
 
@@ -806,7 +812,13 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            assetBalanceMax = BigDecimalUtils.round(String.valueOf(resp.getConfirmedBalance() / 100000000), 2);
+                            if (resp.getConfirmedBalance() == 0) {
+                                DecimalFormat df = new DecimalFormat("0.00");
+                                assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000);
+                            } else {
+                                DecimalFormat df = new DecimalFormat("0.00000000");
+                                assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000);
+                            }
                             assetsBalanceTv.setText(assetBalanceMax);
                         }
                     });

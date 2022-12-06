@@ -363,9 +363,10 @@
                     android:id="@+id/edit_channel_amount"
                     android:layout_width="@dimen/main_218"
                     android:layout_height="@dimen/main_32"
+                    android:paddingLeft="@dimen/main_5"
                     android:background="@drawable/bg_black_rectangle_round_0"
                     android:singleLine="true"
-                    android:inputType="number"
+                    android:inputType="number|numberDecimal"
                     android:textColor="@color/color_99_transparent"
                     android:textSize="@dimen/text_16"/>
 
@@ -481,7 +482,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
-                        android:text="@string/satoshi_per_byte"
+                        android:text="@string/unit_per_byte"
                         android:textColor="@color/color_80p_transparent"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>

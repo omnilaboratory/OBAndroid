@@ -17,7 +17,6 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
-import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
@@ -36,6 +35,7 @@ import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
 import org.greenrobot.eventbus.EventBus;
 
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import lnrpc.LightningOuterClass;
@@ -49,7 +49,7 @@ import obdmobile.RecvStream;
  * author: guoyalei
  * date: 2022/12/5
  */
-public class CreateChannelDialog implements Wallet.ScanChannelListener{
+public class CreateChannelDialog implements Wallet.ScanChannelListener {
     private static final String TAG = CreateChannelDialog.class.getSimpleName();
 
     private Context mContext;
@@ -199,7 +199,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener{
             @Override
             public void afterTextChanged(Editable s) {
                 if (!StringUtils.isEmpty(s.toString())) {
-                    estimateOnChainFee(Long.parseLong(s.toString()), time);
+                    estimateOnChainFee((long) (Double.parseDouble(s.toString()) * 100000000), time);
                 }
             }
         });
@@ -215,21 +215,21 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener{
                                 speedButton.setText(R.string.slow);
                                 time = 1; // 10 Minutes
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
-                                    estimateOnChainFee(Long.parseLong(channelAmountEdit.getText().toString()), time);
+                                    estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
                                 }
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
                                 time = 6 * 6; // 6 Hours
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
-                                    estimateOnChainFee(Long.parseLong(channelAmountEdit.getText().toString()), time);
+                                    estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
                                 }
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
                                 time = 6 * 24; // 24 Hours
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
-                                    estimateOnChainFee(Long.parseLong(channelAmountEdit.getText().toString()), time);
+                                    estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
                                 }
                                 break;
                         }
@@ -251,7 +251,13 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener{
                             amountUnitButton.setText("USDT");
                         }
                         assetId = item.getPropertyid();
-                        assetBalanceMax = BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2);
+                        if (item.getAmount() == 0) {
+                            DecimalFormat df = new DecimalFormat("0.00");
+                            assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
+                        } else {
+                            DecimalFormat df = new DecimalFormat("0.00000000");
+                            assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
+                        }
                         channelAmountTv.setText(assetBalanceMax);
                     }
                 });
@@ -305,7 +311,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener{
 //                    return;
 //                }
 
-                if (Long.parseLong(assetBalance) - Long.parseLong(BigDecimalUtils.round(assetBalanceMax, 0)) > 0) {
+                if ((Double.parseDouble(assetBalance) * 100000000) - (Double.parseDouble(assetBalanceMax) * 100000000) > 0) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
                     return;
                 }
@@ -415,7 +421,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener{
                 .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
                 .setPrivate(false)
                 .setLocalFundingBtcAmount(20000)
-                .setLocalFundingAssetAmount(Long.parseLong(assetBalance))
+                .setLocalFundingAssetAmount((long) (Double.parseDouble(assetBalance) * 100000000))
+                .setPushAssetSat((long) ((Double.parseDouble(assetBalance) * 100000000) / 2))
                 .setAssetId((int) assetId)
                 .build();
         Obdmobile.openChannel(openChannelRequest.toByteArray(), new RecvStream() {
@@ -643,7 +650,13 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener{
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            assetBalanceMax = BigDecimalUtils.round(String.valueOf(resp.getConfirmedBalance() / 100000000), 2);
+                            if (resp.getConfirmedBalance() == 0) {
+                                DecimalFormat df = new DecimalFormat("0.00");
+                                assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000);
+                            } else {
+                                DecimalFormat df = new DecimalFormat("0.00000000");
+                                assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000);
+                            }
                             channelAmountTv.setText(assetBalanceMax);
                         }
                     });

@@ -334,7 +334,7 @@
                                 android:background="@null"
                                 android:textColorHint="@color/color_99_transparent"
                                 android:hint="0"
-                                android:inputType="number"
+                                android:inputType="number|numberDecimal"
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16"/>
 
@@ -436,6 +436,7 @@
                             android:layout_width="@dimen/main_179"
                             android:layout_height="@dimen/main_32"
                             android:background="@drawable/bg_black_rectangle_round_0_thin"
+                            android:paddingRight="@dimen/main_10"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:gravity="center_vertical|right"

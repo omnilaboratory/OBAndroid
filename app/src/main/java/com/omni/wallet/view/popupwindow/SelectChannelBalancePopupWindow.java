@@ -10,7 +10,6 @@ import android.view.WindowManager;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
-import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
@@ -18,6 +17,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.framelibrary.entity.User;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +73,6 @@ public class SelectChannelBalancePopupWindow {
     /**
      * get BTC Channel Balance
      * 查询btc通道余额
-     *
      */
     public void getBtcChannelBalance() {
         LightningOuterClass.ChannelBalanceRequest channelBalanceRequest = LightningOuterClass.ChannelBalanceRequest.newBuilder()
@@ -103,7 +102,7 @@ public class SelectChannelBalancePopupWindow {
                     LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
                     blockData.clear();
                     ListAssetItemEntity entity = new ListAssetItemEntity();
-                    entity.setAmount(resp.getLocalBalance().getMsat());
+                    entity.setAmount(resp.getLocalBalance().getMsat() + resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat());
                     entity.setPropertyid(0);
                     entity.setType(1);
                     blockData.add(entity);
@@ -187,7 +186,7 @@ public class SelectChannelBalancePopupWindow {
                     LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
                     lightningData.clear();
                     ListAssetItemEntity entity = new ListAssetItemEntity();
-                    entity.setAmount(resp.getLocalBalance().getMsat());
+                    entity.setAmount(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat());
                     entity.setPropertyid(propertyid);
                     entity.setType(2);
                     lightningData.add(entity);
@@ -224,7 +223,13 @@ public class SelectChannelBalancePopupWindow {
                 holder.setImageResource(R.id.iv_logo, R.mipmap.icon_usdt_logo_small);
                 holder.setText(R.id.tv_asset, "USDT");
             }
-            holder.setText(R.id.tv_asset_amount, BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2));
+            if (item.getAmount() == 0) {
+                DecimalFormat df = new DecimalFormat("0.00");
+                holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+            } else {
+                DecimalFormat df = new DecimalFormat("0.00000000");
+                holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+            }
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

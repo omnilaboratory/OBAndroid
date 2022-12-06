@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
@@ -42,6 +41,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -204,10 +204,15 @@ public class AccountLightningActivity extends AppBaseActivity {
                 try {
                     LightningOuterClass.GetInfoResponse resp = LightningOuterClass.GetInfoResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------getInfoOnResponse-----------------" + resp);
-                    pubkey = resp.getIdentityPubkey();
-                    mNetworkTypeTv.setText(resp.getChains(0).getNetwork());
-                    User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
-                    User.getInstance().setNodeVersion(mContext, resp.getVersion());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            pubkey = resp.getIdentityPubkey();
+                            mNetworkTypeTv.setText(resp.getChains(0).getNetwork());
+                            User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
+                            User.getInstance().setNodeVersion(mContext, resp.getVersion());
+                        }
+                    });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -241,9 +246,17 @@ public class AccountLightningActivity extends AppBaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mBalanceValueTv.setText("$ " + BigDecimalUtils.round(String.valueOf(resp.getConfirmedBalance() / 100000000), 2));
-                            balanceAmount = resp.getConfirmedBalance();
-                            mBalanceAmountTv.setText("My account " + BigDecimalUtils.round(String.valueOf(balanceAmount / 100000000), 2) + " balance");
+                            if (resp.getConfirmedBalance() == 0) {
+                                DecimalFormat df = new DecimalFormat("0.00");
+                                mBalanceValueTv.setText("$ " + df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000));
+                                balanceAmount = resp.getConfirmedBalance();
+                                mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
+                            }else{
+                                DecimalFormat df = new DecimalFormat("0.00000000");
+                                mBalanceValueTv.setText("$ " + df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000));
+                                balanceAmount = resp.getConfirmedBalance();
+                                mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
+                            }
                             blockData.clear();
                             ListAssetItemEntity entity = new ListAssetItemEntity();
                             entity.setAmount(resp.getConfirmedBalance());
@@ -446,8 +459,15 @@ public class AccountLightningActivity extends AppBaseActivity {
             } else {
                 holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_usdt_logo_small);
             }
-            holder.setText(R.id.tv_asset_amount, BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2));
-            holder.setText(R.id.tv_asset_value, BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2));
+            if (item.getAmount() == 0) {
+                DecimalFormat df = new DecimalFormat("0.00");
+                holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+            } else {
+                DecimalFormat df = new DecimalFormat("0.00000000");
+                holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+            }
             if (item.getType() == 1) {
                 holder.setImageResource(R.id.iv_asset_net, R.mipmap.icon_network_link_black);
                 holder.setOnItemClickListener(new View.OnClickListener() {

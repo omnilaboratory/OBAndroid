@@ -10,7 +10,6 @@ import android.view.WindowManager;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
-import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
@@ -18,6 +17,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.framelibrary.entity.User;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -175,7 +175,13 @@ public class SelectAssetPopupWindow {
                 holder.setImageResource(R.id.iv_logo, R.mipmap.icon_usdt_logo_small);
                 holder.setText(R.id.tv_asset, "USDT");
             }
-            holder.setText(R.id.tv_asset_amount, BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2));
+            if (item.getAmount() == 0) {
+                DecimalFormat df = new DecimalFormat("0.00");
+                holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+            }else {
+                DecimalFormat df = new DecimalFormat("0.00000000");
+                holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+            }
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

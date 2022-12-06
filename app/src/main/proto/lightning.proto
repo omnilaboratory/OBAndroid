@@ -84,6 +84,12 @@ service Lightning {
     rpc AssetsBalanceByAddress (AssetsBalanceByAddressRequest)
         returns (AssetsBalanceByAddressResponse);
 
+    /* obd update wxf
+     * get all asset info: omni_getproperty
+     https://github.com/OmniLayer/omnicore/blob/master/src/omnicore/doc/rpc-api.md#omni_getproperty
+     */
+    rpc GetAssetInfo (GetAssetInfoRequest) returns (GetAssetInfoResponse);
+
     /* lncli: `channelbalance`
     ChannelBalance returns a report on the total funds across all open channels,
     categorized in local/remote, pending local/remote and unsettled local/remote
@@ -2716,6 +2722,41 @@ message WalletBalanceByAddressRequest {
 }
 message AssetsBalanceByAddressRequest {
     string address = 1;
+}
+
+message GetAssetInfoRequest {
+    int64 asset_id = 1;
+}
+message GetAssetInfoResponse {
+    // (number) the identifier
+    int64 propertyid = 1;
+    // (string) the name of the tokens
+    string name = 2;
+    // (string) the category used for the tokens
+    string category = 3;
+    // (string) the subcategory used for the tokens
+    string subcategory = 4;
+    // (string) additional information or a description
+    string data = 5;
+    // (string) an URI, for example pointing to a website
+    string url = 6;
+    // (boolean) whether the tokens are divisible
+    bool divisible = 7;
+    // (string) the Bitcoin address of the issuer on record
+    string issuer = 8;
+    // (string) the Bitcoin address of the issuance delegate, if there is one
+    string delegate = 9;
+    // (string) the hex-encoded creation transaction hash
+    string creationtxid = 10;
+    // (boolean) whether the token supply is fixed
+    bool fixedissuance = 11;
+    // (boolean) whether the token supply is managed by the issuer
+    bool managedissuance = 12;
+    // (boolean) whether freezing is enabled for the property (managed
+    // properties only)
+    bool freezingenabled = 13;
+    // (string) the total number of tokens in existence
+    string totaltokens = 14;
 }
 
 message AssetBalanceByAddressResponse {
