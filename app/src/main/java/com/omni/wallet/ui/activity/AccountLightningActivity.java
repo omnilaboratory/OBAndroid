@@ -110,59 +110,6 @@ public class AccountLightningActivity extends AppBaseActivity {
         initRecyclerView();
     }
 
-    /**
-     * 测试用方法生成block assets 数据
-     * Test data for block assets
-     */
-    private void initBlockAssets() {
-//        Map a = new HashMap<String, String>();
-//        a.put("tokenImageSource", R.mipmap.icon_usdt_logo_small);
-//        a.put("networkImageSource", R.mipmap.icon_network_link_black);
-//        a.put("amount", 10000.0000f);
-//        a.put("value", 70000.0000f);
-//        Map b = new HashMap<String, String>();
-//        b.put("tokenImageSource", R.mipmap.icon_btc_logo_small);
-//        b.put("networkImageSource", R.mipmap.icon_network_link_black);
-//        b.put("amount", 10000.0000f);
-//        b.put("value", 70000.0000f);
-//        blockData.add(a);
-//        blockData.add(b);
-//        blockData.add(a);
-//        blockData.add(b);
-    }
-
-    /**
-     * 测试用方法生成 Lightning assets 数据
-     * Test data for Lightning assets
-     */
-    private void initLightningAssets() {
-//        Map c = new HashMap<String, String>();
-//        c.put("tokenImageSource", R.mipmap.icon_usdt_logo_small);
-//        c.put("networkImageSource", R.mipmap.icon_network_vector);
-//        c.put("amount", 10000.0000f);
-//        c.put("value", 70000.0000f);
-//        Map d = new HashMap<String, String>();
-//        d.put("tokenImageSource", R.mipmap.icon_btc_logo_small);
-//        d.put("networkImageSource", R.mipmap.icon_network_vector);
-//        d.put("amount", 10000.0000f);
-//        d.put("value", 70000.0000f);
-//        lightningData.add(c);
-//        lightningData.add(d);
-//        lightningData.add(c);
-//        lightningData.add(d);
-    }
-
-    private void initAllData() {
-        allData.addAll(blockData);
-        allData.addAll(lightningData);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-    }
-
     private void initRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
