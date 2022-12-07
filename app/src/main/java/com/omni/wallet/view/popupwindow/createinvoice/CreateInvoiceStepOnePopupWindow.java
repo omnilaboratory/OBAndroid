@@ -124,7 +124,7 @@ public class CreateInvoiceStepOnePopupWindow {
         Button timeButton = rootView.findViewById(R.id.btn_time);
         EditText amountTimeEdit = rootView.findViewById(R.id.edit_time);
         EditText memoEdit = rootView.findViewById(R.id.edit_memo);
-        if (mAssetId == 1) {
+        if (mAssetId == 0) {
             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeTv.setText("BTC");
             amountUnitTv.setText("BTC");
@@ -142,7 +142,7 @@ public class CreateInvoiceStepOnePopupWindow {
                 mSelectChannelBalancePopupWindow.setOnItemClickCallback(new SelectChannelBalancePopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
-                        if (item.getPropertyid() == 1) {
+                        if (item.getPropertyid() == 0) {
                             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
                             assetTypeTv.setText("BTC");
                             amountUnitTv.setText("BTC");
@@ -226,10 +226,10 @@ public class CreateInvoiceStepOnePopupWindow {
                 }
                 mLoadingDialog.show();
                 LightningOuterClass.Invoice asyncInvoiceRequest;
-                if (mAssetId == 1) {
+                if (mAssetId == 0) {
                     asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                             .setAssetId((int) mAssetId)
-                            .setValueMsat((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000))
+                            .setValueMsat((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000 * 1000))
                             .setMemo(memoEdit.getText().toString())
                             .setExpiry(Long.parseLong("86400")) // in seconds
                             .setPrivate(false)
@@ -301,7 +301,7 @@ public class CreateInvoiceStepOnePopupWindow {
         ImageView qrCodeIv = rootView.findViewById(R.id.iv_success_qrcode);
         TextView paymentSuccessTv = rootView.findViewById(R.id.tv_success_payment);
         ImageView copyIv = rootView.findViewById(R.id.iv_success_copy);
-        if (mAssetId == 1) {
+        if (mAssetId == 0) {
             assetTypeSuccessIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeSuccessTv.setText("BTC");
             amountUnitSuccessTv.setText("BTC");
@@ -310,7 +310,7 @@ public class CreateInvoiceStepOnePopupWindow {
             assetTypeSuccessTv.setText("USDT");
             amountUnitSuccessTv.setText("USDT");
         }
-        amountSuccessTv.setText((long) (Double.parseDouble(amountInput) * 100000000) + "");
+        amountSuccessTv.setText(amountInput);
         timeSuccessTv.setText(timeInput);
         timeUnitSuccessTv.setText(timeType);
         paymentSuccessTv.setText(qrCodeUrl);
@@ -394,7 +394,7 @@ public class CreateInvoiceStepOnePopupWindow {
         TextView amountUnitFailedTv = rootView.findViewById(R.id.tv_amount_unit_failed);
         TextView timeFailedTv = rootView.findViewById(R.id.tv_time_failed);
         TextView timeUnitFailedTv = rootView.findViewById(R.id.tv_time_unit_failed);
-        if (mAssetId == 1) {
+        if (mAssetId == 0) {
             assetTypeFailedIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeFailedTv.setText("BTC");
             amountUnitFailedTv.setText("BTC");
@@ -403,7 +403,7 @@ public class CreateInvoiceStepOnePopupWindow {
             assetTypeFailedTv.setText("USDT");
             amountUnitFailedTv.setText("USDT");
         }
-        amountFailedTv.setText((long) (Double.parseDouble(amountInput) * 100000000) + "");
+        amountFailedTv.setText(amountInput);
         timeFailedTv.setText(timeInput);
         timeUnitFailedTv.setText(timeType);
         TextView messageFailedTv = rootView.findViewById(R.id.tv_failed_message);
@@ -458,29 +458,55 @@ public class CreateInvoiceStepOnePopupWindow {
                         try {
                             LightningOuterClass.ChannelBalanceResponse resp = LightningOuterClass.ChannelBalanceResponse.parseFrom(bytes);
                             LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
-                            if (resp.getLocalBalance().getMsat() == 0) {
-                                DecimalFormat df = new DecimalFormat("0.00");
-                                mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat())) / 100000000));
+                            if (propertyid == 0) {
+                                if (resp.getLocalBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() / 1000)) / 100000000));
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00000000");
+                                    mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() / 1000)) / 100000000));
+                                }
+                                if (resp.getRemoteBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00000000");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
+                                }
+                                mCanReceiveTv.setText(canReceive);
+                                if (resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() / 1000 + resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00000000");
+                                    assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() / 1000 + resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
+                                }
+                                assetMaxTv.setText(assetBalanceMax);
                             } else {
-                                DecimalFormat df = new DecimalFormat("0.00000000");
-                                mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat())) / 100000000));
+                                if (resp.getLocalBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat())) / 100000000));
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00000000");
+                                    mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat())) / 100000000));
+                                }
+                                if (resp.getRemoteBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00000000");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
+                                }
+                                mCanReceiveTv.setText(canReceive);
+                                if (resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat())) / 100000000);
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00000000");
+                                    assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat())) / 100000000);
+                                }
+                                assetMaxTv.setText(assetBalanceMax);
                             }
-                            if (resp.getRemoteBalance().getMsat() == 0) {
-                                DecimalFormat df = new DecimalFormat("0.00");
-                                canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
-                            } else {
-                                DecimalFormat df = new DecimalFormat("0.00000000");
-                                canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
-                            }
-                            mCanReceiveTv.setText(canReceive);
-                            if (resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat() == 0) {
-                                DecimalFormat df = new DecimalFormat("0.00");
-                                assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat())) / 100000000);
-                            } else {
-                                DecimalFormat df = new DecimalFormat("0.00000000");
-                                assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat())) / 100000000);
-                            }
-                            assetMaxTv.setText(assetBalanceMax);
                             /**
                              * @描述： 设置进度条
                              * @desc: set progress bar

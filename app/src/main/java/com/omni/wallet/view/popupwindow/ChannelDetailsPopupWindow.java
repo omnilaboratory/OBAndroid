@@ -168,7 +168,7 @@ public class ChannelDetailsPopupWindow {
         LightningOuterClass.Channel channel = LightningOuterClass.Channel.parseFrom(channelString);
         mRemoteName.setText(Wallet.getInstance().getNodeAliasFromPubKey(channel.getRemotePubkey(), mContext));
         mRemotePubkey.setText(channel.getRemotePubkey());
-        if (channel.getAssetId() == 1) {
+        if (channel.getAssetId() == 0) {
             mAssetLogo.setImageResource(R.mipmap.icon_btc_logo_small);
             mAssetUnit.setText("BTC");
             mLocalBalanceUnit.setText("BTC");
@@ -219,8 +219,8 @@ public class ChannelDetailsPopupWindow {
                 pendingOpenChannel.getChannel().getRemoteNodePub(),
                 pendingOpenChannel.getChannel().getChannelPoint());
         mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ec9a1e_25);
-        if (pendingOpenChannel.getChannel().getAssetId() == 1) {
-            setBalances(pendingOpenChannel.getChannel().getLocalBalance() / 1000, pendingOpenChannel.getChannel().getRemoteBalance() / 1000, pendingOpenChannel.getChannel().getBtcCapacity() / 1000);
+        if (pendingOpenChannel.getChannel().getAssetId() == 0) {
+            setBalances(pendingOpenChannel.getChannel().getLocalBalance() / 1000, pendingOpenChannel.getChannel().getRemoteBalance() / 1000, pendingOpenChannel.getChannel().getBtcCapacity());
         } else {
             setBalances(pendingOpenChannel.getChannel().getLocalBalance(), pendingOpenChannel.getChannel().getRemoteBalance(), pendingOpenChannel.getChannel().getAssetCapacity());
         }
@@ -233,8 +233,8 @@ public class ChannelDetailsPopupWindow {
                 waitingCloseChannel.getChannel().getRemoteNodePub(),
                 waitingCloseChannel.getChannel().getChannelPoint());
         mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ff0000_25);
-        if (waitingCloseChannel.getChannel().getAssetId() == 1) {
-            setBalances(waitingCloseChannel.getChannel().getLocalBalance() / 1000, waitingCloseChannel.getChannel().getRemoteBalance() / 1000, waitingCloseChannel.getChannel().getBtcCapacity() / 1000);
+        if (waitingCloseChannel.getChannel().getAssetId() == 0) {
+            setBalances(waitingCloseChannel.getChannel().getLocalBalance() / 1000, waitingCloseChannel.getChannel().getRemoteBalance() / 1000, waitingCloseChannel.getChannel().getBtcCapacity());
         } else {
             setBalances(waitingCloseChannel.getChannel().getLocalBalance(), waitingCloseChannel.getChannel().getRemoteBalance(), waitingCloseChannel.getChannel().getAssetCapacity());
         }
@@ -247,8 +247,8 @@ public class ChannelDetailsPopupWindow {
                 pendingCloseChannel.getChannel().getRemoteNodePub(),
                 pendingCloseChannel.getChannel().getChannelPoint());
         mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ff0000_25);
-        if (pendingCloseChannel.getChannel().getAssetId() == 1) {
-            setBalances(pendingCloseChannel.getChannel().getLocalBalance() / 1000, pendingCloseChannel.getChannel().getRemoteBalance() / 1000, pendingCloseChannel.getChannel().getBtcCapacity() / 1000);
+        if (pendingCloseChannel.getChannel().getAssetId() == 0) {
+            setBalances(pendingCloseChannel.getChannel().getLocalBalance() / 1000, pendingCloseChannel.getChannel().getRemoteBalance() / 1000, pendingCloseChannel.getChannel().getBtcCapacity());
         } else {
             setBalances(pendingCloseChannel.getChannel().getLocalBalance(), pendingCloseChannel.getChannel().getRemoteBalance(), pendingCloseChannel.getChannel().getAssetCapacity());
         }
@@ -262,8 +262,8 @@ public class ChannelDetailsPopupWindow {
                 forceClosedChannel.getChannel().getRemoteNodePub(),
                 forceClosedChannel.getChannel().getChannelPoint());
         mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ff0000_25);
-        if (forceClosedChannel.getChannel().getAssetId() == 1) {
-            setBalances(forceClosedChannel.getChannel().getLocalBalance() / 1000, forceClosedChannel.getChannel().getRemoteBalance() / 1000, forceClosedChannel.getChannel().getBtcCapacity() / 1000);
+        if (forceClosedChannel.getChannel().getAssetId() == 0) {
+            setBalances(forceClosedChannel.getChannel().getLocalBalance() / 1000, forceClosedChannel.getChannel().getRemoteBalance() / 1000, forceClosedChannel.getChannel().getBtcCapacity());
         } else {
             setBalances(forceClosedChannel.getChannel().getLocalBalance(), forceClosedChannel.getChannel().getRemoteBalance(), forceClosedChannel.getChannel().getAssetCapacity());
         }
@@ -273,7 +273,7 @@ public class ChannelDetailsPopupWindow {
     private void setBasicInformation(@NonNull int assetId, @NonNull String remoteNodePublicKey, @NonNull String remotePubKey, @NonNull String channelPoint) {
         mRemoteName.setText(Wallet.getInstance().getNodeAliasFromPubKey(remoteNodePublicKey, mContext));
         mRemotePubkey.setText(remotePubKey);
-        if (assetId == 1) {
+        if (assetId == 0) {
             mAssetLogo.setImageResource(R.mipmap.icon_btc_logo_small);
             mAssetUnit.setText("BTC");
             mLocalBalanceUnit.setText("BTC");

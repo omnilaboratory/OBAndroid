@@ -50,7 +50,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setLogo(int assetId) {
-        if (assetId == 1) {
+        if (assetId == 0) {
             mAssetLogo.setImageResource(R.mipmap.icon_btc_logo_small);
             mAssetUnit.setText("BTC");
         } else {

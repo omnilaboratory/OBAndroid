@@ -130,6 +130,7 @@
             </LinearLayout>
 
             <ImageView
+                android:id="@+id/iv_qrcode"
                 android:layout_width="@dimen/main_24"
                 android:layout_height="@dimen/main_24"
                 android:layout_alignParentRight="true"

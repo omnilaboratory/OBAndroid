@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.utils.CopyUtil;
@@ -54,7 +55,7 @@ public class TokenInfoPopupWindow {
             TextView dateTv = rootView.findViewById(R.id.tv_token_date);
             TextView tokenUrlTv = rootView.findViewById(R.id.tv_token_url);
             TextView divisibleTv = rootView.findViewById(R.id.tv_token_divisible);
-            if (assetId == 1) {
+            if (assetId == 0) {
                 tokenLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
                 tokenTypeTv.setText("BTC");
             } else {
@@ -83,7 +84,7 @@ public class TokenInfoPopupWindow {
                                 tokenPubkeyTv.setText(resp.getIssuer());
                                 tokenAmountTv.setText(resp.getTotaltokens());
                                 categoryTv.setText(resp.getCategory());
-                                dateTv.setText("");
+                                dateTv.setText(DateUtils.formatCurrentDate());
                                 tokenUrlTv.setText(resp.getUrl());
                                 divisibleTv.setText(resp.getDivisible() + "");
                             } catch (InvalidProtocolBufferException e) {

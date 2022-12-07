@@ -260,7 +260,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                             blockData.clear();
                             ListAssetItemEntity entity = new ListAssetItemEntity();
                             entity.setAmount(resp.getConfirmedBalance());
-                            entity.setPropertyid(1);
+                            entity.setPropertyid(0);
                             entity.setType(1);
                             blockData.add(entity);
                             allData.addAll(blockData);
@@ -309,7 +309,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                                         mAdapter.notifyDataSetChanged();
                                     }
                                 });
-                                getBtcChannelBalance(1);
+                                getBtcChannelBalance(0);
                             } catch (InvalidProtocolBufferException e) {
                                 e.printStackTrace();
                             }
@@ -352,7 +352,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                             lightningData.clear();
                             ListAssetItemEntity entity = new ListAssetItemEntity();
                             entity.setAmount(resp.getLocalBalance().getMsat() / 1000 + resp.getRemoteBalance().getMsat() / 1000);
-                            entity.setPropertyid(1);
+                            entity.setPropertyid(0);
                             entity.setType(2);
                             lightningData.add(entity);
                             allData.addAll(lightningData);
@@ -504,7 +504,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 //                });
 //            }
             // TODO: 2022/11/14 暂定待修改与完善
-            if (item.getPropertyid() == 1) {
+            if (item.getPropertyid() == 0) {
                 holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_btc_logo_small);
             } else {
                 holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_usdt_logo_small);

@@ -25,6 +25,7 @@ import com.omni.wallet.utils.UriUtil;
 import org.greenrobot.eventbus.EventBus;
 
 import java.security.SecureRandom;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -167,7 +168,7 @@ public class PayInvoiceDialog {
                                 return;
                             }
                             RouterOuterClass.SendPaymentRequest probeRequest;
-                            if (mAssetId == 1) {
+                            if (mAssetId == 0) {
                                 probeRequest = prepareBtcPaymentProbe(resp);
                             } else {
                                 probeRequest = preparePaymentProbe(resp);
@@ -207,7 +208,11 @@ public class PayInvoiceDialog {
                                                         }
                                                         paymentHash = payment.getPaymentHash();
                                                         toNodeAddress = resp.getDestination();
-                                                        payAmount = resp.getAmount();
+                                                        if (mAssetId == 0) {
+                                                            payAmount = resp.getAmtMsat();
+                                                        } else {
+                                                            payAmount = resp.getAmount();
+                                                        }
                                                         mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.VISIBLE);
                                                         mAlertDialog.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.GONE);
                                                         mLoadingDialog.dismiss();
@@ -261,15 +266,21 @@ public class PayInvoiceDialog {
         TextView amountPayTv = mAlertDialog.findViewById(R.id.tv_amount_pay);
         TextView amountPayExchangeTv = mAlertDialog.findViewById(R.id.tv_amount_pay_exchange);
         TextView amountPayFeeTv = mAlertDialog.findViewById(R.id.tv_amount_pay_fee);
-        if (mAssetId == 1) {
+        if (mAssetId == 0) {
             amountLogoTv.setImageResource(R.mipmap.icon_btc_logo_small);
         } else {
             amountLogoTv.setImageResource(R.mipmap.icon_usdt_logo_small);
         }
         fromNodeAddress1Tv.setText(StringUtils.encodePubkey(mAddress));
         toNodeAddress1Tv.setText(StringUtils.encodePubkey(toNodeAddress));
-        amountPayTv.setText(payAmount + "");
-        amountPayExchangeTv.setText(payAmount + "");
+        DecimalFormat df = new DecimalFormat("0.00000000");
+        if (mAssetId == 0) {
+            amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
+            amountPayExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
+        } else {
+            amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
+            amountPayExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
+        }
         amountPayFeeTv.setText(feeSats + "");
         /**
          * @备注： 点击back显示invoice step one
@@ -434,15 +445,21 @@ public class PayInvoiceDialog {
         TextView amountPay1Tv = mAlertDialog.findViewById(R.id.tv_amount_pay_1);
         TextView amountPayExchange1Tv = mAlertDialog.findViewById(R.id.tv_amount_pay_exchange_1);
         TextView amountPayFee1Tv = mAlertDialog.findViewById(R.id.tv_amount_pay_fee_1);
-        if (mAssetId == 1) {
+        if (mAssetId == 0) {
             amountLogo1Tv.setImageResource(R.mipmap.icon_btc_logo_small);
         } else {
             amountLogo1Tv.setImageResource(R.mipmap.icon_usdt_logo_small);
         }
         fromNodeAddress2Tv.setText(StringUtils.encodePubkey(mAddress));
         toNodeAddress2Tv.setText(StringUtils.encodePubkey(toNodeAddress));
-        amountPay1Tv.setText(payAmount + "");
-        amountPayExchange1Tv.setText(payAmount + "");
+        DecimalFormat df = new DecimalFormat("0.00000000");
+        if (mAssetId == 0) {
+            amountPay1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
+            amountPayExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
+        } else {
+            amountPay1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
+            amountPayExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
+        }
         amountPayFee1Tv.setText(feeSats + "");
     }
 
@@ -456,7 +473,7 @@ public class PayInvoiceDialog {
         TextView payTimeTv = mAlertDialog.findViewById(R.id.tv_pay_time);
         TextView payTimeUnitTv = mAlertDialog.findViewById(R.id.tv_pay_time_unit);
         TextView failedMessageTv = mAlertDialog.findViewById(R.id.tv_failed_message);
-        if (mAssetId == 1) {
+        if (mAssetId == 0) {
             amountLogo2Tv.setImageResource(R.mipmap.icon_btc_logo_small);
             amountUnitTv.setText("BTC");
             amountUnit1Tv.setText("BTC");
@@ -466,7 +483,12 @@ public class PayInvoiceDialog {
             amountUnit1Tv.setText("USDT");
         }
         toNodeAddress3Tv.setText(toNodeAddress);
-        amountPay2Tv.setText(payAmount + "");
+        DecimalFormat df = new DecimalFormat("0.00000000");
+        if (mAssetId == 0) {
+            amountPay2Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
+        } else {
+            amountPay2Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
+        }
         failedMessageTv.setText(message);
         fromNodeAddress3Tv.setText(mAddress);
 

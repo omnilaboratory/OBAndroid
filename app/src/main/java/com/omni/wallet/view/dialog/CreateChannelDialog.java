@@ -63,7 +63,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     //    String nodePubkey = "02b49967df27dfe5a3615f48c8b11621f64bd04f39e71b91e88121be4704a791ef";
     String centerNodePubkey;
     String nodePubkey;
-    long assetId = 1;
+    long assetId = 0;
     int time;
     long feeStr;
     String assetBalance;
@@ -248,7 +248,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 mSelectAssetUnitPopupWindow.setOnItemClickCallback(new SelectAssetUnitPopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
-                        if (item.getPropertyid() == 1) {
+                        if (item.getPropertyid() == 0) {
                             amountUnitButton.setText("BTC");
                             feePerByteTv.setText(R.string.satoshi_per_byte);
                         } else {
@@ -428,7 +428,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     private void openChannelConnected(long balanceAmount, String walletAddress) {
         byte[] nodeKeyBytes = hexStringToByteArray(nodePubkey);
         LightningOuterClass.OpenChannelRequest openChannelRequest;
-        if (assetId == 1) {
+        if (assetId == 0) {
             openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
                     .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
                     .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))

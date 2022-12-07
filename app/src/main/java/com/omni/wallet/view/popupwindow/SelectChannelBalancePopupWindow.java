@@ -76,7 +76,7 @@ public class SelectChannelBalancePopupWindow {
      */
     public void getBtcChannelBalance() {
         LightningOuterClass.ChannelBalanceRequest channelBalanceRequest = LightningOuterClass.ChannelBalanceRequest.newBuilder()
-                .setAssetId((int) 1)
+                .setAssetId((int) 0)
                 .build();
         Obdmobile.channelBalance(channelBalanceRequest.toByteArray(), new Callback() {
             @Override
@@ -102,8 +102,8 @@ public class SelectChannelBalancePopupWindow {
                     LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
                     blockData.clear();
                     ListAssetItemEntity entity = new ListAssetItemEntity();
-                    entity.setAmount(resp.getLocalBalance().getMsat() + resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat());
-                    entity.setPropertyid(1);
+                    entity.setAmount(resp.getLocalBalance().getMsat() / 1000 + resp.getRemoteBalance().getMsat() / 1000);
+                    entity.setPropertyid(0);
                     entity.setType(1);
                     blockData.add(entity);
                     allData.addAll(blockData);
@@ -216,7 +216,7 @@ public class SelectChannelBalancePopupWindow {
 
         @Override
         public void convert(ViewHolder holder, final int position, final ListAssetItemEntity item) {
-            if (item.getPropertyid() == 1) {
+            if (item.getPropertyid() == 0) {
                 holder.setImageResource(R.id.iv_logo, R.mipmap.icon_btc_logo_small);
                 holder.setText(R.id.tv_asset, "BTC");
             } else {

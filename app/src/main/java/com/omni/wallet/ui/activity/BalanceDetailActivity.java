@@ -38,6 +38,7 @@ import com.omni.wallet.utils.PaymentRequestUtil;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
+import com.omni.wallet.view.popupwindow.FundPopupWindow;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
@@ -235,7 +236,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mLineView.setVisibility(View.GONE);
             mRootMyInvoicesLayout.setVisibility(View.GONE);
         }
-        if (assetId == 1) {
+        if (assetId == 0) {
             mAssetLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
             mAssetNameTv.setText("BTC");
             mBalanceUnitTv.setText("BTC");
@@ -667,6 +668,16 @@ public class BalanceDetailActivity extends AppBaseActivity {
         //Get the notice when you copy success
         String toastString = getResources().getString(R.string.toast_copy_address);
         CopyUtil.SelfCopy(BalanceDetailActivity.this, toCopyAddress, toastString);
+    }
+
+    /**
+     * click qrcode
+     * 点击qrcode按钮
+     */
+    @OnClick(R.id.iv_qrcode)
+    public void copyQRCode() {
+        FundPopupWindow mFundPopupWindow = new FundPopupWindow(mContext);
+        mFundPopupWindow.show(mParentLayout, User.getInstance().getWalletAddress(mContext));
     }
 
     /**

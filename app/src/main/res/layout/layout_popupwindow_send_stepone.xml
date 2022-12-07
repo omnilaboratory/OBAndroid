@@ -431,6 +431,7 @@
                             android:textSize="@dimen/text_16"/>
 
                         <TextView
+                            android:id="@+id/tv_send_fee_unit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="unit"
@@ -810,6 +811,7 @@
                         android:textSize="@dimen/text_16"/>
 
                     <TextView
+                        android:id="@+id/tv_send_gas_fee_unit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="unit"
@@ -1200,6 +1202,7 @@
                             android:textSize="@dimen/text_16"/>
 
                         <TextView
+                            android:id="@+id/tv_failed_gas_fee_unit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"

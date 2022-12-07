@@ -165,7 +165,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             copySuccessToast.setGravity(Gravity.TOP,0,30);
             copySuccessToast.show();
         }else{
-            switchActivity(AccountLightningActivity.class);
+            switchActivityFinish(AccountLightningActivity.class);
         }
 
     }

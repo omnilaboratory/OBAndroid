@@ -23,7 +23,7 @@ public class OpenChannelViewHolder extends ChannelViewHolder {
         setState(openChannelItem.getChannel().getActive());
 
         // Set balances
-        if (openChannelItem.getChannel().getAssetId() == 1) {
+        if (openChannelItem.getChannel().getAssetId() == 0) {
             long availableCapacity = openChannelItem.getChannel().getBtcCapacity() - openChannelItem.getChannel().getCommitFee();
             setBalances(openChannelItem.getChannel().getLocalBalance(), openChannelItem.getChannel().getRemoteBalance(), availableCapacity);
         } else {

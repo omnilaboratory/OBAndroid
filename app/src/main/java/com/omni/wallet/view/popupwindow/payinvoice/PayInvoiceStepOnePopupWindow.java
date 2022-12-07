@@ -259,7 +259,7 @@ public class PayInvoiceStepOnePopupWindow {
         TextView amountPayTv = rootView.findViewById(R.id.tv_amount_pay);
         TextView amountPayExchangeTv = rootView.findViewById(R.id.tv_amount_pay_exchange);
         TextView amountPayFeeTv = rootView.findViewById(R.id.tv_amount_pay_fee);
-        if (mAssetId == 1) {
+        if (mAssetId == 0) {
             amountLogoTv.setImageResource(R.mipmap.icon_btc_logo_small);
         } else {
             amountLogoTv.setImageResource(R.mipmap.icon_usdt_logo_small);
@@ -431,7 +431,7 @@ public class PayInvoiceStepOnePopupWindow {
         TextView amountPay1Tv = rootView.findViewById(R.id.tv_amount_pay_1);
         TextView amountPayExchange1Tv = rootView.findViewById(R.id.tv_amount_pay_exchange_1);
         TextView amountPayFee1Tv = rootView.findViewById(R.id.tv_amount_pay_fee_1);
-        if (mAssetId == 1) {
+        if (mAssetId == 0) {
             amountLogo1Tv.setImageResource(R.mipmap.icon_btc_logo_small);
         } else {
             amountLogo1Tv.setImageResource(R.mipmap.icon_usdt_logo_small);
@@ -453,7 +453,7 @@ public class PayInvoiceStepOnePopupWindow {
         TextView payTimeTv = rootView.findViewById(R.id.tv_pay_time);
         TextView payTimeUnitTv = rootView.findViewById(R.id.tv_pay_time_unit);
         TextView failedMessageTv = rootView.findViewById(R.id.tv_failed_message);
-        if (mAssetId == 1) {
+        if (mAssetId == 0) {
             amountLogo2Tv.setImageResource(R.mipmap.icon_btc_logo_small);
             amountUnitTv.setText("BTC");
             amountUnit1Tv.setText("BTC");
