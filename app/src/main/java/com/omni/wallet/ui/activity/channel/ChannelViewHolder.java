@@ -10,9 +10,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.omni.wallet.R;
-import com.omni.wallet.utils.MonetaryUtil;
 import com.omni.wallet.utils.OnSingleClickListener;
 import com.omni.wallet.utils.Wallet;
+
+import java.text.DecimalFormat;
 
 public class ChannelViewHolder extends RecyclerView.ViewHolder {
 
@@ -63,8 +64,9 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
 
         mProgressBar.setProgress((int) (localBarValue * 100f));
 
-        mLocalBalance.setText(MonetaryUtil.getInstance().getPrimaryDisplayAmountAndUnit(local));
-        mRemoteBalance.setText(MonetaryUtil.getInstance().getPrimaryDisplayAmountAndUnit(remote));
+        DecimalFormat df = new DecimalFormat("0.00000000");
+        mLocalBalance.setText(df.format(Double.parseDouble(String.valueOf(local)) / 100000000));
+        mRemoteBalance.setText(df.format(Double.parseDouble(String.valueOf(remote)) / 100000000));
     }
 
     void addOnChannelSelectListener(ChannelSelectListener channelSelectListener) {

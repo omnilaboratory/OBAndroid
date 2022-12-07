@@ -76,7 +76,7 @@ public class SelectChannelBalancePopupWindow {
      */
     public void getBtcChannelBalance() {
         LightningOuterClass.ChannelBalanceRequest channelBalanceRequest = LightningOuterClass.ChannelBalanceRequest.newBuilder()
-                .setAssetId((int) 0)
+                .setAssetId((int) 1)
                 .build();
         Obdmobile.channelBalance(channelBalanceRequest.toByteArray(), new Callback() {
             @Override

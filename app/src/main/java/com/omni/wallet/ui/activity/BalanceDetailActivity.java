@@ -82,8 +82,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
     ImageView mAssetLogoIv;
     @BindView(R.id.tv_asset_name)
     TextView mAssetNameTv;
-    @BindView(R.id.iv_token_info)
-    ImageView mTokenInfoIv;
     @BindView(R.id.tv_balance_account)
     TextView mBalanceAccountTv;
     @BindView(R.id.tv_balance_unit)
@@ -244,7 +242,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mBalanceUnit1Tv.setText("BTC");
             mBalanceUnit2Tv.setText("BTC");
             mBalanceUnit3Tv.setText("BTC");
-            mTokenInfoIv.setVisibility(View.GONE);
         } else {
             mAssetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
             mAssetNameTv.setText("USDT");
@@ -252,7 +249,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mBalanceUnit1Tv.setText("USDT");
             mBalanceUnit2Tv.setText("USDT");
             mBalanceUnit3Tv.setText("USDT");
-            mTokenInfoIv.setVisibility(View.VISIBLE);
         }
         if (balanceAmount == 0) {
             DecimalFormat df = new DecimalFormat("0.00");

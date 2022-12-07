@@ -229,7 +229,7 @@ public class CreateInvoiceStepOnePopupWindow {
                 if (mAssetId == 1) {
                     asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                             .setAssetId((int) mAssetId)
-                            .setValueMsat((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000000L))
+                            .setValueMsat((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000))
                             .setMemo(memoEdit.getText().toString())
                             .setExpiry(Long.parseLong("86400")) // in seconds
                             .setPrivate(false)

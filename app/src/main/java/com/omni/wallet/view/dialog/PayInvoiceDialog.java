@@ -166,7 +166,12 @@ public class PayInvoiceDialog {
                                 ToastUtils.showToast(mContext, "Probe send request was null");
                                 return;
                             }
-                            RouterOuterClass.SendPaymentRequest probeRequest = preparePaymentProbe(resp);
+                            RouterOuterClass.SendPaymentRequest probeRequest;
+                            if (mAssetId == 1) {
+                                probeRequest = prepareBtcPaymentProbe(resp);
+                            } else {
+                                probeRequest = preparePaymentProbe(resp);
+                            }
                             Obdmobile.routerSendPaymentV2(probeRequest.toByteArray(), new RecvStream() {
                                 @Override
                                 public void onError(Exception e) {
@@ -534,6 +539,40 @@ public class PayInvoiceDialog {
                 .setAssetId((int) mAssetId)
                 .setDest(byteStringFromHex(destination))
                 .setAssetAmt(amountSat)
+                .setFeeLimitMsat(feeLimit)
+                .setPaymentHash(ByteString.copyFrom(bytes))
+                .setNoInflightUpdates(true)
+                .setTimeoutSeconds(RefConstants.TIMEOUT_MEDIUM * RefConstants.TOR_TIMEOUT_MULTIPLIER)
+                .setMaxParts(1); // We are looking for a direct path. Probing using MPP isn’t really possible at the moment.
+        if (paymentAddress != null) {
+            sprb.setPaymentAddr(paymentAddress);
+        }
+        if (destFeatures != null && !destFeatures.isEmpty()) {
+            for (Map.Entry<Integer, LightningOuterClass.Feature> entry : destFeatures.entrySet()) {
+                sprb.addDestFeaturesValue(entry.getKey());
+            }
+        }
+        if (routeHints != null && !routeHints.isEmpty()) {
+            sprb.addAllRouteHints(routeHints);
+        }
+
+        return sprb.build();
+    }
+
+    public RouterOuterClass.SendPaymentRequest prepareBtcPaymentProbe(LightningOuterClass.PayReq paymentRequest) {
+        return prepareBtcPaymentProbe(paymentRequest.getDestination(), paymentRequest.getAmtMsat(), paymentRequest.getPaymentAddr(), paymentRequest.getRouteHintsList(), paymentRequest.getFeaturesMap());
+    }
+
+    public RouterOuterClass.SendPaymentRequest prepareBtcPaymentProbe(String destination, long amountSat, @Nullable ByteString paymentAddress, @Nullable List<LightningOuterClass.RouteHint> routeHints, @Nullable Map<Integer, LightningOuterClass.Feature> destFeatures) {
+        // The paymentHash will be replaced with a random hash. This way we can create a fake payment.
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[PAYMENT_HASH_BYTE_LENGTH];
+        random.nextBytes(bytes);
+        long feeLimit = calculateAbsoluteFeeLimit(amountSat);
+        RouterOuterClass.SendPaymentRequest.Builder sprb = RouterOuterClass.SendPaymentRequest.newBuilder()
+                .setAssetId((int) mAssetId)
+                .setDest(byteStringFromHex(destination))
+                .setAmtMsat(amountSat)
                 .setFeeLimitMsat(feeLimit)
                 .setPaymentHash(ByteString.copyFrom(bytes))
                 .setNoInflightUpdates(true)

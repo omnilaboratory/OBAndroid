@@ -309,9 +309,59 @@ public class AccountLightningActivity extends AppBaseActivity {
                                         mAdapter.notifyDataSetChanged();
                                     }
                                 });
+                                getBtcChannelBalance(1);
                             } catch (InvalidProtocolBufferException e) {
                                 e.printStackTrace();
                             }
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * get btc Channel Balance
+     * 查询BTC通道余额
+     *
+     * @param propertyid
+     */
+    private void getBtcChannelBalance(long propertyid) {
+        LightningOuterClass.ChannelBalanceRequest channelBalanceRequest = LightningOuterClass.ChannelBalanceRequest.newBuilder()
+                .setAssetId((int) propertyid)
+                .build();
+        Obdmobile.channelBalance(channelBalanceRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.ChannelBalanceResponse resp = LightningOuterClass.ChannelBalanceResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            lightningData.clear();
+                            ListAssetItemEntity entity = new ListAssetItemEntity();
+                            entity.setAmount(resp.getLocalBalance().getMsat() / 1000 + resp.getRemoteBalance().getMsat() / 1000);
+                            entity.setPropertyid(1);
+                            entity.setType(2);
+                            lightningData.add(entity);
+                            allData.addAll(lightningData);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                            });
                         }
                     });
                 } catch (InvalidProtocolBufferException e) {
@@ -340,14 +390,14 @@ public class AccountLightningActivity extends AppBaseActivity {
             @Override
             public void onResponse(byte[] bytes) {
                 if (bytes == null) {
-                    lightningData = null;
-                    allData.addAll(lightningData);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    });
+//                    lightningData = null;
+//                    allData.addAll(lightningData);
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            mAdapter.notifyDataSetChanged();
+//                        }
+//                    });
                     return;
                 }
                 try {

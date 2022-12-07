@@ -57,12 +57,13 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     TextView localEdit;
     TextView channelAmountTv;
     TextView channelFeeTv;
+    TextView feePerByteTv;
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetUnitPopupWindow mSelectAssetUnitPopupWindow;
     //    String nodePubkey = "02b49967df27dfe5a3615f48c8b11621f64bd04f39e71b91e88121be4704a791ef";
     String centerNodePubkey;
     String nodePubkey;
-    long assetId;
+    long assetId = 1;
     int time;
     long feeStr;
     String assetBalance;
@@ -181,6 +182,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         EditText channelAmountEdit = mAlertDialog.findViewById(R.id.edit_channel_amount);
         channelAmountTv = mAlertDialog.findViewById(R.id.tv_channel_amount);
         channelFeeTv = mAlertDialog.findViewById(R.id.tv_channel_fee);
+        feePerByteTv = mAlertDialog.findViewById(R.id.tv_fee_per_byte);
         Button amountUnitButton = mAlertDialog.findViewById(R.id.btn_amount_unit);
         Button speedButton = mAlertDialog.findViewById(R.id.btn_speed);
 
@@ -248,8 +250,10 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     public void onItemClick(View view, ListAssetItemEntity item) {
                         if (item.getPropertyid() == 1) {
                             amountUnitButton.setText("BTC");
+                            feePerByteTv.setText(R.string.satoshi_per_byte);
                         } else {
                             amountUnitButton.setText("USDT");
+                            feePerByteTv.setText(R.string.unit_per_byte);
                         }
                         assetId = item.getPropertyid();
                         if (item.getAmount() == 0) {

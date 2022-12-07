@@ -17,7 +17,6 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.baselibrary.utils.BigDecimalUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.entity.event.CloseChannelEvent;
@@ -38,6 +37,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +110,13 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
 
     @Override
     protected void initView() {
-        mBalanceAmountTv.setText("My account " + BigDecimalUtils.round(String.valueOf(balanceAmount / 100000000), 2));
+        if (balanceAmount == 0) {
+            DecimalFormat df = new DecimalFormat("0.00");
+            mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));
+        } else {
+            DecimalFormat df = new DecimalFormat("0.00000000");
+            mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));
+        }
         mWalletAddressTv.setText(walletAddress);
         mSearchEdit.addTextChangedListener(new TextWatcher() {
             @Override

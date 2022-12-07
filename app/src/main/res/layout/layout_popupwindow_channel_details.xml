@@ -222,8 +222,7 @@
                                 android:layout_marginLeft="@dimen/main_5"
                                 android:text="USDT"
                                 android:textColor="@color/color_99_transparent"
-                                android:textSize="@dimen/text_16"
-                                android:visibility="gone"/>
+                                android:textSize="@dimen/text_16" />
                         </LinearLayout>
                     </RelativeLayout>
 
@@ -265,8 +264,7 @@
                                 android:layout_marginLeft="@dimen/main_5"
                                 android:text="USDT"
                                 android:textColor="@color/color_99_transparent"
-                                android:textSize="@dimen/text_16"
-                                android:visibility="gone"/>
+                                android:textSize="@dimen/text_16" />
                         </LinearLayout>
                     </RelativeLayout>
 

@@ -25,8 +25,13 @@ public abstract class PendingChannelViewHolder extends ChannelViewHolder {
         setState();
 
         // Set balances
-        long availableCapacity = pendingChannel.getAssetCapacity();
-        setBalances(pendingChannel.getLocalBalance(), pendingChannel.getRemoteBalance(), availableCapacity);
+        if (pendingChannel.getAssetId() == 1) {
+            long availableCapacity = pendingChannel.getBtcCapacity();
+            setBalances(pendingChannel.getLocalBalance() / 1000, pendingChannel.getRemoteBalance() / 1000, availableCapacity / 1000);
+        } else {
+            long availableCapacity = pendingChannel.getAssetCapacity();
+            setBalances(pendingChannel.getLocalBalance(), pendingChannel.getRemoteBalance(), availableCapacity);
+        }
 
         // Set name
         setName(pendingChannel.getRemoteNodePub());
