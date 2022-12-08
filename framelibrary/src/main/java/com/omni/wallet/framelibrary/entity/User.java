@@ -55,6 +55,12 @@ public class User {
     private String walletAddress;
     // 节点版本
     private String nodeVersion;
+    // Btc价格
+    private String btcPrice;
+    // Btc价格变化
+    private String btcPriceChange;
+    // usdt价格
+    private String usdtPrice;
 
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
@@ -193,6 +199,36 @@ public class User {
     public void setNodeVersion(Context context, String nodeVersion) {
         PreferencesUtils.saveNodeVersionToLocal(context, nodeVersion);
         this.nodeVersion = nodeVersion;
+    }
+
+    public String getBtcPrice(Context context) {
+        btcPrice = PreferencesUtils.getBtcPriceFromLocal(context);
+        return btcPrice;
+    }
+
+    public void setBtcPrice(Context context, String btcPrice) {
+        PreferencesUtils.saveBtcPriceToLocal(context, btcPrice);
+        this.btcPrice = btcPrice;
+    }
+
+    public String getBtcPriceChange(Context context) {
+        btcPriceChange = PreferencesUtils.getBtcPriceChangeFromLocal(context);
+        return btcPriceChange;
+    }
+
+    public void setBtcPriceChange(Context context, String btcPriceChange) {
+        PreferencesUtils.saveBtcPriceChangeToLocal(context, btcPriceChange);
+        this.btcPriceChange = btcPriceChange;
+    }
+
+    public String getUsdtPrice(Context context) {
+        usdtPrice = PreferencesUtils.getUsdtPriceFromLocal(context);
+        return usdtPrice;
+    }
+
+    public void setUsdtPrice(Context context, String usdtPrice) {
+        PreferencesUtils.saveUsdtPriceToLocal(context, usdtPrice);
+        this.usdtPrice = usdtPrice;
     }
 
     /**

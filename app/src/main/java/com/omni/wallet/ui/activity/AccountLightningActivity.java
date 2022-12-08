@@ -16,9 +16,11 @@ import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
+import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.OpenChannelEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.entity.event.SelectAccountEvent;
@@ -64,6 +66,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     ImageView mMenuIv;
     @BindView(R.id.tv_balance_value)
     TextView mBalanceValueTv;
+    @BindView(R.id.tv_price_change)
+    TextView mPriceChangeTv;
     @BindView(R.id.tv_balance_amount)
     TextView mBalanceAmountTv;
     @BindView(R.id.tv_wallet_address)
@@ -106,6 +110,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Override
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
+        DecimalFormat df = new DecimalFormat("0.00");
+        mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext)) * 100) + "%");
         mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
         initRecyclerView();
     }
@@ -194,13 +200,11 @@ public class AccountLightningActivity extends AppBaseActivity {
                         @Override
                         public void run() {
                             if (resp.getConfirmedBalance() == 0) {
-                                DecimalFormat df = new DecimalFormat("0.00");
-                                mBalanceValueTv.setText("$ " + df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000));
-                                balanceAmount = resp.getConfirmedBalance();
-                                mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
+                                mBalanceValueTv.setText("$ 0.00");
+                                mBalanceAmountTv.setText("My account 0.00 balance");
                             } else {
                                 DecimalFormat df = new DecimalFormat("0.00000000");
-                                mBalanceValueTv.setText("$ " + df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000));
+                                mBalanceValueTv.setText("$ " + df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                                 balanceAmount = resp.getConfirmedBalance();
                                 mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
                             }
@@ -457,13 +461,17 @@ public class AccountLightningActivity extends AppBaseActivity {
                 holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_usdt_logo_small);
             }
             if (item.getAmount() == 0) {
-                DecimalFormat df = new DecimalFormat("0.00");
-                holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-                holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                holder.setText(R.id.tv_asset_amount, "0.00");
+                holder.setText(R.id.tv_asset_value, "0.00");
             } else {
                 DecimalFormat df = new DecimalFormat("0.00000000");
-                holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-                holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                if (item.getPropertyid() == 0) {
+                    holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                    holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                } else {
+                    holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                    holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                }
             }
             if (item.getType() == 1) {
                 holder.setImageResource(R.id.iv_asset_net, R.mipmap.icon_network_link_black);
@@ -555,7 +563,8 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @OnClick(R.id.iv_search)
     public void clickSearch() {
-        switchActivity(SearchActivity.class);
+        ToastUtils.showToast(mContext,"Not yet open, please wait");
+//        switchActivity(SearchActivity.class);
     }
 
     /**
@@ -564,7 +573,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @OnClick(R.id.iv_filter)
     public void clickFilter() {
-
+        ToastUtils.showToast(mContext,"Not yet open, please wait");
     }
 
     /**
@@ -708,6 +717,17 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onOpenChannelEvent(OpenChannelEvent event) {
+        getAssetAndBtcData();
+    }
+
+    /**
+     * btc和usdt变化后的消息通知监听
+     * Message notification monitoring after Btc and Usdt change
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBtcAndUsdtEvent(BtcAndUsdtEvent event) {
+        DecimalFormat df = new DecimalFormat("0.00");
+        mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext)) * 100) + "%");
         getAssetAndBtcData();
     }
 

@@ -27,6 +27,9 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_NETWORK = "networkKey";// 保存网络类型的Key
     private static final String KEY_WALLET_ADDRESS = "walletAddressKey";// 保存钱包地址的Key
     private static final String KEY_NODE_VERSION = "nodeVersionKey";// 保存节点版本的Key
+    private static final String KEY_BTC_PRICE = "btcPriceKey";// 保存btc价格的Key
+    private static final String KEY_BTC_PRICE_CHANGE = "btcPriceChangeKey";// 保存btc价格变化的Key
+    private static final String KEY_USDT_PRICE = "usdtPriceChangeKey";// 保存usdt价格变化的Key
 
     /**
      * 版本信息本地化
@@ -197,6 +200,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     public static void saveNetworkToLocal(Context context, String value) {
         putString(SETTINGS, context, KEY_NETWORK, value);
     }
+
     /**
      * 获取本地保存的钱包地址
      */
@@ -210,6 +214,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     public static void saveWalletAddressToLocal(Context context, String value) {
         putString(SETTINGS, context, KEY_WALLET_ADDRESS, value);
     }
+
     /**
      * 获取本地保存的节点版本
      */
@@ -222,5 +227,47 @@ public class PreferencesUtils extends BasePreferencesUtils {
      */
     public static void saveNodeVersionToLocal(Context context, String value) {
         putString(SETTINGS, context, KEY_NODE_VERSION, value);
+    }
+
+    /**
+     * 获取本地保存的btc价格
+     */
+    public static String getBtcPriceFromLocal(Context context) {
+        return getString(SETTINGS, context, KEY_BTC_PRICE);
+    }
+
+    /**
+     * btc价格本地化
+     */
+    public static void saveBtcPriceToLocal(Context context, String value) {
+        putString(SETTINGS, context, KEY_BTC_PRICE, value);
+    }
+
+    /**
+     * 获取本地保存的btc价格变化
+     */
+    public static String getBtcPriceChangeFromLocal(Context context) {
+        return getString(SETTINGS, context, KEY_BTC_PRICE_CHANGE);
+    }
+
+    /**
+     * btc价格变化本地化
+     */
+    public static void saveBtcPriceChangeToLocal(Context context, String value) {
+        putString(SETTINGS, context, KEY_BTC_PRICE_CHANGE, value);
+    }
+
+    /**
+     * 获取本地保存的usdt价格
+     */
+    public static String getUsdtPriceFromLocal(Context context) {
+        return getString(SETTINGS, context, KEY_USDT_PRICE);
+    }
+
+    /**
+     * usdt价格本地化
+     */
+    public static void saveUsdtPriceToLocal(Context context, String value) {
+        putString(SETTINGS, context, KEY_USDT_PRICE, value);
     }
 }

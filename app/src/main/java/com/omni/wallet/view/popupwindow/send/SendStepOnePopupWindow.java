@@ -60,6 +60,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
     RecyclerView mRecyclerView;
     TextView assetsBalanceTv;
     private TextView sendFeeTv;
+    private TextView sendFeeExchangeTv;
     private List<LightningOuterClass.Transaction> mData = new ArrayList<>();
     private List<LightningOuterClass.Transaction> mDataSearch = new ArrayList<>();
     private MyAdapter mAdapter;
@@ -260,8 +261,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
         assetsBalanceTv = view.findViewById(R.id.tv_asset_balance);
         sendFeeTv = view.findViewById(R.id.tv_send_fee);
         TextView sendFeeUnitTv = view.findViewById(R.id.tv_send_fee_unit);
-        TextView sendFeeExchangeTv = view.findViewById(R.id.tv_send_fee_exchange);
-        sendFeeExchangeTv.setText("0");
+        sendFeeExchangeTv = view.findViewById(R.id.tv_send_fee_exchange);
         if (assetId == 0) {
             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeTv.setText("BTC");
@@ -352,17 +352,23 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                             case R.id.tv_slow:
                                 speedButton.setText(R.string.slow);
                                 time = 1; // 10 Minutes
-                                estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
+                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                }
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
                                 time = 6 * 6; // 6 Hours
-                                estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
+                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                }
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
                                 time = 6 * 24; // 24 Hours
-                                estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
+                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                }
                                 break;
                         }
                     }
@@ -429,26 +435,31 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
         TextView sendAmountView = view.findViewById(R.id.tv_send_amount);
         sendAmountView.setText(assetBalance);
         TextView sendAmountValueView = view.findViewById(R.id.tv_send_amount_value);
-        sendAmountValueView.setText(assetBalance);
         TextView feeAmountView = view.findViewById(R.id.tv_send_gas_fee_amount);
         feeAmountView.setText(feeStr + "");
         TextView feeUnitView = view.findViewById(R.id.tv_send_gas_fee_unit);
         TextView feeAmountValueView = view.findViewById(R.id.tv_send_gas_fee_amount_value);
-        feeAmountValueView.setText("0");
         TextView sendUsedValueView = view.findViewById(R.id.tv_send_used_value);
-        DecimalFormat df = new DecimalFormat("0.00000000");
-        String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
-        sendUsedValueView.setText(df.format(Double.parseDouble(sendUsedValue) / 100000000));
         if (assetId == 0) {
+            DecimalFormat df = new DecimalFormat("0.00000000");
             tokenImage.setImageResource(R.mipmap.icon_btc_logo_small);
             tokenTypeView.setText("BTC");
             tokenTypeView2.setText("BTC");
             feeUnitView.setText("satoshis");
+            sendAmountValueView.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            feeAmountValueView.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
+            sendUsedValueView.setText(df.format(Double.parseDouble(sendUsedValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
+            DecimalFormat df = new DecimalFormat("0.00000000");
             tokenImage.setImageResource(R.mipmap.icon_usdt_logo_small);
             tokenTypeView.setText("USDT");
             tokenTypeView2.setText("USDT");
             feeUnitView.setText("unit");
+            sendAmountValueView.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            feeAmountValueView.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
+            sendUsedValueView.setText(df.format(Double.parseDouble(sendUsedValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
         /**
          * @desc: Click back button then back to step two
@@ -567,9 +578,6 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
         failedGasFeeTv.setText(feeStr + "");
         TextView failedGasFeeUnitTv = view.findViewById(R.id.tv_failed_gas_fee_unit);
         TextView failedTotalValueTv = view.findViewById(R.id.tv_failed_total_value);
-        DecimalFormat df = new DecimalFormat("0.00000000");
-        String totalValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
-        failedTotalValueTv.setText(df.format(Double.parseDouble(totalValue) / 100000000));
         TextView failedMessageTv = view.findViewById(R.id.tv_failed_message);
         failedMessageTv.setText(message);
         if (assetId == 0) {
@@ -577,11 +585,17 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
             assetUnitTv.setText("BTC");
             failedAmountUnitTv.setText("BTC");
             failedGasFeeUnitTv.setText("satoshis");
+            DecimalFormat df = new DecimalFormat("0.00000000");
+            String totalValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
+            failedTotalValueTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
             assetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
             assetUnitTv.setText("USDT");
             failedAmountUnitTv.setText("USDT");
             failedGasFeeUnitTv.setText("unit");
+            DecimalFormat df = new DecimalFormat("0.00000000");
+            String totalValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
+            failedTotalValueTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
         // 点击try again
         view.findViewById(R.id.layout_try_again).setOnClickListener(new View.OnClickListener() {
@@ -592,7 +606,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAddr(selectAddress)
                             .setFrom(User.getInstance().getWalletAddress(mContext))
-                            .setAmount(Long.parseLong(assetBalance))
+                            .setAmount((long) (Double.parseDouble(assetBalance) * 100000000))
                             .setTargetConf(time)
                             .build();
                     Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
@@ -773,6 +787,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                     public void run() {
                         feeStr = 0;
                         sendFeeTv.setText(feeStr + "");
+                        sendFeeExchangeTv.setText("0");
                     }
                 });
             }
@@ -790,6 +805,12 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                         public void run() {
                             feeStr = resp.getFeeSat();
                             sendFeeTv.setText(feeStr + "");
+                            DecimalFormat df = new DecimalFormat("0.00000000");
+                            if (assetId == 0) {
+                                sendFeeExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                            } else {
+                                sendFeeExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                            }
                         }
                     });
                 } catch (InvalidProtocolBufferException e) {

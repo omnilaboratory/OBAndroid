@@ -1,9 +1,7 @@
 package com.omni.wallet.ui.activity;
 
 import android.Manifest;
-import android.content.SharedPreferences;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 

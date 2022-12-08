@@ -24,9 +24,11 @@ import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
+import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
@@ -256,33 +258,42 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mTokenInfoTv.setVisibility(View.VISIBLE);
         }
         if (balanceAmount == 0) {
-            DecimalFormat df = new DecimalFormat("0.00");
-            mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));
+            mBalanceAmountTv.setText("My account 0.00");
         } else {
             DecimalFormat df = new DecimalFormat("0.00000000");
             mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));
         }
         mWalletAddressTv.setText(walletAddress);
+        initBalanceAccount();
+    }
+
+    private void initBalanceAccount() {
         if (balanceAccount == 0) {
-            DecimalFormat df = new DecimalFormat("0.00");
-            mBalanceAccountTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
-            mBalanceAccountExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
-            mBalanceAccount1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
-            mBalanceAccountExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
-            mBalanceAccount2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
-            mBalanceAccountExchange2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
-            mBalanceAccount3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
-            mBalanceAccountExchange3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            mBalanceAccountTv.setText("0.00");
+            mBalanceAccountExchangeTv.setText("0.00");
+            mBalanceAccount1Tv.setText("0.00");
+            mBalanceAccountExchange1Tv.setText("0.00");
+            mBalanceAccount2Tv.setText("0.00");
+            mBalanceAccountExchange2Tv.setText("0.00");
+            mBalanceAccount3Tv.setText("0.00");
+            mBalanceAccountExchange3Tv.setText("0.00");
         } else {
             DecimalFormat df = new DecimalFormat("0.00000000");
             mBalanceAccountTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
-            mBalanceAccountExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
             mBalanceAccount1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
-            mBalanceAccountExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
             mBalanceAccount2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
-            mBalanceAccountExchange2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
             mBalanceAccount3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
-            mBalanceAccountExchange3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
+            if (assetId == 0) {
+                mBalanceAccountExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                mBalanceAccountExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                mBalanceAccountExchange2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                mBalanceAccountExchange3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            } else {
+                mBalanceAccountExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                mBalanceAccountExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                mBalanceAccountExchange2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                mBalanceAccountExchange3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            }
         }
     }
 
@@ -313,13 +324,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     public void fetchTransactionsFromLND() {
         LightningOuterClass.ListPaymentsRequest paymentsRequest;
-        if(assetId ==0){
+        if (assetId == 0) {
             paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(false)
                     .setIncludeIncomplete(false)
                     .build();
-        }else {
+        } else {
             paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(true)
@@ -374,13 +385,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     public void fetchPaymentsFromLND() {
         LightningOuterClass.ListPaymentsRequest paymentsRequest;
-        if(assetId ==0){
+        if (assetId == 0) {
             paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(false)
                     .setIncludeIncomplete(false)
                     .build();
-        }else {
+        } else {
             paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(true)
@@ -440,13 +451,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     private void fetchInvoicesFromLND(long lastIndex) {
         LightningOuterClass.ListInvoiceRequest invoiceRequest;
-        if(assetId ==0){
+        if (assetId == 0) {
             invoiceRequest = LightningOuterClass.ListInvoiceRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(false)
                     .setNumMaxInvoices(lastIndex)
                     .build();
-        }else {
+        } else {
             invoiceRequest = LightningOuterClass.ListInvoiceRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(true)
@@ -820,8 +831,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @OnClick(R.id.layout_lucky_packet)
     public void clickLuckyPacket() {
-        mCreateLuckyPacketPopupWindow = new CreateLuckyPacketPopupWindow(mContext);
-        mCreateLuckyPacketPopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
+        ToastUtils.showToast(mContext,"Not yet open, please wait");
+//        mCreateLuckyPacketPopupWindow = new CreateLuckyPacketPopupWindow(mContext);
+//        mCreateLuckyPacketPopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
     }
 
 
@@ -994,6 +1006,15 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCreateInvoiceEvent(CreateInvoiceEvent event) {
         fetchInvoicesFromLND(100);
+    }
+
+    /**
+     * btc和usdt变化后的消息通知监听
+     * Message notification monitoring after Btc and Usdt change
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBtcAndUsdtEvent(BtcAndUsdtEvent event) {
+        initBalanceAccount();
     }
 
     @Override

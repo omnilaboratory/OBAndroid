@@ -131,6 +131,7 @@
                                 android:src="@mipmap/icon_arrow_up_green"/>
 
                             <TextView
+                                android:id="@+id/tv_price_change"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:shadowColor="#40000000"

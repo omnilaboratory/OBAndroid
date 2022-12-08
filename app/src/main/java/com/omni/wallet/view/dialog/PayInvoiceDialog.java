@@ -19,6 +19,7 @@ import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.RefConstants;
 import com.omni.wallet.utils.UriUtil;
 
@@ -284,12 +285,13 @@ public class PayInvoiceDialog {
         DecimalFormat df = new DecimalFormat("0.00000000");
         if (mAssetId == 0) {
             amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
-            amountPayExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
+            amountPayExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            amountPayFeeTv.setText(df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
             amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
-            amountPayExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
+            amountPayExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            amountPayFeeTv.setText(df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
-        amountPayFeeTv.setText(feeSats + "");
         /**
          * @备注： 点击back显示invoice step one
          * @description: Show pay invoice step one when click next
@@ -441,7 +443,7 @@ public class PayInvoiceDialog {
                             }
                         }
                     });
-                }else {
+                } else {
                     RouterOuterClass.SendPaymentRequest sendPaymentRequest = RouterOuterClass.SendPaymentRequest.newBuilder()
                             .setAssetId((int) mAssetId)
                             .setPaymentRequest(lnInvoice)
@@ -547,12 +549,13 @@ public class PayInvoiceDialog {
         DecimalFormat df = new DecimalFormat("0.00000000");
         if (mAssetId == 0) {
             amountPay1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
-            amountPayExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
+            amountPayExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            amountPayFee1Tv.setText(df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
             amountPay1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
-            amountPayExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
+            amountPayExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            amountPayFee1Tv.setText(df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
-        amountPayFee1Tv.setText(feeSats + "");
     }
 
     private void showStepFailed(String message) {

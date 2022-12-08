@@ -19,6 +19,7 @@ import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.ui.activity.ScanActivity;
@@ -308,6 +309,15 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     @OnClick(R.id.iv_close)
     public void clickClose() {
         finish();
+    }
+
+    /**
+     * click filter button
+     * 点击Filter按钮
+     */
+    @OnClick(R.id.iv_filter)
+    public void clickFilter() {
+        ToastUtils.showToast(mContext,"Not yet open, please wait");
     }
 
     @OnClick(R.id.iv_create_channel)

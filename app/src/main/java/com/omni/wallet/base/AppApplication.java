@@ -1,18 +1,30 @@
 package com.omni.wallet.base;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.multidex.MultiDex;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.omni.wallet.baselibrary.base.BaseApplication;
 import com.omni.wallet.baselibrary.common.Constants;
 import com.omni.wallet.baselibrary.http.HttpUtils;
+import com.omni.wallet.baselibrary.http.callback.EngineCallback;
 import com.omni.wallet.baselibrary.http.engine.OkHttpEngine;
 import com.omni.wallet.baselibrary.http.interceptor.LogInterceptor;
+import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.Wallet;
+
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 import obdmobile.Callback;
@@ -24,6 +36,7 @@ import obdmobile.Obdmobile;
 public class AppApplication extends BaseApplication {
     private static final String TAG = AppApplication.class.getSimpleName();
     private static AppApplication mContext;
+    Handler handler = new Handler();
 
     public AppApplication() {
         mContext = this;
@@ -110,6 +123,127 @@ public class AppApplication extends BaseApplication {
 //                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
             }
         });
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                getBtcPrice();
+                // 在此处添加执行的代码
+                handler.postDelayed(this, 30000);// 30s后执行
+            }
+        };
+        handler.postDelayed(runnable, 0);// 打开定时器立即执行
+    }
+
+    /**
+     * Get BTC price related information
+     * 获取btc价格相关信息
+     */
+    public void getBtcPrice() {
+        HttpUtils.with(mContext)
+                .get()
+                .url("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false")
+                .execute(new EngineCallback() {
+                    @Override
+                    public void onPreExecute(Context context, Map<String, Object> params) {
+
+                    }
+
+                    @Override
+                    public void onCancel(Context context) {
+
+                    }
+
+                    @Override
+                    public void onError(Context context, String errorCode, String errorMsg) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, String result) {
+                        LogUtils.e(TAG, "----------------BTC--------------------" + result);
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+                            String btcPrice = jsonObject.getString("current_price");
+                            String priceChange24h = jsonObject.getString("price_change_percentage_24h");
+                            User.getInstance().setBtcPrice(mContext,btcPrice);
+                            User.getInstance().setBtcPriceChange(mContext,priceChange24h);
+                            getUsdtPrice();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, byte[] result) {
+
+                    }
+
+                    @Override
+                    public void onProgressInThread(Context context, Progress progress) {
+
+                    }
+
+                    @Override
+                    public void onFileSuccess(Context context, String filePath) {
+
+                    }
+                });
+    }
+
+    /**
+     * Get Usdt price related information
+     * 获取Usdt价格相关信息
+     */
+    public void getUsdtPrice() {
+        HttpUtils.with(mContext)
+                .get()
+                .url("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=tether&order=market_cap_desc&per_page=100&page=1&sparkline=false")
+                .execute(new EngineCallback() {
+                    @Override
+                    public void onPreExecute(Context context, Map<String, Object> params) {
+
+                    }
+
+                    @Override
+                    public void onCancel(Context context) {
+
+                    }
+
+                    @Override
+                    public void onError(Context context, String errorCode, String errorMsg) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, String result) {
+                        LogUtils.e(TAG, "---------------Usdt---------------------" + result.toString());
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+                            String usdtPrice = jsonObject.getString("current_price");
+                            User.getInstance().setUsdtPrice(mContext,usdtPrice);
+                            EventBus.getDefault().post(new BtcAndUsdtEvent());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, byte[] result) {
+
+                    }
+
+                    @Override
+                    public void onProgressInThread(Context context, Progress progress) {
+
+                    }
+
+                    @Override
+                    public void onFileSuccess(Context context, String filePath) {
+
+                    }
+                });
     }
 
     /**
