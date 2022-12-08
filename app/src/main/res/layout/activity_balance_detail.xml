@@ -993,7 +993,7 @@
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/recycler_to_be_paid_list"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/main_250"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/main_10"/>
 
                     <LinearLayout
@@ -1001,7 +1001,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginTop="@dimen/main_30"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/tv_to_be_paid_confirm"
@@ -1225,7 +1226,7 @@
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/recycler_my_invoices_list"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/main_250"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/main_10"/>
 
                     <LinearLayout
@@ -1233,7 +1234,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginTop="@dimen/main_30"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/tv_my_invoices_confirm"

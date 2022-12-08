@@ -225,8 +225,18 @@ public class PayInvoiceDialog {
                                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                     @Override
                                                     public void run() {
+                                                        paymentHash = payment.getPaymentHash();
+                                                        toNodeAddress = resp.getDestination();
+                                                        if (mAssetId == 0) {
+                                                            payAmount = resp.getAmtMsat();
+                                                        } else {
+                                                            payAmount = resp.getAmount();
+                                                        }
+                                                        feeSats = calculateAbsoluteFeeLimit(payAmount);
+                                                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.VISIBLE);
+                                                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.GONE);
                                                         mLoadingDialog.dismiss();
-                                                        ToastUtils.showToast(mContext, mContext.getResources().getString(R.string.error_payment_no_route));
+                                                        showStepTwo();
                                                         deletePaymentProbe(payment.getPaymentHash());
                                                     }
                                                 });
@@ -244,8 +254,6 @@ public class PayInvoiceDialog {
                                     } catch (InvalidProtocolBufferException e) {
                                         e.printStackTrace();
                                     }
-
-
                                 }
                             });
                         } catch (InvalidProtocolBufferException e) {
@@ -301,137 +309,221 @@ public class PayInvoiceDialog {
             @Override
             public void onClick(View v) {
                 mLoadingDialog.show();
-                RouterOuterClass.SendToRouteRequest sendToRouteRequest = RouterOuterClass.SendToRouteRequest.newBuilder()
-                        .setPaymentHash(byteStringFromHex(paymentHash))
-                        .setRoute(route)
-                        .build();
-                Obdmobile.routerSendToRouteV2(sendToRouteRequest.toByteArray(), new Callback() {
-                    @Override
-                    public void onError(Exception e) {
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                mLoadingDialog.dismiss();
-                                showStepFailed(e.getMessage());
-                            }
-                        });
-                        LogUtils.e(TAG, "Exception while executing SendToRoute.");
-                        LogUtils.e(TAG, e.getMessage());
-                    }
+                if (route != null) {
+                    RouterOuterClass.SendToRouteRequest sendToRouteRequest = RouterOuterClass.SendToRouteRequest.newBuilder()
+                            .setPaymentHash(byteStringFromHex(paymentHash))
+                            .setRoute(route)
+                            .build();
+                    Obdmobile.routerSendToRouteV2(sendToRouteRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mLoadingDialog.dismiss();
+                                    showStepFailed(e.getMessage());
+                                }
+                            });
+                            LogUtils.e(TAG, "Exception while executing SendToRoute.");
+                            LogUtils.e(TAG, e.getMessage());
+                        }
 
-                    @Override
-                    public void onResponse(byte[] bytes) {
-                        try {
-                            LightningOuterClass.HTLCAttempt htlcAttempt = LightningOuterClass.HTLCAttempt.parseFrom(bytes);
-                            switch (htlcAttempt.getStatus()) {
-                                case SUCCEEDED:
-                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                        @Override
-                                        public void run() {
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            try {
+                                LightningOuterClass.HTLCAttempt htlcAttempt = LightningOuterClass.HTLCAttempt.parseFrom(bytes);
+                                switch (htlcAttempt.getStatus()) {
+                                    case SUCCEEDED:
+                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                EventBus.getDefault().post(new PayInvoiceSuccessEvent());
+                                                mLoadingDialog.dismiss();
+                                                // updated the history, so it is shown the next time the user views it
+                                                mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
+                                                mAlertDialog.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);
+                                                mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                                mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                                showStepSuccess();
+                                            }
+                                        });
+                                        break;
+                                    case FAILED:
+                                        switch (htlcAttempt.getFailure().getCode()) {
+                                            case INCORRECT_OR_UNKNOWN_PAYMENT_DETAILS:
+                                                RouterOuterClass.SendPaymentRequest sendPaymentRequest = RouterOuterClass.SendPaymentRequest.newBuilder()
+                                                        .setAssetId((int) mAssetId)
+                                                        .setPaymentRequest(lnInvoice)
+                                                        .setFeeLimitMsat(calculateAbsoluteFeeLimit(payAmount))
+                                                        .setTimeoutSeconds(RefConstants.TIMEOUT_MEDIUM * RefConstants.TOR_TIMEOUT_MULTIPLIER)
+                                                        .setMaxParts(1)
+                                                        .build();
+                                                Obdmobile.routerSendPaymentV2(sendPaymentRequest.toByteArray(), new RecvStream() {
+                                                    @Override
+                                                    public void onError(Exception e) {
+                                                        if (e.getMessage().equals("EOF")) {
+                                                            return;
+                                                        }
+                                                        LogUtils.e(TAG, "------------------sendPaymentOnError------------------" + e.getMessage());
+                                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                EventBus.getDefault().post(new PayInvoiceFailedEvent());
+                                                                mLoadingDialog.dismiss();
+                                                                mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
+                                                                mAlertDialog.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
+                                                                mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                                                mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                                                showStepFailed(e.getMessage());
+                                                            }
+                                                        });
+                                                    }
+
+                                                    @Override
+                                                    public void onResponse(byte[] bytes) {
+                                                        if (bytes == null) {
+                                                            return;
+                                                        }
+                                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                try {
+                                                                    LightningOuterClass.Payment resp = LightningOuterClass.Payment.parseFrom(bytes);
+                                                                    LogUtils.e(TAG, "------------------sendPaymentOnResponse-----------------" + resp);
+                                                                    if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.SUCCEEDED) {
+                                                                        EventBus.getDefault().post(new PayInvoiceSuccessEvent());
+                                                                        mLoadingDialog.dismiss();
+                                                                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
+                                                                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);
+                                                                        mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                                                        mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                                                        showStepSuccess();
+                                                                    } else if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.FAILED) {
+                                                                        EventBus.getDefault().post(new PayInvoiceFailedEvent());
+                                                                        mLoadingDialog.dismiss();
+                                                                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
+                                                                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
+                                                                        mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                                                        mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                                                        String errorMessage;
+                                                                        switch (resp.getFailureReason()) {
+                                                                            case FAILURE_REASON_TIMEOUT:
+                                                                                errorMessage = mContext.getResources().getString(R.string.error_payment_timeout);
+                                                                                showStepFailed(errorMessage);
+                                                                                break;
+                                                                            case FAILURE_REASON_NO_ROUTE:
+                                                                                errorMessage = mContext.getResources().getString(R.string.error_payment_no_route);
+                                                                                showStepFailed(errorMessage);
+                                                                                break;
+                                                                            case FAILURE_REASON_INSUFFICIENT_BALANCE:
+                                                                                errorMessage = mContext.getResources().getString(R.string.error_payment_insufficient_balance);
+                                                                                showStepFailed(errorMessage);
+                                                                                break;
+                                                                            case FAILURE_REASON_INCORRECT_PAYMENT_DETAILS:
+                                                                                errorMessage = mContext.getResources().getString(R.string.error_payment_invalid_details);
+                                                                                showStepFailed(errorMessage);
+                                                                                break;
+                                                                        }
+                                                                    }
+                                                                } catch (InvalidProtocolBufferException e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                                break;
+                                        }
+                                        break;
+                                }
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }else {
+                    RouterOuterClass.SendPaymentRequest sendPaymentRequest = RouterOuterClass.SendPaymentRequest.newBuilder()
+                            .setAssetId((int) mAssetId)
+                            .setPaymentRequest(lnInvoice)
+                            .setFeeLimitMsat(calculateAbsoluteFeeLimit(payAmount))
+                            .setTimeoutSeconds(RefConstants.TIMEOUT_MEDIUM * RefConstants.TOR_TIMEOUT_MULTIPLIER)
+                            .setMaxParts(RefConstants.LN_MAX_PARTS)
+                            .build();
+                    Obdmobile.routerSendPaymentV2(sendPaymentRequest.toByteArray(), new RecvStream() {
+                        @Override
+                        public void onError(Exception e) {
+                            if (e.getMessage().equals("EOF")) {
+                                return;
+                            }
+                            LogUtils.e(TAG, "------------------sendPaymentOnError------------------" + e.getMessage());
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    EventBus.getDefault().post(new PayInvoiceFailedEvent());
+                                    mLoadingDialog.dismiss();
+                                    mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
+                                    mAlertDialog.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
+                                    mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                    mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                    showStepFailed(e.getMessage());
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        LightningOuterClass.Payment resp = LightningOuterClass.Payment.parseFrom(bytes);
+                                        LogUtils.e(TAG, "------------------sendPaymentOnResponse-----------------" + resp);
+                                        if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.SUCCEEDED) {
                                             EventBus.getDefault().post(new PayInvoiceSuccessEvent());
                                             mLoadingDialog.dismiss();
-                                            // updated the history, so it is shown the next time the user views it
                                             mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
                                             mAlertDialog.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);
                                             mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
                                             mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
                                             showStepSuccess();
+                                        } else if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.FAILED) {
+                                            EventBus.getDefault().post(new PayInvoiceFailedEvent());
+                                            mLoadingDialog.dismiss();
+                                            mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
+                                            mAlertDialog.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
+                                            mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                            mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                            String errorMessage;
+                                            switch (resp.getFailureReason()) {
+                                                case FAILURE_REASON_TIMEOUT:
+                                                    errorMessage = mContext.getResources().getString(R.string.error_payment_timeout);
+                                                    showStepFailed(errorMessage);
+                                                    break;
+                                                case FAILURE_REASON_NO_ROUTE:
+                                                    errorMessage = mContext.getResources().getString(R.string.error_payment_no_route);
+                                                    showStepFailed(errorMessage);
+                                                    break;
+                                                case FAILURE_REASON_INSUFFICIENT_BALANCE:
+                                                    errorMessage = mContext.getResources().getString(R.string.error_payment_insufficient_balance);
+                                                    showStepFailed(errorMessage);
+                                                    break;
+                                                case FAILURE_REASON_INCORRECT_PAYMENT_DETAILS:
+                                                    errorMessage = mContext.getResources().getString(R.string.error_payment_invalid_details);
+                                                    showStepFailed(errorMessage);
+                                                    break;
+                                            }
                                         }
-                                    });
-                                    break;
-                                case FAILED:
-                                    switch (htlcAttempt.getFailure().getCode()) {
-                                        case INCORRECT_OR_UNKNOWN_PAYMENT_DETAILS:
-                                            RouterOuterClass.SendPaymentRequest sendPaymentRequest = RouterOuterClass.SendPaymentRequest.newBuilder()
-                                                    .setAssetId((int) mAssetId)
-                                                    .setPaymentRequest(lnInvoice)
-                                                    .setFeeLimitMsat(calculateAbsoluteFeeLimit(payAmount))
-                                                    .setTimeoutSeconds(RefConstants.TIMEOUT_MEDIUM * RefConstants.TOR_TIMEOUT_MULTIPLIER)
-                                                    .setMaxParts(1)
-                                                    .build();
-                                            Obdmobile.routerSendPaymentV2(sendPaymentRequest.toByteArray(), new RecvStream() {
-                                                @Override
-                                                public void onError(Exception e) {
-                                                    if (e.getMessage().equals("EOF")) {
-                                                        return;
-                                                    }
-                                                    LogUtils.e(TAG, "------------------sendPaymentOnError------------------" + e.getMessage());
-                                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            EventBus.getDefault().post(new PayInvoiceFailedEvent());
-                                                            mLoadingDialog.dismiss();
-                                                            mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
-                                                            mAlertDialog.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
-                                                            mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-                                                            mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                                            showStepFailed(e.getMessage());
-                                                        }
-                                                    });
-                                                }
-
-                                                @Override
-                                                public void onResponse(byte[] bytes) {
-                                                    if (bytes == null) {
-                                                        return;
-                                                    }
-                                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            try {
-                                                                LightningOuterClass.Payment resp = LightningOuterClass.Payment.parseFrom(bytes);
-                                                                LogUtils.e(TAG, "------------------sendPaymentOnResponse-----------------" + resp);
-                                                                if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.SUCCEEDED) {
-                                                                    EventBus.getDefault().post(new PayInvoiceSuccessEvent());
-                                                                    mLoadingDialog.dismiss();
-                                                                    mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
-                                                                    mAlertDialog.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);
-                                                                    mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-                                                                    mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                                                    showStepSuccess();
-                                                                } else if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.FAILED) {
-                                                                    EventBus.getDefault().post(new PayInvoiceFailedEvent());
-                                                                    mLoadingDialog.dismiss();
-                                                                    mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
-                                                                    mAlertDialog.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
-                                                                    mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-                                                                    mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                                                    String errorMessage;
-                                                                    switch (resp.getFailureReason()) {
-                                                                        case FAILURE_REASON_TIMEOUT:
-                                                                            errorMessage = mContext.getResources().getString(R.string.error_payment_timeout);
-                                                                            showStepFailed(errorMessage);
-                                                                            break;
-                                                                        case FAILURE_REASON_NO_ROUTE:
-                                                                            errorMessage = mContext.getResources().getString(R.string.error_payment_no_route);
-                                                                            showStepFailed(errorMessage);
-                                                                            break;
-                                                                        case FAILURE_REASON_INSUFFICIENT_BALANCE:
-                                                                            errorMessage = mContext.getResources().getString(R.string.error_payment_insufficient_balance);
-                                                                            showStepFailed(errorMessage);
-                                                                            break;
-                                                                        case FAILURE_REASON_INCORRECT_PAYMENT_DETAILS:
-                                                                            errorMessage = mContext.getResources().getString(R.string.error_payment_invalid_details);
-                                                                            showStepFailed(errorMessage);
-                                                                            break;
-                                                                    }
-                                                                }
-                                                            } catch (InvalidProtocolBufferException e) {
-                                                                e.printStackTrace();
-                                                            }
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                            break;
+                                    } catch (InvalidProtocolBufferException e) {
+                                        e.printStackTrace();
                                     }
-                                    break;
-                            }
-                        } catch (InvalidProtocolBufferException e) {
-                            e.printStackTrace();
+                                }
+                            });
                         }
-                    }
-                });
+                    });
+                }
             }
         });
     }

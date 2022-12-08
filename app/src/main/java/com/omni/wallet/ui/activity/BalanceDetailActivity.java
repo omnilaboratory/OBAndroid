@@ -75,6 +75,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TextView mNetworkTypeTv;
     @BindView(R.id.tv_network)
     TextView mNetworkTv;
+    @BindView(R.id.iv_token_info)
+    ImageView mTokenInfoTv;
     @BindView(R.id.tv_balance_amount)
     TextView mBalanceAmountTv;
     @BindView(R.id.tv_wallet_address)
@@ -243,6 +245,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mBalanceUnit1Tv.setText("BTC");
             mBalanceUnit2Tv.setText("BTC");
             mBalanceUnit3Tv.setText("BTC");
+            mTokenInfoTv.setVisibility(View.GONE);
         } else {
             mAssetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
             mAssetNameTv.setText("USDT");
@@ -250,6 +253,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mBalanceUnit1Tv.setText("USDT");
             mBalanceUnit2Tv.setText("USDT");
             mBalanceUnit3Tv.setText("USDT");
+            mTokenInfoTv.setVisibility(View.VISIBLE);
         }
         if (balanceAmount == 0) {
             DecimalFormat df = new DecimalFormat("0.00");
@@ -308,11 +312,20 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * 请求交易列表各个状态的接口
      */
     public void fetchTransactionsFromLND() {
-        LightningOuterClass.ListPaymentsRequest paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
-                .setAssetId((int) assetId)
-                .setIsQueryAsset(true)
-                .setIncludeIncomplete(false)
-                .build();
+        LightningOuterClass.ListPaymentsRequest paymentsRequest;
+        if(assetId ==0){
+            paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
+                    .setAssetId((int) assetId)
+                    .setIsQueryAsset(false)
+                    .setIncludeIncomplete(false)
+                    .build();
+        }else {
+            paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
+                    .setAssetId((int) assetId)
+                    .setIsQueryAsset(true)
+                    .setIncludeIncomplete(false)
+                    .build();
+        }
         Obdmobile.listPayments(paymentsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
@@ -360,11 +373,20 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * 请求支付列表各个状态的接口
      */
     public void fetchPaymentsFromLND() {
-        LightningOuterClass.ListPaymentsRequest paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
-                .setAssetId((int) assetId)
-                .setIsQueryAsset(true)
-                .setIncludeIncomplete(false)
-                .build();
+        LightningOuterClass.ListPaymentsRequest paymentsRequest;
+        if(assetId ==0){
+            paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
+                    .setAssetId((int) assetId)
+                    .setIsQueryAsset(false)
+                    .setIncludeIncomplete(false)
+                    .build();
+        }else {
+            paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
+                    .setAssetId((int) assetId)
+                    .setIsQueryAsset(true)
+                    .setIncludeIncomplete(false)
+                    .build();
+        }
         Obdmobile.listPayments(paymentsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
@@ -417,11 +439,20 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * 请求发票列表各个状态的接口
      */
     private void fetchInvoicesFromLND(long lastIndex) {
-        LightningOuterClass.ListInvoiceRequest invoiceRequest = LightningOuterClass.ListInvoiceRequest.newBuilder()
-                .setAssetId((int) assetId)
-                .setIsQueryAsset(true)
-                .setNumMaxInvoices(lastIndex)
-                .build();
+        LightningOuterClass.ListInvoiceRequest invoiceRequest;
+        if(assetId ==0){
+            invoiceRequest = LightningOuterClass.ListInvoiceRequest.newBuilder()
+                    .setAssetId((int) assetId)
+                    .setIsQueryAsset(false)
+                    .setNumMaxInvoices(lastIndex)
+                    .build();
+        }else {
+            invoiceRequest = LightningOuterClass.ListInvoiceRequest.newBuilder()
+                    .setAssetId((int) assetId)
+                    .setIsQueryAsset(true)
+                    .setNumMaxInvoices(lastIndex)
+                    .build();
+        }
         Obdmobile.listInvoices(invoiceRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
@@ -469,7 +500,12 @@ public class BalanceDetailActivity extends AppBaseActivity {
         @Override
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Payment item) {
             holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
-            holder.setText(R.id.tv_amount, item.getValueMsat() + "");
+            DecimalFormat df = new DecimalFormat("0.00000000");
+            if (item.getAssetId() == 0) {
+                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getValueMsat() / 1000)) / 100000000));
+            } else {
+                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getValueMsat())) / 100000000));
+            }
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -493,7 +529,12 @@ public class BalanceDetailActivity extends AppBaseActivity {
         @Override
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Payment item) {
             holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
-            holder.setText(R.id.tv_amount, item.getValueMsat() + "");
+            DecimalFormat df = new DecimalFormat("0.00000000");
+            if (item.getAssetId() == 0) {
+                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getValueMsat() / 1000)) / 100000000));
+            } else {
+                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getValueMsat())) / 100000000));
+            }
             if (item.getPaymentRequest() != null && !item.getPaymentRequest().isEmpty()) {
                 holder.setText(R.id.tv_receiver, PaymentRequestUtil.getMemo(item.getPaymentRequest()));
             } else {
@@ -567,7 +608,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     // The invoice has been payed
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
                     DecimalFormat df = new DecimalFormat("0.00000000");
-                    holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed)) / 100000000));
+                    if (assetId == 0) {
+                        holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed / 1000)) / 100000000));
+                    } else {
+                        holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed)) / 100000000));
+                    }
                 } else {
                     // The invoice has not been payed yet
                     holder.setText(R.id.tv_amount, "0.00");
@@ -585,11 +630,19 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     // The invoice has been payed
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
                     DecimalFormat df = new DecimalFormat("0.00000000");
-                    holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed)) / 100000000));
+                    if (assetId == 0) {
+                        holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed / 1000)) / 100000000));
+                    } else {
+                        holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed)) / 100000000));
+                    }
                 } else {
                     // The invoice has not been payed yet
                     DecimalFormat df = new DecimalFormat("0.00000000");
-                    holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amt)) / 100000000));
+                    if (assetId == 0) {
+                        holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amt / 1000)) / 100000000));
+                    } else {
+                        holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amt)) / 100000000));
+                    }
                     if (isInvoiceExpired(item)) {
                         // The invoice has expired
                         holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
