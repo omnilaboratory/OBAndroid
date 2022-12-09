@@ -26,6 +26,7 @@ import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.ui.activity.AccountLightningActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.ObdLogFileObserver;
+import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.utils.WalletGetInfo;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
@@ -174,7 +175,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
         HttpUtils.with(ctx)
                 .postString()
-                .url("http://43.138.107.248:18332")
+                .url("http://"+Wallet.BTC_HOST_ADDRESS_REGTEST+":18332")
                 .addContent(jsonStr)
                 .execute(new EngineCallback() {
                     @Override

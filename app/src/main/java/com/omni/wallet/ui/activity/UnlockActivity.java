@@ -25,6 +25,7 @@ import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.ObdLogFileObserverCheckStarted;
+import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.json.JSONException;
@@ -224,7 +225,7 @@ public class UnlockActivity extends AppBaseActivity {
         String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
         HttpUtils.with(ctx)
                 .postString()
-                .url("http://43.138.107.248:18332")
+                .url("http://"+Wallet.BTC_HOST_ADDRESS_REGTEST+":18332")
                 .addContent(jsonStr)
                 .execute(new EngineCallback() {
 
