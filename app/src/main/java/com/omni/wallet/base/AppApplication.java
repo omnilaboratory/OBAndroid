@@ -126,6 +126,16 @@ public class AppApplication extends BaseApplication {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                String btcPrice = User.getInstance().getBtcPrice(mContext);
+                if(btcPrice==null){
+                    User.getInstance().setBtcPrice(mContext,"16000");
+                    User.getInstance().setBtcPriceChange(mContext,"0");
+                }
+                String usdtPrice = User.getInstance().getUsdtPrice(mContext);
+                if(usdtPrice==null){
+                    User.getInstance().setUsdtPrice(mContext,"1");
+                }
+
                 getBtcPrice();
                 // 在此处添加执行的代码
                 handler.postDelayed(this, 30000);// 30s后执行
@@ -155,6 +165,7 @@ public class AppApplication extends BaseApplication {
 
                     @Override
                     public void onError(Context context, String errorCode, String errorMsg) {
+                        
 
                     }
 
@@ -212,7 +223,7 @@ public class AppApplication extends BaseApplication {
 
                     @Override
                     public void onError(Context context, String errorCode, String errorMsg) {
-
+                        
                     }
 
                     @Override

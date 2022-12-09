@@ -45,6 +45,9 @@ public class Wallet {
     public List<ListAssetItemEntity> allData = new ArrayList<>();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    
+    private static final String BTC_HOST_ADDRESS_REGTEST = "43.138.107.248";
+    private static final String BTC_HOST_ADDRESS_TEST = "192.144.199.67";
 
     public static final String START_NODE = "  --trickledelay=5000 --alias=alice\n" +
             "--listen=0.0.0.0:9735\n" +
@@ -64,9 +67,15 @@ public class Wallet {
     public static final String START_NODE_OMNI_WITH_SEED = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
-            "--omnicoreproxy.rpchost=43.138.107.248:18332 " +
-            "--omnicoreproxy.zmqpubrawblock=tcp://43.138.107.248:28332 " +
-            "--omnicoreproxy.zmqpubrawtx=tcp://43.138.107.248:28333";
+            "--omnicoreproxy.rpchost=" +BTC_HOST_ADDRESS_REGTEST +":18332 "+
+            "--omnicoreproxy.zmqpubrawblock=tcp:" +BTC_HOST_ADDRESS_REGTEST +":28332 "+
+            "--omnicoreproxy.zmqpubrawtx=" +BTC_HOST_ADDRESS_REGTEST +":28333";
+
+    public static final String START_NODE_TEST_WITH_SEED = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
+            "--autopilot.active --maxpendingchannels=100 " +
+            "--bitcoin.active --bitcoin.testnet --bitcoin.node=neutrino " +
+            "--neutrino.connect="+BTC_HOST_ADDRESS_TEST+
+            "--omnicoreproxy.rpchost=" + BTC_HOST_ADDRESS_TEST + ":18332";
 
     private Wallet() {
         ;
