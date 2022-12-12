@@ -30,6 +30,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_BTC_PRICE = "btcPriceKey";// 保存btc价格的Key
     private static final String KEY_BTC_PRICE_CHANGE = "btcPriceChangeKey";// 保存btc价格变化的Key
     private static final String KEY_USDT_PRICE = "usdtPriceChangeKey";// 保存usdt价格变化的Key
+    private static final String KEY_FROM_PUBKEY = "fromPubKeyKey";// 自身节点pubkey的Key
 
     /**
      * 版本信息本地化
@@ -269,5 +270,19 @@ public class PreferencesUtils extends BasePreferencesUtils {
      */
     public static void saveUsdtPriceToLocal(Context context, String value) {
         putString(SETTINGS, context, KEY_USDT_PRICE, value);
+    }
+
+    /**
+     * 获取本地保存的自身节点pubkey
+     */
+    public static String getFromPubKeyFromLocal(Context context) {
+        return getString(SETTINGS, context, KEY_FROM_PUBKEY);
+    }
+
+    /**
+     * 自身节点pubkey本地化
+     */
+    public static void saveFromPubKeyToLocal(Context context, String value) {
+        putString(SETTINGS, context, KEY_FROM_PUBKEY, value);
     }
 }

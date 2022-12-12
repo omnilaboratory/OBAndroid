@@ -323,9 +323,11 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 mLoadingDialog.show();
                 // TODO: 2022/12/6 该逻辑待验证
                 if (nodePubkey.equals(centerNodePubkey)) {
-                    openChannelConnected(mBalanceAmount, mWalletAddress);
+                    LogUtils.e(TAG, "===========111111111111111========");
+                    openChannelConnected(nodePubkey, mBalanceAmount, mWalletAddress);
                 } else {
-                    connectPeer(mBalanceAmount, mWalletAddress);
+                    LogUtils.e(TAG, "===========222222222222222========");
+                    connectPeer(nodePubkey, mBalanceAmount, mWalletAddress);
                 }
 //                Obdmobile.listPeers(LightningOuterClass.ListPeersRequest.newBuilder().build().toByteArray(), new Callback() {
 //                    @Override
@@ -425,10 +427,11 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
      * Opening transaction channel
      * 开通交易通道
      */
-    private void openChannelConnected(long balanceAmount, String walletAddress) {
-        byte[] nodeKeyBytes = hexStringToByteArray(nodePubkey);
+    private void openChannelConnected(String pubkey, long balanceAmount, String walletAddress) {
+        byte[] nodeKeyBytes = hexStringToByteArray(pubkey);
         LightningOuterClass.OpenChannelRequest openChannelRequest;
         if (assetId == 0) {
+            LogUtils.e(TAG, "===========55555555555========");
             openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
                     .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
                     .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
@@ -438,6 +441,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     .setAssetId((int) assetId)
                     .build();
         } else {
+            LogUtils.e(TAG, "===========66666666666========");
             openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
                     .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
                     .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
@@ -448,6 +452,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     .setAssetId((int) assetId)
                     .build();
         }
+        LogUtils.e(TAG, "===========777777777777777========" + pubkey);
         Obdmobile.openChannel(openChannelRequest.toByteArray(), new RecvStream() {
             @Override
             public void onError(Exception e) {
@@ -481,7 +486,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             Bundle bundle = new Bundle();
                             bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
                             bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
-                            bundle.putString(ChannelsActivity.KEY_PUBKEY, nodePubkey);
+                            bundle.putString(ChannelsActivity.KEY_PUBKEY, User.getInstance().getFromPubKey(mContext));
                             Intent intent = new Intent(mContext, ChannelsActivity.class);
                             mContext.startActivity(intent, bundle);
                         } catch (InvalidProtocolBufferException e) {
@@ -493,13 +498,15 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         });
     }
 
-    private void connectPeer(long balanceAmount, String walletAddress) {
-        LightningNodeUri nodeUri = LightningParser.parseNodeUri(nodePubkey);
+    private void connectPeer(String pubkey, long balanceAmount, String walletAddress) {
+        LightningNodeUri nodeUri = LightningParser.parseNodeUri(pubkey);
         if (nodeUri.getHost() == null || nodeUri.getHost().isEmpty()) {
             LogUtils.e(TAG, "Host info missing. Trying to fetch host info to connect peer...");
-            fetchNodeInfoToConnectPeer(balanceAmount, walletAddress);
+            fetchNodeInfoToConnectPeer(pubkey, balanceAmount, walletAddress);
             return;
         }
+        LogUtils.e(TAG, "===========33333==============" + nodeUri.getHost());
+        LogUtils.e(TAG, "===========44444==============" + nodeUri.getPubKey());
 
         LightningOuterClass.LightningAddress lightningAddress = LightningOuterClass.LightningAddress.newBuilder()
                 .setHostBytes(ByteString.copyFrom(nodeUri.getHost().getBytes(StandardCharsets.UTF_8)))
@@ -508,10 +515,10 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         Obdmobile.connectPeer(connectPeerRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                new Thread(new Runnable() {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        Looper.prepare();
+                        mLoadingDialog.dismiss();
                         LogUtils.e(TAG, "Error connecting to peer: " + e.getMessage());
                         if (e.getMessage().toLowerCase().contains("refused")) {
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_refused));
@@ -522,9 +529,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                         } else {
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer));
                         }
-                        Looper.loop();
                     }
-                }).start();
+                });
             }
 
             @Override
@@ -533,16 +539,16 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        openChannelConnected(balanceAmount, walletAddress);
+                        openChannelConnected(pubkey, balanceAmount, walletAddress);
                     }
                 });
             }
         });
     }
 
-    public void fetchNodeInfoToConnectPeer(long balanceAmount, String walletAddress) {
+    public void fetchNodeInfoToConnectPeer(String pubkey, long balanceAmount, String walletAddress) {
         LightningOuterClass.NodeInfoRequest nodeInfoRequest = LightningOuterClass.NodeInfoRequest.newBuilder()
-                .setPubKey(nodePubkey)
+                .setPubKey(pubkey)
                 .build();
         Obdmobile.getNodeInfo(nodeInfoRequest.toByteArray(), new Callback() {
             @Override
@@ -551,6 +557,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
+                        mLoadingDialog.dismiss();
                         ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_no_host));
                     }
                 });
@@ -564,16 +571,18 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                         try {
                             LightningOuterClass.NodeInfo nodeInfo = LightningOuterClass.NodeInfo.parseFrom(bytes);
                             if (nodeInfo.getNode().getAddressesCount() > 0) {
-                                String tempUri = nodePubkey + "@" + nodeInfo.getNode().getAddresses(0).getAddr();
+                                String tempUri = pubkey + "@" + nodeInfo.getNode().getAddresses(0).getAddr();
                                 LightningNodeUri nodeUriWithHost = LightningParser.parseNodeUri(tempUri);
                                 if (nodeUriWithHost != null) {
                                     LogUtils.e(TAG, "Host info successfully fetched. NodeUriWithHost: " + nodeUriWithHost.getAsString());
-                                    connectPeer(balanceAmount, walletAddress);
+                                    connectPeer(tempUri, balanceAmount, walletAddress);
                                 } else {
+                                    mLoadingDialog.dismiss();
                                     LogUtils.e(TAG, "Failed to parse nodeUri");
                                     ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_no_host));
                                 }
                             } else {
+                                mLoadingDialog.dismiss();
                                 LogUtils.e(TAG, "Node Info does not contain any addresses.");
                                 ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_no_host));
                             }

@@ -111,7 +111,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
         DecimalFormat df = new DecimalFormat("0.00");
-        mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext)) * 100) + "%");
+        mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext))) + "%");
         mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
         initRecyclerView();
     }
@@ -164,6 +164,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                             mNetworkTypeTv.setText(resp.getChains(0).getNetwork());
                             User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
                             User.getInstance().setNodeVersion(mContext, resp.getVersion());
+                            User.getInstance().setFromPubKey(mContext, resp.getIdentityPubkey());
                         }
                     });
                 } catch (InvalidProtocolBufferException e) {
@@ -469,7 +470,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
                     holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                 } else {
-                    holder.setText(R.id.tv_asset_amount,df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000) );
+                    holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
                     holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                 }
             }
@@ -563,7 +564,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @OnClick(R.id.iv_search)
     public void clickSearch() {
-        ToastUtils.showToast(mContext,"Not yet open, please wait");
+        ToastUtils.showToast(mContext, "Not yet open, please wait");
 //        switchActivity(SearchActivity.class);
     }
 
@@ -573,7 +574,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @OnClick(R.id.iv_filter)
     public void clickFilter() {
-        ToastUtils.showToast(mContext,"Not yet open, please wait");
+        ToastUtils.showToast(mContext, "Not yet open, please wait");
     }
 
     /**
@@ -727,7 +728,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBtcAndUsdtEvent(BtcAndUsdtEvent event) {
         DecimalFormat df = new DecimalFormat("0.00");
-        mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext)) * 100) + "%");
+        mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext))) + "%");
         getAssetAndBtcData();
     }
 

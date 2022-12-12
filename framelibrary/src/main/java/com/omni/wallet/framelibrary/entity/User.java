@@ -61,6 +61,8 @@ public class User {
     private String btcPriceChange;
     // usdt价格
     private String usdtPrice;
+    // 自身节点的pubKey
+    private String fromPubKey;
 
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
@@ -229,6 +231,16 @@ public class User {
     public void setUsdtPrice(Context context, String usdtPrice) {
         PreferencesUtils.saveUsdtPriceToLocal(context, usdtPrice);
         this.usdtPrice = usdtPrice;
+    }
+
+    public String getFromPubKey(Context context) {
+        fromPubKey = PreferencesUtils.getFromPubKeyFromLocal(context);
+        return fromPubKey;
+    }
+
+    public void setFromPubKey(Context context, String fromPubKey) {
+        PreferencesUtils.saveFromPubKeyToLocal(context, fromPubKey);
+        this.fromPubKey = fromPubKey;
     }
 
     /**

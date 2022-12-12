@@ -138,7 +138,7 @@ public class AppApplication extends BaseApplication {
 
                 getBtcPrice();
                 // 在此处添加执行的代码
-                handler.postDelayed(this, 30000);// 30s后执行
+                handler.postDelayed(this, 60000);// 60s后执行
             }
         };
         handler.postDelayed(runnable, 0);// 打开定时器立即执行
