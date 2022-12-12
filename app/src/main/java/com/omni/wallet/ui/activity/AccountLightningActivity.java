@@ -204,7 +204,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                                 mBalanceValueTv.setText("$ 0.00");
                                 mBalanceAmountTv.setText("My account 0.00 balance");
                             } else {
-                                DecimalFormat df = new DecimalFormat("0.00000000");
+                                DecimalFormat df = new DecimalFormat("0.00######");
                                 mBalanceValueTv.setText("$ " + df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                                 balanceAmount = resp.getConfirmedBalance();
                                 mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
@@ -303,7 +303,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                         public void run() {
                             lightningData.clear();
                             ListAssetItemEntity entity = new ListAssetItemEntity();
-                            entity.setAmount(resp.getLocalBalance().getMsat() / 1000 + resp.getRemoteBalance().getMsat() / 1000);
+                            entity.setAmount(resp.getLocalBalance().getMsat() / 1000);
                             entity.setPropertyid(0);
                             entity.setType(2);
                             lightningData.add(entity);
@@ -360,7 +360,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                         public void run() {
                             lightningData.clear();
                             ListAssetItemEntity entity = new ListAssetItemEntity();
-                            entity.setAmount(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat());
+                            entity.setAmount(resp.getLocalBalance().getMsat());
                             entity.setPropertyid(propertyid);
                             entity.setType(2);
                             lightningData.add(entity);
@@ -465,7 +465,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                 holder.setText(R.id.tv_asset_amount, "0.00");
                 holder.setText(R.id.tv_asset_value, "0.00");
             } else {
-                DecimalFormat df = new DecimalFormat("0.00000000");
+                DecimalFormat df = new DecimalFormat("0.00######");
                 if (item.getPropertyid() == 0) {
                     holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
                     holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));

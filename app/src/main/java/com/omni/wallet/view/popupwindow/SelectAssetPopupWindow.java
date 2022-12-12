@@ -179,7 +179,7 @@ public class SelectAssetPopupWindow {
                 DecimalFormat df = new DecimalFormat("0.00");
                 holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
             }else {
-                DecimalFormat df = new DecimalFormat("0.00000000");
+                DecimalFormat df = new DecimalFormat("0.00######");
                 holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
             }
             holder.setOnItemClickListener(new View.OnClickListener() {

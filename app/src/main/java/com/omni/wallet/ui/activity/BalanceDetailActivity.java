@@ -260,7 +260,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         if (balanceAmount == 0) {
             mBalanceAmountTv.setText("My account 0.00");
         } else {
-            DecimalFormat df = new DecimalFormat("0.00000000");
+            DecimalFormat df = new DecimalFormat("0.00######");
             mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));
         }
         mWalletAddressTv.setText(walletAddress);
@@ -278,7 +278,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mBalanceAccount3Tv.setText("0.00");
             mBalanceAccountExchange3Tv.setText("0.00");
         } else {
-            DecimalFormat df = new DecimalFormat("0.00000000");
+            DecimalFormat df = new DecimalFormat("0.00######");
             mBalanceAccountTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
             mBalanceAccount1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
             mBalanceAccount2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
@@ -511,7 +511,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         @Override
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Payment item) {
             holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
-            DecimalFormat df = new DecimalFormat("0.00000000");
+            DecimalFormat df = new DecimalFormat("0.00######");
             if (item.getAssetId() == 0) {
                 holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getValueMsat() / 1000)) / 100000000));
             } else {
@@ -540,7 +540,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         @Override
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Payment item) {
             holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
-            DecimalFormat df = new DecimalFormat("0.00000000");
+            DecimalFormat df = new DecimalFormat("0.00######");
             if (item.getAssetId() == 0) {
                 holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getValueMsat() / 1000)) / 100000000));
             } else {
@@ -618,7 +618,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 if (!amtPayed.equals(0L)) {
                     // The invoice has been payed
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
-                    DecimalFormat df = new DecimalFormat("0.00000000");
+                    DecimalFormat df = new DecimalFormat("0.00######");
                     if (assetId == 0) {
                         holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed / 1000)) / 100000000));
                     } else {
@@ -640,7 +640,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 if (isInvoicePayed(item)) {
                     // The invoice has been payed
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
-                    DecimalFormat df = new DecimalFormat("0.00000000");
+                    DecimalFormat df = new DecimalFormat("0.00######");
                     if (assetId == 0) {
                         holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed / 1000)) / 100000000));
                     } else {
@@ -648,7 +648,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     }
                 } else {
                     // The invoice has not been payed yet
-                    DecimalFormat df = new DecimalFormat("0.00000000");
+                    DecimalFormat df = new DecimalFormat("0.00######");
                     if (assetId == 0) {
                         holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amt / 1000)) / 100000000));
                     } else {

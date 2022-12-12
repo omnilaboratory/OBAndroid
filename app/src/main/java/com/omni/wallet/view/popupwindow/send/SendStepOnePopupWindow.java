@@ -271,7 +271,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
             assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
             assetTypeTv.setText("USDT");
             amountTypeTv.setText("USDT");
-            sendFeeUnitTv.setText("unit");
+            sendFeeUnitTv.setText("satoshis");
         }
         fetchWalletBalance();
         RelativeLayout assetLayout = view.findViewById(R.id.layout_asset);
@@ -291,14 +291,14 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                             assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
                             assetTypeTv.setText("USDT");
                             amountTypeTv.setText("USDT");
-                            sendFeeUnitTv.setText("unit");
+                            sendFeeUnitTv.setText("satoshis");
                         }
                         assetId = item.getPropertyid();
                         if (item.getAmount() == 0) {
                             DecimalFormat df = new DecimalFormat("0.00");
                             assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
                         } else {
-                            DecimalFormat df = new DecimalFormat("0.00000000");
+                            DecimalFormat df = new DecimalFormat("0.00######");
                             assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
                         }
                         assetsBalanceTv.setText(assetBalanceMax);
@@ -441,7 +441,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
         TextView feeAmountValueView = view.findViewById(R.id.tv_send_gas_fee_amount_value);
         TextView sendUsedValueView = view.findViewById(R.id.tv_send_used_value);
         if (assetId == 0) {
-            DecimalFormat df = new DecimalFormat("0.00000000");
+            DecimalFormat df = new DecimalFormat("0.00######");
             tokenImage.setImageResource(R.mipmap.icon_btc_logo_small);
             tokenTypeView.setText("BTC");
             tokenTypeView2.setText("BTC");
@@ -451,11 +451,11 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
             String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
             sendUsedValueView.setText(df.format(Double.parseDouble(sendUsedValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
-            DecimalFormat df = new DecimalFormat("0.00000000");
+            DecimalFormat df = new DecimalFormat("0.00######");
             tokenImage.setImageResource(R.mipmap.icon_usdt_logo_small);
             tokenTypeView.setText("USDT");
             tokenTypeView2.setText("USDT");
-            feeUnitView.setText("unit");
+            feeUnitView.setText("satoshis");
             sendAmountValueView.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
             feeAmountValueView.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
             String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
@@ -585,15 +585,15 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
             assetUnitTv.setText("BTC");
             failedAmountUnitTv.setText("BTC");
             failedGasFeeUnitTv.setText("satoshis");
-            DecimalFormat df = new DecimalFormat("0.00000000");
+            DecimalFormat df = new DecimalFormat("0.00######");
             String totalValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
             failedTotalValueTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
             assetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
             assetUnitTv.setText("USDT");
             failedAmountUnitTv.setText("USDT");
-            failedGasFeeUnitTv.setText("unit");
-            DecimalFormat df = new DecimalFormat("0.00000000");
+            failedGasFeeUnitTv.setText("satoshis");
+            DecimalFormat df = new DecimalFormat("0.00######");
             String totalValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
             failedTotalValueTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
@@ -805,7 +805,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                         public void run() {
                             feeStr = resp.getFeeSat();
                             sendFeeTv.setText(feeStr + "");
-                            DecimalFormat df = new DecimalFormat("0.00000000");
+                            DecimalFormat df = new DecimalFormat("0.00######");
                             if (assetId == 0) {
                                 sendFeeExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                             } else {
@@ -849,7 +849,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                                 DecimalFormat df = new DecimalFormat("0.00");
                                 assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000);
                             } else {
-                                DecimalFormat df = new DecimalFormat("0.00000000");
+                                DecimalFormat df = new DecimalFormat("0.00######");
                                 assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000);
                             }
                             assetsBalanceTv.setText(assetBalanceMax);

@@ -282,7 +282,7 @@ public class PayInvoiceDialog {
         }
         fromNodeAddress1Tv.setText(StringUtils.encodePubkey(mAddress));
         toNodeAddress1Tv.setText(StringUtils.encodePubkey(toNodeAddress));
-        DecimalFormat df = new DecimalFormat("0.00000000");
+        DecimalFormat df = new DecimalFormat("0.00######");
         if (mAssetId == 0) {
             amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
             amountPayExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
@@ -546,7 +546,7 @@ public class PayInvoiceDialog {
         }
         fromNodeAddress2Tv.setText(StringUtils.encodePubkey(mAddress));
         toNodeAddress2Tv.setText(StringUtils.encodePubkey(toNodeAddress));
-        DecimalFormat df = new DecimalFormat("0.00000000");
+        DecimalFormat df = new DecimalFormat("0.00######");
         if (mAssetId == 0) {
             amountPay1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
             amountPayExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
@@ -578,7 +578,7 @@ public class PayInvoiceDialog {
             amountUnit1Tv.setText("USDT");
         }
         toNodeAddress3Tv.setText(toNodeAddress);
-        DecimalFormat df = new DecimalFormat("0.00000000");
+        DecimalFormat df = new DecimalFormat("0.00######");
         if (mAssetId == 0) {
             amountPay2Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
         } else {

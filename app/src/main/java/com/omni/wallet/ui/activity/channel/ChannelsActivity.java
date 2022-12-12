@@ -115,7 +115,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
             DecimalFormat df = new DecimalFormat("0.00");
             mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));
         } else {
-            DecimalFormat df = new DecimalFormat("0.00000000");
+            DecimalFormat df = new DecimalFormat("0.00######");
             mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));
         }
         mWalletAddressTv.setText(walletAddress);

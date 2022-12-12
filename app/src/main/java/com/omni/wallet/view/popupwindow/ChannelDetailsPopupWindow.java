@@ -296,10 +296,10 @@ public class ChannelDetailsPopupWindow {
             DecimalFormat df = new DecimalFormat("0.00");
             mAssetAmount.setText(df.format(Double.parseDouble(String.valueOf(capacity)) / 100000000));
         } else {
-            DecimalFormat df = new DecimalFormat("0.00000000");
+            DecimalFormat df = new DecimalFormat("0.00######");
             mAssetAmount.setText(df.format(Double.parseDouble(String.valueOf(capacity)) / 100000000));
         }
-        DecimalFormat df = new DecimalFormat("0.00000000");
+        DecimalFormat df = new DecimalFormat("0.00######");
         mLocalBalance.setText(df.format(Double.parseDouble(String.valueOf(local)) / 100000000));
         mRemoteBalance.setText(df.format(Double.parseDouble(String.valueOf(remote)) / 100000000));
     }

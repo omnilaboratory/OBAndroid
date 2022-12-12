@@ -32,7 +32,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/main_18"
-                android:layout_weight="10000">
+                android:layout_weight="10000"
+                android:scrollbars="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
