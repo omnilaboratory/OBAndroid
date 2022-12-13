@@ -33,12 +33,14 @@ import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
+import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.PaymentRequestUtil;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
+import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
@@ -46,7 +48,6 @@ import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateLuckyPacketPopupWindow;
 import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
-import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -103,6 +104,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TextView mBalanceAccountExchange1Tv;
     @BindView(R.id.tv_balance_unit_exchange_1)
     TextView mBalanceUnitExchange1Tv;
+    @BindView(R.id.tv_network_1)
+    TextView mNetwork1Tv;
     @BindView(R.id.tv_balance_account_2)
     TextView mBalanceAccount2Tv;
     @BindView(R.id.tv_balance_unit_2)
@@ -111,6 +114,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TextView mBalanceAccountExchange2Tv;
     @BindView(R.id.tv_balance_unit_exchange_2)
     TextView mBalanceUnitExchange2Tv;
+    @BindView(R.id.tv_network_2)
+    TextView mNetwork2Tv;
     @BindView(R.id.tv_balance_account_3)
     TextView mBalanceAccount3Tv;
     @BindView(R.id.tv_balance_unit_3)
@@ -119,6 +124,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TextView mBalanceAccountExchange3Tv;
     @BindView(R.id.tv_balance_unit_exchange_3)
     TextView mBalanceUnitExchange3Tv;
+    @BindView(R.id.tv_network_3)
+    TextView mNetwork3Tv;
     @BindView(R.id.layout_network_lightning)
     RelativeLayout mLightningNetworkLayout;
     @BindView(R.id.layout_network_link)
@@ -161,6 +168,14 @@ public class BalanceDetailActivity extends AppBaseActivity {
     private ToBePaidAdapter mToBePaidAdapter;
     private List<LightningOuterClass.Invoice> mMyInvoicesData = new ArrayList<>();
     private MyInvoicesAdapter mMyInvoicesAdapter;
+    private List<LightningOuterClass.Transaction> mTransactionsChainData = new ArrayList<>();
+    private TransactionsChainAdapter mTransactionsChainAdapter;
+    private List<LightningOuterClass.Transaction> mPendingTxsChainData = new ArrayList<>();
+    private PendingTxsChainAdapter mPendingTxsChainAdapter;
+    private List<LightningOuterClass.AssetTx> mTransactionsAssetData = new ArrayList<>();
+    private TransactionsAssetAdapter mTransactionsAssetAdapter;
+    private List<LightningOuterClass.AssetTx> mPendingTxsAssetData = new ArrayList<>();
+    private PendingTxsAssetAdapter mPendingTxsAssetAdapter;
 
     public static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";
     public static final String KEY_WALLET_ADDRESS = "walletAddressKey";
@@ -176,7 +191,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     private String pubkey;
 
     PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow;
-    SendStepOnePopupWindow mSendStepOnePopupWindow;
+    SendDialog mSendDialog;
     CreateInvoiceStepOnePopupWindow mCreateInvoiceStepOnePopupWindow;
     CreateLuckyPacketPopupWindow mCreateLuckyPacketPopupWindow;
     TransactionsDetailsPopupWindow mTransactionsDetailsPopupWindow;
@@ -217,6 +232,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mNetworkIv.setImageResource(R.mipmap.icon_network_vector);
             mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
             mNetworkTv.setText("USDT lightning network");
+            mNetwork1Tv.setText("USDT lightning network");
+            mNetwork2Tv.setText("USDT lightning network");
+            mNetwork3Tv.setText("USDT lightning network");
             mLightningNetworkLayout.setVisibility(View.VISIBLE);
             mLinkNetworkLayout.setVisibility(View.GONE);
             mChannelActivitiesTv.setText(R.string.channel_activities);
@@ -229,7 +247,17 @@ public class BalanceDetailActivity extends AppBaseActivity {
         } else if (network.equals("link")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_link_black);
             mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
-            mNetworkTv.setText("Omnilayer Mainnet");
+            if (assetId == 0) {
+                mNetworkTv.setText("BTC Mainnet");
+                mNetwork1Tv.setText("BTC Mainnet");
+                mNetwork2Tv.setText("BTC Mainnet");
+                mNetwork3Tv.setText("BTC Mainnet");
+            } else {
+                mNetworkTv.setText("Omnilayer Mainnet");
+                mNetwork1Tv.setText("Omnilayer Mainnet");
+                mNetwork2Tv.setText("Omnilayer Mainnet");
+                mNetwork3Tv.setText("Omnilayer Mainnet");
+            }
             mLightningNetworkLayout.setVisibility(View.GONE);
             mLinkNetworkLayout.setVisibility(View.VISIBLE);
             mChannelActivitiesTv.setText("My Account Activities");
@@ -313,9 +341,89 @@ public class BalanceDetailActivity extends AppBaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mTransactionsRecyclerView.setLayoutManager(layoutManager);
-        mTransactionsAdapter = new TransactionsAdapter(mContext, mTransactionsData, R.layout.layout_item_transactions_list);
-        mTransactionsRecyclerView.setAdapter(mTransactionsAdapter);
-        fetchTransactionsFromLND();
+        if (network.equals("link")) {
+            if (assetId == 0) {
+                mTransactionsChainAdapter = new TransactionsChainAdapter(mContext, mTransactionsChainData, R.layout.layout_item_transactions_list);
+                mTransactionsRecyclerView.setAdapter(mTransactionsChainAdapter);
+                getTransactions();
+            } else {
+                mTransactionsAssetAdapter = new TransactionsAssetAdapter(mContext, mTransactionsAssetData, R.layout.layout_item_transactions_list);
+                mTransactionsRecyclerView.setAdapter(mTransactionsAssetAdapter);
+                listTransactions();
+            }
+        } else if (network.equals("lightning")) {
+            mTransactionsAdapter = new TransactionsAdapter(mContext, mTransactionsData, R.layout.layout_item_transactions_list);
+            mTransactionsRecyclerView.setAdapter(mTransactionsAdapter);
+            fetchTransactionsFromLND();
+        }
+    }
+
+    /**
+     * @description: getTransactions
+     * @描述： 获取链上btc交易记录
+     */
+    private void getTransactions() {
+        Obdmobile.getTransactions(LightningOuterClass.GetTransactionsRequest.newBuilder().build().toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------getTransactionsOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------getTransactionsOnResponse-----------------" + resp);
+                    mTransactionsChainData.clear();
+                    mTransactionsChainData.addAll(resp.getTransactionsList());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTransactionsChainAdapter.notifyDataSetChanged();
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * @description: ListTransactions
+     * @描述： 获取链上asset交易记录
+     */
+    private void listTransactions() {
+        Obdmobile.listTranscations(LightningOuterClass.ListTranscationsRequest.newBuilder().build().toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------listTranscationsOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.ListTranscationsResponse resp = LightningOuterClass.ListTranscationsResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------listTranscationsOnResponse-----------------" + resp);
+                    mTransactionsAssetData.clear();
+                    mTransactionsAssetData.addAll(Lists.reverse(resp.getListList()));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTransactionsAssetAdapter.notifyDataSetChanged();
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -374,9 +482,99 @@ public class BalanceDetailActivity extends AppBaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mToBePaidRecyclerView.setLayoutManager(layoutManager);
-        mToBePaidAdapter = new ToBePaidAdapter(mContext, mToBePaidData, R.layout.layout_item_to_be_paid_list);
-        mToBePaidRecyclerView.setAdapter(mToBePaidAdapter);
-        fetchPaymentsFromLND();
+        if (network.equals("link")) {
+            if (assetId == 0) {
+                mPendingTxsChainAdapter = new PendingTxsChainAdapter(mContext, mPendingTxsChainData, R.layout.layout_item_transactions_list);
+                mToBePaidRecyclerView.setAdapter(mPendingTxsChainAdapter);
+                getPendingTxsChain();
+            } else {
+                mPendingTxsAssetAdapter = new PendingTxsAssetAdapter(mContext, mPendingTxsAssetData, R.layout.layout_item_transactions_list);
+                mToBePaidRecyclerView.setAdapter(mPendingTxsAssetAdapter);
+                getPendingTxsAsset();
+            }
+        } else if (network.equals("lightning")) {
+            mToBePaidAdapter = new ToBePaidAdapter(mContext, mToBePaidData, R.layout.layout_item_to_be_paid_list);
+            mToBePaidRecyclerView.setAdapter(mToBePaidAdapter);
+            fetchPaymentsFromLND();
+        }
+    }
+
+    /**
+     * @description: getPendingTxsChain
+     * @描述： 获取链上btc确认中交易记录
+     */
+    private void getPendingTxsChain() {
+        Obdmobile.getTransactions(LightningOuterClass.GetTransactionsRequest.newBuilder().build().toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------getTransactionsOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------getTransactionsOnResponse-----------------" + resp);
+                    mPendingTxsChainData.clear();
+                    for (LightningOuterClass.Transaction transaction : resp.getTransactionsList()) {
+                        if (StringUtils.isEmpty(String.valueOf(transaction.getNumConfirmations())) || transaction.getNumConfirmations() < 3) {
+                            mPendingTxsChainData.add(transaction);
+                        }
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mToBePaidNumTv.setText(mPendingTxsChainData.size() + "");
+                            mPendingTxsChainAdapter.notifyDataSetChanged();
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * @description: getPendingTxsAsset
+     * @描述： 获取链上asset确认中交易记录
+     */
+    private void getPendingTxsAsset() {
+        Obdmobile.listTranscations(LightningOuterClass.ListTranscationsRequest.newBuilder().build().toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------listTranscationsOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.ListTranscationsResponse resp = LightningOuterClass.ListTranscationsResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------listTranscationsOnResponse-----------------" + resp);
+                    mPendingTxsAssetData.clear();
+                    for (LightningOuterClass.AssetTx assetTx : resp.getListList()) {
+                        if (StringUtils.isEmpty(String.valueOf(assetTx.getConfirmations())) || assetTx.getConfirmations() < 3) {
+                            mPendingTxsAssetData.add(assetTx);
+                        }
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mToBePaidNumTv.setText(mPendingTxsAssetData.size() + "");
+                            mPendingTxsAssetAdapter.notifyDataSetChanged();
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -502,6 +700,64 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * the adapter of activity list
      * 交易列表适配器
      */
+    private class TransactionsChainAdapter extends CommonRecyclerAdapter<LightningOuterClass.Transaction> {
+
+        public TransactionsChainAdapter(Context context, List<LightningOuterClass.Transaction> data, int layoutId) {
+            super(context, data, layoutId);
+        }
+
+        @Override
+        public void convert(ViewHolder holder, final int position, final LightningOuterClass.Transaction item) {
+            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getTimeStamp() + ""));
+            DecimalFormat df = new DecimalFormat("0.00######");
+            if (item.getAmount() < 0) {
+                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
+                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
+                    holder.setText(R.id.tv_state, "PENDING");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                } else {
+                    holder.setText(R.id.tv_state, "SENT");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
+                }
+            } else if (item.getAmount() > 0) {
+                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
+                    holder.setText(R.id.tv_state, "PENDING");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                } else {
+                    holder.setText(R.id.tv_state, "RECEIVED");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
+                }
+            }
+            holder.setOnItemClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+        }
+    }
+
+    /**
+     * the adapter of activity list
+     * 交易列表适配器
+     */
+    private class TransactionsAssetAdapter extends CommonRecyclerAdapter<LightningOuterClass.AssetTx> {
+
+        public TransactionsAssetAdapter(Context context, List<LightningOuterClass.AssetTx> data, int layoutId) {
+            super(context, data, layoutId);
+        }
+
+        @Override
+        public void convert(ViewHolder holder, final int position, final LightningOuterClass.AssetTx item) {
+
+        }
+    }
+
+    /**
+     * the adapter of activity list
+     * 交易列表适配器
+     */
     private class TransactionsAdapter extends CommonRecyclerAdapter<LightningOuterClass.Payment> {
 
         public TransactionsAdapter(Context context, List<LightningOuterClass.Payment> data, int layoutId) {
@@ -560,7 +816,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                      * 删除付款
                      */
                     LightningOuterClass.DeletePaymentRequest deletePaymentRequest = LightningOuterClass.DeletePaymentRequest.newBuilder()
-                            .setPaymentHash(byteStringFromHex(""))
+                            .setPaymentHash(byteStringFromHex(item.getPaymentHash()))
                             .setFailedHtlcsOnly(false)
                             .build();
                     Obdmobile.deletePayment(deletePaymentRequest.toByteArray(), new Callback() {
@@ -594,6 +850,59 @@ public class BalanceDetailActivity extends AppBaseActivity {
     private static ByteString byteStringFromHex(String hexString) {
         byte[] hexBytes = BaseEncoding.base16().decode(hexString.toUpperCase());
         return ByteString.copyFrom(hexBytes);
+    }
+
+
+    /**
+     * the adapter of Pending Txs
+     * 链上btc交易确认中列表适配器
+     */
+    private class PendingTxsChainAdapter extends CommonRecyclerAdapter<LightningOuterClass.Transaction> {
+
+        public PendingTxsChainAdapter(Context context, List<LightningOuterClass.Transaction> data, int layoutId) {
+            super(context, data, layoutId);
+        }
+
+        @Override
+        public void convert(ViewHolder holder, final int position, final LightningOuterClass.Transaction item) {
+            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getTimeStamp() + ""));
+            DecimalFormat df = new DecimalFormat("0.00######");
+            if (item.getAmount() < 0) {
+                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
+                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
+                    holder.setText(R.id.tv_state, "PENDING");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                } else {
+                    holder.setText(R.id.tv_state, "SENT");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
+                }
+            } else if (item.getAmount() > 0) {
+                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
+                    holder.setText(R.id.tv_state, "PENDING");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                } else {
+                    holder.setText(R.id.tv_state, "RECEIVED");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
+                }
+            }
+        }
+    }
+
+    /**
+     * the adapter of Pending Txs
+     * 链上asset交易确认中列表适配器
+     */
+    private class PendingTxsAssetAdapter extends CommonRecyclerAdapter<LightningOuterClass.AssetTx> {
+
+        public PendingTxsAssetAdapter(Context context, List<LightningOuterClass.AssetTx> data, int layoutId) {
+            super(context, data, layoutId);
+        }
+
+        @Override
+        public void convert(ViewHolder holder, final int position, final LightningOuterClass.AssetTx item) {
+
+        }
     }
 
     /**
@@ -831,7 +1140,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @OnClick(R.id.layout_lucky_packet)
     public void clickLuckyPacket() {
-        ToastUtils.showToast(mContext,"Not yet open, please wait");
+        ToastUtils.showToast(mContext, "Not yet open, please wait");
 //        mCreateLuckyPacketPopupWindow = new CreateLuckyPacketPopupWindow(mContext);
 //        mCreateLuckyPacketPopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
     }
@@ -843,8 +1152,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @OnClick(R.id.layout_send_invoice)
     public void clickSendInvoice() {
-        mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
-        mSendStepOnePopupWindow.show(mParentLayout, "");
+        mSendDialog = new SendDialog(mContext);
+        mSendDialog.show("");
     }
 
     /**
@@ -975,8 +1284,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
 //                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
 //                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, event.getData());
             } else if (event.getType().equals("send")) {
-                mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
-                mSendStepOnePopupWindow.show(mParentLayout, event.getData());
+                mSendDialog = new SendDialog(mContext);
+                mSendDialog.show(event.getData());
             }
         }
     }
@@ -1009,6 +1318,21 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * 支付成功后的消息通知监听
+     * Message notification monitoring after successful payment
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSendSuccessEvent(SendSuccessEvent event) {
+        if (assetId == 0) {
+            getTransactions();
+            getPendingTxsChain();
+        } else {
+            listTransactions();
+            getPendingTxsAsset();
+        }
+    }
+
+    /**
      * btc和usdt变化后的消息通知监听
      * Message notification monitoring after Btc and Usdt change
      */
@@ -1024,8 +1348,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
         if (mPayInvoiceStepOnePopupWindow != null) {
             mPayInvoiceStepOnePopupWindow.release();
         }
-        if (mSendStepOnePopupWindow != null) {
-            mSendStepOnePopupWindow.release();
+        if (mSendDialog != null) {
+            mSendDialog.release();
         }
         if (mCreateInvoiceStepOnePopupWindow != null) {
             mCreateInvoiceStepOnePopupWindow.release();

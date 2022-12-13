@@ -32,12 +32,12 @@ import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
+import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.AccountManagePopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
-import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -83,7 +83,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     FundPopupWindow mFundPopupWindow;
     AccountManagePopupWindow mAccountManagePopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
-    SendStepOnePopupWindow mSendStepOnePopupWindow;
+    SendDialog mSendDialog;
     SelectNodePopupWindow mSelectNodePopupWindow;
     private LoadingDialog mLoadingDialog;
     CreateChannelDialog mCreateChannelDialog;
@@ -554,8 +554,8 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @OnClick(R.id.iv_send)
     public void clickSend() {
-        mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
-        mSendStepOnePopupWindow.show(mParentLayout, "");
+        mSendDialog = new SendDialog(mContext);
+        mSendDialog.show("");
     }
 
     /**
@@ -682,8 +682,8 @@ public class AccountLightningActivity extends AppBaseActivity {
 //                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
 //                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, User.getInstance().getWalletAddress(mContext), event.getData());
             } else if (event.getType().equals("send")) {
-                mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
-                mSendStepOnePopupWindow.show(mParentLayout, event.getData());
+                mSendDialog = new SendDialog(mContext);
+                mSendDialog.show(event.getData());
             }
         }
     }
@@ -745,8 +745,8 @@ public class AccountLightningActivity extends AppBaseActivity {
         if (mCreateChannelStepOnePopupWindow != null) {
             mCreateChannelStepOnePopupWindow.release();
         }
-        if (mSendStepOnePopupWindow != null) {
-            mSendStepOnePopupWindow.release();
+        if (mSendDialog != null) {
+            mSendDialog.release();
         }
         if (mAccountManagePopupWindow != null) {
             mAccountManagePopupWindow.release();

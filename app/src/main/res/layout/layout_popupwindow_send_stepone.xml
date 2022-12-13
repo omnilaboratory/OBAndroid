@@ -114,6 +114,7 @@
                     android:textSize="@dimen/text_16" />
 
                 <TextView
+                    android:id="@+id/tv_recents_address_second"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/main_10"
@@ -121,8 +122,7 @@
                     android:singleLine="true"
                     android:text="2nm8382odjd.........dfe689"
                     android:textColor="@color/color_99_transparent"
-                    android:textSize="@dimen/text_16"
-                    android:visibility="gone"/>
+                    android:textSize="@dimen/text_16" />
             </LinearLayout>
 
             <android.support.v7.widget.RecyclerView
@@ -1286,11 +1286,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="@dimen/main_30"
-                android:layout_marginLeft="@dimen/main_30"
-                android:layout_marginRight="@dimen/main_30">
+                android:layout_marginLeft="@dimen/main_50"
+                android:layout_marginRight="@dimen/main_50">
 
                 <LinearLayout
-                    android:id="@+id/layout_try_again"
+                    android:id="@+id/layout_back_to_three"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -1300,14 +1300,14 @@
                         android:layout_width="@dimen/main_36"
                         android:layout_height="@dimen/main_36"
                         android:padding="@dimen/main_6"
-                        android:src="@mipmap/icon_send_green"/>
+                        android:src="@mipmap/icon_arrow_left_green"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/main_7"
                         android:letterSpacing="0.25"
-                        android:text="@string/try_again"
+                        android:text="@string/back_big"
                         android:textColor="@color/color_black"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>

@@ -28,11 +28,11 @@ import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
+import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.ChannelDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
-import com.omni.wallet.view.popupwindow.send.SendStepOnePopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -74,7 +74,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     ChannelDetailsPopupWindow mChannelDetailsPopupWindow;
     SelectNodePopupWindow mSelectNodePopupWindow;
-    SendStepOnePopupWindow mSendStepOnePopupWindow;
+    SendDialog mSendDialog;
 
     public static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";
     public static final String KEY_WALLET_ADDRESS = "walletAddressKey";
@@ -399,8 +399,8 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
 //                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
 //                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, event.getData());
             } else if (event.getType().equals("send")) {
-                mSendStepOnePopupWindow = new SendStepOnePopupWindow(mContext);
-                mSendStepOnePopupWindow.show(mParentLayout, event.getData());
+                mSendDialog = new SendDialog(mContext);
+                mSendDialog.show(event.getData());
             }
         }
     }
@@ -429,8 +429,8 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
         if (mChannelDetailsPopupWindow != null) {
             mChannelDetailsPopupWindow.release();
         }
-        if (mSendStepOnePopupWindow != null) {
-            mSendStepOnePopupWindow.release();
+        if (mSendDialog != null) {
+            mSendDialog.release();
         }
         if (mPayInvoiceDialog != null) {
             mPayInvoiceDialog.release();
