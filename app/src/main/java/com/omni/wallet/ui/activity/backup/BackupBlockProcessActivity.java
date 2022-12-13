@@ -14,6 +14,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.downloader.Error;
+import com.downloader.OnDownloadListener;
+import com.downloader.OnProgressListener;
+import com.downloader.OnStartOrResumeListener;
+import com.downloader.PRDownloader;
+import com.downloader.PRDownloaderConfig;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
@@ -74,12 +80,10 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @SuppressLint("LongLogTag")
     private final SharedPreferences.OnSharedPreferenceChangeListener currentBlockSharePreferenceChangeListener = (sharedPreferences, key) -> {
-        Log.e("--------------------BlockChange-------------------",key);
         if (key == "currentBlockHeight"){
             int totalHeight = sharedPreferences.getInt("totalBlockHeight",0);
             int currentHeight = sharedPreferences.getInt("currentBlockHeight",0);
-            Log.e("-------------------blockListener----------------------",String.valueOf(totalHeight) + "," + String.valueOf(currentHeight));
-            if(totalHeight<currentHeight){
+            if(totalHeight<=currentHeight){
                 int endCurrentHeight = totalHeight;
                 updateSyncDataView(endCurrentHeight,totalHeight);
                 newAddressToWallet();
@@ -121,16 +125,18 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
         accountList = WalletGetInfo.getAccountList(ctx);
-        for (int i = 0; i < accountList.size();i++){
-            Log.e("AccountList",accountList.get(i));
-        }
         String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/regtest/lnd.log";
 //        String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/testnet/lnd.log";
         obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
         blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
         getTotalBlockHeight();
+        
+        /*PRDownloaderConfig config = PRDownloaderConfig.newBuilder().setDatabaseEnabled(true)
+                .setReadTimeout(30000)
+                .setConnectTimeout(30000)
+                .build();
+        PRDownloader.initialize(ctx,config);*/
     }
-
     @Override
     protected void initData() {
     }
@@ -246,7 +252,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
             }
             @Override
-            public void onResponse(byte[] bytes) {
+            public void onResponse(byte[] bytes) {                
                 if(bytes == null){
                     return;
                 }
@@ -277,5 +283,54 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                 }
             }
         });
+    }
+    
+    public void downloadFiles (){
+        String basePath = ctx.getExternalCacheDir() + "/data/bitcoin/"+User.getInstance().getNetwork(ctx) + "/";
+        String headerFileName = "block_header.bin";
+        String dbFileName = "neutrino.db";
+        String dbUrlStr = "http://43.138.107.248:9090/obd-android-build.tar.gz";
+        String headerUrlStr = "http://43.138.107.248:9090/obd-android-build.tar.gz";
+        PRDownloader.download(dbUrlStr,basePath,dbFileName).build()
+                .setOnStartOrResumeListener(() -> { })
+                .setOnPauseListener(()->{})
+                .setOnCancelListener(()->{})
+                .setOnProgressListener(new OnProgressListener() {
+                    @Override
+                    public void onProgress(com.downloader.Progress progress) {
+                        Log.e("Progress String",progress.toString());
+                    }
+                })
+                .start(new OnDownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        PRDownloader.download(headerUrlStr,basePath,headerFileName).build()
+                                .setOnStartOrResumeListener(() -> { })
+                                .setOnPauseListener(()->{})
+                                .setOnCancelListener(()->{})
+                                .setOnProgressListener(new OnProgressListener() {
+                                    @Override
+                                    public void onProgress(com.downloader.Progress progress) {
+                                        Log.e("Progress String",progress.toString());
+                                    }
+                                })
+                                .start(new OnDownloadListener() {
+                                    @Override
+                                    public void onDownloadComplete() {
+                                        
+                                    }
+
+                                    @Override
+                                    public void onError(Error error) {
+
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onError(Error error) {
+
+                    }
+                });
     }
 }
