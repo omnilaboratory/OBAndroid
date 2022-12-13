@@ -74,7 +74,13 @@ public class ObdLogFileObserver extends FileObserver {
                             }
                         }else if(checkRecoveredStartString(oldLine)){
                             String stringHeight = oldLine.split("height=")[1].split("hash=")[0];
-                            Log.e("---------------------checkRecoverString-------------------------",stringHeight);
+                            int syncingHeight = Integer.parseInt(stringHeight.trim());
+                            if(syncingHeight>currentHeight){
+                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                blockDataEditor.commit();
+                            }
+                        }else if(checkSyncedHeightNeutrinoString(oldLine)){
+                            String stringHeight = oldLine.split("height=")[2].split(",")[0];
                             int syncingHeight = Integer.parseInt(stringHeight.trim());
                             if(syncingHeight>currentHeight){
                                 blockDataEditor.putInt("currentBlockHeight",syncingHeight);
@@ -105,7 +111,13 @@ public class ObdLogFileObserver extends FileObserver {
                             }
                         }else if(checkRecoveredStartString(oldLine)){
                             String stringHeight = oldLine.split("height=")[1].split("hash=")[0];
-                            Log.e("---------------------checkRecoverString-------------------------",stringHeight);
+                            int syncingHeight = Integer.parseInt(stringHeight.trim());
+                            if(syncingHeight>currentHeight){
+                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                blockDataEditor.commit();
+                            }
+                        }else if(checkSyncedHeightNeutrinoString(oldLine)){
+                            String stringHeight = oldLine.split("height=")[2].split(",")[0];
                             int syncingHeight = Integer.parseInt(stringHeight.trim());
                             if(syncingHeight>currentHeight){
                                 blockDataEditor.putInt("currentBlockHeight",syncingHeight);
@@ -165,5 +177,15 @@ public class ObdLogFileObserver extends FileObserver {
         Matcher m = r.matcher(logLine);
         isMatch = m.matches();
         return isMatch;
+    }
+    private Boolean checkSyncedHeightNeutrinoString(String logLine){
+        Boolean isMatch = false;
+        String pattern;
+        pattern = ".*Got cfheaders from height=\\d+ to height=\\d+, prev_hash=\\w.*";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(logLine);
+        isMatch = m.matches();
+        return isMatch;
+        
     }
 }

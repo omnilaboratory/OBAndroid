@@ -125,6 +125,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             Log.e("AccountList",accountList.get(i));
         }
         String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/regtest/lnd.log";
+//        String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/testnet/lnd.log";
         obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
         blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
         getTotalBlockHeight();
