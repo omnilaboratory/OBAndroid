@@ -252,6 +252,7 @@ public class UnlockActivity extends AppBaseActivity {
                             String block = jsonObject1.getString("block");
                             int totalBlock = Integer.parseInt(block);
                             String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/regtest/lnd.log";
+//                            String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/testnet/lnd.log";
                             obdLogFileObserverCheckStarted = new ObdLogFileObserverCheckStarted(fileLocal,ctx,totalBlock);
                             blockData.registerOnSharedPreferenceChangeListener(isOpenedSharePreferenceChangeListener);
                             runOnUiThread(new Runnable() {
