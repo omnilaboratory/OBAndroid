@@ -285,12 +285,12 @@ public class PayInvoiceDialog {
         DecimalFormat df = new DecimalFormat("0.00######");
         if (mAssetId == 0) {
             amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
-            amountPayExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
-            amountPayFeeTv.setText(df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            amountPayExchangeTv.setText("$" + df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            amountPayFeeTv.setText("$" + df.format(Double.parseDouble(String.valueOf(feeSats / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
             amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
-            amountPayExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
-            amountPayFeeTv.setText(df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            amountPayExchangeTv.setText("$" + df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            amountPayFeeTv.setText("$" + df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
         /**
          * @备注： 点击back显示invoice step one
@@ -549,12 +549,12 @@ public class PayInvoiceDialog {
         DecimalFormat df = new DecimalFormat("0.00######");
         if (mAssetId == 0) {
             amountPay1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
-            amountPayExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
-            amountPayFee1Tv.setText(df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            amountPayExchange1Tv.setText("$" + df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            amountPayFee1Tv.setText("$" + df.format(Double.parseDouble(String.valueOf(feeSats / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
             amountPay1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
-            amountPayExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
-            amountPayFee1Tv.setText(df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            amountPayExchange1Tv.setText("$" + df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            amountPayFee1Tv.setText("$" + df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
     }
 

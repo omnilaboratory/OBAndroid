@@ -209,6 +209,7 @@
     <string name="error_channel_close">Could not close channel</string>
     <string name="create_invoice_amount">Please enter the amount</string>
     <string name="enter_node_pubkey">Please enter node pubkey</string>
+    <string name="enter_valid_node_pubkey">Please enter valid node pubkey</string>
     <string name="amount_greater_than_0">Amount must be greater than 0</string>
     <string name="minimum_input">Minimum input 20000</string>
     <string name="maximum_input">Maximum input 16777215</string>

@@ -17,6 +17,8 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.utils.CopyUtil;
 
+import java.text.DecimalFormat;
+
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -82,7 +84,8 @@ public class TokenInfoPopupWindow {
                                 LightningOuterClass.GetAssetInfoResponse resp = LightningOuterClass.GetAssetInfoResponse.parseFrom(bytes);
                                 LogUtils.e(TAG, "------------------getAssetInfoOnResponse-----------------" + resp);
                                 tokenPubkeyTv.setText(resp.getIssuer());
-                                tokenAmountTv.setText(resp.getTotaltokens());
+                                DecimalFormat df = new DecimalFormat("0.00######");
+                                tokenAmountTv.setText(df.format(Double.parseDouble(resp.getTotaltokens())));
                                 categoryTv.setText(resp.getCategory());
                                 dateTv.setText(DateUtils.formatCurrentDate());
                                 tokenUrlTv.setText(resp.getUrl());

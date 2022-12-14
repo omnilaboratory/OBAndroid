@@ -3,6 +3,7 @@ package com.omni.wallet.view.dialog;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -60,8 +61,6 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     TextView feePerByteTv;
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetUnitPopupWindow mSelectAssetUnitPopupWindow;
-    //    String nodePubkey = "02b49967df27dfe5a3615f48c8b11621f64bd04f39e71b91e88121be4704a791ef";
-    String centerNodePubkey;
     String nodePubkey;
     long assetId = 0;
     int time;
@@ -88,15 +87,15 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         }
         mBalanceAmount = balanceAmount;
         mWalletAddress = walletAddress;
-        nodePubkey = pubKey;
         Wallet.getInstance().registerScanChannelListener(this);
         mLoadingDialog = new LoadingDialog(mContext);
         if (!StringUtils.isEmpty(pubKey)) {
+            nodePubkey = pubKey;
             mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
             mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
             showStepTwo();
         } else {
-            getListPeers();
+            nodePubkey = "0273ec25347ba3f6f90a54bfd2e815aaa8efd3a7fa1a158c8cbb0a80c63b4315d8@43.138.107.248:9735";
             showStepOne();
         }
         /**
@@ -119,6 +118,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         localEdit = mAlertDialog.findViewById(R.id.edit_local);
         EditText waterDripEdit = mAlertDialog.findViewById(R.id.edit_water_drip);
         EditText remoteEdit = mAlertDialog.findViewById(R.id.edit_remote);
+        localEdit.setText(nodePubkey);
         waterDripEdit.setText(nodePubkey);
         remoteEdit.setText(nodePubkey);
         /**
@@ -128,9 +128,9 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         mAlertDialog.findViewById(R.id.layout_defaylt_addr).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                nodePubkey = localEdit.getText().toString();
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
-                nodePubkey = localEdit.getText().toString();
                 showStepTwo();
             }
         });
@@ -168,9 +168,9 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         mAlertDialog.findViewById(R.id.layout_fill_in).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                nodePubkey = "";
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
-                nodePubkey = "";
                 showStepTwo();
             }
         });
@@ -179,6 +179,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     private void showStepTwo() {
         EditText vaildPubkeyEdit = mAlertDialog.findViewById(R.id.edit_vaild_pubkey);
         TextView nodeNameTv = mAlertDialog.findViewById(R.id.tv_node_name);
+        TextView validPubkeyTv = mAlertDialog.findViewById(R.id.tv_valid_pubkey);
         EditText channelAmountEdit = mAlertDialog.findViewById(R.id.edit_channel_amount);
         channelAmountTv = mAlertDialog.findViewById(R.id.tv_channel_amount);
         channelFeeTv = mAlertDialog.findViewById(R.id.tv_channel_fee);
@@ -187,6 +188,31 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         Button speedButton = mAlertDialog.findViewById(R.id.btn_speed);
 
         vaildPubkeyEdit.setText(nodePubkey);
+        vaildPubkeyEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    LightningNodeUri nodeUri = LightningParser.parseNodeUri(s.toString());
+                    if (nodeUri == null) {
+                        validPubkeyTv.setText("Invalid pubkey");
+                        validPubkeyTv.setTextColor(Color.parseColor("#ffE51414"));
+                    } else {
+                        validPubkeyTv.setText("Valid Pubkey");
+                        validPubkeyTv.setTextColor(Color.parseColor("#ff00BA6C"));
+                    }
+                }
+            }
+        });
         nodeNameTv.setText(Wallet.getInstance().getNodeAliasFromPubKey(nodePubkey, mContext));
         fetchWalletBalance();
         channelAmountEdit.addTextChangedListener(new TextWatcher() {
@@ -260,7 +286,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             DecimalFormat df = new DecimalFormat("0.00");
                             assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
                         } else {
-                            DecimalFormat df = new DecimalFormat("0.00000000");
+                            DecimalFormat df = new DecimalFormat("0.00######");
                             assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
                         }
                         channelAmountTv.setText(assetBalanceMax);
@@ -293,6 +319,11 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 long maxSendAmount = 16777215;
                 nodePubkey = vaildPubkeyEdit.getText().toString();
                 assetBalance = channelAmountEdit.getText().toString();
+                LightningNodeUri nodeUri = LightningParser.parseNodeUri(nodePubkey);
+                if (nodeUri == null) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_valid_node_pubkey));
+                    return;
+                }
                 if (StringUtils.isEmpty(nodePubkey)) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.enter_node_pubkey));
                     return;
@@ -321,107 +352,11 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     return;
                 }
                 mLoadingDialog.show();
-                // TODO: 2022/12/6 该逻辑待验证
-                if (nodePubkey.equals(centerNodePubkey)) {
-                    LogUtils.e(TAG, "===========111111111111111========");
-                    openChannelConnected(nodePubkey, mBalanceAmount, mWalletAddress);
-                } else {
-                    LogUtils.e(TAG, "===========222222222222222========");
-                    connectPeer(nodePubkey, mBalanceAmount, mWalletAddress);
-                }
-//                Obdmobile.listPeers(LightningOuterClass.ListPeersRequest.newBuilder().build().toByteArray(), new Callback() {
-//                    @Override
-//                    public void onError(Exception e) {
-//                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                LogUtils.e(TAG, "Error listing peers request: " + e.getMessage());
-//                                if (e.getMessage().toLowerCase().contains("terminated")) {
-//                                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_get_peers_timeout));
-//                                } else {
-//                                    ToastUtils.showToast(mContext, mContext.getString(R.string.error_get_peers));
-//                                }
-//                            }
-//                        });
-//                    }
-//
-//                    @Override
-//                    public void onResponse(byte[] bytes) {
-//                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (bytes == null) {
-//                                    connectPeer(mBalanceAmount, mWalletAddress);
-//                                } else {
-//                                    try {
-//                                        LightningOuterClass.ListPeersResponse resp = LightningOuterClass.ListPeersResponse.parseFrom(bytes);
-//                                        LogUtils.e(TAG, "------------------listPeersonResponse------------------" + resp.toString());
-//                                        boolean connected = false;
-//                                        for (LightningOuterClass.Peer node : resp.getPeersList()) {
-//                                            if (node.getPubKey().equals(nodePubkey)) {
-//                                                connected = true;
-//                                                break;
-//                                            }
-//                                        }
-//                                        if (connected) {
-//                                            LogUtils.e(TAG, "Already connected to peer, trying to open channel...");
-//                                            openChannelConnected(mBalanceAmount, mWalletAddress);
-//                                        } else {
-//                                            LogUtils.e(TAG, "Not connected to peer, trying to connect...");
-//                                            connectPeer(mBalanceAmount, mWalletAddress);
-//                                        }
-//                                    } catch (InvalidProtocolBufferException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//                            }
-//                        });
-//                    }
-//                });
+                // 先链接后再开通通道
+                connectPeer(nodePubkey, mBalanceAmount, mWalletAddress);
             }
         });
     }
-
-    private void getListPeers() {
-        Obdmobile.listPeers(LightningOuterClass.ListPeersRequest.newBuilder().build().toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        LogUtils.e(TAG, "Error listing peers request: " + e.getMessage());
-                        if (e.getMessage().toLowerCase().contains("terminated")) {
-                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_get_peers_timeout));
-                        } else {
-                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_get_peers));
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                if (bytes == null) {
-                    return;
-                }
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            LightningOuterClass.ListPeersResponse resp = LightningOuterClass.ListPeersResponse.parseFrom(bytes);
-                            LogUtils.e(TAG, "------------------listPeersonResponse------------------" + resp.toString());
-                            nodePubkey = resp.getPeers(0).getPubKey();
-                            centerNodePubkey = resp.getPeers(0).getPubKey();
-                            localEdit.setText(nodePubkey);
-                        } catch (InvalidProtocolBufferException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-    }
-
 
     /**
      * Opening transaction channel
@@ -431,7 +366,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         byte[] nodeKeyBytes = hexStringToByteArray(pubkey);
         LightningOuterClass.OpenChannelRequest openChannelRequest;
         if (assetId == 0) {
-            LogUtils.e(TAG, "===========55555555555========");
+            LogUtils.e(TAG, "==========33333==========");
             openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
                     .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
                     .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
@@ -441,7 +376,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     .setAssetId((int) assetId)
                     .build();
         } else {
-            LogUtils.e(TAG, "===========66666666666========");
+            LogUtils.e(TAG, "==========44444==========");
             openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
                     .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
                     .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
@@ -452,7 +387,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     .setAssetId((int) assetId)
                     .build();
         }
-        LogUtils.e(TAG, "===========777777777777777========" + pubkey);
+        LogUtils.e(TAG, "==========55555==========" + pubkey);
         Obdmobile.openChannel(openChannelRequest.toByteArray(), new RecvStream() {
             @Override
             public void onError(Exception e) {
@@ -465,6 +400,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_pending_max));
                         } else if (e.getMessage().toLowerCase().contains("terminated")) {
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_timeout));
+                        } else if (e.getMessage().toLowerCase().contains("funding amount is too large")) {
+                            ToastUtils.showToast(mContext, e.getMessage());
                         } else {
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open));
                         }
@@ -488,7 +425,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
                             bundle.putString(ChannelsActivity.KEY_PUBKEY, User.getInstance().getFromPubKey(mContext));
                             Intent intent = new Intent(mContext, ChannelsActivity.class);
-                            mContext.startActivity(intent, bundle);
+                            intent.putExtras(bundle);
+                            mContext.startActivity(intent);
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
                         }
@@ -500,13 +438,13 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
 
     private void connectPeer(String pubkey, long balanceAmount, String walletAddress) {
         LightningNodeUri nodeUri = LightningParser.parseNodeUri(pubkey);
-        if (nodeUri.getHost() == null || nodeUri.getHost().isEmpty()) {
-            LogUtils.e(TAG, "Host info missing. Trying to fetch host info to connect peer...");
-            fetchNodeInfoToConnectPeer(pubkey, balanceAmount, walletAddress);
-            return;
-        }
-        LogUtils.e(TAG, "===========33333==============" + nodeUri.getHost());
-        LogUtils.e(TAG, "===========44444==============" + nodeUri.getPubKey());
+//        if (nodeUri.getHost() == null || nodeUri.getHost().isEmpty()) {
+//            LogUtils.e(TAG, "Host info missing. Trying to fetch host info to connect peer...");
+//            fetchNodeInfoToConnectPeer(pubkey, balanceAmount, walletAddress);
+//            return;
+//        }
+        LogUtils.e(TAG, "==========11111==========" + nodeUri.getHost());
+        LogUtils.e(TAG, "==========22222==========" + nodeUri.getPubKey());
 
         LightningOuterClass.LightningAddress lightningAddress = LightningOuterClass.LightningAddress.newBuilder()
                 .setHostBytes(ByteString.copyFrom(nodeUri.getHost().getBytes(StandardCharsets.UTF_8)))
@@ -518,15 +456,20 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        mLoadingDialog.dismiss();
                         LogUtils.e(TAG, "Error connecting to peer: " + e.getMessage());
                         if (e.getMessage().toLowerCase().contains("refused")) {
+                            mLoadingDialog.dismiss();
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_refused));
                         } else if (e.getMessage().toLowerCase().contains("self")) {
+                            mLoadingDialog.dismiss();
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_self));
                         } else if (e.getMessage().toLowerCase().contains("terminated")) {
+                            mLoadingDialog.dismiss();
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer_timeout));
+                        } else if (e.getMessage().toLowerCase().contains("already connected to peer")) {
+                            openChannelConnected(nodeUri.getPubKey(), balanceAmount, walletAddress);
                         } else {
+                            mLoadingDialog.dismiss();
                             ToastUtils.showToast(mContext, mContext.getString(R.string.error_connect_peer));
                         }
                     }
@@ -539,7 +482,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        openChannelConnected(pubkey, balanceAmount, walletAddress);
+                        openChannelConnected(nodeUri.getPubKey(), balanceAmount, walletAddress);
                     }
                 });
             }
@@ -686,7 +629,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                                 DecimalFormat df = new DecimalFormat("0.00");
                                 assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000);
                             } else {
-                                DecimalFormat df = new DecimalFormat("0.00000000");
+                                DecimalFormat df = new DecimalFormat("0.00######");
                                 assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000);
                             }
                             channelAmountTv.setText(assetBalanceMax);
@@ -701,9 +644,9 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
 
     @Override
     public void onScanChannelUpdated(String result) {
+        nodePubkey = result;
         mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
         mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
-        nodePubkey = result;
         showStepTwo();
     }
 

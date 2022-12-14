@@ -641,6 +641,14 @@ message ListTranscationsRequest {
 message ListTranscationsResponse {
     repeated AssetTx List = 1;
 }
+
+/*obd update wxf
+add support for "ominsend2many"*/
+message receiver {
+    int64 output = 1;
+    string address = 2;
+    string amount = 3;
+}
 message AssetTx {
     string amount = 1;
 
@@ -675,6 +683,11 @@ message AssetTx {
     bool valid = 16;
 
     int64 version = 17;
+
+    /*obd update wxf
+    add support for "ominsend2many"*/
+    repeated receiver receivers = 18;
+    string totalamount = 19;
 }
 message ListAssetResponse {
     repeated Asset List = 1;

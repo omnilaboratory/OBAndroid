@@ -397,7 +397,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * @描述： 获取链上asset交易记录
      */
     private void listTransactions() {
-        Obdmobile.listTranscations(LightningOuterClass.ListTranscationsRequest.newBuilder().build().toByteArray(), new Callback() {
+        LightningOuterClass.ListTranscationsRequest listTranscationsRequest = LightningOuterClass.ListTranscationsRequest.newBuilder()
+                .addAddrs(User.getInstance().getWalletAddress(mContext))
+                .build();
+        Obdmobile.listTranscations(listTranscationsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------listTranscationsOnError------------------" + e.getMessage());
@@ -507,7 +510,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         Obdmobile.getTransactions(LightningOuterClass.GetTransactionsRequest.newBuilder().build().toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------getTransactionsOnError------------------" + e.getMessage());
+                LogUtils.e(TAG, "------------------getPendingTxsChainOnError------------------" + e.getMessage());
             }
 
             @Override
@@ -517,7 +520,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 }
                 try {
                     LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------getTransactionsOnResponse-----------------" + resp);
+                    LogUtils.e(TAG, "------------------getPendingTxsChainOnResponse-----------------" + resp);
                     mPendingTxsChainData.clear();
                     for (LightningOuterClass.Transaction transaction : resp.getTransactionsList()) {
                         if (StringUtils.isEmpty(String.valueOf(transaction.getNumConfirmations())) || transaction.getNumConfirmations() < 3) {
@@ -543,10 +546,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * @描述： 获取链上asset确认中交易记录
      */
     private void getPendingTxsAsset() {
-        Obdmobile.listTranscations(LightningOuterClass.ListTranscationsRequest.newBuilder().build().toByteArray(), new Callback() {
+        LightningOuterClass.ListTranscationsRequest listTranscationsRequest = LightningOuterClass.ListTranscationsRequest.newBuilder()
+                .addAddrs(User.getInstance().getWalletAddress(mContext))
+                .build();
+        Obdmobile.listTranscations(listTranscationsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------listTranscationsOnError------------------" + e.getMessage());
+                LogUtils.e(TAG, "------------------getPendingTxsAssetOnError------------------" + e.getMessage());
             }
 
             @Override
@@ -556,7 +562,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 }
                 try {
                     LightningOuterClass.ListTranscationsResponse resp = LightningOuterClass.ListTranscationsResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------listTranscationsOnResponse-----------------" + resp);
+                    LogUtils.e(TAG, "------------------getPendingTxsAssetOnResponse-----------------" + resp);
                     mPendingTxsAssetData.clear();
                     for (LightningOuterClass.AssetTx assetTx : resp.getListList()) {
                         if (StringUtils.isEmpty(String.valueOf(assetTx.getConfirmations())) || assetTx.getConfirmations() < 3) {

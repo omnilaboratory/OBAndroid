@@ -32,6 +32,7 @@ import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.ScanSendActivity;
+import com.omni.wallet.utils.ValidateBitcoinAddress;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.popupwindow.SelectAssetPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
@@ -193,19 +194,18 @@ public class SendDialog implements Wallet.ScanSendListener {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            selectAddress = s.toString();
-                            mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
-                            mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
-                            showStepTwo();
-                        }
-                    }, 1000);
-//                    if (ValidateBitcoinAddress.validateBitcoinAddress(s.toString())) {
-//
-//                    } else {
-//                        ToastUtils.showToast(mContext, "The wallet address is invalid");
-//                    }
+                    if (ValidateBitcoinAddress.validateBitcoinAddress(s.toString())) {
+                        new Handler().postDelayed(new Runnable() {
+                            public void run() {
+                                selectAddress = s.toString();
+                                mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
+                                mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
+                                showStepTwo();
+                            }
+                        }, 1000);
+                    } else {
+                        ToastUtils.showToast(mContext, "The wallet address is invalid");
+                    }
                 }
             }
         });
