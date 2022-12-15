@@ -162,6 +162,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TextView mToBePaidTitleTv;
     @BindView(R.id.view_line)
     View mLineView;
+    @BindView(R.id.tv_receiver)
+    TextView mReceiverTv;
     private List<LightningOuterClass.Payment> mTransactionsData = new ArrayList<>();
     private TransactionsAdapter mTransactionsAdapter;
     private List<LightningOuterClass.Payment> mToBePaidData = new ArrayList<>();
@@ -241,6 +243,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mChannelActivitiesTv.setTextColor(Color.parseColor("#4A92FF"));
             mToBePaidTv.setText(R.string.to_be_paid);
             mToBePaidTitleTv.setText(R.string.to_be_paid);
+            mReceiverTv.setText(R.string.receiver);
             mToBePaidTv.setTextColor(Color.parseColor("#4A92FF"));
             mLineView.setVisibility(View.VISIBLE);
             mRootMyInvoicesLayout.setVisibility(View.VISIBLE);
@@ -264,6 +267,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mChannelActivitiesTv.setTextColor(Color.parseColor("#000000"));
             mToBePaidTv.setText(R.string.pending_txs);
             mToBePaidTitleTv.setText(R.string.pending_txs);
+            mReceiverTv.setText(R.string.status);
             mToBePaidTv.setTextColor(Color.parseColor("#000000"));
             mLineView.setVisibility(View.GONE);
             mRootMyInvoicesLayout.setVisibility(View.GONE);
@@ -487,11 +491,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
         mToBePaidRecyclerView.setLayoutManager(layoutManager);
         if (network.equals("link")) {
             if (assetId == 0) {
-                mPendingTxsChainAdapter = new PendingTxsChainAdapter(mContext, mPendingTxsChainData, R.layout.layout_item_transactions_list);
+                mPendingTxsChainAdapter = new PendingTxsChainAdapter(mContext, mPendingTxsChainData, R.layout.layout_item_to_be_paid_list);
                 mToBePaidRecyclerView.setAdapter(mPendingTxsChainAdapter);
                 getPendingTxsChain();
             } else {
-                mPendingTxsAssetAdapter = new PendingTxsAssetAdapter(mContext, mPendingTxsAssetData, R.layout.layout_item_transactions_list);
+                mPendingTxsAssetAdapter = new PendingTxsAssetAdapter(mContext, mPendingTxsAssetData, R.layout.layout_item_to_be_paid_list);
                 mToBePaidRecyclerView.setAdapter(mPendingTxsAssetAdapter);
                 getPendingTxsAsset();
             }
@@ -756,7 +760,53 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.AssetTx item) {
-
+            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getBlocktime() + ""));
+            DecimalFormat df = new DecimalFormat("0.00######");
+            holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getAmount())));
+            if (item.getType().equals("Simple Send")) {
+                if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
+                    holder.setText(R.id.tv_state, "PENDING");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                } else {
+                    holder.setText(R.id.tv_state, "RECEIVED");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
+                }
+            } else if (item.getType().equals("Send to Many")) {
+                if (item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                    if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
+                        holder.setText(R.id.tv_state, "PENDING");
+                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                    } else {
+                        holder.setText(R.id.tv_state, "SENT");
+                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
+                    }
+                } else if (!item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                    if (item.getReceiversList() != null) {
+                        if (item.getReceiversList().size() == 1) {
+                            if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                                if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
+                                    holder.setText(R.id.tv_state, "PENDING");
+                                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                                } else {
+                                    holder.setText(R.id.tv_state, "RECEIVED");
+                                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
+                                }
+                            }
+                        } else if (item.getReceiversList().size() == 2) {
+                            if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
+                                    || item.getReceivers(1).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                                if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
+                                    holder.setText(R.id.tv_state, "PENDING");
+                                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                                } else {
+                                    holder.setText(R.id.tv_state, "RECEIVED");
+                                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -876,19 +926,19 @@ public class BalanceDetailActivity extends AppBaseActivity {
             if (item.getAmount() < 0) {
                 holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
                 if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
-                    holder.setText(R.id.tv_state, "PENDING");
+                    holder.setText(R.id.tv_receiver, "PENDING");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
                 } else {
-                    holder.setText(R.id.tv_state, "SENT");
+                    holder.setText(R.id.tv_receiver, "SENT");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
                 }
             } else if (item.getAmount() > 0) {
                 holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
                 if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
-                    holder.setText(R.id.tv_state, "PENDING");
+                    holder.setText(R.id.tv_receiver, "PENDING");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
                 } else {
-                    holder.setText(R.id.tv_state, "RECEIVED");
+                    holder.setText(R.id.tv_receiver, "RECEIVED");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
                 }
             }
@@ -907,7 +957,53 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.AssetTx item) {
-
+            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getBlocktime() + ""));
+            DecimalFormat df = new DecimalFormat("0.00######");
+            holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getAmount())));
+            if (item.getType().equals("Simple Send")) {
+                if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
+                    holder.setText(R.id.tv_receiver, "PENDING");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                } else {
+                    holder.setText(R.id.tv_receiver, "RECEIVED");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
+                }
+            } else if (item.getType().equals("Send to Many")) {
+                if (item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                    if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
+                        holder.setText(R.id.tv_receiver, "PENDING");
+                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                    } else {
+                        holder.setText(R.id.tv_receiver, "SENT");
+                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
+                    }
+                } else if (!item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                    if (item.getReceiversList() != null) {
+                        if (item.getReceiversList().size() == 1) {
+                            if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                                if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
+                                    holder.setText(R.id.tv_receiver, "PENDING");
+                                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                                } else {
+                                    holder.setText(R.id.tv_receiver, "RECEIVED");
+                                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
+                                }
+                            }
+                        } else if (item.getReceiversList().size() == 2) {
+                            if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
+                                    || item.getReceivers(1).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                                if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
+                                    holder.setText(R.id.tv_receiver, "PENDING");
+                                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                                } else {
+                                    holder.setText(R.id.tv_receiver, "RECEIVED");
+                                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

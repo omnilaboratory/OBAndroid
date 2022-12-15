@@ -62,6 +62,7 @@
             android:layout_weight="3">
 
             <ImageView
+                android:id="@+id/iv_state"
                 android:layout_width="@dimen/main_24"
                 android:layout_height="@dimen/main_24"
                 android:layout_centerInParent="true"
