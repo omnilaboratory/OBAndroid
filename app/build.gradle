@@ -162,4 +162,5 @@ dependencies {
     compileOnly 'com.google.api.grpc:googleapis-common-protos:0.0.3'
     // Asynchronous programming library
     implementation "io.reactivex.rxjava3:rxandroid:3.0.0"
+    implementation 'com.mindorks.android:prdownloader:0.5.0'
 }

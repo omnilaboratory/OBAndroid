@@ -63,6 +63,7 @@ public class ObdLogFileObserver extends FileObserver {
                             int syncingHeight = Integer.parseInt(stringHeight.trim());
                             if(syncingHeight>currentHeight){
                                 blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                blockDataEditor.putBoolean("isSynced",true);
                                 blockDataEditor.commit();
                             }
                         }else if(checkRecoverString(oldLine)){

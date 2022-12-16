@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.support.multidex.MultiDex;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.downloader.PRDownloader;
+import com.downloader.PRDownloaderConfig;
 import com.omni.wallet.baselibrary.base.BaseApplication;
 import com.omni.wallet.baselibrary.common.Constants;
 import com.omni.wallet.baselibrary.http.HttpUtils;
@@ -123,6 +125,12 @@ public class AppApplication extends BaseApplication {
 //                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
             }
         });
+        PRDownloaderConfig config = PRDownloaderConfig.newBuilder()
+                .setConnectTimeout(30000)
+                .setReadTimeout(30000)
+                .setDatabaseEnabled(true)
+                .build();
+        PRDownloader.initialize(mContext,config);
         Runnable runnable = new Runnable() {
             @Override
             public void run() {

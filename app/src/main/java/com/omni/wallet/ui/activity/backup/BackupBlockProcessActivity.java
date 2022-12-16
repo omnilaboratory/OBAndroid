@@ -9,11 +9,18 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.downloader.Error;
+import com.downloader.OnDownloadListener;
+import com.downloader.OnProgressListener;
+import com.downloader.OnStartOrResumeListener;
+import com.downloader.PRDownloader;
+import com.downloader.PRDownloaderConfig;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
@@ -67,6 +74,12 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     TextView qrAddressTv;
     @BindView(R.id.qr_image)
     ImageView qrAddressIv;
+    @BindView(R.id.tv_doing_explain)
+    TextView doExplainTv;
+    @BindView(R.id.tv_type_sync)
+    TextView typeSyncTV;
+    @BindView(R.id.commit_content)
+    RelativeLayout commitContentRL;
 
     String newCreatedAddress ="";
     ObdLogFileObserver obdLogFileObserver = null;
@@ -74,17 +87,23 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @SuppressLint("LongLogTag")
     private final SharedPreferences.OnSharedPreferenceChangeListener currentBlockSharePreferenceChangeListener = (sharedPreferences, key) -> {
-        Log.e("--------------------BlockChange-------------------",key);
         if (key == "currentBlockHeight"){
             int totalHeight = sharedPreferences.getInt("totalBlockHeight",0);
             int currentHeight = sharedPreferences.getInt("currentBlockHeight",0);
-            Log.e("-------------------blockListener----------------------",String.valueOf(totalHeight) + "," + String.valueOf(currentHeight));
-            if(totalHeight<currentHeight){
+            if(totalHeight<=currentHeight){
                 int endCurrentHeight = totalHeight;
                 updateSyncDataView(endCurrentHeight,totalHeight);
                 newAddressToWallet();
             }else{
-                updateSyncDataView(currentHeight,totalHeight);
+                boolean isSynced = blockData.getBoolean("isSynced",false);
+                if(isSynced){
+                    currentHeight = totalHeight;
+                    updateSyncDataView(currentHeight,totalHeight);
+                    newAddressToWallet();
+                }else{
+                    updateSyncDataView(currentHeight,totalHeight);    
+                }
+                
             }
         }
     };
@@ -105,6 +124,21 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         commitNumSyncedView.setText(Integer.toString(syncedHeight));
     }
 
+    @SuppressLint({"DefaultLocale", "SetTextI18n"})
+    private void updateDataView(double currentMb, double totalMb){
+        double percent = (currentMb/totalMb * 100);
+        double totalWidth =  rvMyProcessOuter.getWidth();
+        int innerHeight = (int)rvMyProcessOuter.getHeight()-2;
+        int innerWidth = (int) (totalWidth*percent/100);
+        String percentString = String.format("%.0f",percent);
+        syncPercentView.setText(percentString + "%");
+        RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth,innerHeight);
+        rvProcessInner.setLayoutParams(rlInnerParam);
+
+        syncedBlockNumView.setText(String.format("%.0f",currentMb) +"MB");
+        commitNumSyncedView.setText(String.format("%.0f",currentMb) +"MB");
+    }
+
 
 
     @Override
@@ -119,18 +153,29 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        
         mLoadingDialog = new LoadingDialog(mContext);
         accountList = WalletGetInfo.getAccountList(ctx);
-        for (int i = 0; i < accountList.size();i++){
-            Log.e("AccountList",accountList.get(i));
-        }
         String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/regtest/lnd.log";
 //        String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/testnet/lnd.log";
         obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
         blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
-        getTotalBlockHeight();
+        blockData.edit().putBoolean("isSynced",false);
+        blockData.edit().commit();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                downloadFiles();
+            }
+        }).start();
+        
+        
+        /*PRDownloaderConfig config = PRDownloaderConfig.newBuilder().setDatabaseEnabled(true)
+                .setReadTimeout(30000)
+                .setConnectTimeout(30000)
+                .build();
+        PRDownloader.initialize(ctx,config);*/
     }
-
     @Override
     protected void initData() {
     }
@@ -207,6 +252,9 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    doExplainTv.setText(ctx.getString(R.string.sync_block));
+                                    typeSyncTV.setText(ctx.getString(R.string.block));
+                                    commitContentRL.setVisibility(View.VISIBLE);
                                     commitNumSyncView.setText(block);
                                     syncBlockNumView.setText(block);
                                     updateSyncDataView(0,Integer.parseInt(block));
@@ -246,7 +294,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
             }
             @Override
-            public void onResponse(byte[] bytes) {
+            public void onResponse(byte[] bytes) {                
                 if(bytes == null){
                     return;
                 }
@@ -277,5 +325,86 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                 }
             }
         });
+    }
+    
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @Description Download database and bin files
+     * @描述 下载数据以及头部执行文件
+     * @Date 2022/12/13 22:11
+    */
+    public void downloadFiles (){
+        //Save files path 存储路径
+        String basePath = ctx.getExternalCacheDir() + "/data/chain/bitcoin/testnet/";
+        //Header.bin file name 头部文件名称
+        String headerFileName = "block_header.bin";
+        //data base file name 数据文件名称 
+        String dbFileName = "neutrino.db";
+        //data base file download url 数据文件下载路径
+        String dbUrlStr = "http://43.138.107.248:9090/obd-android-build.tar.gz";
+        //header bin file download url 头部执行文件下载路径
+        String headerUrlStr = "http://43.138.107.248:9090/obd-android-build.tar.gz";
+        //下载头部文件
+        PRDownloader.download(headerUrlStr,basePath,headerFileName).build()
+                .setOnStartOrResumeListener(() -> {
+                    commitContentRL.setVisibility(View.INVISIBLE);
+                    doExplainTv.setText(ctx.getString(R.string.download_header));
+                    typeSyncTV.setText(ctx.getString(R.string.size));
+                })
+                .setOnPauseListener(()->{})
+                .setOnCancelListener(()->{})
+                .setOnProgressListener(new OnProgressListener() {
+                    @SuppressLint({"SetTextI18n", "DefaultLocale"})
+                    @Override
+                    public void onProgress(com.downloader.Progress progress) {
+                        Log.e("Progress String header",progress.toString());
+                        double currentM = (double)progress.currentBytes/1024/1024;
+                        double totalBytes = (double)progress.totalBytes/1024/1024;
+                        commitNumSyncView.setText(String.format("%.0f",totalBytes)+"MB");
+                        syncBlockNumView.setText(String.format("%.0f",totalBytes)+"MB");
+                        updateDataView(currentM,totalBytes);
+                    }
+                })
+                .start(new OnDownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        //下载数据文件
+                        PRDownloader.download(dbUrlStr,basePath,dbFileName).build()
+                                .setOnStartOrResumeListener(() -> {
+                                    doExplainTv.setText(ctx.getString(R.string.download_db));
+                                })
+                                .setOnPauseListener(()->{})
+                                .setOnCancelListener(()->{})
+                                .setOnProgressListener(new OnProgressListener() {
+                                    @SuppressLint({"SetTextI18n", "DefaultLocale"})
+                                    @Override
+                                    public void onProgress(com.downloader.Progress progress) {
+                                        Log.e("Progress String db",progress.toString());
+                                        double currentM = (double)progress.currentBytes/1024/1024;
+                                        double totalBytes = (double)progress.totalBytes/1024/1024;
+                                        commitNumSyncView.setText(String.format("%.0f",totalBytes)+"MB");
+                                        syncBlockNumView.setText(String.format("%.0f",totalBytes)+"MB");
+                                        updateDataView(currentM,totalBytes);
+                                    }
+                                })
+                                .start(new OnDownloadListener() {
+                                    @Override
+                                    public void onDownloadComplete() {
+                                        getTotalBlockHeight();
+                                    }
+
+                                    @Override
+                                    public void onError(Error error) {
+
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onError(Error error) {
+
+                    }
+                });
     }
 }
