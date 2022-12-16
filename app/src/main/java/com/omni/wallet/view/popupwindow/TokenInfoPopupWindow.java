@@ -69,7 +69,7 @@ public class TokenInfoPopupWindow {
             LightningOuterClass.GetAssetInfoRequest getAssetInfoRequest = LightningOuterClass.GetAssetInfoRequest.newBuilder()
                     .setAssetId(assetId)
                     .build();
-            Obdmobile.getAssetInfo(getAssetInfoRequest.toByteArray(), new Callback() {
+            Obdmobile.oB_GetAssetInfo(getAssetInfoRequest.toByteArray(), new Callback() {
                 @Override
                 public void onError(Exception e) {
                     LogUtils.e(TAG, "------------------getAssetInfoOnError------------------" + e.getMessage());

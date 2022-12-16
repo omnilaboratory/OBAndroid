@@ -174,7 +174,7 @@ public class PayInvoiceDialog {
                             } else {
                                 probeRequest = preparePaymentProbe(resp);
                             }
-                            Obdmobile.routerSendPaymentV2(probeRequest.toByteArray(), new RecvStream() {
+                            Obdmobile.routerOB_SendPaymentV2(probeRequest.toByteArray(), new RecvStream() {
                                 @Override
                                 public void onError(Exception e) {
                                     if (e.getMessage().equals("EOF")) {
@@ -360,7 +360,7 @@ public class PayInvoiceDialog {
                                                         .setTimeoutSeconds(RefConstants.TIMEOUT_MEDIUM * RefConstants.TOR_TIMEOUT_MULTIPLIER)
                                                         .setMaxParts(1)
                                                         .build();
-                                                Obdmobile.routerSendPaymentV2(sendPaymentRequest.toByteArray(), new RecvStream() {
+                                                Obdmobile.routerOB_SendPaymentV2(sendPaymentRequest.toByteArray(), new RecvStream() {
                                                     @Override
                                                     public void onError(Exception e) {
                                                         if (e.getMessage().equals("EOF")) {
@@ -451,7 +451,7 @@ public class PayInvoiceDialog {
                             .setTimeoutSeconds(RefConstants.TIMEOUT_MEDIUM * RefConstants.TOR_TIMEOUT_MULTIPLIER)
                             .setMaxParts(RefConstants.LN_MAX_PARTS)
                             .build();
-                    Obdmobile.routerSendPaymentV2(sendPaymentRequest.toByteArray(), new RecvStream() {
+                    Obdmobile.routerOB_SendPaymentV2(sendPaymentRequest.toByteArray(), new RecvStream() {
                         @Override
                         public void onError(Exception e) {
                             if (e.getMessage().equals("EOF")) {

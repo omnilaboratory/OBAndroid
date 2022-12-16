@@ -404,7 +404,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         LightningOuterClass.ListTranscationsRequest listTranscationsRequest = LightningOuterClass.ListTranscationsRequest.newBuilder()
                 .addAddrs(User.getInstance().getWalletAddress(mContext))
                 .build();
-        Obdmobile.listTranscations(listTranscationsRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_ListTranscations(listTranscationsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------listTranscationsOnError------------------" + e.getMessage());
@@ -452,7 +452,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     .setIncludeIncomplete(false)
                     .build();
         }
-        Obdmobile.listPayments(paymentsRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_ListPayments(paymentsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------paymentsOnError------------------" + e.getMessage());
@@ -553,7 +553,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         LightningOuterClass.ListTranscationsRequest listTranscationsRequest = LightningOuterClass.ListTranscationsRequest.newBuilder()
                 .addAddrs(User.getInstance().getWalletAddress(mContext))
                 .build();
-        Obdmobile.listTranscations(listTranscationsRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_ListTranscations(listTranscationsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------getPendingTxsAssetOnError------------------" + e.getMessage());
@@ -606,7 +606,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     .setIncludeIncomplete(false)
                     .build();
         }
-        Obdmobile.listPayments(paymentsRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_ListPayments(paymentsRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------toBePaidPaymentsOnError------------------" + e.getMessage());
@@ -672,7 +672,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     .setNumMaxInvoices(lastIndex)
                     .build();
         }
-        Obdmobile.listInvoices(invoiceRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_ListInvoices(invoiceRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------invoiceOnError------------------" + e.getMessage());

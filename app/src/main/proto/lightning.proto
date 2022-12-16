@@ -48,21 +48,29 @@ message SetDefaultAddressResponse {
 service Lightning {
     // doc
     // https://github.com/OmniLayer/omnicore/blob/master/src/omnicore/doc/rpc-api.md#omni_getproperty
-    rpc ListAsset (ListAssetRequest) returns (ListAssetResponse);
+    rpc OB_ListAsset (ListAssetRequest) returns (ListAssetResponse);
 
     /* obd update wxf
      *  obd wallet need  all address in the wallet
      */
-    rpc ListAddresses (ListAddressesRequest) returns (ListAddressesResponse);
+    rpc OB_ListAddresses (ListAddressesRequest) returns (ListAddressesResponse);
 
-    rpc ListRecAddress (ListRecAddressRequest) returns (ListRecAddressResponse);
-    rpc SetDefaultAddress (SetDefaultAddressRequest)
+    rpc OB_ListRecAddress (ListRecAddressRequest)
+        returns (ListRecAddressResponse);
+    rpc OB_SetDefaultAddress (SetDefaultAddressRequest)
         returns (SetDefaultAddressResponse);
 
-    // map to omni_listtransactions
+    // map to omni_gettransaction
+    // Get detailed information about an Omni transaction.
     // doc
+    // https://github.com/OmniLayer/omnicore/blob/master/src/omnicore/doc/rpc-api.md#omni_gettransaction
+    rpc OB_GetOmniTransaction (GetOmniTransactionRequest) returns (AssetTx);
+
+    // map to omni_listtransactions
+    // List wallet transactions, optionally filtered by an address and block
+    // boundaries. doc
     // https://github.com/OmniLayer/omnicore/blob/master/src/omnicore/doc/rpc-api.md#omni_listtransactions
-    rpc ListTranscations (ListTranscationsRequest)
+    rpc OB_ListTranscations (ListTranscationsRequest)
         returns (ListTranscationsResponse);
     /* lncli: `walletbalance`
     WalletBalance returns total unspent outputs(confirmed and unconfirmed), all
@@ -74,21 +82,21 @@ service Lightning {
     /* obd update wxf
      * omni wallet's balance is queryed by address
      */
-    rpc WalletBalanceByAddress (WalletBalanceByAddressRequest)
+    rpc OB_WalletBalanceByAddress (WalletBalanceByAddressRequest)
         returns (WalletBalanceByAddressResponse);
 
     /* obd update wxf
      * get all asset balance  by address
      omni_getallbalancesforaddress
      */
-    rpc AssetsBalanceByAddress (AssetsBalanceByAddressRequest)
+    rpc OB_AssetsBalanceByAddress (AssetsBalanceByAddressRequest)
         returns (AssetsBalanceByAddressResponse);
 
     /* obd update wxf
      * get all asset info: omni_getproperty
      https://github.com/OmniLayer/omnicore/blob/master/src/omnicore/doc/rpc-api.md#omni_getproperty
      */
-    rpc GetAssetInfo (GetAssetInfoRequest) returns (GetAssetInfoResponse);
+    rpc OB_GetAssetInfo (GetAssetInfoRequest) returns (GetAssetInfoResponse);
 
     /* lncli: `channelbalance`
     ChannelBalance returns a report on the total funds across all open channels,
@@ -123,7 +131,7 @@ service Lightning {
     */
     rpc SendCoins (SendCoinsRequest) returns (SendCoinsResponse);
 
-    rpc SendCoinsFrom (SendCoinsFromRequest) returns (SendCoinsResponse);
+    rpc OB_SendCoinsFrom (SendCoinsFromRequest) returns (SendCoinsResponse);
 
     /* lncli: `listunspent`
     Deprecated, use walletrpc.ListUnspent instead.
@@ -152,7 +160,7 @@ service Lightning {
     /* lncli: `newaddress`
     NewAddress creates a new address under control of the local wallet.
     */
-    rpc NewAddress (NewAddressRequest) returns (NewAddressResponse);
+    rpc OB_NewAddress (NewAddressRequest) returns (NewAddressResponse);
 
     /* lncli: `signmessage`
     SignMessage signs a message with this node's private key. The returned
@@ -200,7 +208,7 @@ service Lightning {
     it's identity pubkey, alias, the chains it is connected to, and information
     concerning the number of open+pending channels.
     */
-    rpc GetInfo (GetInfoRequest) returns (GetInfoResponse);
+    rpc OB_GetInfo (GetInfoRequest) returns (GetInfoResponse);
 
     /** lncli: `getrecoveryinfo`
     GetRecoveryInfo returns information concerning the recovery mode including
@@ -259,7 +267,7 @@ service Lightning {
     arguments specified in the OpenChannelRequest, this pending channel ID can
     then be used to manually progress the channel funding flow.
     */
-    rpc OpenChannel (OpenChannelRequest) returns (stream OpenStatusUpdate);
+    rpc OB_OpenChannel (OpenChannelRequest) returns (stream OpenStatusUpdate);
 
     /* lncli: `batchopenchannel`
     BatchOpenChannel attempts to open multiple single-funded channels in a
@@ -355,7 +363,7 @@ service Lightning {
     duplicated invoices are rejected, therefore all invoices *must* have a
     unique payment preimage.
     */
-    rpc AddInvoice (Invoice) returns (AddInvoiceResponse);
+    rpc OB_AddInvoice (Invoice) returns (AddInvoiceResponse);
 
     /* lncli: `listinvoices`
     ListInvoices returns a list of all the invoices currently stored within the
@@ -366,7 +374,7 @@ service Lightning {
     next request. By default, the first 100 invoices created will be returned.
     Backwards pagination is also supported through the Reversed flag.
     */
-    rpc ListInvoices (ListInvoiceRequest) returns (ListInvoiceResponse);
+    rpc OB_ListInvoices (ListInvoiceRequest) returns (ListInvoiceResponse);
 
     /* lncli: `lookupinvoice`
     LookupInvoice attempts to look up an invoice according to its payment hash.
@@ -398,7 +406,7 @@ service Lightning {
     /* lncli: `listpayments`
     ListPayments returns a list of all outgoing payments.
     */
-    rpc ListPayments (ListPaymentsRequest) returns (ListPaymentsResponse);
+    rpc OB_ListPayments (ListPaymentsRequest) returns (ListPaymentsResponse);
 
     /*
     DeletePayment deletes an outgoing payment from DB. Note that it will not
@@ -634,6 +642,10 @@ service Lightning {
 }
 
 message ListAssetRequest {
+}
+message GetOmniTransactionRequest {
+    //    the hash of the transaction to lookup
+    string txid = 1;
 }
 message ListTranscationsRequest {
     repeated string addrs = 1;

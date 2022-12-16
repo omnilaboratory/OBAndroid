@@ -237,7 +237,7 @@ public class CreateLuckyPacketPopupWindow {
                         .setExpiry(Long.parseLong("86400")) // in seconds
                         .setPrivate(false)
                         .build();
-                Obdmobile.addInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
+                Obdmobile.oB_AddInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
                     @Override
                     public void onError(Exception e) {
                         LogUtils.e(TAG, "------------------addInvoiceOnError------------------" + e.getMessage());

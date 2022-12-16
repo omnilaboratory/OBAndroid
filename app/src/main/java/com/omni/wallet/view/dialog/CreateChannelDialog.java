@@ -302,6 +302,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         mAlertDialog.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                nodePubkey = "0273ec25347ba3f6f90a54bfd2e815aaa8efd3a7fa1a158c8cbb0a80c63b4315d8@43.138.107.248:9735";
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.VISIBLE);
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.GONE);
                 showStepOne();
@@ -388,7 +389,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     .build();
         }
         LogUtils.e(TAG, "==========55555==========" + pubkey);
-        Obdmobile.openChannel(openChannelRequest.toByteArray(), new RecvStream() {
+        Obdmobile.oB_OpenChannel(openChannelRequest.toByteArray(), new RecvStream() {
             @Override
             public void onError(Exception e) {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -608,7 +609,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
                 .setAddress(User.getInstance().getWalletAddress(mContext))
                 .build();
-        Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());

@@ -527,7 +527,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                             .setAmount((long) (Double.parseDouble(assetBalance) * 100000000))
                             .setTargetConf(time)
                             .build();
-                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
+                    Obdmobile.oB_SendCoinsFrom(sendRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -606,7 +606,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                             .setAssetAmount((long) (Double.parseDouble(assetBalance) * 100000000))
                             .setTargetConf(time)
                             .build();
-                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
+                    Obdmobile.oB_SendCoinsFrom(sendRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -914,7 +914,7 @@ public class SendDialog implements Wallet.ScanSendListener {
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
                 .setAddress(User.getInstance().getWalletAddress(mContext))
                 .build();
-        Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());

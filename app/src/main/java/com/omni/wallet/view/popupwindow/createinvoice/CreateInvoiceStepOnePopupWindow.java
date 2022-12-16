@@ -243,7 +243,7 @@ public class CreateInvoiceStepOnePopupWindow {
                             .setPrivate(false)
                             .build();
                 }
-                Obdmobile.addInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
+                Obdmobile.oB_AddInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
                     @Override
                     public void onError(Exception e) {
                         LogUtils.e(TAG, "------------------addInvoiceOnError------------------" + e.getMessage());

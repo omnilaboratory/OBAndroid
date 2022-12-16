@@ -14,13 +14,13 @@ service Router {
     PaymentRequest to the final destination. The call returns a stream of
     payment updates.
     */
-    rpc SendPaymentV2 (SendPaymentRequest) returns (stream lnrpc.Payment);
+    rpc OB_SendPaymentV2 (SendPaymentRequest) returns (stream lnrpc.Payment);
 
     /*
     TrackPaymentV2 returns an update stream for the payment identified by the
     payment hash.
     */
-    rpc TrackPaymentV2 (TrackPaymentRequest) returns (stream lnrpc.Payment);
+    rpc OB_TrackPaymentV2 (TrackPaymentRequest) returns (stream lnrpc.Payment);
 
     /*
     EstimateRouteFee allows callers to obtain a lower bound w.r.t how much it
