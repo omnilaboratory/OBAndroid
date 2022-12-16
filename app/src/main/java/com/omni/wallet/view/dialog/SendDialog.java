@@ -98,7 +98,27 @@ public class SendDialog implements Wallet.ScanSendListener {
         }
         Wallet.getInstance().registerScanSendListener(this);
         mLoadingDialog = new LoadingDialog(mContext);
+        SharedPreferences sp = mContext.getSharedPreferences("SP_ADDR_LIST", Activity.MODE_PRIVATE);
+        String addrListJson = sp.getString("addrListKey", "");
+        if (!StringUtils.isEmpty(addrListJson)) {
+            Gson gson = new Gson();
+            mAddressData = gson.fromJson(addrListJson, new TypeToken<List<AddressEntity>>() {
+            }.getType()); //将json字符串转换成List集合
+            removeDuplicate(mAddressData);
+            LogUtils.e(TAG, "========localaddress=====" + mAddressData.get(0).getName());
+            LogUtils.e(TAG, "========localaddress=====" + addrListJson);
+        }
         if (!StringUtils.isEmpty(payAddr)) {
+            if (mAddressData.size() == 0) {
+                toFriendName = "unname";
+            } else {
+                toFriendName = "unname";
+                for (AddressEntity entity : mAddressData) {
+                    if (entity.getAddress().equals(payAddr)) {
+                        toFriendName = entity.getName();
+                    }
+                }
+            }
             selectAddress = payAddr;
             mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
             mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
@@ -126,16 +146,6 @@ public class SendDialog implements Wallet.ScanSendListener {
      * send step one
      */
     private void showStepOne() {
-        SharedPreferences sp = mContext.getSharedPreferences("SP_ADDR_LIST", Activity.MODE_PRIVATE);
-        String addrListJson = sp.getString("addrListKey", "");
-        if (!StringUtils.isEmpty(addrListJson)) {
-            Gson gson = new Gson();
-            mAddressData = gson.fromJson(addrListJson, new TypeToken<List<AddressEntity>>() {
-            }.getType()); //将json字符串转换成List集合
-            removeDuplicate(mAddressData);
-            LogUtils.e(TAG, "========localaddress=====" + mAddressData.get(0).getName());
-            LogUtils.e(TAG, "========localaddress=====" + addrListJson);
-        }
         searchEdit = mAlertDialog.findViewById(R.id.edit_search);
         recentsAddressTv = mAlertDialog.findViewById(R.id.tv_recents_address);
         recentsAddressSecondTv = mAlertDialog.findViewById(R.id.tv_recents_address_second);
@@ -157,6 +167,7 @@ public class SendDialog implements Wallet.ScanSendListener {
         recentsAddressTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                toFriendName = mAddressData.get(0).getName();
                 selectAddress = recentsAddressTv.getText().toString();
                 mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
                 mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
@@ -166,6 +177,7 @@ public class SendDialog implements Wallet.ScanSendListener {
         recentsAddressSecondTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                toFriendName = mAddressData.get(1).getName();
                 selectAddress = recentsAddressSecondTv.getText().toString();
                 mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
                 mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
@@ -200,6 +212,16 @@ public class SendDialog implements Wallet.ScanSendListener {
                     if (ValidateBitcoinAddress.validateBitcoinAddress(s.toString())) {
                         new Handler().postDelayed(new Runnable() {
                             public void run() {
+                                if (mAddressData.size() == 0) {
+                                    toFriendName = "unname";
+                                } else {
+                                    toFriendName = "unname";
+                                    for (AddressEntity entity : mAddressData) {
+                                        if (entity.getAddress().equals(s.toString())) {
+                                            toFriendName = entity.getName();
+                                        }
+                                    }
+                                }
                                 selectAddress = s.toString();
                                 mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
                                 mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
@@ -820,6 +842,7 @@ public class SendDialog implements Wallet.ScanSendListener {
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    toFriendName = item.getName();
                     selectAddress = item.getAddress();
                     mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
                     mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
@@ -927,19 +950,36 @@ public class SendDialog implements Wallet.ScanSendListener {
 
     @Override
     public void onScanSendUpdated(String result) {
+        if (mAddressData.size() == 0) {
+            toFriendName = "unname";
+        } else {
+            toFriendName = "unname";
+            for (AddressEntity entity : mAddressData) {
+                if (entity.getAddress().equals(result)) {
+                    toFriendName = entity.getName();
+                }
+            }
+        }
         selectAddress = result;
         mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
         mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
         showStepTwo();
     }
 
-    // TODO: 2022/12/15 处理逻辑存在问题，需完善（没处理再次进行转账不设置名字的时候）
     // 循环重复数据
     public static void removeDuplicate(List<AddressEntity> list) {
         for (int i = 0; i < list.size() - 1; i++) {
             for (int j = list.size() - 1; j > i; j--) {
                 if (list.get(j).getAddress().equals(list.get(i).getAddress())) {
-                    list.remove(i);
+                    if (list.get(j).getName().equals("unname") & !list.get(i).getName().equals("unname")) {
+                        list.remove(j);
+                    } else if (!list.get(j).getName().equals("unname") & list.get(i).getName().equals("unname")) {
+                        list.remove(i);
+                    } else if (!list.get(j).getName().equals("unname") & !list.get(i).getName().equals("unname")) {
+                        list.remove(i);
+                    } else if (list.get(j).getName().equals("unname") & list.get(i).getName().equals("unname")) {
+                        list.remove(i);
+                    }
                 }
             }
         }
