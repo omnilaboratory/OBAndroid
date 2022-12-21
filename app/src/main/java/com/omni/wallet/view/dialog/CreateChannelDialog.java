@@ -228,7 +228,13 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!StringUtils.isEmpty(s.toString())) {
-                    estimateOnChainFee((long) (Double.parseDouble(s.toString()) * 100000000), time);
+                    if (assetId == 0) {
+                        estimateOnChainFee((long) (Double.parseDouble(s.toString()) * 100000000), time);
+                    } else {
+                        estimateOnChainFee(20000, time);
+                    }
+                } else {
+                    estimateOnChainFee(0, time);
                 }
             }
         });
@@ -244,21 +250,33 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                                 speedButton.setText(R.string.slow);
                                 time = 1; // 10 Minutes
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
+                                    if (assetId == 0) {
+                                        estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
+                                    } else {
+                                        estimateOnChainFee(20000, time);
+                                    }
                                 }
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
                                 time = 6 * 6; // 6 Hours
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
+                                    if (assetId == 0) {
+                                        estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
+                                    } else {
+                                        estimateOnChainFee(20000, time);
+                                    }
                                 }
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
                                 time = 6 * 24; // 24 Hours
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
+                                    if (assetId == 0) {
+                                        estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
+                                    } else {
+                                        estimateOnChainFee(20000, time);
+                                    }
                                 }
                                 break;
                         }
@@ -290,6 +308,13 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
                         }
                         channelAmountTv.setText(assetBalanceMax);
+                        if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
+                            if (assetId == 0) {
+                                estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
+                            } else {
+                                estimateOnChainFee(20000, time);
+                            }
+                        }
                     }
                 });
                 mSelectAssetUnitPopupWindow.show(v);

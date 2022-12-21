@@ -292,6 +292,32 @@ public class SendDialog implements Wallet.ScanSendListener {
             sendFeeUnitTv.setText("satoshis");
         }
         fetchWalletBalance();
+        final EditText amountInputView = mAlertDialog.findViewById(R.id.etv_send_amount);
+        amountInputView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                estimateOnChainFee(count, time);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                assetBalance = s.toString();
+                if (!StringUtils.isEmpty(s.toString())) {
+                    if (assetId == 0) {
+                        estimateOnChainFee((long) (Double.parseDouble(assetBalance) * 100000000), time);
+                    } else {
+                        estimateOnChainFee(546, time);
+                    }
+                } else {
+                    estimateOnChainFee(0, time);
+                }
+            }
+        });
         RelativeLayout assetLayout = mAlertDialog.findViewById(R.id.layout_asset);
         assetLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -320,6 +346,13 @@ public class SendDialog implements Wallet.ScanSendListener {
                             assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
                         }
                         assetsBalanceTv.setText(assetBalanceMax);
+                        if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
+                            if (assetId == 0) {
+                                estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                            } else {
+                                estimateOnChainFee(546, time);
+                            }
+                        }
                     }
                 });
                 mSelectAssetPopupWindow.show(v);
@@ -331,26 +364,6 @@ public class SendDialog implements Wallet.ScanSendListener {
          * @author: Tong ChangHui
          * @E-mail: tch081092@gmail.com
          */
-        final EditText amountInputView = mAlertDialog.findViewById(R.id.etv_send_amount);
-        amountInputView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                estimateOnChainFee(count, time);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                assetBalance = s.toString();
-                if (!StringUtils.isEmpty(s.toString())) {
-                    estimateOnChainFee((long) (Double.parseDouble(assetBalance) * 100000000), time);
-                }
-            }
-        });
         TextView maxBtnView = mAlertDialog.findViewById(R.id.tv_btn_set_amount_max);
         maxBtnView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -371,21 +384,33 @@ public class SendDialog implements Wallet.ScanSendListener {
                                 speedButton.setText(R.string.slow);
                                 time = 1; // 10 Minutes
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    if (assetId == 0) {
+                                        estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    } else {
+                                        estimateOnChainFee(546, time);
+                                    }
                                 }
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
                                 time = 6 * 6; // 6 Hours
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    if (assetId == 0) {
+                                        estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    } else {
+                                        estimateOnChainFee(546, time);
+                                    }
                                 }
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
                                 time = 6 * 24; // 24 Hours
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    if (assetId == 0) {
+                                        estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    } else {
+                                        estimateOnChainFee(546, time);
+                                    }
                                 }
                                 break;
                         }

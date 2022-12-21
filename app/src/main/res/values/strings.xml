@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Omni Wallet</string>
+    <string name="app_name">OB Wallet</string>
 
     <!-- Unlock页面 -->
     <string name="pwd">Password</string>
