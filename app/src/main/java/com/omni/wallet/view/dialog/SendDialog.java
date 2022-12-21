@@ -67,6 +67,7 @@ public class SendDialog implements Wallet.ScanSendListener {
     TextView assetsBalanceTv;
     private TextView sendFeeTv;
     private TextView sendFeeExchangeTv;
+    private List<String> txidList;
     private List<AddressEntity> list;
     private List<AddressEntity> mAddressData = new ArrayList<>();
     private MyAdapter mAdapter;
@@ -568,7 +569,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                                             editor.commit();
                                         } else {
                                             Gson gson = new Gson();
-                                            list = gson.fromJson(addrListJson, new TypeToken<List<String>>() {
+                                            list = gson.fromJson(addrListJson, new TypeToken<List<AddressEntity>>() {
                                             }.getType());
                                             AddressEntity entity = new AddressEntity();
                                             entity.setName("unname");
@@ -577,6 +578,27 @@ public class SendDialog implements Wallet.ScanSendListener {
                                             String jsonStr = gson.toJson(list);
                                             SharedPreferences.Editor editor = sp.edit();
                                             editor.putString("addrListKey", jsonStr);
+                                            editor.commit();
+                                        }
+                                        // 存储txid
+                                        SharedPreferences txidSp = mContext.getSharedPreferences("SP_TXID_LIST", Activity.MODE_PRIVATE);
+                                        String txidListJson = txidSp.getString("txidListKey", "");
+                                        if (StringUtils.isEmpty(txidListJson)) {
+                                            txidList = new ArrayList<>();
+                                            txidList.add(resp.getTxid());
+                                            Gson gson = new Gson();
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
+                                            editor.commit();
+                                        } else {
+                                            Gson gson = new Gson();
+                                            txidList = gson.fromJson(txidListJson, new TypeToken<List<String>>() {
+                                            }.getType());
+                                            txidList.add(resp.getTxid());
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
                                             editor.commit();
                                         }
                                         EventBus.getDefault().post(new SendSuccessEvent());
@@ -656,6 +678,27 @@ public class SendDialog implements Wallet.ScanSendListener {
                                             String jsonStr = gson.toJson(list);
                                             SharedPreferences.Editor editor = sp.edit();
                                             editor.putString("addrListKey", jsonStr);
+                                            editor.commit();
+                                        }
+                                        // 存储txid
+                                        SharedPreferences txidSp = mContext.getSharedPreferences("SP_TXID_LIST", Activity.MODE_PRIVATE);
+                                        String txidListJson = txidSp.getString("txidListKey", "");
+                                        if (StringUtils.isEmpty(txidListJson)) {
+                                            txidList = new ArrayList<>();
+                                            txidList.add(resp.getTxid());
+                                            Gson gson = new Gson();
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
+                                            editor.commit();
+                                        } else {
+                                            Gson gson = new Gson();
+                                            txidList = gson.fromJson(txidListJson, new TypeToken<List<String>>() {
+                                            }.getType());
+                                            txidList.add(resp.getTxid());
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
                                             editor.commit();
                                         }
                                         EventBus.getDefault().post(new SendSuccessEvent());
