@@ -41,6 +41,8 @@ public class ObdLogFileObserver extends FileObserver {
         if(event == FileObserver.MODIFY){
             BufferedReader bfr;
             try {
+                long lastReadLineNum = blockDataSharedPreferences.getLong("lastReadLineNum",0);
+                long readingLineNum = 0;
                 bfr = new BufferedReader(new FileReader(filePath));
                 String line;
                 line = bfr.readLine();
@@ -50,84 +52,91 @@ public class ObdLogFileObserver extends FileObserver {
                     sb.append(line);
                     sb.append("\n");
                     line = bfr.readLine();
-                    if(line!=null){
-                        if(checkString(oldLine)){
-                            String stringHeight = oldLine.split("height")[1].split(",")[0];
-                            int syncingHeight = Integer.parseInt(stringHeight.trim());
-                            if(syncingHeight>currentHeight){
-                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
-                                blockDataEditor.commit();
+                    readingLineNum++;
+                    if(readingLineNum>lastReadLineNum){
+                        if(line!=null){
+                            if(checkString(oldLine)){
+                                String stringHeight = oldLine.split("height")[1].split(",")[0];
+                                int syncingHeight = Integer.parseInt(stringHeight.trim());
+                                if(syncingHeight>currentHeight){
+                                    blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                    blockDataEditor.commit();
+                                }
+                            }else if(checkSyncedOver(oldLine)){
+                                String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
+                                int syncingHeight = Integer.parseInt(stringHeight.trim());
+                                if(syncingHeight>currentHeight){
+                                    blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                    blockDataEditor.putBoolean("isSynced",true);
+                                    blockDataEditor.putBoolean("isOpened",true);
+                                    blockDataEditor.commit();
+                                }
+                            }else if(checkRecoverString(oldLine)){
+                                String stringHeight = oldLine.split("blocks")[1].split("-")[1];
+                                int syncingHeight = Integer.parseInt(stringHeight.trim());
+                                if(syncingHeight>currentHeight){
+                                    blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                    blockDataEditor.commit();
+                                }
+                            }else if(checkRecoveredStartString(oldLine)){
+                                String stringHeight = oldLine.split("height=")[1].split("hash=")[0];
+                                int syncingHeight = Integer.parseInt(stringHeight.trim());
+                                if(syncingHeight>currentHeight){
+                                    blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                    blockDataEditor.commit();
+                                }
+                            }else if(checkSyncedHeightNeutrinoString(oldLine)){
+                                String stringHeight = oldLine.split("height=")[2].split(",")[0];
+                                int syncingHeight = Integer.parseInt(stringHeight.trim());
+                                if(syncingHeight>currentHeight){
+                                    blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                    blockDataEditor.commit();
+                                }
                             }
-                        }else if(checkSyncedOver(oldLine)){
-                            String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
-                            int syncingHeight = Integer.parseInt(stringHeight.trim());
-                            if(syncingHeight>currentHeight){
-                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
-                                blockDataEditor.putBoolean("isSynced",true);
-                                blockDataEditor.commit();
+                        }else{
+                            if(checkString(oldLine)){
+                                String stringHeight = oldLine.split("height")[1].split(",")[0];
+                                int syncingHeight = Integer.parseInt(stringHeight.trim());
+                                if(syncingHeight>currentHeight){
+                                    blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                    blockDataEditor.commit();
+                                }
+                            }else if(checkSyncedOver(oldLine)){
+                                String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
+                                int syncingHeight = Integer.parseInt(stringHeight.trim());
+                                if(syncingHeight>currentHeight){
+                                    blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                    blockDataEditor.putBoolean("isSynced",true);
+                                    blockDataEditor.putBoolean("isOpened",true);
+                                    blockDataEditor.commit();
+                                }
+                            }else if(checkRecoverString(oldLine)){
+                                String stringHeight = oldLine.split("blocks")[1].split("-")[0];
+                                int syncingHeight = Integer.parseInt(stringHeight.trim());
+                                if(syncingHeight>currentHeight){
+                                    blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                    blockDataEditor.commit();
+                                }
+                            }else if(checkRecoveredStartString(oldLine)){
+                                String stringHeight = oldLine.split("height=")[1].split("hash=")[0];
+                                int syncingHeight = Integer.parseInt(stringHeight.trim());
+                                if(syncingHeight>currentHeight){
+                                    blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                    blockDataEditor.commit();
+                                }
+                            }else if(checkSyncedHeightNeutrinoString(oldLine)){
+                                String stringHeight = oldLine.split("height=")[2].split(",")[0];
+                                int syncingHeight = Integer.parseInt(stringHeight.trim());
+                                if(syncingHeight>currentHeight){
+                                    blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                    blockDataEditor.commit();
+                                }
                             }
-                        }else if(checkRecoverString(oldLine)){
-                            String stringHeight = oldLine.split("blocks")[1].split("-")[1];
-                            int syncingHeight = Integer.parseInt(stringHeight.trim());
-                            if(syncingHeight>currentHeight){
-                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
-                                blockDataEditor.commit();
-                            }
-                        }else if(checkRecoveredStartString(oldLine)){
-                            String stringHeight = oldLine.split("height=")[1].split("hash=")[0];
-                            int syncingHeight = Integer.parseInt(stringHeight.trim());
-                            if(syncingHeight>currentHeight){
-                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
-                                blockDataEditor.commit();
-                            }
-                        }else if(checkSyncedHeightNeutrinoString(oldLine)){
-                            String stringHeight = oldLine.split("height=")[2].split(",")[0];
-                            int syncingHeight = Integer.parseInt(stringHeight.trim());
-                            if(syncingHeight>currentHeight){
-                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
-                                blockDataEditor.commit();
-                            }
+                            bfr.close();
+                            break;
                         }
-                    }else{
-                        if(checkString(oldLine)){
-                            String stringHeight = oldLine.split("height")[1].split(",")[0];
-                            int syncingHeight = Integer.parseInt(stringHeight.trim());
-                            if(syncingHeight>currentHeight){
-                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
-                                blockDataEditor.commit();
-                            }
-                        }else if(checkSyncedOver(oldLine)){
-                            String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
-                            int syncingHeight = Integer.parseInt(stringHeight.trim());
-                            if(syncingHeight>currentHeight){
-                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
-                                blockDataEditor.commit();
-                            }
-                        }else if(checkRecoverString(oldLine)){
-                            String stringHeight = oldLine.split("blocks")[1].split("-")[0];
-                            int syncingHeight = Integer.parseInt(stringHeight.trim());
-                            if(syncingHeight>currentHeight){
-                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
-                                blockDataEditor.commit();
-                            }
-                        }else if(checkRecoveredStartString(oldLine)){
-                            String stringHeight = oldLine.split("height=")[1].split("hash=")[0];
-                            int syncingHeight = Integer.parseInt(stringHeight.trim());
-                            if(syncingHeight>currentHeight){
-                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
-                                blockDataEditor.commit();
-                            }
-                        }else if(checkSyncedHeightNeutrinoString(oldLine)){
-                            String stringHeight = oldLine.split("height=")[2].split(",")[0];
-                            int syncingHeight = Integer.parseInt(stringHeight.trim());
-                            if(syncingHeight>currentHeight){
-                                blockDataEditor.putInt("currentBlockHeight",syncingHeight);
-                                blockDataEditor.commit();
-                            }
-                        }
-                        bfr.close();
-                        break;
                     }
+                    
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

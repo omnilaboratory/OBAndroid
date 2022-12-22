@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:name=".base.AppApplication"
         android:allowBackup="false"
@@ -134,6 +135,10 @@
         <!-- ScanQRCode Send页面 -->
         <activity
             android:name=".ui.activity.ScanSendActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
+        <activity 
+            android:name=".ui.activity.backup.RestoreChannelActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
     </application>

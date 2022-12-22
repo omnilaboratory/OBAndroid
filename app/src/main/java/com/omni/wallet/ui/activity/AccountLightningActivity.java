@@ -1,17 +1,21 @@
 package com.omni.wallet.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Parser;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
@@ -760,5 +764,40 @@ public class AccountLightningActivity extends AppBaseActivity {
         if (mCreateChannelDialog != null) {
             mCreateChannelDialog.release();
         }
+    }
+    @OnClick(R.id.btn_backup)
+    public void backup(){
+        LightningOuterClass.ExportChannelBackupRequest exportChannelBackupRequest = LightningOuterClass.ExportChannelBackupRequest.newBuilder().build();
+        
+        Obdmobile.exportAllChannelBackups(exportChannelBackupRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+
+            @SuppressLint("LongLogTag")
+            @Override
+            public void onResponse(byte[] bytes) {
+                if(bytes==null){
+                    return;
+                }
+                try {
+                    LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(bytes);
+                    LightningOuterClass.MultiChanBackup backupChannel = chanBackupSnapshot.getMultiChanBackup();
+                    List<LightningOuterClass.ChannelPoint> chanPointsList = backupChannel.getChanPointsList();
+                    for (LightningOuterClass.ChannelPoint channelPoint : chanPointsList){
+                        String txIdStr = channelPoint.getFundingTxidStr();
+                        Log.e("txIdStr",txIdStr);
+                    }
+                    
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    
+    public void restore(){
+//        LightningOuterClass.RestoreChanBackupRequest restoreChanBackupRequest = LightningOuterClass.RestoreChanBackupRequest.newBuilder().setMultiChanBackup().setChanBackups().build();
     }
 }

@@ -333,6 +333,12 @@
                     android:layout_marginTop="@dimen/main_10"
                     android:layout_weight="1"/>
             </LinearLayout>
+            <TextView
+                android:id="@+id/btn_backup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="back up channel"
+                android:padding="@dimen/main_20"/>
 
             <LinearLayout
                 android:id="@+id/layout_create_channel"

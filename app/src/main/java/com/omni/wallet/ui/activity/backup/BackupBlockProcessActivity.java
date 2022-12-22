@@ -165,7 +165,8 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                downloadFiles();
+//                downloadFiles();
+                getTotalBlockHeight();
             }
         }).start();
         
@@ -358,7 +359,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                     @SuppressLint({"SetTextI18n", "DefaultLocale"})
                     @Override
                     public void onProgress(com.downloader.Progress progress) {
-                        Log.e("Progress String header",progress.toString());
                         double currentM = (double)progress.currentBytes/1024/1024;
                         double totalBytes = (double)progress.totalBytes/1024/1024;
                         commitNumSyncView.setText(String.format("%.0f",totalBytes)+"MB");

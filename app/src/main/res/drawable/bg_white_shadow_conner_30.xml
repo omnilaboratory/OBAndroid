@@ -1,0 +1,27 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--阴影-->
+    <item android:top="10dp" android:left="@dimen/main_10">
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial"
+                android:centerX="0.5"
+                android:centerY="0.5"
+                android:gradientRadius="1in"
+                android:startColor="@color/color_white"
+                android:centerColor="#FFABAADD"
+                android:endColor="#40ABAADD"/>
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+    <!--前景-->
+    <item
+        android:bottom="5dp"
+        android:left="1dp"
+        android:right="6dp"
+        android:top="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white"/>
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+</layer-list>

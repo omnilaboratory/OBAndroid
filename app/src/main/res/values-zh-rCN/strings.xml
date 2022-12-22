@@ -305,6 +305,10 @@
     <string name="block_sync_num">7,5000</string>
     <string name="block_of">of</string>
     <string name="commit_filter">Commitment Filter</string>
+    <string name="last_edit">最后更新:</string>
+
+    <!--restore page-->
+    <string name="restore_desc">选择您的通道数据文件以恢复您闪电节点</string>
 
     <!--common 通用-->
     <string name="aets">≈</string>

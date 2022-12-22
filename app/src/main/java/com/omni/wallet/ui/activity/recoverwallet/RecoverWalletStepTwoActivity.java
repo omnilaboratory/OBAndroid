@@ -247,7 +247,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                 Log.e("mnemonicString",mnemonicString);
             }
             initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
-            initWalletRequestBuilder.setRecoveryWindow(1);
+            initWalletRequestBuilder.setRecoveryWindow(0);
 
             Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
             Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
