@@ -56,7 +56,7 @@ public class RemoteObdLightningService implements ObdLightningService {
 
     @Override
     public Single<lnrpc.LightningOuterClass.NewAddressResponse> newAddress(lnrpc.LightningOuterClass.NewAddressRequest request) {
-        return DefaultSingle.createDefault(emitter -> asyncStub.newAddress(request, new RemoteObdSingleObserver<>(emitter)));
+        return DefaultSingle.createDefault(emitter -> asyncStub.oBNewAddress(request, new RemoteObdSingleObserver<>(emitter)));
     }
 
     @Override
@@ -91,7 +91,7 @@ public class RemoteObdLightningService implements ObdLightningService {
 
     @Override
     public Single<lnrpc.LightningOuterClass.GetInfoResponse> getInfo(lnrpc.LightningOuterClass.GetInfoRequest request) {
-        return DefaultSingle.createDefault(emitter -> asyncStub.getInfo(request, new RemoteObdSingleObserver<>(emitter)));
+        return DefaultSingle.createDefault(emitter -> asyncStub.oBGetInfo(request, new RemoteObdSingleObserver<>(emitter)));
     }
 
     @Override
@@ -126,7 +126,7 @@ public class RemoteObdLightningService implements ObdLightningService {
 
     @Override
     public Observable<lnrpc.LightningOuterClass.OpenStatusUpdate> openChannel(lnrpc.LightningOuterClass.OpenChannelRequest request) {
-        return DefaultObservable.createDefault(emitter -> asyncStub.openChannel(request, new RemoteObdStreamObserver<>(emitter)));
+        return DefaultObservable.createDefault(emitter -> asyncStub.oBOpenChannel(request, new RemoteObdStreamObserver<>(emitter)));
     }
 
     @Override
@@ -161,12 +161,12 @@ public class RemoteObdLightningService implements ObdLightningService {
 
     @Override
     public Single<lnrpc.LightningOuterClass.AddInvoiceResponse> addInvoice(lnrpc.LightningOuterClass.Invoice request) {
-        return DefaultSingle.createDefault(emitter -> asyncStub.addInvoice(request, new RemoteObdSingleObserver<>(emitter)));
+        return DefaultSingle.createDefault(emitter -> asyncStub.oBAddInvoice(request, new RemoteObdSingleObserver<>(emitter)));
     }
 
     @Override
     public Single<lnrpc.LightningOuterClass.ListInvoiceResponse> listInvoices(lnrpc.LightningOuterClass.ListInvoiceRequest request) {
-        return DefaultSingle.createDefault(emitter -> asyncStub.listInvoices(request, new RemoteObdSingleObserver<>(emitter)));
+        return DefaultSingle.createDefault(emitter -> asyncStub.oBListInvoices(request, new RemoteObdSingleObserver<>(emitter)));
     }
 
     @Override
@@ -186,7 +186,7 @@ public class RemoteObdLightningService implements ObdLightningService {
 
     @Override
     public Single<lnrpc.LightningOuterClass.ListPaymentsResponse> listPayments(lnrpc.LightningOuterClass.ListPaymentsRequest request) {
-        return DefaultSingle.createDefault(emitter -> asyncStub.listPayments(request, new RemoteObdSingleObserver<>(emitter)));
+        return DefaultSingle.createDefault(emitter -> asyncStub.oBListPayments(request, new RemoteObdSingleObserver<>(emitter)));
     }
 
     @Override

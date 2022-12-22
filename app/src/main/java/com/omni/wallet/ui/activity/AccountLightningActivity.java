@@ -147,7 +147,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      * 获取钱包相关信息
      */
     private void getInfo() {
-        Obdmobile.getInfo(LightningOuterClass.GetInfoRequest.newBuilder().build().toByteArray(), new Callback() {
+        Obdmobile.oB_GetInfo(LightningOuterClass.GetInfoRequest.newBuilder().build().toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------getInfoOnError------------------" + e.getMessage());
@@ -187,7 +187,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
                 .setAddress(User.getInstance().getWalletAddress(mContext))
                 .build();
-        Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());
@@ -235,7 +235,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
                             .setAddress(User.getInstance().getWalletAddress(mContext))
                             .build();
-                    Obdmobile.assetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
+                    Obdmobile.oB_AssetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
                             LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
@@ -392,7 +392,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         LightningOuterClass.SetDefaultAddressRequest setDefaultAddressRequest = LightningOuterClass.SetDefaultAddressRequest.newBuilder()
                 .setAddress(User.getInstance().getWalletAddress(mContext))
                 .build();
-        Obdmobile.setDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_SetDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------setDefaultAddressOnError------------------" + e.getMessage());

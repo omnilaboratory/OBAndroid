@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Omni Wallet</string>
+    <string name="app_name">OB Wallet</string>
 
     <!-- Unlock页面 -->
     <string name="pwd">Password</string>
@@ -208,8 +208,10 @@
     <string name="error_channel_close_offline">Peer is offline. Only force close allowed.</string>
     <string name="error_channel_close_timeout">Channel could not be closed within deadline.</string>
     <string name="error_channel_close">Could not close channel</string>
+    <string name="wallet_address_is_invalid">The wallet address is invalid</string>
     <string name="create_invoice_amount">Please enter the amount</string>
     <string name="enter_node_pubkey">Please enter node pubkey</string>
+    <string name="enter_valid_node_pubkey">Please enter valid node pubkey</string>
     <string name="amount_greater_than_0">Amount must be greater than 0</string>
     <string name="minimum_input">Minimum input 20000</string>
     <string name="maximum_input">Maximum input 16777215</string>
@@ -257,6 +259,13 @@
     <string name="number_first_upper">Number</string>
     <string name="lucky_packet_upper">LUCKY PACKET</string>
     <string name="created_first_upper">Created</string>
+    <string name="tx_sent">Tx Sent</string>
+    <string name="transaction_hash">Transaction hash</string>
+    <string name="address">Address</string>
+    <string name="executed">Executed</string>
+    <string name="add_to_addressbook_upper">ADD TO ADDRESSBOOK</string>
+    <string name="nickname">Nickname</string>
+    <string name="save_upper">SAVE</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

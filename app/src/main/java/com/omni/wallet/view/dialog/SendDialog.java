@@ -22,16 +22,19 @@ import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
+import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.AddressEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.ScanSendActivity;
+import com.omni.wallet.utils.ValidateBitcoinAddress;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.popupwindow.SelectAssetPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
@@ -64,8 +67,9 @@ public class SendDialog implements Wallet.ScanSendListener {
     TextView assetsBalanceTv;
     private TextView sendFeeTv;
     private TextView sendFeeExchangeTv;
-    private List<String> list;
-    private List<String> mAddressData = new ArrayList<>();
+    private List<String> txidList;
+    private List<AddressEntity> list;
+    private List<AddressEntity> mAddressData = new ArrayList<>();
     private MyAdapter mAdapter;
     String selectAddress;
     int time = 1;
@@ -95,7 +99,27 @@ public class SendDialog implements Wallet.ScanSendListener {
         }
         Wallet.getInstance().registerScanSendListener(this);
         mLoadingDialog = new LoadingDialog(mContext);
+        SharedPreferences sp = mContext.getSharedPreferences("SP_ADDR_LIST", Activity.MODE_PRIVATE);
+        String addrListJson = sp.getString("addrListKey", "");
+        if (!StringUtils.isEmpty(addrListJson)) {
+            Gson gson = new Gson();
+            mAddressData = gson.fromJson(addrListJson, new TypeToken<List<AddressEntity>>() {
+            }.getType()); //将json字符串转换成List集合
+            removeDuplicate(mAddressData);
+            LogUtils.e(TAG, "========localaddress=====" + mAddressData.get(0).getName());
+            LogUtils.e(TAG, "========localaddress=====" + addrListJson);
+        }
         if (!StringUtils.isEmpty(payAddr)) {
+            if (mAddressData.size() == 0) {
+                toFriendName = "unname";
+            } else {
+                toFriendName = "unname";
+                for (AddressEntity entity : mAddressData) {
+                    if (entity.getAddress().equals(payAddr)) {
+                        toFriendName = entity.getName();
+                    }
+                }
+            }
             selectAddress = payAddr;
             mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
             mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
@@ -123,15 +147,6 @@ public class SendDialog implements Wallet.ScanSendListener {
      * send step one
      */
     private void showStepOne() {
-        SharedPreferences sp = mContext.getSharedPreferences("SP_ADDR_LIST", Activity.MODE_PRIVATE);
-        String addrListJson = sp.getString("addrListKey", "");
-        if (!StringUtils.isEmpty(addrListJson)) {
-            Gson gson = new Gson();
-            mAddressData = gson.fromJson(addrListJson, new TypeToken<List<String>>() {
-            }.getType()); //将json字符串转换成List集合
-            removeDuplicate(mAddressData);
-            LogUtils.e(TAG, "========localaddress=====" + mAddressData.toString());
-        }
         searchEdit = mAlertDialog.findViewById(R.id.edit_search);
         recentsAddressTv = mAlertDialog.findViewById(R.id.tv_recents_address);
         recentsAddressSecondTv = mAlertDialog.findViewById(R.id.tv_recents_address_second);
@@ -142,17 +157,18 @@ public class SendDialog implements Wallet.ScanSendListener {
             if (mAddressData.size() == 1) {
                 recentsAddressTv.setVisibility(View.VISIBLE);
                 recentsAddressSecondTv.setVisibility(View.GONE);
-                recentsAddressTv.setText(mAddressData.get(0));
+                recentsAddressTv.setText(mAddressData.get(0).getAddress());
             } else {
                 recentsAddressTv.setVisibility(View.VISIBLE);
                 recentsAddressSecondTv.setVisibility(View.VISIBLE);
-                recentsAddressTv.setText(mAddressData.get(0));
-                recentsAddressSecondTv.setText(mAddressData.get(1));
+                recentsAddressTv.setText(mAddressData.get(0).getAddress());
+                recentsAddressSecondTv.setText(mAddressData.get(1).getAddress());
             }
         }
         recentsAddressTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                toFriendName = mAddressData.get(0).getName();
                 selectAddress = recentsAddressTv.getText().toString();
                 mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
                 mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
@@ -162,6 +178,7 @@ public class SendDialog implements Wallet.ScanSendListener {
         recentsAddressSecondTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                toFriendName = mAddressData.get(1).getName();
                 selectAddress = recentsAddressSecondTv.getText().toString();
                 mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
                 mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
@@ -193,19 +210,28 @@ public class SendDialog implements Wallet.ScanSendListener {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            selectAddress = s.toString();
-                            mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
-                            mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
-                            showStepTwo();
-                        }
-                    }, 1000);
-//                    if (ValidateBitcoinAddress.validateBitcoinAddress(s.toString())) {
-//
-//                    } else {
-//                        ToastUtils.showToast(mContext, "The wallet address is invalid");
-//                    }
+                    if (ValidateBitcoinAddress.validateBitcoinAddress(s.toString())) {
+                        new Handler().postDelayed(new Runnable() {
+                            public void run() {
+                                if (mAddressData.size() == 0) {
+                                    toFriendName = "unname";
+                                } else {
+                                    toFriendName = "unname";
+                                    for (AddressEntity entity : mAddressData) {
+                                        if (entity.getAddress().equals(s.toString())) {
+                                            toFriendName = entity.getName();
+                                        }
+                                    }
+                                }
+                                selectAddress = s.toString();
+                                mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
+                                mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
+                                showStepTwo();
+                            }
+                        }, 1000);
+                    } else {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.wallet_address_is_invalid));
+                    }
                 }
             }
         });
@@ -266,6 +292,32 @@ public class SendDialog implements Wallet.ScanSendListener {
             sendFeeUnitTv.setText("satoshis");
         }
         fetchWalletBalance();
+        final EditText amountInputView = mAlertDialog.findViewById(R.id.etv_send_amount);
+        amountInputView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                estimateOnChainFee(count, time);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                assetBalance = s.toString();
+                if (!StringUtils.isEmpty(s.toString())) {
+                    if (assetId == 0) {
+                        estimateOnChainFee((long) (Double.parseDouble(assetBalance) * 100000000), time);
+                    } else {
+                        estimateOnChainFee(546, time);
+                    }
+                } else {
+                    estimateOnChainFee(0, time);
+                }
+            }
+        });
         RelativeLayout assetLayout = mAlertDialog.findViewById(R.id.layout_asset);
         assetLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -294,6 +346,13 @@ public class SendDialog implements Wallet.ScanSendListener {
                             assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
                         }
                         assetsBalanceTv.setText(assetBalanceMax);
+                        if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
+                            if (assetId == 0) {
+                                estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                            } else {
+                                estimateOnChainFee(546, time);
+                            }
+                        }
                     }
                 });
                 mSelectAssetPopupWindow.show(v);
@@ -305,26 +364,6 @@ public class SendDialog implements Wallet.ScanSendListener {
          * @author: Tong ChangHui
          * @E-mail: tch081092@gmail.com
          */
-        final EditText amountInputView = mAlertDialog.findViewById(R.id.etv_send_amount);
-        amountInputView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                estimateOnChainFee(count, time);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                assetBalance = s.toString();
-                if (!StringUtils.isEmpty(s.toString())) {
-                    estimateOnChainFee((long) (Double.parseDouble(assetBalance) * 100000000), time);
-                }
-            }
-        });
         TextView maxBtnView = mAlertDialog.findViewById(R.id.tv_btn_set_amount_max);
         maxBtnView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -345,21 +384,33 @@ public class SendDialog implements Wallet.ScanSendListener {
                                 speedButton.setText(R.string.slow);
                                 time = 1; // 10 Minutes
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    if (assetId == 0) {
+                                        estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    } else {
+                                        estimateOnChainFee(546, time);
+                                    }
                                 }
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
                                 time = 6 * 6; // 6 Hours
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    if (assetId == 0) {
+                                        estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    } else {
+                                        estimateOnChainFee(546, time);
+                                    }
                                 }
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
                                 time = 6 * 24; // 24 Hours
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    if (assetId == 0) {
+                                        estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    } else {
+                                        estimateOnChainFee(546, time);
+                                    }
                                 }
                                 break;
                         }
@@ -388,6 +439,24 @@ public class SendDialog implements Wallet.ScanSendListener {
         mAlertDialog.findViewById(R.id.layout_next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (assetId != 0) {
+                    if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+                        if (!toAddressView.getText().toString().startsWith("m") & !toAddressView.getText().toString().startsWith("n")) {
+                            ToastUtils.showToast(mContext, mContext.getString(R.string.wallet_address_is_invalid));
+                            return;
+                        }
+                    } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+                        if (!toAddressView.getText().toString().startsWith("m") & !toAddressView.getText().toString().startsWith("n")) {
+                            ToastUtils.showToast(mContext, mContext.getString(R.string.wallet_address_is_invalid));
+                            return;
+                        }
+                    } else { //mainnet
+                        if (!toAddressView.getText().toString().startsWith("1")) {
+                            ToastUtils.showToast(mContext, mContext.getString(R.string.wallet_address_is_invalid));
+                            return;
+                        }
+                    }
+                }
                 if (StringUtils.isEmpty(assetBalance)) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
                     return;
@@ -484,52 +553,96 @@ public class SendDialog implements Wallet.ScanSendListener {
                             .setAmount((long) (Double.parseDouble(assetBalance) * 100000000))
                             .setTargetConf(time)
                             .build();
-                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
+                    Obdmobile.oB_SendCoinsFrom(sendRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mAlertDialog.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
-                                    mAlertDialog.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
-                                    mLoadingDialog.dismiss();
-                                    showStepFailed(e.getMessage());
+                                    new Handler().postDelayed(new Runnable() {
+                                        public void run() {
+                                            mLoadingDialog.dismiss();
+                                            mAlertDialog.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
+                                            mAlertDialog.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                                            showStepFailed(e.getMessage());
+                                        }
+                                    }, 2000);
                                 }
                             });
                         }
 
                         @Override
                         public void onResponse(byte[] bytes) {
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    SharedPreferences sp = mContext.getSharedPreferences("SP_ADDR_LIST", Activity.MODE_PRIVATE);
-                                    String addrListJson = sp.getString("addrListKey", "");
-                                    if (StringUtils.isEmpty(addrListJson)) {
-                                        list = new ArrayList<>();
-                                        list.add(selectAddress);
-                                        Gson gson = new Gson();
-                                        String jsonStr = gson.toJson(list);
-                                        SharedPreferences.Editor editor = sp.edit();
-                                        editor.putString("addrListKey", jsonStr);
-                                        editor.commit();
-                                    } else {
-                                        Gson gson = new Gson();
-                                        list = gson.fromJson(addrListJson, new TypeToken<List<String>>() {
-                                        }.getType());
-                                        list.add(selectAddress);
-                                        String jsonStr = gson.toJson(list);
-                                        SharedPreferences.Editor editor = sp.edit();
-                                        editor.putString("addrListKey", jsonStr);
-                                        editor.commit();
+                            try {
+                                LightningOuterClass.SendCoinsResponse resp = LightningOuterClass.SendCoinsResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------sendCoinsFromOnResponse-----------------" + resp);
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        SharedPreferences sp = mContext.getSharedPreferences("SP_ADDR_LIST", Activity.MODE_PRIVATE);
+                                        String addrListJson = sp.getString("addrListKey", "");
+                                        if (StringUtils.isEmpty(addrListJson)) {
+                                            list = new ArrayList<>();
+                                            AddressEntity entity = new AddressEntity();
+                                            entity.setName("unname");
+                                            entity.setAddress(selectAddress);
+                                            list.add(entity);
+                                            Gson gson = new Gson();
+                                            String jsonStr = gson.toJson(list);
+                                            SharedPreferences.Editor editor = sp.edit();
+                                            editor.putString("addrListKey", jsonStr);
+                                            editor.commit();
+                                        } else {
+                                            Gson gson = new Gson();
+                                            list = gson.fromJson(addrListJson, new TypeToken<List<AddressEntity>>() {
+                                            }.getType());
+                                            AddressEntity entity = new AddressEntity();
+                                            entity.setName("unname");
+                                            entity.setAddress(selectAddress);
+                                            list.add(entity);
+                                            String jsonStr = gson.toJson(list);
+                                            SharedPreferences.Editor editor = sp.edit();
+                                            editor.putString("addrListKey", jsonStr);
+                                            editor.commit();
+                                        }
+                                        // 存储txid
+                                        SharedPreferences txidSp = mContext.getSharedPreferences("SP_TXID_LIST", Activity.MODE_PRIVATE);
+                                        String txidListJson = txidSp.getString("txidListKey", "");
+                                        if (StringUtils.isEmpty(txidListJson)) {
+                                            txidList = new ArrayList<>();
+                                            txidList.add(resp.getTxid());
+                                            Gson gson = new Gson();
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
+                                            editor.commit();
+                                        } else {
+                                            Gson gson = new Gson();
+                                            txidList = gson.fromJson(txidListJson, new TypeToken<List<String>>() {
+                                            }.getType());
+                                            txidList.add(resp.getTxid());
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
+                                            editor.commit();
+                                        }
+                                        EventBus.getDefault().post(new SendSuccessEvent());
+                                        new Handler().postDelayed(new Runnable() {
+                                            public void run() {
+                                                mLoadingDialog.dismiss();
+//                                                mAlertDialog.dismiss();
+//                                                mSendSuccessDialog = new SendSuccessDialog(mContext);
+//                                                mSendSuccessDialog.show("success");
+                                                mAlertDialog.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                                                mAlertDialog.findViewById(R.id.lv_step_success_content).setVisibility(View.VISIBLE);
+                                                showStepSuccess(resp.getTxid());
+                                            }
+                                        }, 2000);
                                     }
-                                    EventBus.getDefault().post(new SendSuccessEvent());
-                                    mLoadingDialog.dismiss();
-                                    mAlertDialog.dismiss();
-                                    mSendSuccessDialog = new SendSuccessDialog(mContext);
-                                    mSendSuccessDialog.show("success");
-                                }
-                            });
+                                });
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 } else {
@@ -540,55 +653,190 @@ public class SendDialog implements Wallet.ScanSendListener {
                             .setAssetAmount((long) (Double.parseDouble(assetBalance) * 100000000))
                             .setTargetConf(time)
                             .build();
-                    Obdmobile.sendCoinsFrom(sendRequest.toByteArray(), new Callback() {
+                    Obdmobile.oB_SendCoinsFrom(sendRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mAlertDialog.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
-                                    mAlertDialog.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
-                                    mLoadingDialog.dismiss();
-                                    showStepFailed(e.getMessage());
+                                    new Handler().postDelayed(new Runnable() {
+                                        public void run() {
+                                            mLoadingDialog.dismiss();
+                                            mAlertDialog.findViewById(R.id.lv_step_failed_content).setVisibility(View.VISIBLE);
+                                            mAlertDialog.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                                            showStepFailed(e.getMessage());
+                                        }
+                                    }, 2000);
                                 }
                             });
                         }
 
                         @Override
                         public void onResponse(byte[] bytes) {
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    SharedPreferences sp = mContext.getSharedPreferences("SP_ADDR_LIST", Activity.MODE_PRIVATE);
-                                    String addrListJson = sp.getString("addrListKey", "");
-                                    if (StringUtils.isEmpty(addrListJson)) {
-                                        list = new ArrayList<>();
-                                        list.add(selectAddress);
-                                        Gson gson = new Gson();
-                                        String jsonStr = gson.toJson(list);
-                                        SharedPreferences.Editor editor = sp.edit();
-                                        editor.putString("addrListKey", jsonStr);
-                                        editor.commit();
-                                    } else {
-                                        Gson gson = new Gson();
-                                        list = gson.fromJson(addrListJson, new TypeToken<List<String>>() {
-                                        }.getType());
-                                        list.add(selectAddress);
-                                        String jsonStr = gson.toJson(list);
-                                        SharedPreferences.Editor editor = sp.edit();
-                                        editor.putString("addrListKey", jsonStr);
-                                        editor.commit();
+                            try {
+                                LightningOuterClass.SendCoinsResponse resp = LightningOuterClass.SendCoinsResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------sendCoinsFromOnResponse-----------------" + resp);
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        SharedPreferences sp = mContext.getSharedPreferences("SP_ADDR_LIST", Activity.MODE_PRIVATE);
+                                        String addrListJson = sp.getString("addrListKey", "");
+                                        if (StringUtils.isEmpty(addrListJson)) {
+                                            list = new ArrayList<>();
+                                            AddressEntity entity = new AddressEntity();
+                                            entity.setName("unname");
+                                            entity.setAddress(selectAddress);
+                                            list.add(entity);
+                                            Gson gson = new Gson();
+                                            String jsonStr = gson.toJson(list);
+                                            SharedPreferences.Editor editor = sp.edit();
+                                            editor.putString("addrListKey", jsonStr);
+                                            editor.commit();
+                                        } else {
+                                            Gson gson = new Gson();
+                                            list = gson.fromJson(addrListJson, new TypeToken<List<AddressEntity>>() {
+                                            }.getType());
+                                            AddressEntity entity = new AddressEntity();
+                                            entity.setName("unname");
+                                            entity.setAddress(selectAddress);
+                                            list.add(entity);
+                                            String jsonStr = gson.toJson(list);
+                                            SharedPreferences.Editor editor = sp.edit();
+                                            editor.putString("addrListKey", jsonStr);
+                                            editor.commit();
+                                        }
+                                        // 存储txid
+                                        SharedPreferences txidSp = mContext.getSharedPreferences("SP_TXID_LIST", Activity.MODE_PRIVATE);
+                                        String txidListJson = txidSp.getString("txidListKey", "");
+                                        if (StringUtils.isEmpty(txidListJson)) {
+                                            txidList = new ArrayList<>();
+                                            txidList.add(resp.getTxid());
+                                            Gson gson = new Gson();
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
+                                            editor.commit();
+                                        } else {
+                                            Gson gson = new Gson();
+                                            txidList = gson.fromJson(txidListJson, new TypeToken<List<String>>() {
+                                            }.getType());
+                                            txidList.add(resp.getTxid());
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
+                                            editor.commit();
+                                        }
+                                        EventBus.getDefault().post(new SendSuccessEvent());
+                                        new Handler().postDelayed(new Runnable() {
+                                            public void run() {
+                                                mLoadingDialog.dismiss();
+//                                                mAlertDialog.dismiss();
+//                                                mSendSuccessDialog = new SendSuccessDialog(mContext);
+//                                                mSendSuccessDialog.show("success");
+                                                mAlertDialog.findViewById(R.id.lv_step_three_content).setVisibility(View.GONE);
+                                                mAlertDialog.findViewById(R.id.lv_step_success_content).setVisibility(View.VISIBLE);
+                                                showStepSuccess(resp.getTxid());
+                                            }
+                                        }, 2000);
                                     }
-                                    EventBus.getDefault().post(new SendSuccessEvent());
-                                    mLoadingDialog.dismiss();
-                                    mAlertDialog.dismiss();
-                                    mSendSuccessDialog = new SendSuccessDialog(mContext);
-                                    mSendSuccessDialog.show("success");
-                                }
-                            });
+                                });
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 }
+            }
+        });
+    }
+
+    /**
+     * send step success
+     */
+    private void showStepSuccess(String transactionHash) {
+        TextView transactionHashTv = mAlertDialog.findViewById(R.id.tv_send_success_transaction_hash);
+        TextView successAddressTv = mAlertDialog.findViewById(R.id.tv_send_success_address);
+        TextView successExecutedTv = mAlertDialog.findViewById(R.id.tv_send_success_executed);
+        ImageView successTokenImageIv = mAlertDialog.findViewById(R.id.iv_send_success_token_image);
+        TextView successTokenTypeTv = mAlertDialog.findViewById(R.id.tv_send_success_token_type);
+        TextView successAmountTv = mAlertDialog.findViewById(R.id.tv_send_success_amount);
+        TextView successAmountUnitTv = mAlertDialog.findViewById(R.id.tv_send_success_amount_unit);
+        TextView successAmountValueTv = mAlertDialog.findViewById(R.id.tv_send_success_amount_value);
+        TextView gasFeeAmountTv = mAlertDialog.findViewById(R.id.tv_send_success_gas_fee_amount);
+        TextView gasFeeAmountUnitTv = mAlertDialog.findViewById(R.id.tv_send_success_gas_fee_unit);
+        TextView successTotalValueTv = mAlertDialog.findViewById(R.id.tv_send_success_total_value);
+        transactionHashTv.setText(transactionHash);
+        successExecutedTv.setText(DateUtils.formatCurrentTime());
+        successAddressTv.setText(selectAddress);
+        successAmountTv.setText(assetBalance);
+        gasFeeAmountTv.setText(feeStr + "");
+        if (assetId == 0) {
+            DecimalFormat df = new DecimalFormat("0.00######");
+            successTokenImageIv.setImageResource(R.mipmap.icon_btc_logo_small);
+            successTokenTypeTv.setText("BTC");
+            successAmountUnitTv.setText("BTC");
+            gasFeeAmountUnitTv.setText("satoshis");
+            successAmountValueTv.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
+            successTotalValueTv.setText(df.format(Double.parseDouble(sendUsedValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+        } else {
+            DecimalFormat df = new DecimalFormat("0.00######");
+            successTokenImageIv.setImageResource(R.mipmap.icon_usdt_logo_small);
+            successTokenTypeTv.setText("USDT");
+            successAmountUnitTv.setText("USDT");
+            gasFeeAmountUnitTv.setText("satoshis");
+            successAmountValueTv.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
+            successTotalValueTv.setText(df.format(Double.parseDouble(sendUsedValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+        }
+        mAlertDialog.findViewById(R.id.layout_add_to_addressbook).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAlertDialog.findViewById(R.id.layout_step_add_to_addressbook).setVisibility(View.VISIBLE);
+                mAlertDialog.findViewById(R.id.lv_step_success_content).setVisibility(View.GONE);
+                showStepAddAddressBook();
+            }
+        });
+    }
+
+    /**
+     * send step add to addressbook
+     */
+    private void showStepAddAddressBook() {
+        TextView addressTv = mAlertDialog.findViewById(R.id.tv_address);
+        TextView nicknameEdit = mAlertDialog.findViewById(R.id.edit_nickname);
+        addressTv.setText(selectAddress);
+        mAlertDialog.findViewById(R.id.layout_save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nickname = nicknameEdit.getText().toString();
+                SharedPreferences sp = mContext.getSharedPreferences("SP_ADDR_LIST", Activity.MODE_PRIVATE);
+                String addrListJson = sp.getString("addrListKey", "");
+                if (StringUtils.isEmpty(addrListJson)) {
+                    list = new ArrayList<>();
+                    AddressEntity entity = new AddressEntity();
+                    entity.setName(nickname);
+                    entity.setAddress(selectAddress);
+                    list.add(entity);
+                    Gson gson = new Gson();
+                    String jsonStr = gson.toJson(list);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("addrListKey", jsonStr);
+                    editor.commit();
+                } else {
+                    Gson gson = new Gson();
+                    list = gson.fromJson(addrListJson, new TypeToken<List<AddressEntity>>() {
+                    }.getType());
+                    AddressEntity entity = new AddressEntity();
+                    entity.setName(nickname);
+                    entity.setAddress(selectAddress);
+                    list.add(entity);
+                    String jsonStr = gson.toJson(list);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("addrListKey", jsonStr);
+                    editor.commit();
+                }
+                mAlertDialog.dismiss();
             }
         });
     }
@@ -651,24 +899,27 @@ public class SendDialog implements Wallet.ScanSendListener {
      * @描述： send list列表适配器
      * @desc: Adapter for send list
      */
-    private class MyAdapter extends CommonRecyclerAdapter<String> {
+    private class MyAdapter extends CommonRecyclerAdapter<AddressEntity> {
 
-        public MyAdapter(Context context, List<String> data, int layoutId) {
+        public MyAdapter(Context context, List<AddressEntity> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, final int position, final String item) {
+        public void convert(ViewHolder holder, final int position, final AddressEntity item) {
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    selectAddress = item;
+                    toFriendName = item.getName();
+                    selectAddress = item.getAddress();
                     mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
                     mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
                     showStepTwo();
                 }
             });
-            holder.setText(R.id.tv_send_list_address, item);
+            holder.setText(R.id.tv_group_name, item.getName().substring(0, 1));
+            holder.setText(R.id.tv_send_list_name, item.getName());
+            holder.setText(R.id.tv_send_list_address, item.getAddress());
         }
     }
 
@@ -731,7 +982,7 @@ public class SendDialog implements Wallet.ScanSendListener {
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
                 .setAddress(User.getInstance().getWalletAddress(mContext))
                 .build();
-        Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());
@@ -767,6 +1018,16 @@ public class SendDialog implements Wallet.ScanSendListener {
 
     @Override
     public void onScanSendUpdated(String result) {
+        if (mAddressData.size() == 0) {
+            toFriendName = "unname";
+        } else {
+            toFriendName = "unname";
+            for (AddressEntity entity : mAddressData) {
+                if (entity.getAddress().equals(result)) {
+                    toFriendName = entity.getName();
+                }
+            }
+        }
         selectAddress = result;
         mAlertDialog.findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
         mAlertDialog.findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
@@ -774,11 +1035,19 @@ public class SendDialog implements Wallet.ScanSendListener {
     }
 
     // 循环重复数据
-    public static void removeDuplicate(List list) {
+    public static void removeDuplicate(List<AddressEntity> list) {
         for (int i = 0; i < list.size() - 1; i++) {
             for (int j = list.size() - 1; j > i; j--) {
-                if (list.get(j).equals(list.get(i))) {
-                    list.remove(j);
+                if (list.get(j).getAddress().equals(list.get(i).getAddress())) {
+                    if (list.get(j).getName().equals("unname") & !list.get(i).getName().equals("unname")) {
+                        list.remove(j);
+                    } else if (!list.get(j).getName().equals("unname") & list.get(i).getName().equals("unname")) {
+                        list.remove(i);
+                    } else if (!list.get(j).getName().equals("unname") & !list.get(i).getName().equals("unname")) {
+                        list.remove(i);
+                    } else if (list.get(j).getName().equals("unname") & list.get(i).getName().equals("unname")) {
+                        list.remove(i);
+                    }
                 }
             }
         }

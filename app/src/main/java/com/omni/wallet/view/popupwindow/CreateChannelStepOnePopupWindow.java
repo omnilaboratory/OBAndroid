@@ -419,7 +419,7 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
                 .setLocalFundingAssetAmount(Long.parseLong(assetBalance))
                 .setAssetId((int) assetId)
                 .build();
-        Obdmobile.openChannel(openChannelRequest.toByteArray(), new RecvStream() {
+        Obdmobile.oB_OpenChannel(openChannelRequest.toByteArray(), new RecvStream() {
             @Override
             public void onError(Exception e) {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -627,7 +627,7 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
                 .setAddress(User.getInstance().getWalletAddress(mContext))
                 .build();
-        Obdmobile.walletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());

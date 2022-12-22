@@ -124,13 +124,11 @@ public class MenuPopupWindow {
                 @Override
                 public void onClick(View v) {
                     mLoadingDialog.show();
-                    LightningOuterClass.DisconnectPeerRequest disconnectPeerRequest = LightningOuterClass.DisconnectPeerRequest.newBuilder()
-                            .setPubKey(pubKey)
-                            .build();
-                    Obdmobile.disconnectPeer(disconnectPeerRequest.toByteArray(), new Callback() {
+                    LightningOuterClass.StopRequest stopRequest = LightningOuterClass.StopRequest.newBuilder().build();
+                    Obdmobile.stopDaemon(stopRequest.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
-                            LogUtils.e(TAG, "------------------disconnectPeerOnError------------------" + e.getMessage());
+                            LogUtils.e(TAG, "------------------stopDaemonOnError------------------" + e.getMessage());
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -144,8 +142,8 @@ public class MenuPopupWindow {
                         @Override
                         public void onResponse(byte[] bytes) {
                             try {
-                                LightningOuterClass.DisconnectPeerResponse resp = LightningOuterClass.DisconnectPeerResponse.parseFrom(bytes);
-                                LogUtils.e(TAG, "------------------disconnectPeerOnResponse-----------------" + resp);
+                                LightningOuterClass.StopResponse resp = LightningOuterClass.StopResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------stopDaemonOnResponse-----------------" + resp);
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {

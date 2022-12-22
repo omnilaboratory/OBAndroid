@@ -150,7 +150,7 @@ public class AccountManagePopupWindow {
     private void getListRecAddress() {
         LightningOuterClass.ListRecAddressRequest listRecAddressRequest = LightningOuterClass.ListRecAddressRequest.newBuilder()
                 .build();
-        Obdmobile.listRecAddress(listRecAddressRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_ListRecAddress(listRecAddressRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------listRecAddressOnError------------------" + e.getMessage());

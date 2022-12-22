@@ -18,9 +18,7 @@ import android.widget.Toast;
 import com.downloader.Error;
 import com.downloader.OnDownloadListener;
 import com.downloader.OnProgressListener;
-import com.downloader.OnStartOrResumeListener;
 import com.downloader.PRDownloader;
-import com.downloader.PRDownloaderConfig;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
@@ -288,7 +286,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     public void newAddressToWallet (){
         LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
-        Obdmobile.newAddress(newAddressRequest.toByteArray(), new Callback() {
+        Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();

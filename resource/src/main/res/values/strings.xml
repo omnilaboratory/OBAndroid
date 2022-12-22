@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">鑫房链物业</string>
+    <string name="app_name">resource</string>
 
     <!--错误码相关-->
     <string name="error_code_no_network">网络无连接，请检查网络设置</string>

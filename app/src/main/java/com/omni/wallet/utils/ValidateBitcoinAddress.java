@@ -15,7 +15,7 @@ public class ValidateBitcoinAddress {
     private static final String ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
     public static boolean validateBitcoinAddress(String addr) {
-        if (addr.length() < 26 || addr.length() > 35)
+        if (addr.length() < 26 || addr.length() > 34)
             return false;
         byte[] decoded = decodeBase58To25Bytes(addr);
         if (decoded == null)

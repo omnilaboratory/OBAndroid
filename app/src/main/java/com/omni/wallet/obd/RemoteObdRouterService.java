@@ -16,12 +16,12 @@ public class RemoteObdRouterService implements ObdRouterService {
 
     @Override
     public Observable<lnrpc.LightningOuterClass.Payment> sendPaymentV2(routerrpc.RouterOuterClass.SendPaymentRequest request) {
-        return DefaultObservable.createDefault(emitter -> asyncStub.sendPaymentV2(request, new RemoteObdStreamObserver<>(emitter)));
+        return DefaultObservable.createDefault(emitter -> asyncStub.oBSendPaymentV2(request, new RemoteObdStreamObserver<>(emitter)));
     }
 
     @Override
     public Observable<lnrpc.LightningOuterClass.Payment> trackPaymentV2(routerrpc.RouterOuterClass.TrackPaymentRequest request) {
-        return DefaultObservable.createDefault(emitter -> asyncStub.trackPaymentV2(request, new RemoteObdStreamObserver<>(emitter)));
+        return DefaultObservable.createDefault(emitter -> asyncStub.oBTrackPaymentV2(request, new RemoteObdStreamObserver<>(emitter)));
     }
 
     @Override
