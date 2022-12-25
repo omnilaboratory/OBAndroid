@@ -308,11 +308,7 @@ public class SendDialog implements Wallet.ScanSendListener {
             public void afterTextChanged(Editable s) {
                 assetBalance = s.toString();
                 if (!StringUtils.isEmpty(s.toString())) {
-                    if (assetId == 0) {
-                        estimateOnChainFee((long) (Double.parseDouble(assetBalance) * 100000000), time);
-                    } else {
-                        estimateOnChainFee(546, time);
-                    }
+                    estimateOnChainFee((long) (Double.parseDouble(assetBalance) * 100000000), time);
                 } else {
                     estimateOnChainFee(0, time);
                 }
@@ -347,11 +343,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                         }
                         assetsBalanceTv.setText(assetBalanceMax);
                         if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                            if (assetId == 0) {
-                                estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
-                            } else {
-                                estimateOnChainFee(546, time);
-                            }
+                            estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
                         }
                     }
                 });
@@ -384,33 +376,21 @@ public class SendDialog implements Wallet.ScanSendListener {
                                 speedButton.setText(R.string.slow);
                                 time = 1; // 10 Minutes
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    if (assetId == 0) {
-                                        estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
-                                    } else {
-                                        estimateOnChainFee(546, time);
-                                    }
+                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
                                 }
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
                                 time = 6 * 6; // 6 Hours
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    if (assetId == 0) {
-                                        estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
-                                    } else {
-                                        estimateOnChainFee(546, time);
-                                    }
+                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
                                 }
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
                                 time = 6 * 24; // 24 Hours
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    if (assetId == 0) {
-                                        estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
-                                    } else {
-                                        estimateOnChainFee(546, time);
-                                    }
+                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
                                 }
                                 break;
                         }
@@ -928,11 +908,24 @@ public class SendDialog implements Wallet.ScanSendListener {
      */
     private void estimateOnChainFee(long amount, int targetConf) {
         // let LND estimate fee
-        LightningOuterClass.EstimateFeeRequest asyncEstimateFeeRequest = LightningOuterClass.EstimateFeeRequest.newBuilder()
-                .putAddrToAmount(selectAddress, amount)
-                .setTargetConf(targetConf)
-                .build();
-        Obdmobile.estimateFee(asyncEstimateFeeRequest.toByteArray(), new Callback() {
+        LightningOuterClass.ObEstimateFeeRequest asyncEstimateFeeRequest;
+        if (assetId == 0) {
+            asyncEstimateFeeRequest = LightningOuterClass.ObEstimateFeeRequest.newBuilder()
+                    .setAddr(selectAddress)
+                    .setFrom(User.getInstance().getWalletAddress(mContext))
+                    .setAmount(amount)
+                    .setTargetConf(targetConf)
+                    .build();
+        } else {
+            asyncEstimateFeeRequest = LightningOuterClass.ObEstimateFeeRequest.newBuilder()
+                    .setAssetId((int) assetId)
+                    .setAddr(selectAddress)
+                    .setFrom(User.getInstance().getWalletAddress(mContext))
+                    .setAssetAmount(amount)
+                    .setTargetConf(targetConf)
+                    .build();
+        }
+        Obdmobile.oB_EstimateFee(asyncEstimateFeeRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------asyncEstimateFeeOnError------------------" + e.getMessage());

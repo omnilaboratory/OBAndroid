@@ -65,6 +65,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import invoicesrpc.InvoicesOuterClass;
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -989,18 +990,17 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
                         @Override
                         public void onResponse(byte[] bytes) {
-                            try {
-                                LightningOuterClass.DeletePaymentResponse resp = LightningOuterClass.DeletePaymentResponse.parseFrom(bytes);
-                                LogUtils.e(TAG, "------------------deletePaymentOnResponse-----------------" + resp);
-                                menuLayout.quickClose();
-                                mToBePaidData.remove(position);
-                                mToBePaidAdapter.notifyRemoveItem(position);
-                                if (mToBePaidData.size() == 0) {
-                                    mToBePaidAdapter.notifyDataSetChanged();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    menuLayout.quickClose();
+                                    mToBePaidData.remove(position);
+                                    mToBePaidAdapter.notifyRemoveItem(position);
+                                    if (mToBePaidData.size() == 0) {
+                                        mToBePaidAdapter.notifyDataSetChanged();
+                                    }
                                 }
-                            } catch (InvalidProtocolBufferException e) {
-                                e.printStackTrace();
-                            }
+                            });
                         }
                     });
                 }
@@ -1129,11 +1129,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
             Long amt = item.getValueMsat();
             Long amtPayed = item.getAmtPaidMsat();
 
+            final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_my_invoices_list_swipe_menu);
             if (amt.equals(0L)) {
                 // if no specific value was requested
                 if (!amtPayed.equals(0L)) {
                     // The invoice has been payed
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
+                    menuLayout.setSwipeEnable(false);
                     DecimalFormat df = new DecimalFormat("0.00######");
                     if (assetId == 0) {
                         holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed / 1000)) / 100000000));
@@ -1143,12 +1145,26 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 } else {
                     // The invoice has not been payed yet
                     holder.setText(R.id.tv_amount, "0.00");
-                    if (isInvoiceExpired(item)) {
-                        // The invoice has expired
-                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
+                    if (StringUtils.isEmpty(String.valueOf(item.getState()))) {
+                        if (isInvoiceExpired(item)) {
+                            // The invoice has expired
+                            holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
+                            menuLayout.setSwipeEnable(false);
+                        } else {
+                            // The invoice has not yet expired
+                            holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                            menuLayout.setSwipeEnable(true);
+                        }
                     } else {
-                        // The invoice has not yet expired
-                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                        if (isInvoiceExpired(item) || item.getState() == LightningOuterClass.Invoice.InvoiceState.CANCELED) {
+                            // The invoice has expired
+                            holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
+                            menuLayout.setSwipeEnable(false);
+                        } else {
+                            // The invoice has not yet expired
+                            holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                            menuLayout.setSwipeEnable(true);
+                        }
                     }
                 }
             } else {
@@ -1156,6 +1172,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 if (isInvoicePayed(item)) {
                     // The invoice has been payed
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
+                    menuLayout.setSwipeEnable(false);
                     DecimalFormat df = new DecimalFormat("0.00######");
                     if (assetId == 0) {
                         holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amtPayed / 1000)) / 100000000));
@@ -1170,25 +1187,60 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     } else {
                         holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(amt)) / 100000000));
                     }
-                    if (isInvoiceExpired(item)) {
-                        // The invoice has expired
-                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
+                    if (StringUtils.isEmpty(String.valueOf(item.getState()))) {
+                        if (isInvoiceExpired(item)) {
+                            // The invoice has expired
+                            holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
+                            menuLayout.setSwipeEnable(false);
+                        } else {
+                            // The invoice has not yet expired
+                            holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                            menuLayout.setSwipeEnable(true);
+                        }
                     } else {
-                        // The invoice has not yet expired
-                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                        if (isInvoiceExpired(item) || item.getState() == LightningOuterClass.Invoice.InvoiceState.CANCELED) {
+                            // The invoice has expired
+                            holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_off_red);
+                            menuLayout.setSwipeEnable(false);
+                        } else {
+                            // The invoice has not yet expired
+                            holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
+                            menuLayout.setSwipeEnable(true);
+                        }
                     }
                 }
             }
-            final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_my_invoices_list_swipe_menu);
             holder.getView(R.id.tv_my_invoices_delete).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    menuLayout.quickClose();
-                    mMyInvoicesData.remove(position);
-                    mMyInvoicesAdapter.notifyRemoveItem(position);
-                    if (mMyInvoicesData.size() == 0) {
-                        mMyInvoicesAdapter.notifyDataSetChanged();
-                    }
+                    /**
+                     * Used to delete a invoice.
+                     * 删除发票
+                     */
+                    InvoicesOuterClass.CancelInvoiceMsg cancelInvoiceMsg = InvoicesOuterClass.CancelInvoiceMsg.newBuilder()
+                            .setPaymentHash(item.getRHash())
+                            .build();
+                    Obdmobile.invoicesCancelInvoice(cancelInvoiceMsg.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------invoicesCancelInvoiceOnError------------------" + e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    menuLayout.quickClose();
+                                    mMyInvoicesData.remove(position);
+                                    mMyInvoicesAdapter.notifyRemoveItem(position);
+                                    if (mMyInvoicesData.size() == 0) {
+                                        mMyInvoicesAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
+                        }
+                    });
                 }
             });
         }
