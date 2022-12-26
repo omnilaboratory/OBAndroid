@@ -15,6 +15,7 @@ import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.framelibrary.common.Constants;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
 import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
 import com.omni.wallet.utils.AppVersionUtils;
 
@@ -141,9 +142,11 @@ public class SplashActivity extends AppBaseActivity {
         if (User.getInstance().isLogin(mContext) & !StringUtils.isEmpty(User.getInstance().getFirstLogin(mContext))) {
             switchActivityFinish(UnlockActivity.class, mBundle);
 //            switchActivityFinish(RestoreChannelActivity.class, mBundle);
+//            switchActivityFinish(BackupChannelActivity.class, mBundle);
         } else {
             switchActivityFinish(UnlockActivity.class, mBundle);
 //            switchActivityFinish(RestoreChannelActivity.class, mBundle);
+//            switchActivityFinish(BackupChannelActivity.class, mBundle);
         }
     }
 

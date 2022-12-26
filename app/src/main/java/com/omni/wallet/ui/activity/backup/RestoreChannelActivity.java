@@ -1,5 +1,6 @@
 package com.omni.wallet.ui.activity.backup;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -19,14 +20,23 @@ import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.listItems.BackupFile;
+import com.omni.wallet.ui.activity.AccountLightningActivity;
 import com.omni.wallet.utils.FilesUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import lnrpc.LightningOuterClass;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 public class RestoreChannelActivity extends AppBaseActivity {
     private List<String> pathList = new ArrayList();
@@ -179,7 +189,7 @@ public class RestoreChannelActivity extends AppBaseActivity {
                             ToastUtils.showToast(mContext,"The file type is wrong,please select the channel backup type file.");
                         }
                     });
-                }else if(fileType == "channelBack"){
+                }else if(fileType == "OBBackupChannel"){
                     holder.setImageResource(R.id.iv_file_type,R.mipmap.icon_file);
                     holder.setOnItemClickListener(new View.OnClickListener() {
                         @Override
@@ -235,6 +245,60 @@ public class RestoreChannelActivity extends AppBaseActivity {
                     });
                 }
             }
+        }
+    }
+    
+    @OnClick(R.id.btn_back)
+    public void clickBackButton(){
+        finish();
+    }
+    
+    @OnClick(R.id.btn_next)
+    public void clickNextButton(){
+        switchActivity(AccountLightningActivity.class);
+    }
+    
+    @SuppressLint("LongLogTag")
+    @OnClick(R.id.btn_restore)
+    public void clickRestoreBtn(){
+        try {
+            File file = new File(selectedFilePath);
+            Boolean isDirectory = file.isDirectory();
+            if(isDirectory){
+                ToastUtils.showToast(mContext,"Your path is a directory,please choose the file end with .OBBackupChannel!");
+            }else{
+                InputStream inputStream = new FileInputStream(file);
+                LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(inputStream);
+                LightningOuterClass.MultiChanBackup multiChanBackup =  chanBackupSnapshot.getMultiChanBackup();
+                LightningOuterClass.ChannelBackups channelBackups = chanBackupSnapshot.getSingleChanBackups();
+
+                LightningOuterClass.RestoreChanBackupRequest restoreChanBackupRequest = LightningOuterClass.RestoreChanBackupRequest.newBuilder()
+                        .setMultiChanBackup(multiChanBackup.getMultiChanBackup())
+                        .setChanBackups(channelBackups)
+                        .build();
+                Log.e("multi Channel restoreChanBackupRequest Str", String.valueOf(restoreChanBackupRequest));
+                Obdmobile.restoreChannelBackups(restoreChanBackupRequest.toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e("restore string","restore failed");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        Log.e("restore string","restore success");
+                        ToastUtils.showToast(mContext,"The channels are recover successfully!");
+                        if(bytes==null){
+                            return;
+                        }
+
+                    }
+                });
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

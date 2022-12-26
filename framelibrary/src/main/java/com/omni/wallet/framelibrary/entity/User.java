@@ -63,6 +63,8 @@ public class User {
     private String usdtPrice;
     // 自身节点的pubKey
     private String fromPubKey;
+    
+    private String initWalletType;
 
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
@@ -241,6 +243,14 @@ public class User {
     public void setFromPubKey(Context context, String fromPubKey) {
         PreferencesUtils.saveFromPubKeyToLocal(context, fromPubKey);
         this.fromPubKey = fromPubKey;
+    }
+    
+    public String getInitWalletType() {
+        return initWalletType;
+    }
+
+    public void setInitWalletType(String initWalletType) {
+        this.initWalletType = initWalletType;
     }
 
     /**

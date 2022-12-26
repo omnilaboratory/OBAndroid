@@ -141,6 +141,10 @@
             android:name=".ui.activity.backup.RestoreChannelActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.activity.backup.BackupChannelActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

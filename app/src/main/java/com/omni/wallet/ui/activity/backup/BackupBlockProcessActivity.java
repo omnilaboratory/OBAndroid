@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,10 +79,13 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     TextView typeSyncTV;
     @BindView(R.id.commit_content)
     RelativeLayout commitContentRL;
-
+    @BindView(R.id.btn_start_text)
+    TextView startBtnText;
     String newCreatedAddress ="";
     ObdLogFileObserver obdLogFileObserver = null;
     SharedPreferences blockData = null;
+    
+    String initWalletType = User.getInstance().getInitWalletType();
 
     @SuppressLint("LongLogTag")
     private final SharedPreferences.OnSharedPreferenceChangeListener currentBlockSharePreferenceChangeListener = (sharedPreferences, key) -> {
@@ -151,7 +155,11 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-        
+//        if(initWalletType.equals("create")){
+//            startBtnText.setText(R.string.start_upper);
+//        }else if(initWalletType.equals("recovery")){
+//            startBtnText.setText(R.string.next_upper);
+//        }
         mLoadingDialog = new LoadingDialog(mContext);
         accountList = WalletGetInfo.getAccountList(ctx);
         String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/regtest/lnd.log";
@@ -160,6 +168,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
         blockData.edit().putBoolean("isSynced",false);
         blockData.edit().commit();
+        
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -212,6 +221,13 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             copySuccessToast.show();
         }else{
             switchActivityFinish(AccountLightningActivity.class);
+//            String initWalletType = User.getInstance().getInitWalletType();
+//            if(initWalletType.equals("create")){ 
+//                switchActivityFinish(AccountLightningActivity.class);
+//            }else if(initWalletType.equals("recovery")){
+//                switchActivity(RestoreChannelActivity.class);
+//            }
+            
         }
 
     }

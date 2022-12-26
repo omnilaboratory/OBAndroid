@@ -152,6 +152,7 @@
                                 android:layout_height="36dp"
                                 android:src="@mipmap/arrow_right"/>
                             <TextView
+                                android:id="@+id/btn_start_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/start_upper"

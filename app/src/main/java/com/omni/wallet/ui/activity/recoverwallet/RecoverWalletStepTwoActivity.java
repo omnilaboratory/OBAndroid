@@ -18,6 +18,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
 import com.omni.wallet.utils.CheckInputRules;
@@ -271,6 +272,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                         SharedPreferences.Editor macaroonDataEditor = macaroonData.edit();
                         macaroonDataEditor.putString("macaroon", macaroon.toString());
                         macaroonDataEditor.commit();
+                        User.getInstance().setInitWalletType("recovery");
                         switchActivity(BackupBlockProcessActivity.class);
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();

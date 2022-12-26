@@ -7,18 +7,10 @@ import android.os.FileObserver;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.omni.wallet.baselibrary.http.HttpUtils;
-import com.omni.wallet.baselibrary.http.callback.EngineCallback;
-import com.omni.wallet.baselibrary.http.progress.entity.Progress;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,7 +58,15 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
                             readingLineNum++;
                             if(readingLineNum>lastReadLineNum){
                                 Log.e("-------------------------reading,lastReadLineNum----------------------",String.valueOf(readingLineNum)+","+String.valueOf(lastReadLineNum));
-                                if(checkString(oldLine,totalBlock)){
+                                if(checkString(oldLine)){
+                                    String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
+                                    if(Integer.parseInt(stringHeight)>=totalBlock){
+                                        Boolean isOpen = blockDataSharedPreferences.getBoolean("isOpened",false);
+                                        if(!isOpen){
+                                            blockDataEditor.putBoolean("isOpened",true);
+                                        }
+                                    }
+                                }else if(checkRescanString(oldLine)){
                                     String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
                                     if(Integer.parseInt(stringHeight)>=totalBlock){
                                         Boolean isOpen = blockDataSharedPreferences.getBoolean("isOpened",false);
@@ -81,7 +81,15 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
                         }else{
                             readingLineNum++;
                             if(readingLineNum>lastReadLineNum){
-                                if(checkString(oldLine,totalBlock)){
+                                if(checkString(oldLine)){
+                                    String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
+                                    if(Integer.parseInt(stringHeight)>=totalBlock){
+                                        Boolean isOpen = blockDataSharedPreferences.getBoolean("isOpened",false);
+                                        if(!isOpen){
+                                            blockDataEditor.putBoolean("isOpened",true);
+                                        }
+                                    }
+                                }else if(checkRescanString(oldLine)){
                                     String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
                                     if(Integer.parseInt(stringHeight)>=totalBlock){
                                         Boolean isOpen = blockDataSharedPreferences.getBoolean("isOpened",false);
@@ -111,10 +119,20 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
 
 
     @SuppressLint("LongLogTag")
-    private Boolean checkString(String logLine,int block){
+    private Boolean checkString(String logLine){
         Boolean isMatch = false;
         String pattern;
         pattern = ".*Chain backend is fully synced \\(end_height=\\d+\\)!.*";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(logLine);
+        isMatch = m.matches();
+        return isMatch;
+    }
+    
+    private Boolean checkRescanString(String logLine){
+        Boolean isMatch = false;
+        String pattern;
+        pattern = ".*Finished rescan for 1 address \\(synced to block \\w+, height \\d+\\)!.*";
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(logLine);
         isMatch = m.matches();

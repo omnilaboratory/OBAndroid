@@ -146,7 +146,6 @@ public class BackupChannelActivity extends AppBaseActivity {
         @Override
         public void convert(ViewHolder holder, int position, BackupFile item) {
             String filename =  item.getFilename();
-            String fileType =  item.getFileType();
             String lastEdit =  item.getLastEdit();
             Boolean isSelected = item.getSelected();
             holder.setText(R.id.tv_file_name,filename);
@@ -164,7 +163,22 @@ public class BackupChannelActivity extends AppBaseActivity {
                     if(item.isHasChildFile()){
                         updatePathView(filename);
                     }else{
-                        
+                        item.setSelected(true);
+                        for (int i = 0; i<directoryData.size();i++){
+                            if(i != position){
+                                directoryData.get(i).setSelected(false);
+                            }
+                        }
+                        String path = "";
+                        for (int j = 0;j < pathList.size();j++){
+                            if(j==0){
+                                path += pathList.get(j);
+                            }else{
+                                path = path + "/" + pathList.get(j);
+                            }
+                        }
+                        selectedFilePath = path;
+                        myAdapter.notifyDataSetChanged();
                     }
                     
                 }

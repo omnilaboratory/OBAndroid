@@ -3,7 +3,10 @@ package com.omni.wallet.ui.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +18,6 @@ import android.widget.TextView;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Parser;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
@@ -47,6 +49,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +91,13 @@ public class AccountLightningActivity extends AppBaseActivity {
     private List<ListAssetItemEntity> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
     private List<ListAssetItemEntity> allData = new ArrayList<>();
-
+    private ByteString backupChannelBytes;
+    private List<ByteString> channelBackupBytesList = new ArrayList<ByteString>();
+    private List<Integer> outputIndexList = new ArrayList<Integer>();
+    private List<ByteString> fundingTxIdBytesList = new ArrayList<ByteString>();
+    private List<String> fundingTxIdStrList = new ArrayList<String>();
+    
+    
     MenuPopupWindow mMenuPopupWindow;
     FundPopupWindow mFundPopupWindow;
     AccountManagePopupWindow mAccountManagePopupWindow;
@@ -768,36 +783,83 @@ public class AccountLightningActivity extends AppBaseActivity {
     @OnClick(R.id.btn_backup)
     public void backup(){
         LightningOuterClass.ExportChannelBackupRequest exportChannelBackupRequest = LightningOuterClass.ExportChannelBackupRequest.newBuilder().build();
-        
         Obdmobile.exportAllChannelBackups(exportChannelBackupRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @SuppressLint("LongLogTag")
             @Override
             public void onResponse(byte[] bytes) {
                 if(bytes==null){
                     return;
                 }
+
                 try {
                     LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(bytes);
-                    LightningOuterClass.MultiChanBackup backupChannel = chanBackupSnapshot.getMultiChanBackup();
-                    List<LightningOuterClass.ChannelPoint> chanPointsList = backupChannel.getChanPointsList();
-                    for (LightningOuterClass.ChannelPoint channelPoint : chanPointsList){
-                        String txIdStr = channelPoint.getFundingTxidStr();
-                        Log.e("txIdStr",txIdStr);
+                    
+                    String filename = "channelBackupFile.OBBackupChannel";
+                    String path = Environment.getExternalStorageDirectory() + "/" + filename;
+                    File file = new File(path);
+                    if(file.exists()){
+                        file.delete();
                     }
+                    OutputStream outputStream = new FileOutputStream(path);
+                    chanBackupSnapshot.writeTo(outputStream);
                     
                 } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
     }
     
-    public void restore(){
-//        LightningOuterClass.RestoreChanBackupRequest restoreChanBackupRequest = LightningOuterClass.RestoreChanBackupRequest.newBuilder().setMultiChanBackup().setChanBackups().build();
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @SuppressLint("LongLogTag")
+    @OnClick(R.id.btn_restore)
+    public void restore() {
+        String filename = "channelBackupFile.OBBackupChannel";
+        String path = Environment.getExternalStorageDirectory() + "/" + filename;
+        try {
+            
+            File file = new File(path);
+            InputStream inputStream = new FileInputStream(file);
+            LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(inputStream);
+            LightningOuterClass.MultiChanBackup multiChanBackup =  chanBackupSnapshot.getMultiChanBackup();
+            LightningOuterClass.ChannelBackups channelBackups = chanBackupSnapshot.getSingleChanBackups();
+
+            LightningOuterClass.RestoreChanBackupRequest restoreChanBackupRequest = LightningOuterClass.RestoreChanBackupRequest.newBuilder()
+                    .setMultiChanBackup(multiChanBackup.getMultiChanBackup())
+                    .setChanBackups(channelBackups)
+                    .build();
+            Log.e("multi Channel restoreChanBackupRequest Str", String.valueOf(restoreChanBackupRequest));
+            Obdmobile.restoreChannelBackups(restoreChanBackupRequest.toByteArray(), new Callback() {
+                @Override
+                public void onError(Exception e) {
+                    Log.e("restore string","restore failed");
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(byte[] bytes) {
+                    Log.e("restore string","restore success");
+                    if(bytes==null){
+                        return;
+                    }
+
+                }
+            });
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
     }
 }
