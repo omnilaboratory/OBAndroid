@@ -13,9 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Parser;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
@@ -25,6 +23,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
+import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.entity.event.OpenChannelEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.entity.event.SelectAccountEvent;
@@ -736,6 +735,15 @@ public class AccountLightningActivity extends AppBaseActivity {
         getAssetAndBtcData();
     }
 
+    /**
+     * 退出登录后的消息通知监听
+     * Message notification monitoring after login out
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoginOutEvent(LoginOutEvent event) {
+        switchActivityFinish(UnlockActivity.class);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -765,10 +773,11 @@ public class AccountLightningActivity extends AppBaseActivity {
             mCreateChannelDialog.release();
         }
     }
+
     @OnClick(R.id.btn_backup)
-    public void backup(){
+    public void backup() {
         LightningOuterClass.ExportChannelBackupRequest exportChannelBackupRequest = LightningOuterClass.ExportChannelBackupRequest.newBuilder().build();
-        
+
         Obdmobile.exportAllChannelBackups(exportChannelBackupRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
@@ -778,26 +787,26 @@ public class AccountLightningActivity extends AppBaseActivity {
             @SuppressLint("LongLogTag")
             @Override
             public void onResponse(byte[] bytes) {
-                if(bytes==null){
+                if (bytes == null) {
                     return;
                 }
                 try {
                     LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(bytes);
                     LightningOuterClass.MultiChanBackup backupChannel = chanBackupSnapshot.getMultiChanBackup();
                     List<LightningOuterClass.ChannelPoint> chanPointsList = backupChannel.getChanPointsList();
-                    for (LightningOuterClass.ChannelPoint channelPoint : chanPointsList){
+                    for (LightningOuterClass.ChannelPoint channelPoint : chanPointsList) {
                         String txIdStr = channelPoint.getFundingTxidStr();
-                        Log.e("txIdStr",txIdStr);
+                        Log.e("txIdStr", txIdStr);
                     }
-                    
+
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
             }
         });
     }
-    
-    public void restore(){
+
+    public void restore() {
 //        LightningOuterClass.RestoreChanBackupRequest restoreChanBackupRequest = LightningOuterClass.RestoreChanBackupRequest.newBuilder().setMultiChanBackup().setChanBackups().build();
     }
 }
