@@ -22,7 +22,9 @@ import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.ScanActivity;
+import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.utils.Wallet;
@@ -90,7 +92,8 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     @Override
     protected void getBundleData(Bundle bundle) {
         balanceAmount = bundle.getLong(KEY_BALANCE_AMOUNT);
-        walletAddress = bundle.getString(KEY_WALLET_ADDRESS);
+//        walletAddress = bundle.getString(KEY_WALLET_ADDRESS);
+        walletAddress = User.getInstance().getWalletAddress(mContext);
         pubkey = bundle.getString(KEY_PUBKEY);
     }
 
@@ -438,5 +441,10 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
         if (mCreateChannelDialog != null) {
             mCreateChannelDialog.release();
         }
+    }
+    
+    @OnClick(R.id.btn_backup)
+    public void clickBtnBackup(){
+        switchActivity(BackupChannelActivity.class);
     }
 }

@@ -19,8 +19,10 @@ import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.listItems.BackupFile;
 import com.omni.wallet.ui.activity.AccountLightningActivity;
+import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepTwoActivity;
 import com.omni.wallet.utils.FilesUtils;
 
 import java.io.File;
@@ -255,7 +257,16 @@ public class RestoreChannelActivity extends AppBaseActivity {
     
     @OnClick(R.id.btn_next)
     public void clickNextButton(){
-        switchActivity(AccountLightningActivity.class);
+        File file = new File(selectedFilePath);
+        Boolean isDirectory = file.isDirectory();
+        if(isDirectory){
+            ToastUtils.showToast(mContext,"Your path is a directory,please choose the file end with .OBBackupChannel!");
+        }else{
+            User.getInstance().setChannelBackupPath(selectedFilePath);
+//            switchActivity(AccountLightningActivity.class);
+            switchActivity(RecoverWalletStepTwoActivity.class);
+        }
+        
     }
     
     @SuppressLint("LongLogTag")

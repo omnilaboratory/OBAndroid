@@ -997,7 +997,8 @@
                         android:id="@+id/recycler_to_be_paid_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/main_10"/>
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_30"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -1231,7 +1232,8 @@
                         android:id="@+id/recycler_my_invoices_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/main_10"/>
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_30"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"

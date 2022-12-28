@@ -221,7 +221,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             copySuccessToast.show();
         }else{
             switchActivityFinish(AccountLightningActivity.class);
-//            String initWalletType = User.getInstance().getInitWalletType();
 //            if(initWalletType.equals("create")){ 
 //                switchActivityFinish(AccountLightningActivity.class);
 //            }else if(initWalletType.equals("recovery")){

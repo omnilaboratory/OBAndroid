@@ -19,7 +19,9 @@ import android.widget.Toast;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.template.DisablePasteEditText;
+import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
 import com.omni.wallet.utils.CheckRules;
 import com.omni.wallet.utils.NumberFormatter;
 
@@ -172,6 +174,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
         for (int i = 0; i<list.size();i++){
             seedsString = seedsString + list.get(i).getText() + " ";
         }
+        User.getInstance().setSeedString(seedsString);
         /**
          * 使用SharedPreferences 对象，在生成seeds时候将seeds备份到本地文件
          * Use SharedPreferences Class to back up seeds to local file,when create seeds.
@@ -180,6 +183,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
         SharedPreferences.Editor editor = secretData.edit();
         editor.putString("seeds",seedsString);
         editor.commit();
-        switchActivity(RecoverWalletStepTwoActivity.class);
+//        switchActivity(RecoverWalletStepTwoActivity.class);
+        switchActivity(RestoreChannelActivity.class);
     }
 }

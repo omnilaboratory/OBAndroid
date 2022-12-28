@@ -5,6 +5,8 @@ import android.content.Context;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.framelibrary.utils.PreferencesUtils;
 
+import okio.ByteString;
+
 
 public class User {
     private static final String TAG = User.class.getSimpleName();
@@ -65,6 +67,12 @@ public class User {
     private String fromPubKey;
     
     private String initWalletType;
+    
+    private String macaroonString;
+    
+    private String channelBackupPath;
+    
+    private String seedString;
 
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
@@ -251,6 +259,29 @@ public class User {
 
     public void setInitWalletType(String initWalletType) {
         this.initWalletType = initWalletType;
+    }
+    public String getMacaroonString() {
+        return macaroonString;
+    }
+
+    public void setMacaroonString(String macaroonString) {
+        this.macaroonString = macaroonString;
+    }
+
+    public String getChannelBackupPath() {
+        return channelBackupPath;
+    }
+
+    public void setChannelBackupPath(String channelBackupPath) {
+        this.channelBackupPath = channelBackupPath;
+    }
+
+    public String getSeedString() {
+        return seedString;
+    }
+
+    public void setSeedString(String seedString) {
+        this.seedString = seedString;
     }
 
     /**

@@ -235,7 +235,10 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
             SharedPreferences.Editor editor = secretData.edit();
             String newPassMd5String = Md5Util.getMD5Str(password);
             String oldPassMd5String = secretData.getString("password", "");
-            Walletunlocker.ChangePasswordRequest changePasswordRequest = Walletunlocker.ChangePasswordRequest.newBuilder().setCurrentPassword(ByteString.copyFromUtf8(oldPassMd5String)).setNewPassword(ByteString.copyFromUtf8(newPassMd5String)).build();
+            Walletunlocker.ChangePasswordRequest changePasswordRequest = Walletunlocker.ChangePasswordRequest.newBuilder()
+                    .setCurrentPassword(ByteString.copyFromUtf8(oldPassMd5String))
+                    .setNewPassword(ByteString.copyFromUtf8(newPassMd5String))
+                    .build();
             Obdmobile.changePassword(changePasswordRequest.toByteArray(), new Callback() {
                 @Override
                 public void onError(Exception e) {

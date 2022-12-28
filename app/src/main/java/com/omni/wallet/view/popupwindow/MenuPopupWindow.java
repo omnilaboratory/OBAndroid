@@ -9,15 +9,16 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.ui.activity.UnlockActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.view.dialog.LoadingDialog;
+
+import org.greenrobot.eventbus.EventBus;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -110,6 +111,13 @@ public class MenuPopupWindow {
                     mContext.startActivity(intent, bundle);
                 }
             });
+            // profile
+            rootView.findViewById(R.id.layout_profile).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToastUtils.showToast(mContext, "Not yet open, please wait");
+                }
+            });
             // node_info
             rootView.findViewById(R.id.layout_node_info).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -141,23 +149,26 @@ public class MenuPopupWindow {
 
                         @Override
                         public void onResponse(byte[] bytes) {
-                            try {
-                                LightningOuterClass.StopResponse resp = LightningOuterClass.StopResponse.parseFrom(bytes);
-                                LogUtils.e(TAG, "------------------stopDaemonOnResponse-----------------" + resp);
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mMenuPopWindow.dismiss();
-                                        mLoadingDialog.dismiss();
-                                        Intent intent = new Intent(mContext, UnlockActivity.class);
-                                        mContext.startActivity(intent);
-                                    }
-                                });
-                            } catch (InvalidProtocolBufferException e) {
-                                e.printStackTrace();
-                            }
+                            LogUtils.e(TAG, "------------------stopDaemonOnResponse-----------------");
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    EventBus.getDefault().post(new LoginOutEvent());
+                                    mMenuPopWindow.dismiss();
+                                    mLoadingDialog.dismiss();
+//                                    Intent intent = new Intent(mContext, UnlockActivity.class);
+//                                    mContext.startActivity(intent);
+                                }
+                            });
                         }
                     });
+                }
+            });
+            // lock
+            rootView.findViewById(R.id.layout_lock).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToastUtils.showToast(mContext, "Not yet open, please wait");
                 }
             });
             if (mMenuPopWindow.isShowing()) {

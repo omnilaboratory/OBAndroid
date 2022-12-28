@@ -3,6 +3,7 @@ package com.omni.wallet.ui.activity.createwallet;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -24,11 +25,18 @@ import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
+import lnrpc.LightningOuterClass;
 import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -277,17 +285,24 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                         return;
                     }
                     try {
+                        String path = Environment.getExternalStorageDirectory() + "/" + "macaroon.OBBackupMacaroon";
                         Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
                         ByteString macaroon = initWalletResponse.getAdminMacaroon();
-                        SharedPreferences macaroonData = ctx.getSharedPreferences("macaroonData", MODE_PRIVATE);
-                        SharedPreferences.Editor macaroonDataEditor = macaroonData.edit();
-                        macaroonDataEditor.putString("macaroon", macaroon.toString());
-                        macaroonDataEditor.commit();
+                        OutputStream outputStream = new FileOutputStream(path);
+                        initWalletResponse.getAdminMacaroon().writeTo(outputStream);
+                        User.getInstance().setMacaroonString(macaroon.toStringUtf8());
                         User.getInstance().setInitWalletType("create");
+                        File file = new File(path);
+                        if (file.exists()){
+                            file.delete();
+                        }
+                        
                         switchActivity(BackupBlockProcessActivity.class);
-                    } catch (InvalidProtocolBufferException e) {
+                    } catch (InvalidProtocolBufferException | FileNotFoundException e) {
                         e.printStackTrace();
                         mLoadingDialog.dismiss();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             });

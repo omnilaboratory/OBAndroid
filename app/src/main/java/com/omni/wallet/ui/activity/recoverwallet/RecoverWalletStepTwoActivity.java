@@ -3,6 +3,7 @@ package com.omni.wallet.ui.activity.recoverwallet;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -25,11 +26,19 @@ import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
+import lnrpc.LightningOuterClass;
 import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -239,47 +248,61 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
             SharedPreferences.Editor editor = secretData.edit();
             editor.putString("password",md5String);
             editor.commit();
+//            String filename = "channelBackupFile.OBBackupChannel";
+            String path = User.getInstance().getChannelBackupPath();
+            Log.e("channelBackupPath",path);
+            File file = new File(path);
+            
+            Boolean isDirectory = file.isDirectory();
             Walletunlocker.InitWalletRequest.Builder initWalletRequestBuilder = Walletunlocker.InitWalletRequest.newBuilder();
-            List newSeedList = initWalletRequestBuilder.getCipherSeedMnemonicList();
-            Log.e("newSeedList",newSeedList.toString());
-            for (int i =0;i<seedList.length;i++){
-                initWalletRequestBuilder.addCipherSeedMnemonic(seedList[i]);
-                String mnemonicString = initWalletRequestBuilder.getCipherSeedMnemonic(i);
-                Log.e("mnemonicString",mnemonicString);
-            }
-            initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
-            initWalletRequestBuilder.setRecoveryWindow(0);
-
-            Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
-            Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
-                @Override
-                public void onError(Exception e) {
-                    Log.e("initWallet Error",e.toString());
-                    e.printStackTrace();
-                    mLoadingDialog.dismiss();
+            InputStream inputStream = null;
+            try {
+                inputStream = new FileInputStream(file);
+                LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(inputStream);
+                initWalletRequestBuilder.setChannelBackups(chanBackupSnapshot);
+                List newSeedList = initWalletRequestBuilder.getCipherSeedMnemonicList();
+                Log.e("newSeedList",newSeedList.toString());
+                for (int i =0;i<seedList.length;i++){
+                    initWalletRequestBuilder.addCipherSeedMnemonic(seedList[i]);
+                    String mnemonicString = initWalletRequestBuilder.getCipherSeedMnemonic(i);
+                    Log.e("mnemonicString",mnemonicString);
                 }
-                @Override
-                public void onResponse(byte[] bytes) {
-                    if (bytes == null){
-                        mLoadingDialog.dismiss();
-                        return;
-                    }
-                    try {
-                        Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
-                        ByteString macaroon = initWalletResponse.getAdminMacaroon();
-                        Log.e("initWallet response",macaroon.toString());
-                        SharedPreferences macaroonData = ctx.getSharedPreferences("macaroonData", MODE_PRIVATE);
-                        SharedPreferences.Editor macaroonDataEditor = macaroonData.edit();
-                        macaroonDataEditor.putString("macaroon", macaroon.toString());
-                        macaroonDataEditor.commit();
-                        User.getInstance().setInitWalletType("recovery");
-                        switchActivity(BackupBlockProcessActivity.class);
-                    } catch (InvalidProtocolBufferException e) {
+                initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
+                initWalletRequestBuilder.setRecoveryWindow(0);
+                Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
+                Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e("initWallet Error",e.toString());
                         e.printStackTrace();
                         mLoadingDialog.dismiss();
                     }
-                }
-            });
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        if (bytes == null){
+                            mLoadingDialog.dismiss();
+                            return;
+                        }
+                        try {
+                            Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
+                            ByteString macaroon = initWalletResponse.getAdminMacaroon();
+                            User.getInstance().setMacaroonString(macaroon.toStringUtf8());
+                            User.getInstance().setInitWalletType("recovery");
+                            switchActivity(BackupBlockProcessActivity.class);
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                            mLoadingDialog.dismiss();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }else{
             String checkSetPassWrongString = "";
             if(strongerPwd<0){

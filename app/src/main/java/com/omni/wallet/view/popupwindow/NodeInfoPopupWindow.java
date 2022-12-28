@@ -1,7 +1,6 @@
 package com.omni.wallet.view.popupwindow;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
@@ -15,10 +14,12 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.ui.activity.UnlockActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
+
+import org.greenrobot.eventbus.EventBus;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -107,21 +108,17 @@ public class NodeInfoPopupWindow {
 
                         @Override
                         public void onResponse(byte[] bytes) {
-                            try {
-                                LightningOuterClass.StopResponse resp = LightningOuterClass.StopResponse.parseFrom(bytes);
-                                LogUtils.e(TAG, "------------------stopDaemonOnResponse-----------------" + resp);
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mBasePopWindow.dismiss();
-                                        mLoadingDialog.dismiss();
-                                        Intent intent = new Intent(mContext, UnlockActivity.class);
-                                        mContext.startActivity(intent);
-                                    }
-                                });
-                            } catch (InvalidProtocolBufferException e) {
-                                e.printStackTrace();
-                            }
+                            LogUtils.e(TAG, "------------------stopDaemonOnResponse-----------------");
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    EventBus.getDefault().post(new LoginOutEvent());
+                                    mBasePopWindow.dismiss();
+                                    mLoadingDialog.dismiss();
+//                                    Intent intent = new Intent(mContext, UnlockActivity.class);
+//                                    mContext.startActivity(intent);
+                                }
+                            });
                         }
                     });
                 }
