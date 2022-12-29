@@ -58,7 +58,7 @@ public class TransactionsDetailsPopupWindow {
                 assetTypeTv.setText("BTC");
             } else {
                 assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-                assetTypeTv.setText("USDT");
+                assetTypeTv.setText("Doallar");
             }
             LightningOuterClass.Hop lastHop = payment.getHtlcs(0).getRoute().getHops(payment.getHtlcs(0).getRoute().getHopsCount() - 1);
             String payee = lastHop.getPubKey();

@@ -62,7 +62,7 @@ public class TokenInfoPopupWindow {
                 tokenTypeTv.setText("BTC");
             } else {
                 tokenLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-                tokenTypeTv.setText("USDT");
+                tokenTypeTv.setText("Doallar");
             }
             tokenIdTv.setText(assetId + "");
 

@@ -130,7 +130,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
-                                android:text="USDT"
+                                android:text="Doallar"
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16"/>
 
@@ -232,7 +232,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
                         android:layout_margin="@dimen/main_10"
-                        android:text="USDT"
+                        android:text="Doallar"
                         android:textColor="@color/color_99_transparent"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>

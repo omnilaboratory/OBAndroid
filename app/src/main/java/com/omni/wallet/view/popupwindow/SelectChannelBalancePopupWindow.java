@@ -221,7 +221,7 @@ public class SelectChannelBalancePopupWindow {
                 holder.setText(R.id.tv_asset, "BTC");
             } else {
                 holder.setImageResource(R.id.iv_logo, R.mipmap.icon_usdt_logo_small);
-                holder.setText(R.id.tv_asset, "USDT");
+                holder.setText(R.id.tv_asset, "Doallar");
             }
             if (item.getAmount() == 0) {
                 DecimalFormat df = new DecimalFormat("0.00");

@@ -172,7 +172,7 @@ public class ScanActivity extends AppBaseActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (result.startsWith("lightning:") || result.contains("obort")) { //支付发票
+                if (result.startsWith("lightning:")) { //支付发票
                     ScanResultEvent event = new ScanResultEvent();
                     event.setCode(scanCode);
                     event.setType("payInvoice");

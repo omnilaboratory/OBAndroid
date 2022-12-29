@@ -130,8 +130,8 @@ public class TransactionsDetailsAssetPopupWindow {
             fromAddressTv.setText(item.getSendingaddress());
             txIdTv.setText(item.getTxid());
             assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeTv.setText("USDT");
-            amountTypeTv.setText("USDT");
+            assetTypeTv.setText("Doallar");
+            amountTypeTv.setText("Doallar");
             feeTv.setText(df.format(Double.parseDouble(String.valueOf(item.getFee())) * 100000000));
             feeTypeTv.setText("satoshis");
 

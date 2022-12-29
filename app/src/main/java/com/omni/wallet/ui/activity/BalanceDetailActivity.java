@@ -243,10 +243,17 @@ public class BalanceDetailActivity extends AppBaseActivity {
         if (network.equals("lightning")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_vector);
             mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
-            mNetworkTv.setText("USDT lightning network");
-            mNetwork1Tv.setText("USDT lightning network");
-            mNetwork2Tv.setText("USDT lightning network");
-            mNetwork3Tv.setText("USDT lightning network");
+            if (assetId == 0) {
+                mNetworkTv.setText("BTC lightning network");
+                mNetwork1Tv.setText("BTC lightning network");
+                mNetwork2Tv.setText("BTC lightning network");
+                mNetwork3Tv.setText("BTC lightning network");
+            } else {
+                mNetworkTv.setText("Doallar lightning network");
+                mNetwork1Tv.setText("Doallar lightning network");
+                mNetwork2Tv.setText("Doallar lightning network");
+                mNetwork3Tv.setText("Doallar lightning network");
+            }
             mLightningNetworkLayout.setVisibility(View.VISIBLE);
             mLinkNetworkLayout.setVisibility(View.GONE);
             mChannelActivitiesTv.setText(R.string.channel_activities);
@@ -292,11 +299,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mTokenInfoTv.setVisibility(View.GONE);
         } else {
             mAssetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetNameTv.setText("USDT");
-            mBalanceUnitTv.setText("USDT");
-            mBalanceUnit1Tv.setText("USDT");
-            mBalanceUnit2Tv.setText("USDT");
-            mBalanceUnit3Tv.setText("USDT");
+            mAssetNameTv.setText("Doallar");
+            mBalanceUnitTv.setText("Doallar");
+            mBalanceUnit1Tv.setText("Doallar");
+            mBalanceUnit2Tv.setText("Doallar");
+            mBalanceUnit3Tv.setText("Doallar");
             mTokenInfoTv.setVisibility(View.VISIBLE);
         }
         if (balanceAmount == 0) {

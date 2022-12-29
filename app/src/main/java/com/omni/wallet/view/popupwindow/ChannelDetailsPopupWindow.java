@@ -184,9 +184,9 @@ public class ChannelDetailsPopupWindow {
             mTotalReceived.setText(channel.getRemoteConstraints().getChanReserveSat() + " sat");
         } else {
             mAssetLogo.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetUnit.setText("USDT");
-            mLocalBalanceUnit.setText("USDT");
-            mRemoteBalanceUnit.setText("USDT");
+            mAssetUnit.setText("Doallar");
+            mLocalBalanceUnit.setText("Doallar");
+            mRemoteBalanceUnit.setText("Doallar");
             long availableCapacity = channel.getAssetCapacity() - channel.getCommitFee();
             setBalances(channel.getLocalAssetBalance(), channel.getRemoteAssetBalance(), availableCapacity);
             // activity
@@ -280,9 +280,9 @@ public class ChannelDetailsPopupWindow {
             mRemoteBalanceUnit.setText("BTC");
         } else {
             mAssetLogo.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetUnit.setText("USDT");
-            mLocalBalanceUnit.setText("USDT");
-            mRemoteBalanceUnit.setText("USDT");
+            mAssetUnit.setText("Doallar");
+            mLocalBalanceUnit.setText("Doallar");
+            mRemoteBalanceUnit.setText("Doallar");
         }
         mFundingTransaction.setText(channelPoint.substring(0, channelPoint.indexOf(':')));
     }
@@ -323,7 +323,6 @@ public class ChannelDetailsPopupWindow {
 
         LightningOuterClass.CloseChannelRequest closeChannelRequest = LightningOuterClass.CloseChannelRequest.newBuilder()
                 .setChannelPoint(point)
-                .setForce(force)
                 .build();
         Obdmobile.closeChannel(closeChannelRequest.toByteArray(), new RecvStream() {
             @Override
