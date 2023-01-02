@@ -22,6 +22,7 @@ import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
+import com.omni.wallet.utils.BackupUtils;
 import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.view.dialog.LoadingDialog;
@@ -242,26 +243,23 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
              * 使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
              * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
              */
-            SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
-            String seedsString = secretData.getString("seeds", "none");
-            String[] seedList = seedsString.split(" ");
-            SharedPreferences.Editor editor = secretData.edit();
-            editor.putString("password",md5String);
-            editor.commit();
-//            String filename = "channelBackupFile.OBBackupChannel";
-            String path = User.getInstance().getChannelBackupPath();
-            Log.e("channelBackupPath",path);
-            File file = new File(path);
             
-            Boolean isDirectory = file.isDirectory();
+            String seedsString = User.getInstance().getRecoverySeedString(mContext);
+            String[] seedList = seedsString.split(" ");
+            BackupUtils backupUtils = BackupUtils.getInstance();
+            String path = backupUtils.getBasePath() + "/" +backupUtils.getDirectoryName() + "/" + backupUtils.getChannelFileName();
+            
             Walletunlocker.InitWalletRequest.Builder initWalletRequestBuilder = Walletunlocker.InitWalletRequest.newBuilder();
             InputStream inputStream = null;
+            LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = null;
             try {
-                inputStream = new FileInputStream(file);
-                LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(inputStream);
-                initWalletRequestBuilder.setChannelBackups(chanBackupSnapshot);
-                List newSeedList = initWalletRequestBuilder.getCipherSeedMnemonicList();
-                Log.e("newSeedList",newSeedList.toString());
+                File file = new File(path);
+                if (file.exists()){
+                    inputStream = new FileInputStream(file);
+                    chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(inputStream);
+                    initWalletRequestBuilder.setChannelBackups(chanBackupSnapshot);
+                }
+                
                 for (int i =0;i<seedList.length;i++){
                     initWalletRequestBuilder.addCipherSeedMnemonic(seedList[i]);
                     String mnemonicString = initWalletRequestBuilder.getCipherSeedMnemonic(i);
@@ -286,14 +284,16 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                         try {
                             Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
                             ByteString macaroon = initWalletResponse.getAdminMacaroon();
-                            User.getInstance().setMacaroonString(macaroon.toStringUtf8());
-                            User.getInstance().setInitWalletType("recovery");
+                            User.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8());
+                            User.getInstance().setInitWalletType(mContext,"recovery");
+                            User.getInstance().setCreated(mContext,true);
+                            User.getInstance().setSeedChecked(mContext,true);
+                            User.getInstance().setSeedString(mContext,seedsString);
+                            User.getInstance().setPasswordMd5(mContext,md5String);
                             switchActivity(BackupBlockProcessActivity.class);
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
                             mLoadingDialog.dismiss();
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
                     }
                 });

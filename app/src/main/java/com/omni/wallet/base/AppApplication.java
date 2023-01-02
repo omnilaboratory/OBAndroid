@@ -114,17 +114,17 @@ public class AppApplication extends BaseApplication {
             }
         });*/
 
-        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE_OMNI_WITH_SEED, new Callback() {
-            @Override
-            public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
-            }
-        });
+//        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
+//            @Override
+//            public void onError(Exception e) {
+//                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
+//            }
+//
+//            @Override
+//            public void onResponse(byte[] bytes) {
+////                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
+//            }
+//        });
         PRDownloaderConfig config = PRDownloaderConfig.newBuilder()
                 .setConnectTimeout(30000)
                 .setReadTimeout(30000)
@@ -269,6 +269,8 @@ public class AppApplication extends BaseApplication {
      * @描述： 解决放法数量超过65536
      * @desc: The number of solutions exceeds 65536
      */
+    
+    
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

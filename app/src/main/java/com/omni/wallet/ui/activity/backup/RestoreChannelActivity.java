@@ -262,7 +262,7 @@ public class RestoreChannelActivity extends AppBaseActivity {
         if(isDirectory){
             ToastUtils.showToast(mContext,"Your path is a directory,please choose the file end with .OBBackupChannel!");
         }else{
-            User.getInstance().setChannelBackupPath(selectedFilePath);
+            User.getInstance().setChannelBackupPath(mContext,selectedFilePath);
 //            switchActivity(AccountLightningActivity.class);
             switchActivity(RecoverWalletStepTwoActivity.class);
         }

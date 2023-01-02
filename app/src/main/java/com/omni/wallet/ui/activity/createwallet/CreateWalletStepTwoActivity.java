@@ -2,7 +2,6 @@ package com.omni.wallet.ui.activity.createwallet;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.template.DisablePasteEditText;
 import com.omni.wallet.utils.NumberFormatter;
 
@@ -58,8 +58,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
          * 从xml文件中读取seeds
          * Get seeds form xml file
          */
-        SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
-        String seedsString = secretData.getString("seeds", "none");
+        String seedsString = User.getInstance().getSeedString(mContext);
         seedList = seedsString.split(" ");
 
         /**
@@ -158,6 +157,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
         }
         if (checkResult) {
+            User.getInstance().setSeedChecked(mContext,true);
             switchActivity(CreateWalletStepThreeActivity.class);
         }
 

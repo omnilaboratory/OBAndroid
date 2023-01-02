@@ -73,6 +73,18 @@ public class User {
     private String channelBackupPath;
     
     private String seedString;
+    
+    private String passwordMd5;
+    
+    private String recoverySeedString;
+    
+    private Boolean created;
+    
+    private Boolean synced;
+    
+    private Boolean seedChecked;
+    
+    private Boolean startCreate;
 
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
@@ -195,6 +207,9 @@ public class User {
 
     public String getWalletAddress(Context context) {
         walletAddress = PreferencesUtils.getWalletAddressFromLocal(context);
+        if (walletAddress==null){
+            walletAddress = "";
+        }
         return walletAddress;
     }
 
@@ -253,35 +268,133 @@ public class User {
         this.fromPubKey = fromPubKey;
     }
     
-    public String getInitWalletType() {
+    public String getInitWalletType(Context context) {
+        initWalletType = PreferencesUtils.getInitWalletType(context);
+        if(initWalletType == null){
+            initWalletType = "";
+        }
         return initWalletType;
     }
 
-    public void setInitWalletType(String initWalletType) {
+    public void setInitWalletType(Context context,String initWalletType) {
+        PreferencesUtils.saveInitWalletType(context, initWalletType);
         this.initWalletType = initWalletType;
     }
-    public String getMacaroonString() {
+    public String getMacaroonString(Context context) {
+        macaroonString = PreferencesUtils.getMacaroonString(context);
+        if(macaroonString == null){
+            macaroonString = "";
+        }
         return macaroonString;
     }
 
-    public void setMacaroonString(String macaroonString) {
+    public void setMacaroonString(Context context,String macaroonString) {
+        PreferencesUtils.saveMacaroonString(context, macaroonString);
         this.macaroonString = macaroonString;
     }
 
-    public String getChannelBackupPath() {
+    public String getChannelBackupPath(Context context) {
+        channelBackupPath = PreferencesUtils.getChannelBackupPath(context);
+        if(channelBackupPath == null){
+            channelBackupPath = "";
+        }
         return channelBackupPath;
     }
 
-    public void setChannelBackupPath(String channelBackupPath) {
+    public void setChannelBackupPath(Context context,String channelBackupPath) {
+        PreferencesUtils.saveChannelBackupPath(context, channelBackupPath);
         this.channelBackupPath = channelBackupPath;
     }
 
-    public String getSeedString() {
+    public void setPasswordMd5(Context context,String passwordMd5) {
+        PreferencesUtils.savePasswordMd5(context, passwordMd5);
+        this.passwordMd5 = passwordMd5;
+    }
+
+    public String getPasswordMd5(Context context) {
+        passwordMd5 = PreferencesUtils.getPasswordMd5(context);
+        if(passwordMd5 == null){
+            passwordMd5 = "";
+        }
+        return passwordMd5;
+    }
+
+    public void setSeedString(Context context,String seedString) {
+        PreferencesUtils.saveSeedString(context, seedString);
+        this.seedString = seedString;
+    }
+
+    public String getSeedString(Context context) {
+        seedString = PreferencesUtils.getSeedString(context);
+        if(seedString == null){
+            seedString = "";
+        }
         return seedString;
     }
 
-    public void setSeedString(String seedString) {
-        this.seedString = seedString;
+    public Boolean getCreated(Context context) {
+        created = PreferencesUtils.getCreated(context);
+        if(created == null){
+            created = false;
+        }
+        return created;
+    }
+
+    public void setCreated(Context context,Boolean created) {
+        PreferencesUtils.saveCreated(context, created);
+        this.created = created;
+    }
+
+    public Boolean getSynced(Context context) {
+        synced = PreferencesUtils.getSynced(context);
+        if(synced == null){
+            synced = false;
+        }
+        return synced;
+    }
+
+    public void setSynced(Context context,Boolean synced) {
+        PreferencesUtils.saveSynced(context, synced);
+        this.synced = synced;
+    }
+
+    public Boolean getSeedChecked(Context context) {
+        seedChecked = PreferencesUtils.getSeedChecked(context);
+        if(seedChecked == null){
+            seedChecked = false;
+        }
+        return seedChecked;
+    }
+
+    public void setSeedChecked(Context context,Boolean seedChecked) {
+        PreferencesUtils.saveSeedChecked(context, seedChecked);
+        this.seedChecked = seedChecked;
+    }
+
+    public String getRecoverySeedString(Context context) {
+        recoverySeedString = PreferencesUtils.getRecoverySeedString(context);
+        if(recoverySeedString == null){
+            recoverySeedString = "";
+        }
+        return recoverySeedString;
+    }
+
+    public void setRecoverySeedString(Context context,String recoverySeedString) {
+        PreferencesUtils.saveRecoverySeedString(context, recoverySeedString);
+        this.recoverySeedString = recoverySeedString;
+    }
+
+    public Boolean getStartCreate(Context context) {
+        startCreate = PreferencesUtils.getStartCreate(context);
+        if (startCreate == null){
+            startCreate = false;
+        }
+        return startCreate;
+    }
+
+    public void setStartCreate(Context context,Boolean startCreate) {
+        PreferencesUtils.saveStartCreate(context, startCreate);
+        this.startCreate = startCreate;
     }
 
     /**
@@ -313,4 +426,5 @@ public class User {
         mInstance = null;
     }
 
+    
 }

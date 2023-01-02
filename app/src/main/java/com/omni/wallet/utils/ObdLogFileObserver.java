@@ -131,6 +131,14 @@ public class ObdLogFileObserver extends FileObserver {
                                     blockDataEditor.putInt("currentBlockHeight",syncingHeight);
                                     blockDataEditor.commit();
                                 }
+                            }else if(checkNeutrinoSyncingString(oldLine)){
+                                String stringHeight = oldLine.split("height")[1].split("from")[0];
+                                Log.e("syncingHeight",stringHeight);
+                                int syncingHeight = Integer.parseInt(stringHeight.trim());
+                                if(syncingHeight>currentHeight){
+                                    blockDataEditor.putInt("currentBlockHeight",syncingHeight);
+                                    blockDataEditor.commit();
+                                }
                             }
                             bfr.close();
                             break;
@@ -197,5 +205,16 @@ public class ObdLogFileObserver extends FileObserver {
         isMatch = m.matches();
         return isMatch;
         
+    }
+    
+    private Boolean checkNeutrinoSyncingString (String logLine){
+        Boolean isMatch = false;
+        String pattern;
+        pattern = ".*Syncing to block height \\d+ from peer.*";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(logLine);
+        isMatch = m.matches();
+        Log.e("syncingHeight",isMatch.toString());
+        return isMatch;
     }
 }

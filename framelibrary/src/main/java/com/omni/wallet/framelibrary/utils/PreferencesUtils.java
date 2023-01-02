@@ -31,6 +31,24 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_BTC_PRICE_CHANGE = "btcPriceChangeKey";// 保存btc价格变化的Key
     private static final String KEY_USDT_PRICE = "usdtPriceChangeKey";// 保存usdt价格变化的Key
     private static final String KEY_FROM_PUBKEY = "fromPubKeyKey";// 自身节点pubkey的Key
+    
+
+    private static final String INIT_WALLET_TYPE = "initWalletType";
+
+    private static final String MACAROON_STRING = "macaroonString";
+
+    private static final String CHANNEL_BACKUP_PATH = "channelBackupPath";
+
+    private static final String SEED_STRING =  "seedString";
+
+    private static final String PASSWORD_MD5 = "passwordMd5";
+
+    private static final String CREATED = "created";
+
+    private static final String SYNCED= "synced";
+    private static final String SEED_CHECKED = "seedChecked";
+    private static final String RECOVERY_SEED_STRING ="recoverySeedString";
+    private static final String START_CREATE = "startCreate";
 
     /**
      * 版本信息本地化
@@ -284,5 +302,85 @@ public class PreferencesUtils extends BasePreferencesUtils {
      */
     public static void saveFromPubKeyToLocal(Context context, String value) {
         putString(SETTINGS, context, KEY_FROM_PUBKEY, value);
+    }
+    
+    public static String getInitWalletType(Context context) {
+        return getString(SETTINGS, context, INIT_WALLET_TYPE);
+    }
+
+    public static void saveInitWalletType(Context context, String value) {
+        putString(SETTINGS, context, INIT_WALLET_TYPE, value);
+    }
+
+    public static String getMacaroonString(Context context) {
+        return getString(SETTINGS, context, MACAROON_STRING);
+    }
+
+    public static void saveMacaroonString(Context context, String value) {
+        putString(SETTINGS, context, MACAROON_STRING, value);
+    }
+
+    public static String getChannelBackupPath(Context context) {
+        return getString(SETTINGS, context, CHANNEL_BACKUP_PATH);
+    }
+
+    public static void saveChannelBackupPath(Context context, String value) {
+        putString(SETTINGS, context, CHANNEL_BACKUP_PATH, value);
+    }
+
+    public static String getSeedString(Context context) {
+        return getString(SETTINGS, context, SEED_STRING);
+    }
+
+    public static void saveSeedString(Context context, String value) {
+        putString(SETTINGS, context, SEED_STRING, value);
+    }
+
+    public static String getPasswordMd5(Context context) {
+        return getString(SETTINGS, context, PASSWORD_MD5);
+    }
+
+    public static void savePasswordMd5(Context context, String value) {
+        putString(SETTINGS, context, PASSWORD_MD5, value);
+    }
+
+    public static Boolean getCreated(Context context) {
+        return getBoolean(SETTINGS, context, CREATED);
+    }
+
+    public static void saveCreated(Context context, Boolean value) {
+        putBoolean(SETTINGS, context, CREATED, value);
+    }
+
+    public static Boolean getSynced(Context context) {
+        return getBoolean(SETTINGS, context, SYNCED);
+    }
+
+    public static void saveSynced(Context context, Boolean value) {
+        putBoolean(SETTINGS, context, SYNCED, value);
+    }
+
+    public static Boolean getSeedChecked(Context context) {
+        return getBoolean(SETTINGS, context, SEED_CHECKED);
+    }
+
+    public static void saveSeedChecked(Context context, Boolean value) {
+        putBoolean(SETTINGS, context, SEED_CHECKED, value);
+    }
+
+    public static String getRecoverySeedString(Context context) {
+        return getString(SETTINGS, context, RECOVERY_SEED_STRING);
+    }
+
+    public static void saveRecoverySeedString(Context context, String value) {
+        putString(SETTINGS, context, RECOVERY_SEED_STRING, value);
+    }
+
+    public static void saveStartCreate(Context context, Boolean value) {
+        putBoolean(SETTINGS, context, SYNCED, value);
+    }
+
+    public static Boolean getStartCreate(Context context) {
+        return getBoolean(SETTINGS, context, START_CREATE);
     }
 }

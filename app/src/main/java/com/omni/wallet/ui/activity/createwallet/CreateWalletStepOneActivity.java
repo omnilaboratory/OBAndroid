@@ -1,7 +1,6 @@
 package com.omni.wallet.ui.activity.createwallet;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
@@ -78,14 +78,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
                     for (int idx = 0;idx<seedArray.size();idx++){
                         seedsString = seedsString + seedArray.get(idx)+ " ";
                     }
-                    /**
-                     * 使用SharedPreferences 对象，在生成seeds时候将seeds备份到本地文件
-                     * Use SharedPreferences Class to back up seeds to local file,when create seeds.
-                     */
-                    SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = secretData.edit();
-                    editor.putString("seeds",seedsString);
-                    editor.commit();
+                    User.getInstance().setSeedString(mContext,seedsString);
 //                    initTvForSeeds();
                     TextView textView01 = (TextView)findViewById(R.id.seed_text_1);
                     textView01.setText(seedArray.get(0));

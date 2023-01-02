@@ -20,16 +20,20 @@ import com.downloader.Error;
 import com.downloader.OnDownloadListener;
 import com.downloader.OnProgressListener;
 import com.downloader.PRDownloader;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.http.HttpUtils;
 import com.omni.wallet.baselibrary.http.callback.EngineCallback;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
+import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.ui.activity.AccountLightningActivity;
+import com.omni.wallet.ui.activity.UnlockActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.ObdLogFileObserver;
 import com.omni.wallet.utils.Wallet;
@@ -43,14 +47,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import autopilotrpc.AutopilotOuterClass;
 import butterknife.BindView;
 import butterknife.OnClick;
 import lnrpc.LightningOuterClass;
+import lnrpc.Stateservice;
+import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
+import obdmobile.RecvStream;
 
 public class BackupBlockProcessActivity extends AppBaseActivity {
 
+    private static final String TAG = BackupBlockProcessActivity.class.getSimpleName();
     private Context ctx = BackupBlockProcessActivity.this;
 
     List<String> accountList = new ArrayList<>();
@@ -84,46 +93,85 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     String newCreatedAddress ="";
     ObdLogFileObserver obdLogFileObserver = null;
     SharedPreferences blockData = null;
-    
-    String initWalletType = User.getInstance().getInitWalletType();
+    boolean isSynced = false;
+    boolean isCreated = false;
+    String walletAddress = "";
+    int totalBlockHeight = 0;
+    ConstantInOB constantInOB = null;
+
+    @Override
+    protected Drawable getWindowBackground(){
+        return ContextCompat.getDrawable(mContext, R.color.color_f9f9f9);
+    }
+
+    @Override
+    protected int getContentView() {
+        return R.layout.activity_backup_block_process;
+    }
+
+    @Override
+    protected void initView() {
+//        if(initWalletType.equals("create")){
+//            startBtnText.setText(R.string.start_upper);
+//        }else if(initWalletType.equals("recovery")){
+//            startBtnText.setText(R.string.next_upper);
+//        }
+       
+        
+        constantInOB = new ConstantInOB(mContext);
+        String fileLocal = constantInOB.getRegTestLogPath();
+        obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
+        blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
+        isSynced = User.getInstance().getSynced(mContext);
+        isCreated = User.getInstance().getCreated(mContext);
+        walletAddress = User.getInstance().getWalletAddress(mContext);
+        mLoadingDialog = new LoadingDialog(mContext);
+        String passwordMd5 = User.getInstance().getPasswordMd5(mContext);
+        Log.e("password",passwordMd5);
+        subscribeState();
+//        downloadFiles();
+        
+        /*PRDownloaderConfig config = PRDownloaderConfig.newBuilder().setDatabaseEnabled(true)
+                .setReadTimeout(30000)
+                .setConnectTimeout(30000)
+                .build();
+        PRDownloader.initialize(ctx,config);*/
+    }
+    @Override
+    protected void initData() {
+    }
 
     @SuppressLint("LongLogTag")
     private final SharedPreferences.OnSharedPreferenceChangeListener currentBlockSharePreferenceChangeListener = (sharedPreferences, key) -> {
         if (key == "currentBlockHeight"){
-            int totalHeight = sharedPreferences.getInt("totalBlockHeight",0);
             int currentHeight = sharedPreferences.getInt("currentBlockHeight",0);
-            if(totalHeight<=currentHeight){
-                int endCurrentHeight = totalHeight;
-                updateSyncDataView(endCurrentHeight,totalHeight);
-                newAddressToWallet();
-            }else{
-                boolean isSynced = blockData.getBoolean("isSynced",false);
-                if(isSynced){
-                    currentHeight = totalHeight;
-                    updateSyncDataView(currentHeight,totalHeight);
-                    newAddressToWallet();
-                }else{
-                    updateSyncDataView(currentHeight,totalHeight);    
-                }
-                
-            }
+            updateSyncDataView(currentHeight);
+            
         }
     };
 
-    private void updateSyncDataView(int syncedHeight,int syncHeight){
-        double totalHeight =  syncHeight;
+    @SuppressLint("SetTextI18n")
+    private void updateSyncDataView(int syncedHeight){
+        double totalHeight =  totalBlockHeight;
         double currentHeight =  syncedHeight;
+        if(syncedHeight>totalBlockHeight){
+            syncedHeight = totalBlockHeight;
+            currentHeight = totalHeight;
+        }
         double percent = (currentHeight/totalHeight * 100);
         double totalWidth =  rvMyProcessOuter.getWidth();
         int innerHeight = (int)rvMyProcessOuter.getHeight()-2;
         int innerWidth = (int) (totalWidth*percent/100);
-        String percentString = String.format("%.2f",percent);
+        @SuppressLint("DefaultLocale") String percentString = String.format("%.2f",percent);
         syncPercentView.setText(percentString + "%");
         RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth,innerHeight);
         rvProcessInner.setLayoutParams(rlInnerParam);
-
         syncedBlockNumView.setText(Integer.toString(syncedHeight));
         commitNumSyncedView.setText(Integer.toString(syncedHeight));
+        
+        if(totalHeight == currentHeight){
+            User.getInstance().setSynced(mContext,true);
+        }
     }
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
@@ -143,50 +191,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
 
 
-    @Override
-    protected Drawable getWindowBackground(){
-        return ContextCompat.getDrawable(mContext, R.color.color_f9f9f9);
-    }
 
-    @Override
-    protected int getContentView() {
-        return R.layout.activity_backup_block_process;
-    }
-
-    @Override
-    protected void initView() {
-//        if(initWalletType.equals("create")){
-//            startBtnText.setText(R.string.start_upper);
-//        }else if(initWalletType.equals("recovery")){
-//            startBtnText.setText(R.string.next_upper);
-//        }
-        mLoadingDialog = new LoadingDialog(mContext);
-        accountList = WalletGetInfo.getAccountList(ctx);
-        String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/regtest/lnd.log";
-//        String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/testnet/lnd.log";
-        obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
-        blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
-        blockData.edit().putBoolean("isSynced",false);
-        blockData.edit().commit();
-        
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-//                downloadFiles();
-                getTotalBlockHeight();
-            }
-        }).start();
-        
-        
-        /*PRDownloaderConfig config = PRDownloaderConfig.newBuilder().setDatabaseEnabled(true)
-                .setReadTimeout(30000)
-                .setConnectTimeout(30000)
-                .build();
-        PRDownloader.initialize(ctx,config);*/
-    }
-    @Override
-    protected void initData() {
-    }
 
     /**
     *点击Copy address
@@ -260,9 +265,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                             JSONObject jsonObject1 = new JSONObject(jsonObject.getString("result"));
                             String block = jsonObject1.getString("block");
                             blockData.registerOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
-                            SharedPreferences.Editor editor = blockData.edit();
-                            editor.putInt("totalBlockHeight",Integer.parseInt(block));
-                            editor.commit();
+                            totalBlockHeight = Integer.parseInt(block);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -271,7 +274,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                                     commitContentRL.setVisibility(View.VISIBLE);
                                     commitNumSyncView.setText(block);
                                     syncBlockNumView.setText(block);
-                                    updateSyncDataView(0,Integer.parseInt(block));
+                                    updateSyncDataView(0);
                                     obdLogFileObserver.startWatching();
 
                                 }
@@ -326,10 +329,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                             blockData.unregisterOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
                         }
                     });
-                    @SuppressLint("WorldWriteableFiles") SharedPreferences addressList = ctx.getSharedPreferences("Account", MODE_WORLD_WRITEABLE);
-                    SharedPreferences.Editor editor = addressList.edit();
-                    editor.putString("accountList",address);
-                    editor.commit();
                     // save wallet address to local
                     // 保存地址到本地
                     User.getInstance().setWalletAddress(mContext,address);
@@ -349,18 +348,10 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
      * @Date 2022/12/13 22:11
     */
     public void downloadFiles (){
-        //Save files path 存储路径
-        String basePath = ctx.getExternalCacheDir() + "/data/chain/bitcoin/testnet/";
-        //Header.bin file name 头部文件名称
-        String headerFileName = "block_header.bin";
-        //data base file name 数据文件名称 
-        String dbFileName = "neutrino.db";
-        //data base file download url 数据文件下载路径
-        String dbUrlStr = "http://43.138.107.248:9090/obd-android-build.tar.gz";
-        //header bin file download url 头部执行文件下载路径
-        String headerUrlStr = "http://43.138.107.248:9090/obd-android-build.tar.gz";
+        
+        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
         //下载头部文件
-        PRDownloader.download(headerUrlStr,basePath,headerFileName).build()
+        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin,downloadDirectoryPath,ConstantInOB.blockHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
                     commitContentRL.setVisibility(View.INVISIBLE);
                     doExplainTv.setText(ctx.getString(R.string.download_header));
@@ -383,7 +374,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                     @Override
                     public void onDownloadComplete() {
                         //下载数据文件
-                        PRDownloader.download(dbUrlStr,basePath,dbFileName).build()
+                        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB,downloadDirectoryPath,ConstantInOB.neutrinoDB).build()
                                 .setOnStartOrResumeListener(() -> {
                                     doExplainTv.setText(ctx.getString(R.string.download_db));
                                 })
@@ -404,7 +395,37 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                                 .start(new OnDownloadListener() {
                                     @Override
                                     public void onDownloadComplete() {
-                                        getTotalBlockHeight();
+
+                                        //下载数据文件
+                                        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.regFilterHeaderBin,downloadDirectoryPath,ConstantInOB.regFilterHeaderBin).build()
+                                                .setOnStartOrResumeListener(() -> {
+                                                    doExplainTv.setText(ctx.getString(R.string.download_db));
+                                                })
+                                                .setOnPauseListener(()->{})
+                                                .setOnCancelListener(()->{})
+                                                .setOnProgressListener(new OnProgressListener() {
+                                                    @SuppressLint({"SetTextI18n", "DefaultLocale"})
+                                                    @Override
+                                                    public void onProgress(com.downloader.Progress progress) {
+                                                        Log.e("Progress String filter",progress.toString());
+                                                        double currentM = (double)progress.currentBytes/1024/1024;
+                                                        double totalBytes = (double)progress.totalBytes/1024/1024;
+                                                        commitNumSyncView.setText(String.format("%.0f",totalBytes)+"MB");
+                                                        syncBlockNumView.setText(String.format("%.0f",totalBytes)+"MB");
+                                                        updateDataView(currentM,totalBytes);
+                                                    }
+                                                })
+                                                .start(new OnDownloadListener() {
+                                                    @Override
+                                                    public void onDownloadComplete() {
+                                                        subscribeState();
+                                                    }
+
+                                                    @Override
+                                                    public void onError(Error error) {
+
+                                                    }
+                                                });
                                     }
 
                                     @Override
@@ -419,5 +440,79 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
                     }
                 });
+    }
+    
+    @OnClick(R.id.refresh_btn)
+    public void refreshBtnClick (){
+        Log.e("Click refresh","Click refresh");
+        startOBMobile();
+    }
+    
+    public void startOBMobile(){
+        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE_OMNI_WITH_SEED, new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
+            }
+        });
+    }
+    
+    public void unlockWallet(){
+        String passwordMd5 = User.getInstance().getPasswordMd5(mContext);
+        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passwordMd5)).build();
+        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+            }
+        });
+    }
+    
+    public void subscribeState(){
+        Stateservice.SubscribeStateRequest subscribeStateRequest = Stateservice.SubscribeStateRequest.newBuilder().build();
+        Obdmobile.subscribeState(subscribeStateRequest.toByteArray(), new RecvStream() {
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                try {
+                    Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
+                    int stateValue = subscribeStateResponse.getStateValue();
+                    Log.e("state value",Integer.toString(stateValue));
+                    if (stateValue == 255){
+                        startOBMobile();
+                    }else if(stateValue == 1){
+                        unlockWallet();
+                    }else if(stateValue == 4){
+                        newAddressToWallet();
+                    }else if(stateValue == 0){
+                        switchActivity(UnlockActivity.class);
+                    }else if(stateValue >= 2){
+                        accountList = WalletGetInfo.getAccountList(ctx);
+                        String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/regtest/lnd.log";
+//        String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/testnet/lnd.log";
+                        obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
+                        blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
+                        blockData.edit().putBoolean("isSynced",false);
+                        blockData.edit().commit();
+                        getTotalBlockHeight();
+                    }
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
