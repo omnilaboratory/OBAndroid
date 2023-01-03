@@ -249,10 +249,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 mNetwork2Tv.setText("BTC lightning network");
                 mNetwork3Tv.setText("BTC lightning network");
             } else {
-                mNetworkTv.setText("Doallar lightning network");
-                mNetwork1Tv.setText("Doallar lightning network");
-                mNetwork2Tv.setText("Doallar lightning network");
-                mNetwork3Tv.setText("Doallar lightning network");
+                mNetworkTv.setText("doallar lightning network");
+                mNetwork1Tv.setText("doallar lightning network");
+                mNetwork2Tv.setText("doallar lightning network");
+                mNetwork3Tv.setText("doallar lightning network");
             }
             mLightningNetworkLayout.setVisibility(View.VISIBLE);
             mLinkNetworkLayout.setVisibility(View.GONE);
@@ -299,11 +299,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mTokenInfoTv.setVisibility(View.GONE);
         } else {
             mAssetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetNameTv.setText("Doallar");
-            mBalanceUnitTv.setText("Doallar");
-            mBalanceUnit1Tv.setText("Doallar");
-            mBalanceUnit2Tv.setText("Doallar");
-            mBalanceUnit3Tv.setText("Doallar");
+            mAssetNameTv.setText("doallar");
+            mBalanceUnitTv.setText("doallar");
+            mBalanceUnit1Tv.setText("doallar");
+            mBalanceUnit2Tv.setText("doallar");
+            mBalanceUnit3Tv.setText("doallar");
             mTokenInfoTv.setVisibility(View.VISIBLE);
         }
         if (balanceAmount == 0) {

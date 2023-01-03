@@ -104,7 +104,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/main_5"
-                                    android:text="Doallar"
+                                    android:text="doallar"
                                     android:textColor="@color/color_black"
                                     android:textSize="@dimen/text_18"/>
                             </LinearLayout>
@@ -221,7 +221,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_marginLeft="@dimen/main_5"
-                                android:text="Doallar"
+                                android:text="doallar"
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16" />
                         </LinearLayout>
@@ -263,7 +263,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/main_5"
-                                android:text="Doallar"
+                                android:text="doallar"
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16" />
                         </LinearLayout>

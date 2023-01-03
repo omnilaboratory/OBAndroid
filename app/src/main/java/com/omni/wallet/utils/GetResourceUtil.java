@@ -9,7 +9,7 @@ public class GetResourceUtil {
         switch (type){
             default:
                 return R.mipmap.icon_usdt_logo_small;
-            case "Doallar":
+            case "doallar":
                 return R.mipmap.icon_usdt_logo_small;
             case "BTC":
                 return R.mipmap.icon_btc_logo_small;

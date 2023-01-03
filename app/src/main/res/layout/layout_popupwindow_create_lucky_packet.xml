@@ -170,7 +170,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_centerVertical="true"
                                         android:layout_marginLeft="@dimen/main_5"
-                                        android:text="Doallar"
+                                        android:text="doallar"
                                         android:textColor="@color/color_99_transparent"
                                         android:textSize="@dimen/text_16"/>
 
@@ -369,7 +369,7 @@
                                 android:layout_centerVertical="true"
                                 android:layout_marginRight="@dimen/main_5"
                                 android:inputType="number"
-                                android:text="Doallar"
+                                android:text="doallar"
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16"/>
                         </RelativeLayout>
@@ -612,7 +612,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/main_15"
-                                android:text="Doallar"
+                                android:text="doallar"
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16"/>
                         </LinearLayout>
@@ -654,7 +654,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/main_5"
-                                android:text="Doallar"
+                                android:text="doallar"
                                 android:textColor="@color/color_red"
                                 android:textSize="@dimen/text_16"/>
                         </LinearLayout>
@@ -763,7 +763,7 @@
                         android:layout_marginRight="@dimen/main_55"
                         android:layout_marginTop="@dimen/main_25"
                         android:gravity="center"
-                        android:text="Can not create invoice for 100 Doallar, the remote balance does not has sufficient fund to transfer."
+                        android:text="Can not create invoice for 100 doallar, the remote balance does not has sufficient fund to transfer."
                         android:textColor="@color/color_black"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>
@@ -912,7 +912,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_15"
-                            android:text="Doallar"
+                            android:text="doallar"
                             android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16"/>
                     </LinearLayout>
@@ -954,7 +954,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
-                            android:text="Doallar"
+                            android:text="doallar"
                             android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16"/>
                     </LinearLayout>

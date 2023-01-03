@@ -249,7 +249,7 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
                         if (item.getPropertyid() == 0) {
                             amountUnitButton.setText("BTC");
                         } else {
-                            amountUnitButton.setText("Doallar");
+                            amountUnitButton.setText("doallar");
                         }
                         assetId = item.getPropertyid();
                         assetBalanceMax = BigDecimalUtils.round(String.valueOf(item.getAmount() / 100000000), 2);

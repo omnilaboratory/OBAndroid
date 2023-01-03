@@ -24,7 +24,7 @@ public class SendStepThreePopupWindow {
     // 初始数据（Initial data）
     String sendFriendName = "Alpha";
     String sendAddress = "1mn8382odjddwedqw323f3d32343f23fweg65er4345yge43t4534gy7";
-    String type = "Doallar";
+    String type = "doallar";
     Double sendAmount = 100.00d;
     Double sendValue = 710.23d;
     Double gasFeeAmount = 100.00d;

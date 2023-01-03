@@ -55,7 +55,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
             mAssetUnit.setText("BTC");
         } else {
             mAssetLogo.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetUnit.setText("Doallar");
+            mAssetUnit.setText("doallar");
         }
     }
 

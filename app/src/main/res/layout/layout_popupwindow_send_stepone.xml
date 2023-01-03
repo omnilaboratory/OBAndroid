@@ -256,7 +256,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/main_20"
-                                android:text="Doallar"
+                                android:text="doallar"
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16"/>
 
@@ -361,7 +361,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
                         android:layout_marginRight="@dimen/main_30"
-                        android:text="Doallar"
+                        android:text="doallar"
                         android:textColor="@color/color_99_transparent"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>
@@ -681,7 +681,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
-                        android:text="Doallar"
+                        android:text="doallar"
                         android:textColor="@color/color_99_transparent"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>
@@ -729,7 +729,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
-                            android:text="Doallar"
+                            android:text="doallar"
                             android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16"/>
                     </LinearLayout>
@@ -1157,7 +1157,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
-                        android:text="Doallar"
+                        android:text="doallar"
                         android:textColor="@color/color_99_transparent"
                         android:textSize="@dimen/text_16" />
                 </LinearLayout>
@@ -1205,7 +1205,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
-                            android:text="Doallar"
+                            android:text="doallar"
                             android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16" />
                     </LinearLayout>
@@ -1619,7 +1619,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
-                            android:text="Doallar"
+                            android:text="doallar"
                             android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16"/>
                     </LinearLayout>
@@ -1661,7 +1661,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
-                            android:text="Doallar"
+                            android:text="doallar"
                             android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16"/>
                     </LinearLayout>

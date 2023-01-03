@@ -171,7 +171,7 @@ public class SelectAssetUnitPopupWindow {
             if (item.getPropertyid() == 0) {
                 holder.setText(R.id.tv_amount_unit, "BTC");
             } else {
-                holder.setText(R.id.tv_amount_unit, "Doallar");
+                holder.setText(R.id.tv_amount_unit, "doallar");
             }
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override
