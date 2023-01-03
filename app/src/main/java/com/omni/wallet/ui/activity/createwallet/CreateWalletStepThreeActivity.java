@@ -1,7 +1,6 @@
 package com.omni.wallet.ui.activity.createwallet;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
@@ -248,16 +247,9 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             mLoadingDialog.show();
             String md5String = Md5Util.getMD5Str(password);
             System.out.println(md5String);
-            /**
-             * 使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
-             * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
-             */
-            SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
-            String seedsString = secretData.getString("seeds", "none");
+            User.getInstance().setPasswordMd5(mContext,md5String);
+            String seedsString = User.getInstance().getSeedString(mContext);
             String[] seedList = seedsString.split(" ");
-            SharedPreferences.Editor editor = secretData.edit();
-            editor.putString("password",md5String);
-            editor.commit();
             Walletunlocker.InitWalletRequest.Builder initWalletRequestBuilder = Walletunlocker.InitWalletRequest.newBuilder();
             List newSeedList = initWalletRequestBuilder.getCipherSeedMnemonicList();
             Log.e("newSeedList",newSeedList.toString());
@@ -269,7 +261,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
 
             Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
-
+            User.getInstance().setStartCreate(mContext,true);
 
             Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
                 @Override
@@ -285,24 +277,14 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                         return;
                     }
                     try {
-                        String path = Environment.getExternalStorageDirectory() + "/" + "macaroon.OBBackupMacaroon";
                         Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
                         ByteString macaroon = initWalletResponse.getAdminMacaroon();
-                        OutputStream outputStream = new FileOutputStream(path);
-                        initWalletResponse.getAdminMacaroon().writeTo(outputStream);
-                        User.getInstance().setMacaroonString(macaroon.toStringUtf8());
-                        User.getInstance().setInitWalletType("create");
-                        File file = new File(path);
-                        if (file.exists()){
-                            file.delete();
-                        }
-                        
+                        User.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8());
+                        User.getInstance().setCreated(mContext,true);
                         switchActivity(BackupBlockProcessActivity.class);
-                    } catch (InvalidProtocolBufferException | FileNotFoundException e) {
+                    } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();
                         mLoadingDialog.dismiss();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
                 }
             });

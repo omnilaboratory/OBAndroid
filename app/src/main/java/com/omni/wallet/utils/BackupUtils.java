@@ -65,7 +65,6 @@ public class BackupUtils {
             @Override
             public void onResponse(byte[] bytes) {
                 try {
-
                     String directoryPath = basePath + "/" +directoryName;
                     String channelFilePath = directoryPath + "/" + channelFileName;
                     File directoryFile = new File(directoryPath);

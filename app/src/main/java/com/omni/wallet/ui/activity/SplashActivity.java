@@ -1,12 +1,20 @@
 package com.omni.wallet.ui.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.downloader.Error;
+import com.downloader.OnDownloadListener;
+import com.downloader.OnProgressListener;
+import com.downloader.PRDownloader;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.base.PermissionConfig;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
@@ -19,7 +27,12 @@ import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
 import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
 import com.omni.wallet.utils.AppVersionUtils;
 
+import java.io.File;
 import java.util.List;
+
+import butterknife.BindView;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 /**
  * The page for initial
@@ -39,6 +52,21 @@ public class SplashActivity extends AppBaseActivity {
      */
     private AlertDialog mGuideDialog;
 
+    @BindView(R.id.tv_doing_explain)
+    TextView doExplainTv;
+    @BindView(R.id.block_num_sync)
+    TextView syncBlockNumView;
+    @BindView(R.id.progress_bar_outer)
+    RelativeLayout rvMyProcessOuter;
+    @BindView(R.id.sync_percent)
+    TextView syncPercentView;
+    @BindView(R.id.process_inner)
+    RelativeLayout rvProcessInner;
+    @BindView(R.id.block_num_synced)
+    TextView syncedBlockNumView;
+
+    ConstantInOB constantInOB = null;
+
     @Override
     protected boolean isFullScreenStyle() {
         return true;
@@ -56,6 +84,7 @@ public class SplashActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        constantInOB = new ConstantInOB(mContext);
         /**
          * check version code to update all states
          * 检查版本号，更新各个状态
@@ -98,7 +127,7 @@ public class SplashActivity extends AppBaseActivity {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                turnToNextPage();
+                                downloadHeaderBinFile();
                             }
                         }, Constants.SPLASH_SLEEP_TIME);
                     }
@@ -237,5 +266,158 @@ public class SplashActivity extends AppBaseActivity {
             mGuideDialog = null;
         }
         super.onDestroy();
+    }
+
+    public void downloadHeaderBinFile() {
+        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+        File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin);
+        if (file.exists()) {
+            downloadDBFile();
+        } else {
+            PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
+                    .setOnStartOrResumeListener(() -> {
+                        doExplainTv.setText(mContext.getString(R.string.download_header));
+                    })
+                    .setOnPauseListener(() -> {
+                    })
+                    .setOnCancelListener(() -> {
+                    })
+                    .setOnProgressListener(new OnProgressListener() {
+                        @SuppressLint({"SetTextI18n", "DefaultLocale"})
+                        @Override
+                        public void onProgress(com.downloader.Progress progress) {
+                            double currentM = (double) progress.currentBytes / 1024 / 1024;
+                            double totalBytes = (double) progress.totalBytes / 1024 / 1024;
+                            syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
+                            updateDataView(currentM, totalBytes);
+                        }
+                    })
+                    .start(new OnDownloadListener() {
+                        @Override
+                        public void onDownloadComplete() {
+                            downloadDBFile();
+                        }
+
+                        @Override
+                        public void onError(Error error) {
+
+                        }
+                    });
+        }
+
+    }
+
+    public void downloadDBFile() {
+        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+        File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB);
+        if (file.exists()) {
+            downloadFilterHeaderBinFile();
+        } else {
+            PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
+                    .setOnStartOrResumeListener(() -> {
+                        doExplainTv.setText(mContext.getString(R.string.download_db));
+                    })
+                    .setOnPauseListener(() -> {
+                    })
+                    .setOnCancelListener(() -> {
+                    })
+                    .setOnProgressListener(new OnProgressListener() {
+                        @SuppressLint({"SetTextI18n", "DefaultLocale"})
+                        @Override
+                        public void onProgress(com.downloader.Progress progress) {
+                            double currentM = (double) progress.currentBytes / 1024 / 1024;
+                            double totalBytes = (double) progress.totalBytes / 1024 / 1024;
+                            syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
+                            updateDataView(currentM, totalBytes);
+                        }
+                    })
+                    .start(new OnDownloadListener() {
+                        @Override
+                        public void onDownloadComplete() {
+                            downloadFilterHeaderBinFile();
+                        }
+
+                        @Override
+                        public void onError(Error error) {
+
+                        }
+                    });
+        }
+    }
+
+    public void downloadFilterHeaderBinFile() {
+        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+        File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB);
+        if (file.exists()) {
+            Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
+                @Override
+                public void onError(Exception e) {
+                    LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
+                }
+
+                @Override
+                public void onResponse(byte[] bytes) {
+//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
+                    turnToNextPage();
+                }
+            });
+        } else {
+            PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
+                    .setOnStartOrResumeListener(() -> {
+                        doExplainTv.setText(mContext.getString(R.string.download_filter_header));
+                    })
+                    .setOnPauseListener(() -> {
+                    })
+                    .setOnCancelListener(() -> {
+                    })
+                    .setOnProgressListener(new OnProgressListener() {
+                        @SuppressLint({"SetTextI18n", "DefaultLocale"})
+                        @Override
+                        public void onProgress(com.downloader.Progress progress) {
+                            double currentM = (double) progress.currentBytes / 1024 / 1024;
+                            double totalBytes = (double) progress.totalBytes / 1024 / 1024;
+                            syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
+                            updateDataView(currentM, totalBytes);
+                        }
+                    })
+                    .start(new OnDownloadListener() {
+                        @Override
+                        public void onDownloadComplete() {
+                            Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
+                                @Override
+                                public void onError(Exception e) {
+                                    LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
+                                }
+
+                                @Override
+                                public void onResponse(byte[] bytes) {
+//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
+                                    turnToNextPage();
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void onError(Error error) {
+
+                        }
+                    });
+        }
+        
+    }
+
+    @SuppressLint({"DefaultLocale", "SetTextI18n"})
+    private void updateDataView(double currentMb, double totalMb) {
+        double percent = (currentMb / totalMb * 100);
+        double totalWidth = rvMyProcessOuter.getWidth();
+        int innerHeight = (int) rvMyProcessOuter.getHeight() - 2;
+        int innerWidth = (int) (totalWidth * percent / 100);
+        String percentString = String.format("%.0f", percent);
+        syncPercentView.setText(percentString + "%");
+        RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth, innerHeight);
+        rvProcessInner.setLayoutParams(rlInnerParam);
+
+        syncedBlockNumView.setText(String.format("%.0f", currentMb) + "MB");
     }
 }

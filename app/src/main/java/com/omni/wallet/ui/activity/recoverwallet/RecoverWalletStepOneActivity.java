@@ -24,10 +24,13 @@ import com.omni.wallet.template.DisablePasteEditText;
 import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
 import com.omni.wallet.utils.CheckRules;
 import com.omni.wallet.utils.NumberFormatter;
+import com.omni.wallet.utils.Wallet;
 
 import java.util.ArrayList;
 
 import butterknife.OnClick;
+import lnrpc.LightningOuterClass;
+import lnrpc.WalletUnlockerGrpc;
 
 public class RecoverWalletStepOneActivity extends AppBaseActivity {
     private ArrayList<EditText> list = new ArrayList<EditText>();
@@ -174,7 +177,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
         for (int i = 0; i<list.size();i++){
             seedsString = seedsString + list.get(i).getText() + " ";
         }
-        User.getInstance().setSeedString(seedsString);
+        User.getInstance().setRecoverySeedString(mContext,seedsString);
         /**
          * 使用SharedPreferences 对象，在生成seeds时候将seeds备份到本地文件
          * Use SharedPreferences Class to back up seeds to local file,when create seeds.
