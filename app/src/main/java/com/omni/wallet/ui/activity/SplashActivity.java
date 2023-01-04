@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import com.downloader.Error;
 import com.downloader.OnDownloadListener;
 import com.downloader.OnProgressListener;
 import com.downloader.PRDownloader;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.base.ConstantInOB;
@@ -26,10 +28,13 @@ import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.framelibrary.common.Constants;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.AppVersionUtils;
+import com.omni.wallet.utils.FilesUtils;
 
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
+import lnrpc.Stateservice;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
@@ -63,7 +68,8 @@ public class SplashActivity extends AppBaseActivity {
     RelativeLayout rvProcessInner;
     @BindView(R.id.block_num_synced)
     TextView syncedBlockNumView;
-
+    @BindView(R.id.download_view)
+    LinearLayout downloadView;
     ConstantInOB constantInOB = null;
 
     @Override
@@ -308,6 +314,7 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     public void downloadDBFile() {
+        downloadView.setVisibility(View.VISIBLE);
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
         /*File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB);
         if (file.exists()) {
@@ -335,7 +342,7 @@ public class SplashActivity extends AppBaseActivity {
                 .start(new OnDownloadListener() {
                     @Override
                     public void onDownloadComplete() {
-                        downloadFilterHeaderBinFile();
+                        startNode();
                     }
 
                     @Override
@@ -384,7 +391,8 @@ public class SplashActivity extends AppBaseActivity {
         Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
             @Override
             public void onError(Exception e) {
-                /*if(e.getMessage().equals("lnd already started")){
+                if (e.getMessage().equals("lnd already started")){
+
                     Stateservice.GetStateRequest getStateRequest = Stateservice.GetStateRequest.newBuilder().build();
                     Obdmobile.getState(getStateRequest.toByteArray(), new Callback() {
                         @Override
@@ -409,22 +417,13 @@ public class SplashActivity extends AppBaseActivity {
                                     case SERVER_ACTIVE:
                                         switchActivityFinish(AccountLightningActivity.class, mBundle);
                                         break;
-                                    case WAITING_TO_START:
-                                    case NON_EXISTING:
-                                    case UNRECOGNIZED:
-                                        startNode();
-                                        break;
                                 }
                             } catch (InvalidProtocolBufferException ex) {
                                 ex.printStackTrace();
                             }
                         }
                     });
-                    switchActivityFinish(UnlockActivity.class, mBundle);
-                }else if(e.getMessage().equals("error creating wallet config: unable to initialize neutrino backend: unable to create neutrino light client: EOF")){
-                    startNode();
-                }else{
-                }*/
+                }
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
             }
 
@@ -432,29 +431,6 @@ public class SplashActivity extends AppBaseActivity {
             public void onResponse(byte[] bytes) {
                 switchActivityFinish(UnlockActivity.class, mBundle);
                 LogUtils.e(TAG, "------------------startonSuccess------------------");
-                /*String initWalletType = User.getInstance().getInitWalletType(mContext);
-                long nowMillis = Calendar.getInstance().getTimeInMillis();
-                if(initWalletType.equals("")){
-                    downloadHeaderBinFile();
-                }else{
-                    String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-                    long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
-                    if(nowMillis - fileHeaderLastEdit > ConstantInOB.DAY_MILLIS*2){
-                        downloadHeaderBinFile();
-                    }else{
-                        long fileDBLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.neutrinoDB);;
-                        if(nowMillis - fileDBLastEdit > ConstantInOB.DAY_MILLIS*2){
-                            downloadDBFile();
-                        }else{
-                            long fileFilterLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.regFilterHeaderBin);;
-                            if(nowMillis - fileFilterLastEdit > ConstantInOB.DAY_MILLIS*2){
-                                downloadFilterHeaderBinFile();
-                            }else{
-                                switchActivityFinish(UnlockActivity.class, mBundle);
-                            }
-                        }
-                    }
-                }*/
             }
         });
     }
@@ -475,21 +451,18 @@ public class SplashActivity extends AppBaseActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void actionAfterPromise(){
-        startNode();
-
-
-        /*long lastUpdate = User.getInstance().getBaseFileLastUpdate(mContext);
-        long nowTimeMillis = Calendar.getInstance().getTimeInMillis();
-        Log.e("时间戳", String.valueOf(nowTimeMillis-lastUpdate));
-        if (lastUpdate == -1){
-            downloadHeaderBinFile();
+        String initWalletType = User.getInstance().getInitWalletType(mContext);
+        long nowMillis = Calendar.getInstance().getTimeInMillis();
+        if(initWalletType.equals("")){
+            downloadDBFile();
         }else{
-            if (nowTimeMillis - lastUpdate > ConstantInOB.DAY_MILLIS*2){
-                downloadHeaderBinFile();
+            String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+            long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
+            if(nowMillis - fileHeaderLastEdit > ConstantInOB.DAY_MILLIS*2){
+                downloadDBFile();
             }else{
                 startNode();
             }
-        }*/
-
+        }
     }
 }
