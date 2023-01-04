@@ -430,36 +430,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
             for (int i = 0; i < txidList.size(); i++) {
                 getOmniTransactions(txidList.get(i));
             }
+        } else {
+            oBListTransactions();
         }
-        LightningOuterClass.ListTranscationsRequest listTranscationsRequest = LightningOuterClass.ListTranscationsRequest.newBuilder()
-                .addAddrs(User.getInstance().getWalletAddress(mContext))
-                .build();
-        Obdmobile.oB_ListTranscations(listTranscationsRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------listTranscationsOnError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                if (bytes == null) {
-                    return;
-                }
-                try {
-                    LightningOuterClass.ListTranscationsResponse resp = LightningOuterClass.ListTranscationsResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------listTranscationsOnResponse-----------------" + resp);
-                    mTransactionsAssetData.addAll(resp.getListList());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mTransactionsAssetAdapter.notifyDataSetChanged();
-                        }
-                    });
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     private void getOmniTransactions(String txid) {
@@ -483,6 +456,39 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     List<LightningOuterClass.AssetTx> mData = new ArrayList<>();
                     mData.add(resp);
                     mTransactionsAssetData.addAll(mData);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTransactionsAssetAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    oBListTransactions();
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void oBListTransactions() {
+        LightningOuterClass.ListTranscationsRequest listTranscationsRequest = LightningOuterClass.ListTranscationsRequest.newBuilder()
+                .addAddrs(User.getInstance().getWalletAddress(mContext))
+                .build();
+        Obdmobile.oB_ListTranscations(listTranscationsRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------listTranscationsOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.ListTranscationsResponse resp = LightningOuterClass.ListTranscationsResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------listTranscationsOnResponse-----------------" + resp);
+                    mTransactionsAssetData.addAll(resp.getListList());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

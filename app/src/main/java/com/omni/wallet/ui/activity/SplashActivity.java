@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -15,7 +14,6 @@ import com.downloader.Error;
 import com.downloader.OnDownloadListener;
 import com.downloader.OnProgressListener;
 import com.downloader.PRDownloader;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.base.ConstantInOB;
@@ -27,19 +25,11 @@ import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.framelibrary.common.Constants;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
-import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
 import com.omni.wallet.utils.AppVersionUtils;
-import com.omni.wallet.utils.FilesUtils;
 
-import java.io.File;
-import java.time.Instant;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
-import lnrpc.Stateservice;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
@@ -284,7 +274,6 @@ public class SplashActivity extends AppBaseActivity {
         if (file.exists()) {
             downloadDBFile();
         } else {
-
         }*/
         PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
@@ -324,7 +313,6 @@ public class SplashActivity extends AppBaseActivity {
         if (file.exists()) {
             downloadFilterHeaderBinFile();
         } else {
-
         }*/
         PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
                 .setOnStartOrResumeListener(() -> {
@@ -389,7 +377,7 @@ public class SplashActivity extends AppBaseActivity {
 
                     }
                 });
-        
+
     }
 
     public void startNode(){
@@ -404,7 +392,6 @@ public class SplashActivity extends AppBaseActivity {
                             LogUtils.e(TAG, "------------------getStateError------------------" + e.getMessage());
                             e.printStackTrace();
                         }
-
                         @Override
                         public void onResponse(byte[] bytes) {
                             if (bytes == null){
@@ -437,7 +424,6 @@ public class SplashActivity extends AppBaseActivity {
                 }else if(e.getMessage().equals("error creating wallet config: unable to initialize neutrino backend: unable to create neutrino light client: EOF")){
                     startNode();
                 }else{
-
                 }*/
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
             }
