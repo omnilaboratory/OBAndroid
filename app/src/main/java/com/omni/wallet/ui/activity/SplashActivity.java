@@ -71,6 +71,7 @@ public class SplashActivity extends AppBaseActivity {
     @BindView(R.id.download_view)
     LinearLayout downloadView;
     ConstantInOB constantInOB = null;
+    String downloadVersion = "";
 
     @Override
     protected boolean isFullScreenStyle() {
@@ -90,6 +91,13 @@ public class SplashActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         constantInOB = new ConstantInOB(mContext);
+        Calendar calendar = Calendar.getInstance();
+        String year = String.valueOf(calendar.get(Calendar.YEAR));
+        String month = String.valueOf(calendar.get(Calendar.MONTH));
+        String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+        String fileVersion = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)/2);
+        downloadVersion = year + "-" + month + "-" + day + "-" + fileVersion;
+
         /**
          * check version code to update all states
          * 检查版本号，更新各个状态
@@ -281,7 +289,7 @@ public class SplashActivity extends AppBaseActivity {
             downloadDBFile();
         } else {
         }*/
-        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
+        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin + "?date1=" + downloadVersion, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_header));
                 })
@@ -302,7 +310,7 @@ public class SplashActivity extends AppBaseActivity {
                 .start(new OnDownloadListener() {
                     @Override
                     public void onDownloadComplete() {
-                        downloadDBFile();
+                        downloadFilterHeaderBinFile();
                     }
 
                     @Override
@@ -314,14 +322,14 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     public void downloadDBFile() {
-        downloadView.setVisibility(View.VISIBLE);
+
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
         /*File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB);
         if (file.exists()) {
             downloadFilterHeaderBinFile();
         } else {
         }*/
-        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
+        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB + "?date1=" + downloadVersion, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_db));
                 })
@@ -355,7 +363,7 @@ public class SplashActivity extends AppBaseActivity {
     public void downloadFilterHeaderBinFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
 
-        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
+        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.regFilterHeaderBin + "?date1=" + downloadVersion, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_filter_header));
                 })
@@ -376,7 +384,7 @@ public class SplashActivity extends AppBaseActivity {
                 .start(new OnDownloadListener() {
                     @Override
                     public void onDownloadComplete() {
-                        turnToNextPage();
+                        downloadDBFile();
                     }
 
                     @Override
@@ -454,12 +462,14 @@ public class SplashActivity extends AppBaseActivity {
         String initWalletType = User.getInstance().getInitWalletType(mContext);
         long nowMillis = Calendar.getInstance().getTimeInMillis();
         if(initWalletType.equals("")){
-            downloadDBFile();
+            downloadView.setVisibility(View.VISIBLE);
+            downloadHeaderBinFile();
         }else{
             String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
             long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
             if(nowMillis - fileHeaderLastEdit > ConstantInOB.DAY_MILLIS*2){
-                downloadDBFile();
+                downloadView.setVisibility(View.VISIBLE);
+                downloadHeaderBinFile();
             }else{
                 startNode();
             }

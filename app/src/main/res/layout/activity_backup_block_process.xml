@@ -213,6 +213,7 @@
                         android:layout_width="@dimen/main_20"
                         android:layout_height="@dimen/main_20"
                         android:src="@mipmap/refresh"
+                        android:visibility="gone"
                         />
                 </LinearLayout>
             </RelativeLayout>

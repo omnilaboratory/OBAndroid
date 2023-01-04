@@ -15,7 +15,7 @@ public class ConstantInOB {
     public static String neutrinoDB = "neutrino.db";
     public static String regFilterHeaderBin = "reg_filter_headers.bin";
     public static String downloadBaseUrl = "https://cache.oblnd.top/neutrino-regtest/";
-    
+
     public static final String neutrinoRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=neutrino " +

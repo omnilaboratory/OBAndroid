@@ -3,6 +3,7 @@ package com.omni.wallet.ui.activity.backup;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -36,11 +37,13 @@ import com.omni.wallet.baselibrary.http.callback.EngineCallback;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.ui.activity.AccountLightningActivity;
 import com.omni.wallet.ui.activity.UnlockActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.NetworkChangeReceiver;
 import com.omni.wallet.utils.ObdLogFileObserver;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.utils.WalletGetInfo;
@@ -53,7 +56,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import autopilotrpc.AutopilotOuterClass;
 import butterknife.BindView;
 import butterknife.OnClick;
 import lnrpc.LightningOuterClass;
@@ -96,6 +98,8 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     RelativeLayout commitContentRL;
     @BindView(R.id.btn_start_text)
     TextView startBtnText;
+    @BindView(R.id.refresh_btn)
+    ImageView refreshBtnImageView;
     String newCreatedAddress ="";
     ObdLogFileObserver obdLogFileObserver = null;
     SharedPreferences blockData = null;
@@ -105,6 +109,8 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     int totalBlockHeight = 0;
     ConstantInOB constantInOB = null;
     ConnectivityManager connectivityManager = null;
+    boolean networkIsConnected = true;
+    NetworkChangeReceiver networkChangeReceiver = null;
 
     @Override
     protected Drawable getWindowBackground(){
@@ -116,38 +122,10 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         return R.layout.activity_backup_block_process;
     }
 
-    ConnectivityManager.NetworkCallback registerNetworkCallback = new ConnectivityManager.NetworkCallback(){
-        @Override
-        public void onAvailable(Network network){
-            Log.e(TAG, "The default network is now: " + network);
-        }
-
-        @Override
-        public void onLost(Network network) {
-            Log.e(TAG, "The application no longer has a default network. The last default network was " + network);
-        }
-
-        @Override
-        public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
-            Log.e(TAG, "The default network changed capabilities: " + networkCapabilities);
-        }
-
-        @Override
-        public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
-            Log.e(TAG, "The default network changed link properties: " + linkProperties);
-        }
-    };
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void initView() {
-//        if(initWalletType.equals("create")){
-//            startBtnText.setText(R.string.start_upper);
-//        }else if(initWalletType.equals("recovery")){
-//            startBtnText.setText(R.string.next_upper);
-//        }
-       
-        
         constantInOB = new ConstantInOB(mContext);
         String fileLocal = constantInOB.getRegTestLogPath();
         obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
@@ -158,36 +136,68 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         mLoadingDialog = new LoadingDialog(mContext);
         String passwordMd5 = User.getInstance().getPasswordMd5(mContext);
         connectivityManager = getSystemService(ConnectivityManager.class);
-
         Log.e("password",passwordMd5);
-        runOnUiThread(new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void run() {
-                connectivityManager.registerDefaultNetworkCallback(registerNetworkCallback);
-            }
-        });
         subscribeState();
-
-//        downloadFiles();
-        
-        /*PRDownloaderConfig config = PRDownloaderConfig.newBuilder().setDatabaseEnabled(true)
-                .setReadTimeout(30000)
-                .setConnectTimeout(30000)
-                .build();
-        PRDownloader.initialize(ctx,config);*/
     }
     @Override
     protected void initData() {
+        networkChangeReceiver = new NetworkChangeReceiver();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                IntentFilter intentFilter = new IntentFilter();
+                intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+                registerReceiver(networkChangeReceiver, intentFilter);
+                networkChangeReceiver.setCallBackNetWork(new NetworkChangeReceiver.CallBackNetWork(){
+                    @Override
+                    public void callBack(int networkType) {
+                        switch (networkType){
+                            case ConnectivityManager.TYPE_WIFI:
+                                if(!networkIsConnected){
+                                    refreshBtnImageView.setVisibility(View.VISIBLE);
+                                }
+                                networkIsConnected = true;
+                                Log.e(TAG,"Network is wifi!");
+                                ToastUtils.showToast(mContext,"Network is wifi!");
+                                break;
+                            case ConnectivityManager.TYPE_MOBILE:
+                                if(!networkIsConnected){
+                                    refreshBtnImageView.setVisibility(View.VISIBLE);
+                                }
+                                networkIsConnected = true;
+                                Log.e(TAG,"Network is mobile!");
+                                ToastUtils.showToast(mContext,"Network is mobile!");
+                                break;
+                            case ConnectivityManager.TYPE_BLUETOOTH:
+                            case ConnectivityManager.TYPE_DUMMY:
+                            case ConnectivityManager.TYPE_ETHERNET:
+                            case ConnectivityManager.TYPE_MOBILE_DUN:
+                            case ConnectivityManager.TYPE_MOBILE_HIPRI:
+                            case ConnectivityManager.TYPE_MOBILE_MMS:
+                            case ConnectivityManager.TYPE_MOBILE_SUPL:
+                            case ConnectivityManager.TYPE_VPN:
+                            case ConnectivityManager.TYPE_WIMAX:
+                            case -1:
+                                networkIsConnected = false;
+                                Log.e(TAG,"Network is disconnected!");
+                                ToastUtils.showToast(mContext,"Network is disconnected!");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if(mLoadingDialog.isShowing()){
             mLoadingDialog.dismiss();
         }
-        connectivityManager.unregisterNetworkCallback(registerNetworkCallback);
+        unregisterReceiver(networkChangeReceiver);
+        super.onDestroy();
     }
 
     @SuppressLint("LongLogTag")
@@ -538,25 +548,22 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             public void onResponse(byte[] bytes) {
                 try {
                     Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
-                    int stateValue = subscribeStateResponse.getStateValue();
-                    Log.e("state value",Integer.toString(stateValue));
-                    if (stateValue == 255){
-                        startOBMobile();
-                    }else if(stateValue == 1){
-                        unlockWallet();
-                    }else if(stateValue == 4){
-                        newAddressToWallet();
-                    }else if(stateValue == 0){
-                        switchActivity(UnlockActivity.class);
-                    }else if(stateValue >= 2){
-                        accountList = WalletGetInfo.getAccountList(ctx);
-                        String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/regtest/lnd.log";
-//        String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/testnet/lnd.log";
-                        obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
-                        blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
-                        blockData.edit().putBoolean("isSynced",false);
-                        blockData.edit().commit();
-                        getTotalBlockHeight();
+                    Stateservice.WalletState stateValue = subscribeStateResponse.getState();
+                    switch (stateValue){
+                        case NON_EXISTING:
+                        case WAITING_TO_START:
+                        case UNRECOGNIZED:
+                            startOBMobile();
+                            break;
+                        case LOCKED:
+                            unlockWallet();
+                            break;
+                        case UNLOCKED:
+                            getTotalBlockHeight();
+                        case RPC_ACTIVE:
+                            break;
+                        case SERVER_ACTIVE:
+                            newAddressToWallet();
                     }
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
