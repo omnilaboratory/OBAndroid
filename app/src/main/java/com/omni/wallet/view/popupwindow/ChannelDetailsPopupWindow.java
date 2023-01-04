@@ -19,6 +19,7 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.ui.activity.channel.ChannelListItem;
+import com.omni.wallet.utils.BackupUtils;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UtilFunctions;
 import com.omni.wallet.utils.Wallet;
@@ -355,6 +356,7 @@ public class ChannelDetailsPopupWindow {
                         try {
                             LightningOuterClass.CloseStatusUpdate resp = LightningOuterClass.CloseStatusUpdate.parseFrom(bytes);
                             LogUtils.e(TAG, "------------------closeChannelOnResponse-----------------" + resp);
+                            BackupUtils.getInstance().BackupChannelToFile(mContext);
                             EventBus.getDefault().post(new CloseChannelEvent());
                             mBasePopWindow.dismiss();
                             mLoadingDialog.dismiss();
