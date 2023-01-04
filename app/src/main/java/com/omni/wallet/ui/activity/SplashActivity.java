@@ -15,6 +15,7 @@ import com.downloader.Error;
 import com.downloader.OnDownloadListener;
 import com.downloader.OnProgressListener;
 import com.downloader.PRDownloader;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.base.ConstantInOB;
@@ -29,6 +30,7 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
 import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
 import com.omni.wallet.utils.AppVersionUtils;
+import com.omni.wallet.utils.FilesUtils;
 
 import java.io.File;
 import java.time.Instant;
@@ -37,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
+import lnrpc.Stateservice;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
@@ -356,22 +359,6 @@ public class SplashActivity extends AppBaseActivity {
 
     public void downloadFilterHeaderBinFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        /*File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB);
-        if (file.exists()) {
-            Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
-                @Override
-                public void onError(Exception e) {
-                    LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
-                }
-
-                @Override
-                public void onResponse(byte[] bytes) {
-//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
-                    turnToNextPage();
-                }
-            });
-        } else {
-        }*/
 
         PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
@@ -394,7 +381,7 @@ public class SplashActivity extends AppBaseActivity {
                 .start(new OnDownloadListener() {
                     @Override
                     public void onDownloadComplete() {
-                        startNode();
+                        turnToNextPage();
                     }
 
                     @Override
@@ -409,13 +396,79 @@ public class SplashActivity extends AppBaseActivity {
         Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
             @Override
             public void onError(Exception e) {
+                /*if(e.getMessage().equals("lnd already started")){
+                    Stateservice.GetStateRequest getStateRequest = Stateservice.GetStateRequest.newBuilder().build();
+                    Obdmobile.getState(getStateRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------getStateError------------------" + e.getMessage());
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            if (bytes == null){
+                                return;
+                            }
+                            try {
+                                Stateservice.GetStateResponse getStateResponse = Stateservice.GetStateResponse.parseFrom(bytes);
+                                Stateservice.WalletState state = getStateResponse.getState();
+                                switch (state){
+                                    case LOCKED:
+                                        switchActivityFinish(UnlockActivity.class, mBundle);
+                                        break;
+                                    case UNLOCKED:
+                                    case RPC_ACTIVE:
+                                    case SERVER_ACTIVE:
+                                        switchActivityFinish(AccountLightningActivity.class, mBundle);
+                                        break;
+                                    case WAITING_TO_START:
+                                    case NON_EXISTING:
+                                    case UNRECOGNIZED:
+                                        startNode();
+                                        break;
+                                }
+                            } catch (InvalidProtocolBufferException ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
+                    switchActivityFinish(UnlockActivity.class, mBundle);
+                }else if(e.getMessage().equals("error creating wallet config: unable to initialize neutrino backend: unable to create neutrino light client: EOF")){
+                    startNode();
+                }else{
+
+                }*/
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
             }
 
             @Override
             public void onResponse(byte[] bytes) {
-//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
-                turnToNextPage();
+                switchActivityFinish(UnlockActivity.class, mBundle);
+                LogUtils.e(TAG, "------------------startonSuccess------------------");
+                /*String initWalletType = User.getInstance().getInitWalletType(mContext);
+                long nowMillis = Calendar.getInstance().getTimeInMillis();
+                if(initWalletType.equals("")){
+                    downloadHeaderBinFile();
+                }else{
+                    String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+                    long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
+                    if(nowMillis - fileHeaderLastEdit > ConstantInOB.DAY_MILLIS*2){
+                        downloadHeaderBinFile();
+                    }else{
+                        long fileDBLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.neutrinoDB);;
+                        if(nowMillis - fileDBLastEdit > ConstantInOB.DAY_MILLIS*2){
+                            downloadDBFile();
+                        }else{
+                            long fileFilterLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.regFilterHeaderBin);;
+                            if(nowMillis - fileFilterLastEdit > ConstantInOB.DAY_MILLIS*2){
+                                downloadFilterHeaderBinFile();
+                            }else{
+                                switchActivityFinish(UnlockActivity.class, mBundle);
+                            }
+                        }
+                    }
+                }*/
             }
         });
     }
@@ -436,8 +489,9 @@ public class SplashActivity extends AppBaseActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void actionAfterPromise(){
+        startNode();
 
-        downloadHeaderBinFile();
+
         /*long lastUpdate = User.getInstance().getBaseFileLastUpdate(mContext);
         long nowTimeMillis = Calendar.getInstance().getTimeInMillis();
         Log.e("时间戳", String.valueOf(nowTimeMillis-lastUpdate));

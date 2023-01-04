@@ -1,6 +1,7 @@
 package com.omni.wallet.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.omni.wallet.listItems.BackupFile;
 
@@ -65,5 +66,36 @@ public class FilesUtils {
 
         }
         return fileInfoList;
+    }
+
+    public static boolean fileIsExist(String path){
+        try {
+            File file = new File(path);
+            if (!file.exists()){
+                Log.e(path + "is exist","false");
+                return false;
+            }
+        }catch (Exception e){
+            Log.e(path + "is exist","false");
+            return false;
+        }
+        Log.e(path + "is exist","true");
+        return true;
+    }
+
+    public static long fileLastUpdate(String path){
+        try {
+            File file = new File(path);
+            if (!file.exists()){
+                Log.e(path + "is exist","false");
+                return -1;
+            }else{
+                long lastModified = file.lastModified();
+                return lastModified;
+            }
+        }catch (Exception e){
+            Log.e(path + "is exist","false");
+            return -1;
+        }
     }
 }
