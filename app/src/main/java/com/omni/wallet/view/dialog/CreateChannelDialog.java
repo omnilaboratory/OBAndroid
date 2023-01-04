@@ -29,6 +29,7 @@ import com.omni.wallet.lightning.LightningNodeUri;
 import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.ui.activity.ScanChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
+import com.omni.wallet.utils.BackupUtils;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.popupwindow.SelectAssetUnitPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
@@ -451,6 +452,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
                             bundle.putString(ChannelsActivity.KEY_PUBKEY, User.getInstance().getFromPubKey(mContext));
                             Intent intent = new Intent(mContext, ChannelsActivity.class);
+                            BackupUtils.getInstance().BackupChannelToFile(mContext);
                             intent.putExtras(bundle);
                             mContext.startActivity(intent);
                         } catch (InvalidProtocolBufferException e) {

@@ -6,6 +6,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.LinkProperties;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
@@ -98,6 +104,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     String walletAddress = "";
     int totalBlockHeight = 0;
     ConstantInOB constantInOB = null;
+    ConnectivityManager connectivityManager = null;
 
     @Override
     protected Drawable getWindowBackground(){
@@ -109,6 +116,29 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         return R.layout.activity_backup_block_process;
     }
 
+    ConnectivityManager.NetworkCallback registerNetworkCallback = new ConnectivityManager.NetworkCallback(){
+        @Override
+        public void onAvailable(Network network){
+            Log.e(TAG, "The default network is now: " + network);
+        }
+
+        @Override
+        public void onLost(Network network) {
+            Log.e(TAG, "The application no longer has a default network. The last default network was " + network);
+        }
+
+        @Override
+        public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
+            Log.e(TAG, "The default network changed capabilities: " + networkCapabilities);
+        }
+
+        @Override
+        public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
+            Log.e(TAG, "The default network changed link properties: " + linkProperties);
+        }
+    };
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void initView() {
 //        if(initWalletType.equals("create")){
@@ -127,8 +157,18 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         walletAddress = User.getInstance().getWalletAddress(mContext);
         mLoadingDialog = new LoadingDialog(mContext);
         String passwordMd5 = User.getInstance().getPasswordMd5(mContext);
+        connectivityManager = getSystemService(ConnectivityManager.class);
+
         Log.e("password",passwordMd5);
+        runOnUiThread(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void run() {
+                connectivityManager.registerDefaultNetworkCallback(registerNetworkCallback);
+            }
+        });
         subscribeState();
+
 //        downloadFiles();
         
         /*PRDownloaderConfig config = PRDownloaderConfig.newBuilder().setDatabaseEnabled(true)
@@ -139,6 +179,15 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
     @Override
     protected void initData() {
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mLoadingDialog.isShowing()){
+            mLoadingDialog.dismiss();
+        }
+        connectivityManager.unregisterNetworkCallback(registerNetworkCallback);
     }
 
     @SuppressLint("LongLogTag")

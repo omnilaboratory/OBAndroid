@@ -28,6 +28,12 @@ public class ConstantInOB {
             "--omnicoreproxy.rpchost=" +BTCHostAddressRegTest +":18332 "+
             "--omnicoreproxy.zmqpubrawblock=tcp://" +BTCHostAddressRegTest +":28332 "+
             "--omnicoreproxy.zmqpubrawtx=tcp://" +BTCHostAddressRegTest +":28333";
+
+    public static final long SECOND_MILLIS = 1000;
+    public static final long MINUTE_MILLIS = 60 * SECOND_MILLIS;
+    public static final long HOUR_MILLIS = 60 * MINUTE_MILLIS;
+    public static final long DAY_MILLIS = 24 * HOUR_MILLIS;
+    public static final long WEEK_MILLIS = 7 * DAY_MILLIS;
     
     
     public ConstantInOB(Context context){
