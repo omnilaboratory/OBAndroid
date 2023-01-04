@@ -2,7 +2,10 @@ package com.omni.wallet.ui.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -28,6 +31,9 @@ import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
 import com.omni.wallet.utils.AppVersionUtils;
 
 import java.io.File;
+import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -125,9 +131,10 @@ public class SplashActivity extends AppBaseActivity {
                          * 延时3秒跳转主页
                          */
                         handler.postDelayed(new Runnable() {
+                            @RequiresApi(api = Build.VERSION_CODES.O)
                             @Override
                             public void run() {
-                                downloadHeaderBinFile();
+                                actionAfterPromise();
                             }
                         }, Constants.SPLASH_SLEEP_TIME);
                     }
@@ -270,84 +277,86 @@ public class SplashActivity extends AppBaseActivity {
 
     public void downloadHeaderBinFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin);
+        /*File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin);
         if (file.exists()) {
             downloadDBFile();
         } else {
-            PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
-                    .setOnStartOrResumeListener(() -> {
-                        doExplainTv.setText(mContext.getString(R.string.download_header));
-                    })
-                    .setOnPauseListener(() -> {
-                    })
-                    .setOnCancelListener(() -> {
-                    })
-                    .setOnProgressListener(new OnProgressListener() {
-                        @SuppressLint({"SetTextI18n", "DefaultLocale"})
-                        @Override
-                        public void onProgress(com.downloader.Progress progress) {
-                            double currentM = (double) progress.currentBytes / 1024 / 1024;
-                            double totalBytes = (double) progress.totalBytes / 1024 / 1024;
-                            syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
-                            updateDataView(currentM, totalBytes);
-                        }
-                    })
-                    .start(new OnDownloadListener() {
-                        @Override
-                        public void onDownloadComplete() {
-                            downloadDBFile();
-                        }
 
-                        @Override
-                        public void onError(Error error) {
+        }*/
+        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
+                .setOnStartOrResumeListener(() -> {
+                    doExplainTv.setText(mContext.getString(R.string.download_header));
+                })
+                .setOnPauseListener(() -> {
+                })
+                .setOnCancelListener(() -> {
+                })
+                .setOnProgressListener(new OnProgressListener() {
+                    @SuppressLint({"SetTextI18n", "DefaultLocale"})
+                    @Override
+                    public void onProgress(com.downloader.Progress progress) {
+                        double currentM = (double) progress.currentBytes / 1024 / 1024;
+                        double totalBytes = (double) progress.totalBytes / 1024 / 1024;
+                        syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
+                        updateDataView(currentM, totalBytes);
+                    }
+                })
+                .start(new OnDownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        downloadDBFile();
+                    }
 
-                        }
-                    });
-        }
+                    @Override
+                    public void onError(Error error) {
+
+                    }
+                });
 
     }
 
     public void downloadDBFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB);
+        /*File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB);
         if (file.exists()) {
             downloadFilterHeaderBinFile();
         } else {
-            PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
-                    .setOnStartOrResumeListener(() -> {
-                        doExplainTv.setText(mContext.getString(R.string.download_db));
-                    })
-                    .setOnPauseListener(() -> {
-                    })
-                    .setOnCancelListener(() -> {
-                    })
-                    .setOnProgressListener(new OnProgressListener() {
-                        @SuppressLint({"SetTextI18n", "DefaultLocale"})
-                        @Override
-                        public void onProgress(com.downloader.Progress progress) {
-                            double currentM = (double) progress.currentBytes / 1024 / 1024;
-                            double totalBytes = (double) progress.totalBytes / 1024 / 1024;
-                            syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
-                            updateDataView(currentM, totalBytes);
-                        }
-                    })
-                    .start(new OnDownloadListener() {
-                        @Override
-                        public void onDownloadComplete() {
-                            downloadFilterHeaderBinFile();
-                        }
 
-                        @Override
-                        public void onError(Error error) {
+        }*/
+        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
+                .setOnStartOrResumeListener(() -> {
+                    doExplainTv.setText(mContext.getString(R.string.download_db));
+                })
+                .setOnPauseListener(() -> {
+                })
+                .setOnCancelListener(() -> {
+                })
+                .setOnProgressListener(new OnProgressListener() {
+                    @SuppressLint({"SetTextI18n", "DefaultLocale"})
+                    @Override
+                    public void onProgress(com.downloader.Progress progress) {
+                        double currentM = (double) progress.currentBytes / 1024 / 1024;
+                        double totalBytes = (double) progress.totalBytes / 1024 / 1024;
+                        syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
+                        updateDataView(currentM, totalBytes);
+                    }
+                })
+                .start(new OnDownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        downloadFilterHeaderBinFile();
+                    }
 
-                        }
-                    });
-        }
+                    @Override
+                    public void onError(Error error) {
+
+                    }
+                });
     }
 
     public void downloadFilterHeaderBinFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB);
+        /*File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB);
         if (file.exists()) {
             Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
                 @Override
@@ -362,49 +371,53 @@ public class SplashActivity extends AppBaseActivity {
                 }
             });
         } else {
-            PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
-                    .setOnStartOrResumeListener(() -> {
-                        doExplainTv.setText(mContext.getString(R.string.download_filter_header));
-                    })
-                    .setOnPauseListener(() -> {
-                    })
-                    .setOnCancelListener(() -> {
-                    })
-                    .setOnProgressListener(new OnProgressListener() {
-                        @SuppressLint({"SetTextI18n", "DefaultLocale"})
-                        @Override
-                        public void onProgress(com.downloader.Progress progress) {
-                            double currentM = (double) progress.currentBytes / 1024 / 1024;
-                            double totalBytes = (double) progress.totalBytes / 1024 / 1024;
-                            syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
-                            updateDataView(currentM, totalBytes);
-                        }
-                    })
-                    .start(new OnDownloadListener() {
-                        @Override
-                        public void onDownloadComplete() {
-                            Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
-                                @Override
-                                public void onError(Exception e) {
-                                    LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
-                                }
+        }*/
 
-                                @Override
-                                public void onResponse(byte[] bytes) {
-//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
-                                    turnToNextPage();
-                                }
-                            });
+        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
+                .setOnStartOrResumeListener(() -> {
+                    doExplainTv.setText(mContext.getString(R.string.download_filter_header));
+                })
+                .setOnPauseListener(() -> {
+                })
+                .setOnCancelListener(() -> {
+                })
+                .setOnProgressListener(new OnProgressListener() {
+                    @SuppressLint({"SetTextI18n", "DefaultLocale"})
+                    @Override
+                    public void onProgress(com.downloader.Progress progress) {
+                        double currentM = (double) progress.currentBytes / 1024 / 1024;
+                        double totalBytes = (double) progress.totalBytes / 1024 / 1024;
+                        syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
+                        updateDataView(currentM, totalBytes);
+                    }
+                })
+                .start(new OnDownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        startNode();
+                    }
 
-                        }
+                    @Override
+                    public void onError(Error error) {
 
-                        @Override
-                        public void onError(Error error) {
-
-                        }
-                    });
-        }
+                    }
+                });
         
+    }
+
+    public void startNode(){
+        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
+                turnToNextPage();
+            }
+        });
     }
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
@@ -419,5 +432,24 @@ public class SplashActivity extends AppBaseActivity {
         rvProcessInner.setLayoutParams(rlInnerParam);
 
         syncedBlockNumView.setText(String.format("%.0f", currentMb) + "MB");
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void actionAfterPromise(){
+
+        downloadHeaderBinFile();
+        /*long lastUpdate = User.getInstance().getBaseFileLastUpdate(mContext);
+        long nowTimeMillis = Calendar.getInstance().getTimeInMillis();
+        Log.e("时间戳", String.valueOf(nowTimeMillis-lastUpdate));
+        if (lastUpdate == -1){
+            downloadHeaderBinFile();
+        }else{
+            if (nowTimeMillis - lastUpdate > ConstantInOB.DAY_MILLIS*2){
+                downloadHeaderBinFile();
+            }else{
+                startNode();
+            }
+        }*/
+
     }
 }
