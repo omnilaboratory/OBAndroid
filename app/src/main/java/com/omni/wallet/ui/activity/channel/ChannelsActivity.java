@@ -442,9 +442,4 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
             mCreateChannelDialog.release();
         }
     }
-    
-    @OnClick(R.id.btn_backup)
-    public void clickBtnBackup(){
-        switchActivity(BackupChannelActivity.class);
-    }
 }

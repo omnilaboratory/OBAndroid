@@ -132,12 +132,6 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/main_15"
                     android:src="@mipmap/icon_copy_black"/>
-                <TextView
-                    android:id="@+id/btn_backup"
-                    android:layout_marginStart="@dimen/main_10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="backup channel"/>
             </LinearLayout>
 
             <ImageView

@@ -12,8 +12,11 @@ public class ConstantInOB {
     public static String BTCHostAddressRegTest = "43.138.107.248";
     public static String BTCHostAddressPortRegTest = "43.138.107.248:18332";
     public static String blockHeaderBin = "block_headers.bin";
+    public static String blockHeader = "block_headers";
     public static String neutrinoDB = "neutrino.db";
+    public static String neutrino = "neutrino";
     public static String regFilterHeaderBin = "reg_filter_headers.bin";
+    public static String regFilterHeader = "reg_filter_headers";
     public static String downloadBaseUrl = "https://cache.oblnd.top/neutrino-regtest/";
 
     public static final String neutrinoRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +

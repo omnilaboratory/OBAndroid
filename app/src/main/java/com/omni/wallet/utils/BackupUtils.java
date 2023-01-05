@@ -19,7 +19,7 @@ import obdmobile.Obdmobile;
 
 public class BackupUtils {
     private final static String basePath = Environment.getExternalStorageDirectory() + "";
-    private final static String directoryName = "OBBackupDirectory";
+    private final static String directoryName = "OBBackup";
     private final static String channelFileName = "channelBackupFile.OBBackupChannel";
     
     private BackupUtils(){

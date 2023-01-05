@@ -41,6 +41,7 @@ import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
 public class RestoreChannelActivity extends AppBaseActivity {
+    String TAG = RestoreChannelActivity.class.getSimpleName();
     private List<String> pathList = new ArrayList();
     
     @BindView(R.id.tv_path_show)
@@ -50,6 +51,7 @@ public class RestoreChannelActivity extends AppBaseActivity {
     private List<BackupFile> directoryData = new ArrayList();
     private MyAdapter myAdapter;
     String selectedFilePath = "";
+    String directoryName = "OBBackup";
 
     @Override
     protected Drawable getWindowBackground() {
@@ -64,7 +66,15 @@ public class RestoreChannelActivity extends AppBaseActivity {
     @Override
     protected void initView() {
         String storagePath = Environment.getExternalStorageDirectory() + "";
+
+        File file = new File(storagePath + "/" + directoryName);
         pathList.add(storagePath);
+        Log.e(TAG,storagePath);
+        Log.e(TAG,directoryName);
+        if(file.exists()){
+            pathList.add(directoryName);
+        }
+        Log.e(TAG,pathList.toString());
         String pathFull = "";
         for (int i = 0;i<pathList.size();i++){
             if(i==0){
@@ -73,13 +83,14 @@ public class RestoreChannelActivity extends AppBaseActivity {
                 pathFull = pathFull + "/" + pathList.get(i);
             }
         }
+        Log.e(TAG,pathFull);
+        pathShow.setText(pathFull);
         List<BackupFile> filesMap = FilesUtils.getDirectoryAndFile(pathFull,mContext);
         for (BackupFile backupFile : filesMap){
             String fileName = (String) backupFile.getFilename();
             Log.e("filename",fileName);
         }
         directoryData = filesMap;
-        pathShow.setText(pathFull);
         
         initRecyclerView();
     }

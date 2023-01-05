@@ -36,7 +36,10 @@ import com.omni.wallet.utils.AppVersionUtils;
 import com.omni.wallet.utils.FilesUtils;
 import com.omni.wallet.utils.NetworkChangeReceiver;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -106,29 +109,30 @@ public class SplashActivity extends AppBaseActivity {
     protected void initData() {
         constantInOB = new ConstantInOB(mContext);
         networkChangeReceiver = new NetworkChangeReceiver();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
-        String year = String.valueOf(calendar.get(Calendar.YEAR));
-        String month = String.valueOf(calendar.get(Calendar.MONTH));
-        String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
-        String fileVersion = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)/2);
-        downloadVersion = year + "-" + month + "-" + day + "-" + fileVersion;
+        long millis = calendar.getTimeInMillis();
+        long newMillis = millis - ConstantInOB.DAY_MILLIS;
+        Date newDate = new Date(newMillis);
+        downloadVersion = simpleDateFormat.format(newDate);
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
 
 
         callBackNetWork = networkType -> {
-            switch (networkType){
+            switch (networkType) {
                 case ConnectivityManager.TYPE_WIFI:
-                    if(!networkIsConnected){
+                    if (!networkIsConnected) {
                         refreshBtnImageView.setVisibility(View.VISIBLE);
-                        ToastUtils.showToast(mContext,"Network is wifi!");
+                        ToastUtils.showToast(mContext, "Network is wifi!");
                     }
                     networkIsConnected = true;
                     break;
                 case ConnectivityManager.TYPE_MOBILE:
-                    if(!networkIsConnected){
+                    if (!networkIsConnected) {
                         refreshBtnImageView.setVisibility(View.VISIBLE);
-                        ToastUtils.showToast(mContext,"Network is mobile!");
+                        ToastUtils.showToast(mContext, "Network is mobile!");
                     }
                     networkIsConnected = true;
                     break;
@@ -143,8 +147,8 @@ public class SplashActivity extends AppBaseActivity {
                 case ConnectivityManager.TYPE_WIMAX:
                 case -1:
                     networkIsConnected = false;
-                    Log.e(TAG,"Network is disconnected!");
-                    ToastUtils.showToast(mContext,"Network is disconnected!");
+                    Log.e(TAG, "Network is disconnected!");
+                    ToastUtils.showToast(mContext, "Network is disconnected!");
                     break;
                 default:
                     break;
@@ -349,7 +353,8 @@ public class SplashActivity extends AppBaseActivity {
             downloadDBFile();
         } else {
         }*/
-        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin + "?date1=" + downloadVersion, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
+        Log.e(TAG,ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin);
+        PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_header));
                 })
@@ -389,7 +394,8 @@ public class SplashActivity extends AppBaseActivity {
             downloadFilterHeaderBinFile();
         } else {
         }*/
-        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB + "?date1=" + downloadVersion, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
+        Log.e(TAG,ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin);
+        PRDownloader.download(ConstantInOB.downloadBaseUrl  + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_db));
                 })
@@ -422,8 +428,8 @@ public class SplashActivity extends AppBaseActivity {
 
     public void downloadFilterHeaderBinFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-
-        PRDownloader.download(ConstantInOB.downloadBaseUrl + ConstantInOB.regFilterHeaderBin + "?date1=" + downloadVersion, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
+        Log.e(TAG,ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.regFilterHeaderBin);
+        PRDownloader.download(ConstantInOB.downloadBaseUrl  + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_filter_header));
                 })
@@ -455,11 +461,11 @@ public class SplashActivity extends AppBaseActivity {
 
     }
 
-    public void startNode(){
+    public void startNode() {
         Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
             @Override
             public void onError(Exception e) {
-                if (e.getMessage().equals("lnd already started")){
+                if (e.getMessage().equals("lnd already started")) {
 
                     Stateservice.GetStateRequest getStateRequest = Stateservice.GetStateRequest.newBuilder().build();
                     Obdmobile.getState(getStateRequest.toByteArray(), new Callback() {
@@ -468,15 +474,16 @@ public class SplashActivity extends AppBaseActivity {
                             LogUtils.e(TAG, "------------------getStateError------------------" + e.getMessage());
                             e.printStackTrace();
                         }
+
                         @Override
                         public void onResponse(byte[] bytes) {
-                            if (bytes == null){
+                            if (bytes == null) {
                                 return;
                             }
                             try {
                                 Stateservice.GetStateResponse getStateResponse = Stateservice.GetStateResponse.parseFrom(bytes);
                                 Stateservice.WalletState state = getStateResponse.getState();
-                                switch (state){
+                                switch (state) {
                                     case LOCKED:
                                         switchActivityFinish(UnlockActivity.class, mBundle);
                                         break;
@@ -491,6 +498,8 @@ public class SplashActivity extends AppBaseActivity {
                             }
                         }
                     });
+                } else if (e.getMessage().equals("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
+                    startNode();
                 }
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
             }
@@ -518,19 +527,20 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void actionAfterPromise(){
+    public void actionAfterPromise() {
+//        startNode();
         String initWalletType = User.getInstance().getInitWalletType(mContext);
         long nowMillis = Calendar.getInstance().getTimeInMillis();
-        if(initWalletType.equals("")){
+        if (initWalletType.equals("")) {
             downloadView.setVisibility(View.VISIBLE);
             downloadHeaderBinFile();
-        }else{
+        } else {
             String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
             long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
-            if(nowMillis - fileHeaderLastEdit > ConstantInOB.DAY_MILLIS*2){
+            if (nowMillis - fileHeaderLastEdit > ConstantInOB.DAY_MILLIS * 2) {
                 downloadView.setVisibility(View.VISIBLE);
                 downloadHeaderBinFile();
-            }else{
+            } else {
                 startNode();
             }
         }
@@ -538,7 +548,7 @@ public class SplashActivity extends AppBaseActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @OnClick(R.id.refresh_btn)
-    public void clickRefreshBtn(){
+    public void clickRefreshBtn() {
         actionAfterPromise();
     }
 }
