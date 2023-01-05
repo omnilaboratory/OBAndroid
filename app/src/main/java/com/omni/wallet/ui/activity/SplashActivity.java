@@ -2,11 +2,15 @@ package com.omni.wallet.ui.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,15 +29,18 @@ import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.framelibrary.common.Constants;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.AppVersionUtils;
 import com.omni.wallet.utils.FilesUtils;
+import com.omni.wallet.utils.NetworkChangeReceiver;
 
 import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import lnrpc.Stateservice;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -70,8 +77,15 @@ public class SplashActivity extends AppBaseActivity {
     TextView syncedBlockNumView;
     @BindView(R.id.download_view)
     LinearLayout downloadView;
+    @BindView(R.id.refresh_btn)
+    ImageView refreshBtnImageView;
+
     ConstantInOB constantInOB = null;
     String downloadVersion = "";
+    boolean networkIsConnected = true;
+    NetworkChangeReceiver networkChangeReceiver = null;
+
+    NetworkChangeReceiver.CallBackNetWork callBackNetWork = null;
 
     @Override
     protected boolean isFullScreenStyle() {
@@ -91,12 +105,57 @@ public class SplashActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         constantInOB = new ConstantInOB(mContext);
+        networkChangeReceiver = new NetworkChangeReceiver();
         Calendar calendar = Calendar.getInstance();
         String year = String.valueOf(calendar.get(Calendar.YEAR));
         String month = String.valueOf(calendar.get(Calendar.MONTH));
         String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
         String fileVersion = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)/2);
         downloadVersion = year + "-" + month + "-" + day + "-" + fileVersion;
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+
+
+        callBackNetWork = networkType -> {
+            switch (networkType){
+                case ConnectivityManager.TYPE_WIFI:
+                    if(!networkIsConnected){
+                        refreshBtnImageView.setVisibility(View.VISIBLE);
+                        ToastUtils.showToast(mContext,"Network is wifi!");
+                    }
+                    networkIsConnected = true;
+                    break;
+                case ConnectivityManager.TYPE_MOBILE:
+                    if(!networkIsConnected){
+                        refreshBtnImageView.setVisibility(View.VISIBLE);
+                        ToastUtils.showToast(mContext,"Network is mobile!");
+                    }
+                    networkIsConnected = true;
+                    break;
+                case ConnectivityManager.TYPE_BLUETOOTH:
+                case ConnectivityManager.TYPE_DUMMY:
+                case ConnectivityManager.TYPE_ETHERNET:
+                case ConnectivityManager.TYPE_MOBILE_DUN:
+                case ConnectivityManager.TYPE_MOBILE_HIPRI:
+                case ConnectivityManager.TYPE_MOBILE_MMS:
+                case ConnectivityManager.TYPE_MOBILE_SUPL:
+                case ConnectivityManager.TYPE_VPN:
+                case ConnectivityManager.TYPE_WIMAX:
+                case -1:
+                    networkIsConnected = false;
+                    Log.e(TAG,"Network is disconnected!");
+                    ToastUtils.showToast(mContext,"Network is disconnected!");
+                    break;
+                default:
+                    break;
+            }
+
+        };
+        networkChangeReceiver.setCallBackNetWork(callBackNetWork);
+
+        runOnUiThread(() -> {
+            registerReceiver(networkChangeReceiver, intentFilter);
+        });
 
         /**
          * check version code to update all states
@@ -279,6 +338,7 @@ public class SplashActivity extends AppBaseActivity {
             mGuideDialog.dismiss();
             mGuideDialog = null;
         }
+        unregisterReceiver(networkChangeReceiver);
         super.onDestroy();
     }
 
@@ -474,5 +534,11 @@ public class SplashActivity extends AppBaseActivity {
                 startNode();
             }
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @OnClick(R.id.refresh_btn)
+    public void clickRefreshBtn(){
+        actionAfterPromise();
     }
 }

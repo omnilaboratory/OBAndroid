@@ -155,18 +155,16 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                             case ConnectivityManager.TYPE_WIFI:
                                 if(!networkIsConnected){
                                     refreshBtnImageView.setVisibility(View.VISIBLE);
+                                    ToastUtils.showToast(mContext,"Network is wifi!");
                                 }
                                 networkIsConnected = true;
-                                Log.e(TAG,"Network is wifi!");
-                                ToastUtils.showToast(mContext,"Network is wifi!");
                                 break;
                             case ConnectivityManager.TYPE_MOBILE:
                                 if(!networkIsConnected){
                                     refreshBtnImageView.setVisibility(View.VISIBLE);
+                                    ToastUtils.showToast(mContext,"Network is mobile!");
                                 }
                                 networkIsConnected = true;
-                                Log.e(TAG,"Network is mobile!");
-                                ToastUtils.showToast(mContext,"Network is mobile!");
                                 break;
                             case ConnectivityManager.TYPE_BLUETOOTH:
                             case ConnectivityManager.TYPE_DUMMY:
@@ -181,8 +179,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                                 networkIsConnected = false;
                                 Log.e(TAG,"Network is disconnected!");
                                 ToastUtils.showToast(mContext,"Network is disconnected!");
-                                break;
-                            default:
                                 break;
                         }
                     }
