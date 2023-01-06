@@ -1,6 +1,8 @@
 package com.omni.wallet.view.dialog;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
@@ -10,6 +12,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.common.io.BaseEncoding;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
@@ -17,6 +21,7 @@ import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
@@ -27,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +65,8 @@ public class PayInvoiceDialog {
     LightningOuterClass.Route route;
     String paymentHash;
     LoadingDialog mLoadingDialog;
+    private List<InvoiceEntity> list;
+    private List<InvoiceEntity> btcList;
 
     public PayInvoiceDialog(Context context) {
         this.mContext = context;
@@ -168,6 +176,11 @@ public class PayInvoiceDialog {
                                 ToastUtils.showToast(mContext, "Probe send request was null");
                                 return;
                             }
+                            /**
+                             * @备注： 存储未支付的发票
+                             * @description: Store Unpaid Invoices
+                             */
+                            saveInvoiceList(resp);
                             RouterOuterClass.SendPaymentRequest probeRequest;
                             if (mAssetId == 0) {
                                 probeRequest = prepareBtcPaymentProbe(resp);
@@ -180,7 +193,7 @@ public class PayInvoiceDialog {
                                     if (e.getMessage().equals("EOF")) {
                                         return;
                                     }
-                                    LogUtils.e(TAG, "-------------routerSendPaymentV20nError-----------" + e.getMessage());
+                                    LogUtils.e(TAG, "-------------routerSendPaymentV2OnError-----------" + e.getMessage());
                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -266,6 +279,96 @@ public class PayInvoiceDialog {
         });
     }
 
+    /**
+     * @备注： 存储未支付的发票
+     * @description: Store Unpaid Invoices
+     */
+    private void saveInvoiceList(LightningOuterClass.PayReq resp) {
+        if (mAssetId == 0) {
+            SharedPreferences sp = mContext.getSharedPreferences("SP_BTC_INVOICE_LIST", Activity.MODE_PRIVATE);
+            String btcInvoiceListJson = sp.getString("btcInvoiceListKey", "");
+            if (StringUtils.isEmpty(btcInvoiceListJson)) {
+                btcList = new ArrayList<>();
+                InvoiceEntity entity = new InvoiceEntity();
+                entity.setAssetId(0);
+                entity.setDate(resp.getTimestamp());
+                entity.setAmount(resp.getAmtMsat());
+                entity.setInvoice(lnInvoice);
+                btcList.add(entity);
+                removeDuplicateInvoice(btcList);
+                Gson gson = new Gson();
+                String jsonStr = gson.toJson(btcList);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("btcInvoiceListKey", jsonStr);
+                editor.commit();
+            } else {
+                Gson gson = new Gson();
+                btcList = gson.fromJson(btcInvoiceListJson, new TypeToken<List<InvoiceEntity>>() {
+                }.getType());
+                InvoiceEntity entity = new InvoiceEntity();
+                entity.setAssetId(0);
+                entity.setDate(resp.getTimestamp());
+                entity.setAmount(resp.getAmtMsat());
+                entity.setInvoice(lnInvoice);
+                removeDuplicateInvoice(btcList);
+                btcList.add(entity);
+                String jsonStr = gson.toJson(btcList);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("btcInvoiceListKey", jsonStr);
+                editor.commit();
+            }
+        } else {
+            SharedPreferences sp = mContext.getSharedPreferences("SP_INVOICE_LIST", Activity.MODE_PRIVATE);
+            String invoiceListJson = sp.getString("invoiceListKey", "");
+            if (StringUtils.isEmpty(invoiceListJson)) {
+                list = new ArrayList<>();
+                InvoiceEntity entity = new InvoiceEntity();
+                entity.setAssetId(resp.getAssetId());
+                entity.setDate(resp.getTimestamp());
+                entity.setAmount(resp.getAmount());
+                entity.setInvoice(lnInvoice);
+                list.add(entity);
+                removeDuplicateInvoice(list);
+                Gson gson = new Gson();
+                String jsonStr = gson.toJson(list);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("invoiceListKey", jsonStr);
+                editor.commit();
+            } else {
+                Gson gson = new Gson();
+                list = gson.fromJson(invoiceListJson, new TypeToken<List<InvoiceEntity>>() {
+                }.getType());
+                InvoiceEntity entity = new InvoiceEntity();
+                entity.setAssetId(resp.getAssetId());
+                entity.setDate(resp.getTimestamp());
+                entity.setAmount(resp.getAmount());
+                entity.setInvoice(lnInvoice);
+                list.add(entity);
+                removeDuplicateInvoice(list);
+                String jsonStr = gson.toJson(list);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("invoiceListKey", jsonStr);
+                editor.commit();
+            }
+        }
+        EventBus.getDefault().post(new PayInvoiceFailedEvent());
+    }
+
+    /**
+     * @备注： 循环删除重复数据
+     * @description: Circular deletion of duplicate data
+     */
+    public static void removeDuplicateInvoice(List<InvoiceEntity> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = list.size() - 1; j > i; j--) {
+                if (list.get(j).getInvoice().equals(list.get(i).getInvoice())) {
+                    list.remove(j);
+                }
+            }
+        }
+        System.out.println(list);
+    }
+
     private void showStepTwo() {
         TextView fromNodeAddress1Tv = mAlertDialog.findViewById(R.id.tv_from_node_address_1);
         TextView fromNodeName1Tv = mAlertDialog.findViewById(R.id.tv_from_node_name_1);
@@ -339,6 +442,7 @@ public class PayInvoiceDialog {
                                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                                             @Override
                                             public void run() {
+                                                updateInvoiceList();
                                                 EventBus.getDefault().post(new PayInvoiceSuccessEvent());
                                                 mLoadingDialog.dismiss();
                                                 // updated the history, so it is shown the next time the user views it
@@ -366,10 +470,13 @@ public class PayInvoiceDialog {
                                                         if (e.getMessage().equals("EOF")) {
                                                             return;
                                                         }
-                                                        LogUtils.e(TAG, "------------------sendPaymentOnError------------------" + e.getMessage());
+                                                        LogUtils.e(TAG, "------------------routerOB_SendPaymentV2OnError------------------" + e.getMessage());
                                                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                             @Override
                                                             public void run() {
+                                                                if (e.getMessage().contains("invoice is already paid")) {
+                                                                    updateInvoiceList();
+                                                                }
                                                                 EventBus.getDefault().post(new PayInvoiceFailedEvent());
                                                                 mLoadingDialog.dismiss();
                                                                 mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
@@ -391,8 +498,9 @@ public class PayInvoiceDialog {
                                                             public void run() {
                                                                 try {
                                                                     LightningOuterClass.Payment resp = LightningOuterClass.Payment.parseFrom(bytes);
-                                                                    LogUtils.e(TAG, "------------------sendPaymentOnResponse-----------------" + resp);
+                                                                    LogUtils.e(TAG, "------------------routerOB_SendPaymentV2OnResponse-----------------" + resp);
                                                                     if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.SUCCEEDED) {
+                                                                        updateInvoiceList();
                                                                         EventBus.getDefault().post(new PayInvoiceSuccessEvent());
                                                                         mLoadingDialog.dismiss();
                                                                         mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
@@ -457,10 +565,13 @@ public class PayInvoiceDialog {
                             if (e.getMessage().equals("EOF")) {
                                 return;
                             }
-                            LogUtils.e(TAG, "------------------sendPaymentOnError------------------" + e.getMessage());
+                            LogUtils.e(TAG, "------------------noRouterOB_SendPaymentV2OnError------------------" + e.getMessage());
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if (e.getMessage().contains("invoice is already paid")) {
+                                        updateInvoiceList();
+                                    }
                                     EventBus.getDefault().post(new PayInvoiceFailedEvent());
                                     mLoadingDialog.dismiss();
                                     mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
@@ -482,8 +593,9 @@ public class PayInvoiceDialog {
                                 public void run() {
                                     try {
                                         LightningOuterClass.Payment resp = LightningOuterClass.Payment.parseFrom(bytes);
-                                        LogUtils.e(TAG, "------------------sendPaymentOnResponse-----------------" + resp);
+                                        LogUtils.e(TAG, "------------------noRouterOB_SendPaymentV2OnResponse-----------------" + resp);
                                         if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.SUCCEEDED) {
+                                            updateInvoiceList();
                                             EventBus.getDefault().post(new PayInvoiceSuccessEvent());
                                             mLoadingDialog.dismiss();
                                             mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
@@ -528,6 +640,38 @@ public class PayInvoiceDialog {
                 }
             }
         });
+    }
+
+    /**
+     * @备注： 更新未支付的发票
+     * @description: Update Unpaid Invoices
+     */
+    private void updateInvoiceList() {
+        if (mAssetId == 0) {
+            for (InvoiceEntity entity : btcList) {
+                if (entity.getInvoice().equals(lnInvoice)) {
+                    btcList.remove(entity);
+                }
+            }
+            Gson gson = new Gson();
+            String jsonStr = gson.toJson(btcList);
+            SharedPreferences sp = mContext.getSharedPreferences("SP_BTC_INVOICE_LIST", Activity.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("btcInvoiceListKey", jsonStr);
+            editor.commit();
+        } else {
+            for (InvoiceEntity entity : list) {
+                if (entity.getInvoice().equals(lnInvoice)) {
+                    list.remove(entity);
+                }
+            }
+            Gson gson = new Gson();
+            String jsonStr = gson.toJson(list);
+            SharedPreferences sp = mContext.getSharedPreferences("SP_INVOICE_LIST", Activity.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("invoiceListKey", jsonStr);
+            editor.commit();
+        }
     }
 
     private void showStepSuccess() {

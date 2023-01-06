@@ -353,17 +353,11 @@ public class ChannelDetailsPopupWindow {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            LightningOuterClass.CloseStatusUpdate resp = LightningOuterClass.CloseStatusUpdate.parseFrom(bytes);
-                            LogUtils.e(TAG, "------------------closeChannelOnResponse-----------------" + resp);
-                            BackupUtils.getInstance().BackupChannelToFile(mContext);
-                            EventBus.getDefault().post(new CloseChannelEvent());
-                            mBasePopWindow.dismiss();
-                            mLoadingDialog.dismiss();
-                            mSendSuccessDialog.show(mContext.getString(R.string.channel_close_success));
-                        } catch (InvalidProtocolBufferException e) {
-                            e.printStackTrace();
-                        }
+                        BackupUtils.getInstance().BackupChannelToFile(mContext);
+                        EventBus.getDefault().post(new CloseChannelEvent());
+                        mBasePopWindow.dismiss();
+                        mLoadingDialog.dismiss();
+                        mSendSuccessDialog.show(mContext.getString(R.string.channel_close_success));
                     }
                 });
             }

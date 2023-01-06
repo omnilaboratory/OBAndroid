@@ -316,18 +316,20 @@
                                 android:textSize="@dimen/text_16"/>
                         </LinearLayout>
 
-                        <RelativeLayout
+                        <LinearLayout
                             android:layout_width="@dimen/main_179"
                             android:layout_height="@dimen/main_32"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/bg_black_rectangle_round_0_thin">
+                            android:background="@drawable/bg_black_rectangle_round_0_thin"
+                            android:orientation="horizontal">
 
                             <EditText
                                 android:id="@+id/edit_amount"
-                                android:layout_width="match_parent"
+                                android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_marginRight="@dimen/main_50"
+                                android:layout_weight="1000"
+                                android:layout_marginRight="@dimen/main_5"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
                                 android:gravity="center_vertical|right"
@@ -349,7 +351,7 @@
                                 android:text="doallar"
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16"/>
-                        </RelativeLayout>
+                        </LinearLayout>
                     </RelativeLayout>
 
                     <RelativeLayout
