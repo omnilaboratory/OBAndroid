@@ -310,8 +310,8 @@ public class PayInvoiceDialog {
                 entity.setDate(resp.getTimestamp());
                 entity.setAmount(resp.getAmtMsat());
                 entity.setInvoice(lnInvoice);
-                removeDuplicateInvoice(btcList);
                 btcList.add(entity);
+                removeDuplicateInvoice(btcList);
                 String jsonStr = gson.toJson(btcList);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("btcInvoiceListKey", jsonStr);
@@ -474,7 +474,7 @@ public class PayInvoiceDialog {
                                                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                             @Override
                                                             public void run() {
-                                                                if (e.getMessage().contains("invoice is already paid")) {
+                                                                if (e.getMessage().contains("invoice is already paid") || e.getMessage().contains("invoice expired")) {
                                                                     updateInvoiceList();
                                                                 }
                                                                 EventBus.getDefault().post(new PayInvoiceFailedEvent());
@@ -569,7 +569,7 @@ public class PayInvoiceDialog {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (e.getMessage().contains("invoice is already paid")) {
+                                    if (e.getMessage().contains("invoice is already paid") || e.getMessage().contains("invoice expired")) {
                                         updateInvoiceList();
                                     }
                                     EventBus.getDefault().post(new PayInvoiceFailedEvent());
@@ -648,9 +648,9 @@ public class PayInvoiceDialog {
      */
     private void updateInvoiceList() {
         if (mAssetId == 0) {
-            for (InvoiceEntity entity : btcList) {
-                if (entity.getInvoice().equals(lnInvoice)) {
-                    btcList.remove(entity);
+            for (int i = 0; i < btcList.size(); i++) {
+                if (btcList.get(i).getInvoice().equals(lnInvoice)) {
+                    btcList.remove(i);
                 }
             }
             Gson gson = new Gson();
@@ -660,9 +660,9 @@ public class PayInvoiceDialog {
             editor.putString("btcInvoiceListKey", jsonStr);
             editor.commit();
         } else {
-            for (InvoiceEntity entity : list) {
-                if (entity.getInvoice().equals(lnInvoice)) {
-                    list.remove(entity);
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getInvoice().equals(lnInvoice)) {
+                    list.remove(i);
                 }
             }
             Gson gson = new Gson();
