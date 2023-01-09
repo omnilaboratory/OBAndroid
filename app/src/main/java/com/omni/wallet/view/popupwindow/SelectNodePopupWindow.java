@@ -36,10 +36,10 @@ public class SelectNodePopupWindow {
 
     public void initNodeGroupData(){
         List<String> tokenListA = new ArrayList<>();
-        tokenListA.add("doallar");
+        tokenListA.add("dollar");
         tokenListA.add("BTC");
         List<String> tokenListB = new ArrayList<>();
-        tokenListB.add("doallar");
+        tokenListB.add("dollar");
         List<String> tokenListC = new ArrayList<>();
         tokenListC.add("BTC");
 

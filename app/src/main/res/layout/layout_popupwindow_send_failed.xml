@@ -112,7 +112,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
-                            android:text="doallar"
+                            android:text="dollar"
                             android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16"/>
                     </LinearLayout>
@@ -152,7 +152,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/main_5"
-                            android:text="doallar"
+                            android:text="dollar"
                             android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16"/>
                     </LinearLayout>

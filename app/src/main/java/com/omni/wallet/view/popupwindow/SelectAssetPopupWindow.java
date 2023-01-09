@@ -173,7 +173,7 @@ public class SelectAssetPopupWindow {
                 holder.setText(R.id.tv_asset, "BTC");
             } else {
                 holder.setImageResource(R.id.iv_logo, R.mipmap.icon_usdt_logo_small);
-                holder.setText(R.id.tv_asset, "doallar");
+                holder.setText(R.id.tv_asset, "dollar");
             }
             if (item.getAmount() == 0) {
                 DecimalFormat df = new DecimalFormat("0.00");

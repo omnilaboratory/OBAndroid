@@ -287,8 +287,8 @@ public class SendDialog implements Wallet.ScanSendListener {
             sendFeeUnitTv.setText("satoshis");
         } else {
             assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeTv.setText("doallar");
-            amountTypeTv.setText("doallar");
+            assetTypeTv.setText("dollar");
+            amountTypeTv.setText("dollar");
             sendFeeUnitTv.setText("satoshis");
         }
         fetchWalletBalance();
@@ -329,8 +329,8 @@ public class SendDialog implements Wallet.ScanSendListener {
                             sendFeeUnitTv.setText("satoshis");
                         } else {
                             assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-                            assetTypeTv.setText("doallar");
-                            amountTypeTv.setText("doallar");
+                            assetTypeTv.setText("dollar");
+                            amountTypeTv.setText("dollar");
                             sendFeeUnitTv.setText("satoshis");
                         }
                         assetId = item.getPropertyid();
@@ -494,8 +494,8 @@ public class SendDialog implements Wallet.ScanSendListener {
         } else {
             DecimalFormat df = new DecimalFormat("0.00######");
             tokenImage.setImageResource(R.mipmap.icon_usdt_logo_small);
-            tokenTypeView.setText("doallar");
-            tokenTypeView2.setText("doallar");
+            tokenTypeView.setText("dollar");
+            tokenTypeView2.setText("dollar");
             feeUnitView.setText("satoshis");
             sendAmountValueView.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
             feeAmountValueView.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
@@ -762,8 +762,8 @@ public class SendDialog implements Wallet.ScanSendListener {
         } else {
             DecimalFormat df = new DecimalFormat("0.00######");
             successTokenImageIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            successTokenTypeTv.setText("doallar");
-            successAmountUnitTv.setText("doallar");
+            successTokenTypeTv.setText("dollar");
+            successAmountUnitTv.setText("dollar");
             gasFeeAmountUnitTv.setText("satoshis");
             successAmountValueTv.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
             String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
@@ -850,8 +850,8 @@ public class SendDialog implements Wallet.ScanSendListener {
             failedTotalValueTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
             assetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetUnitTv.setText("doallar");
-            failedAmountUnitTv.setText("doallar");
+            assetUnitTv.setText("dollar");
+            failedAmountUnitTv.setText("dollar");
             failedGasFeeUnitTv.setText("satoshis");
             DecimalFormat df = new DecimalFormat("0.00######");
             String totalValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";

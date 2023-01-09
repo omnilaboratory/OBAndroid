@@ -718,8 +718,8 @@ public class PayInvoiceDialog {
             amountUnit1Tv.setText("BTC");
         } else {
             amountLogo2Tv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            amountUnitTv.setText("doallar");
-            amountUnit1Tv.setText("doallar");
+            amountUnitTv.setText("dollar");
+            amountUnit1Tv.setText("dollar");
         }
         toNodeAddress3Tv.setText(toNodeAddress);
         DecimalFormat df = new DecimalFormat("0.00######");

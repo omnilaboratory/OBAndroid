@@ -298,7 +298,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             amountUnitButton.setText("BTC");
                             feePerByteTv.setText(R.string.satoshi_per_byte);
                         } else {
-                            amountUnitButton.setText("doallar");
+                            amountUnitButton.setText("dollar");
                             feePerByteTv.setText(R.string.unit_per_byte);
                         }
                         assetId = item.getPropertyid();
