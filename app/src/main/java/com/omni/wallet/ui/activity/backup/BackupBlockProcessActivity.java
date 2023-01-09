@@ -367,7 +367,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     
     public void subscribeState(){
         WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
-            Log.e(TAG,"wallet state changed:" + walletState);
             switch (walletState){
                 case 1:
                     unlockWallet();
