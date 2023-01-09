@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.Internal;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
@@ -34,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -246,62 +248,47 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
             
             String seedsString = User.getInstance().getRecoverySeedString(mContext);
             String[] seedList = seedsString.split(" ");
-            BackupUtils backupUtils = BackupUtils.getInstance();
-            String path = backupUtils.getBasePath() + "/" +backupUtils.getDirectoryName() + "/" + backupUtils.getChannelFileName();
             
             Walletunlocker.InitWalletRequest.Builder initWalletRequestBuilder = Walletunlocker.InitWalletRequest.newBuilder();
-            InputStream inputStream = null;
-            LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = null;
-            try {
-                File file = new File(path);
-                if (file.exists()){
-                    inputStream = new FileInputStream(file);
-                    chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(inputStream);
-                    initWalletRequestBuilder.setChannelBackups(chanBackupSnapshot);
+            initWalletRequestBuilder.addAllCipherSeedMnemonic(Arrays.asList(seedList));
+//
+//            for (int i =0;i<seedList.length;i++){
+//                initWalletRequestBuilder.addCipherSeedMnemonic(seedList[i]);
+//                String mnemonicString = initWalletRequestBuilder.getCipherSeedMnemonic(i);
+//                Log.e("mnemonicString",mnemonicString);
+//            }
+            initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
+            initWalletRequestBuilder.setRecoveryWindow(0);
+            Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
+            Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
+                @Override
+                public void onError(Exception e) {
+                    Log.e("initWallet Error",e.toString());
+                    e.printStackTrace();
+                    mLoadingDialog.dismiss();
                 }
-                
-                for (int i =0;i<seedList.length;i++){
-                    initWalletRequestBuilder.addCipherSeedMnemonic(seedList[i]);
-                    String mnemonicString = initWalletRequestBuilder.getCipherSeedMnemonic(i);
-                    Log.e("mnemonicString",mnemonicString);
-                }
-                initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
-                initWalletRequestBuilder.setRecoveryWindow(0);
-                Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
-                Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
-                    @Override
-                    public void onError(Exception e) {
-                        Log.e("initWallet Error",e.toString());
+                @Override
+                public void onResponse(byte[] bytes) {
+                    if (bytes == null){
+                        mLoadingDialog.dismiss();
+                        return;
+                    }
+                    try {
+                        Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
+                        ByteString macaroon = initWalletResponse.getAdminMacaroon();
+                        User.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8());
+                        User.getInstance().setInitWalletType(mContext,"recovery");
+                        User.getInstance().setCreated(mContext,true);
+                        User.getInstance().setSeedChecked(mContext,true);
+                        User.getInstance().setSeedString(mContext,seedsString);
+                        User.getInstance().setPasswordMd5(mContext,md5String);
+                        switchActivity(BackupBlockProcessActivity.class);
+                    } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();
                         mLoadingDialog.dismiss();
                     }
-                    @Override
-                    public void onResponse(byte[] bytes) {
-                        if (bytes == null){
-                            mLoadingDialog.dismiss();
-                            return;
-                        }
-                        try {
-                            Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
-                            ByteString macaroon = initWalletResponse.getAdminMacaroon();
-                            User.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8());
-                            User.getInstance().setInitWalletType(mContext,"recovery");
-                            User.getInstance().setCreated(mContext,true);
-                            User.getInstance().setSeedChecked(mContext,true);
-                            User.getInstance().setSeedString(mContext,seedsString);
-                            User.getInstance().setPasswordMd5(mContext,md5String);
-                            switchActivity(BackupBlockProcessActivity.class);
-                        } catch (InvalidProtocolBufferException e) {
-                            e.printStackTrace();
-                            mLoadingDialog.dismiss();
-                        }
-                    }
-                });
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                }
+            });
 
         }else{
             String checkSetPassWrongString = "";

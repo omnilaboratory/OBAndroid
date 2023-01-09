@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
@@ -24,6 +26,8 @@ import com.omni.wallet.listItems.BackupFile;
 import com.omni.wallet.ui.activity.AccountLightningActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepTwoActivity;
 import com.omni.wallet.utils.FilesUtils;
+import com.omni.wallet.utils.PublicUtils;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,8 +41,10 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 import lnrpc.LightningOuterClass;
+import lnrpc.Stateservice;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
+import obdmobile.RecvStream;
 
 public class RestoreChannelActivity extends AppBaseActivity {
     String TAG = RestoreChannelActivity.class.getSimpleName();
@@ -52,6 +58,7 @@ public class RestoreChannelActivity extends AppBaseActivity {
     private MyAdapter myAdapter;
     String selectedFilePath = "";
     String directoryName = "OBBackup";
+    LoadingDialog mLoadingDialog;
 
     @Override
     protected Drawable getWindowBackground() {
@@ -65,6 +72,7 @@ public class RestoreChannelActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        mLoadingDialog = new LoadingDialog(mContext);
         String storagePath = Environment.getExternalStorageDirectory() + "";
 
         File file = new File(storagePath + "/" + directoryName);
@@ -86,12 +94,9 @@ public class RestoreChannelActivity extends AppBaseActivity {
         Log.e(TAG,pathFull);
         pathShow.setText(pathFull);
         List<BackupFile> filesMap = FilesUtils.getDirectoryAndFile(pathFull,mContext);
-        for (BackupFile backupFile : filesMap){
-            String fileName = (String) backupFile.getFilename();
-            Log.e("filename",fileName);
+        if (!filesMap.isEmpty()){
+            directoryData = filesMap;
         }
-        directoryData = filesMap;
-        
         initRecyclerView();
     }
 
@@ -152,7 +157,7 @@ public class RestoreChannelActivity extends AppBaseActivity {
                 directoryData.add(backupFile);
             }
             pathShow.setText(pathFull);
-            selectedFilePath = "";
+            selectedFilePath = pathFull;
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -268,28 +273,87 @@ public class RestoreChannelActivity extends AppBaseActivity {
     
     @OnClick(R.id.btn_next)
     public void clickNextButton(){
+        mLoadingDialog.show();
         File file = new File(selectedFilePath);
+        Log.e(TAG,selectedFilePath);
         Boolean isDirectory = file.isDirectory();
-        if(isDirectory){
-            ToastUtils.showToast(mContext,"Your path is a directory,please choose the file end with .OBBackupChannel!");
+        if(!isDirectory){
+            InputStream inputStream = null;
+            LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = null;
+            if (file.exists()){
+                try {
+                    inputStream = new FileInputStream(file);
+                    chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(inputStream);
+                    Obdmobile.verifyChanBackup(chanBackupSnapshot.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            if(e.getMessage().equals("rpc error: code = Unknown desc = invalid single channel backup: chacha20poly1305: message authentication failed")){
+                                runOnUiThread(()->{
+                                    PublicUtils.closeLoading(mLoadingDialog);
+                                    ToastUtils.showToast(mContext,"The file authenticated failed,please make sure the file and your wallet is matched!");
+                                });
+                            }else if(e.getMessage().trim().equals("rpc error: code = Unknown desc = only one Single is accepted at a time")){
+                                runOnUiThread(()->{
+                                    PublicUtils.closeLoading(mLoadingDialog);
+                                    ToastUtils.showToast(mContext,e.getMessage());
+                                });
+                            }else if(e.getMessage().equals("rpc error: code = Unknown desc = invalid multi channel backup: chacha20poly1305: message authentication failed")){
+                                runOnUiThread(()->{
+                                    PublicUtils.closeLoading(mLoadingDialog);
+                                    ToastUtils.showToast(mContext,"The file authenticated failed,please make sure the file and your wallet is matched!");
+                                });
+                            }else{
+                                runOnUiThread(()->{
+                                    PublicUtils.closeLoading(mLoadingDialog);
+                                    Log.e(TAG,e.getMessage());
+                                });
+
+                            }
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            runOnUiThread(()->{
+                                PublicUtils.closeLoading(mLoadingDialog);
+                                Log.e(TAG,"snapShot is verified");
+                                restoreChannel();
+                            });
+
+                        }
+                    });
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }else{
+                PublicUtils.closeLoading(mLoadingDialog);
+                User.getInstance().setRestoredChannel(mContext,true);
+                switchActivity(AccountLightningActivity.class);
+            }
         }else{
-            User.getInstance().setChannelBackupPath(mContext,selectedFilePath);
-//            switchActivity(AccountLightningActivity.class);
-            switchActivity(RecoverWalletStepTwoActivity.class);
+            PublicUtils.closeLoading(mLoadingDialog);
+            User.getInstance().setRestoredChannel(mContext,true);
+            switchActivity(AccountLightningActivity.class);
         }
         
     }
-    
-    @SuppressLint("LongLogTag")
-    @OnClick(R.id.btn_restore)
-    public void clickRestoreBtn(){
-        try {
-            File file = new File(selectedFilePath);
-            Boolean isDirectory = file.isDirectory();
-            if(isDirectory){
-                ToastUtils.showToast(mContext,"Your path is a directory,please choose the file end with .OBBackupChannel!");
-            }else{
-                InputStream inputStream = new FileInputStream(file);
+
+
+    public void restoreChannel(){
+        mLoadingDialog.show();
+        File file = new File(selectedFilePath);
+        Boolean isDirectory = file.isDirectory();
+        if(isDirectory){
+            PublicUtils.closeLoading(mLoadingDialog);
+            ToastUtils.showToast(mContext,"Your path is a directory,please choose the file end with .OBBackupChannel!");
+        }else{
+            InputStream inputStream = null;
+            try {
+                inputStream = new FileInputStream(file);
                 LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(inputStream);
                 LightningOuterClass.MultiChanBackup multiChanBackup =  chanBackupSnapshot.getMultiChanBackup();
                 LightningOuterClass.ChannelBackups channelBackups = chanBackupSnapshot.getSingleChanBackups();
@@ -298,29 +362,38 @@ public class RestoreChannelActivity extends AppBaseActivity {
                         .setMultiChanBackup(multiChanBackup.getMultiChanBackup())
                         .setChanBackups(channelBackups)
                         .build();
-                Log.e("multi Channel restoreChanBackupRequest Str", String.valueOf(restoreChanBackupRequest));
+                Log.e(TAG, "multi Channel restoreChanBackupRequest Str" + String.valueOf(restoreChanBackupRequest));
                 Obdmobile.restoreChannelBackups(restoreChanBackupRequest.toByteArray(), new Callback() {
                     @Override
                     public void onError(Exception e) {
-                        Log.e("restore string","restore failed");
+                        runOnUiThread(()->{
+                            PublicUtils.closeLoading(mLoadingDialog);
+                            ToastUtils.showToast(mContext,"Please use the right file!");
+                            Log.e("restore string","restore failed");
+                        });
                         e.printStackTrace();
                     }
 
                     @Override
                     public void onResponse(byte[] bytes) {
                         Log.e("restore string","restore success");
-                        ToastUtils.showToast(mContext,"The channels are recover successfully!");
-                        if(bytes==null){
-                            return;
-                        }
+                        runOnUiThread(()->{
+                            PublicUtils.closeLoading(mLoadingDialog);
+                            ToastUtils.showToast(mContext,"The channels are recover successfully!");
+                            User.getInstance().setRestoredChannel(mContext,true);
+                            switchActivity(AccountLightningActivity.class);
+                        });
+
+
 
                     }
                 });
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+
         }
     }
 }

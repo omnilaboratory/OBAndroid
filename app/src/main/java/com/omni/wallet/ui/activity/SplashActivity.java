@@ -35,6 +35,7 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.AppVersionUtils;
 import com.omni.wallet.utils.FilesUtils;
 import com.omni.wallet.utils.NetworkChangeReceiver;
+import com.omni.wallet.utils.WalletState;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -47,6 +48,7 @@ import butterknife.OnClick;
 import lnrpc.Stateservice;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
+import obdmobile.RecvStream;
 
 /**
  * The page for initial
@@ -89,6 +91,7 @@ public class SplashActivity extends AppBaseActivity {
     NetworkChangeReceiver networkChangeReceiver = null;
 
     NetworkChangeReceiver.CallBackNetWork callBackNetWork = null;
+
 
     @Override
     protected boolean isFullScreenStyle() {
@@ -184,6 +187,7 @@ public class SplashActivity extends AppBaseActivity {
      */
     private void requestPermission() {
         PermissionUtils.requestPermission(this, new PermissionUtils.PermissionCallback() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onRequestPermissionSuccess() {
                         /**
@@ -200,13 +204,7 @@ public class SplashActivity extends AppBaseActivity {
                          * To home page after 3s
                          * 延时3秒跳转主页
                          */
-                        handler.postDelayed(new Runnable() {
-                            @RequiresApi(api = Build.VERSION_CODES.O)
-                            @Override
-                            public void run() {
-                                actionAfterPromise();
-                            }
-                        }, Constants.SPLASH_SLEEP_TIME);
+                        actionAfterPromise();
                     }
 
                     @Override
@@ -348,19 +346,21 @@ public class SplashActivity extends AppBaseActivity {
 
     public void downloadHeaderBinFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        /*File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.blockHeaderBin);
-        if (file.exists()) {
-            downloadDBFile();
-        } else {
-        }*/
-        Log.e(TAG,ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin);
+        String filePath = downloadDirectoryPath + ConstantInOB.blockHeaderBin;
+        File file = new File(filePath);
+        if(file.exists()){
+         downloadDBFile();
+         return;
+        }
         PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_header));
                 })
                 .setOnPauseListener(() -> {
+                    Log.e(TAG, "Pause download " + ConstantInOB.blockHeaderBin);
                 })
                 .setOnCancelListener(() -> {
+                    Log.e(TAG, "Cancel download " + ConstantInOB.blockHeaderBin);
                 })
                 .setOnProgressListener(new OnProgressListener() {
                     @SuppressLint({"SetTextI18n", "DefaultLocale"})
@@ -380,6 +380,7 @@ public class SplashActivity extends AppBaseActivity {
 
                     @Override
                     public void onError(Error error) {
+                        Log.e(TAG, error.toString());
 
                     }
                 });
@@ -387,21 +388,22 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     public void downloadDBFile() {
-
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        /*File file = new File(ConstantInOB.downloadBaseUrl + ConstantInOB.neutrinoDB);
-        if (file.exists()) {
-            downloadFilterHeaderBinFile();
-        } else {
-        }*/
-        Log.e(TAG,ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin);
-        PRDownloader.download(ConstantInOB.downloadBaseUrl  + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
+        String filePath = downloadDirectoryPath + ConstantInOB.neutrinoDB;
+        File file = new File(filePath);
+        if(file.exists()){
+            startNode();
+            return;
+        }
+        PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_db));
                 })
                 .setOnPauseListener(() -> {
+                    Log.e(TAG, "Pause download " + ConstantInOB.neutrinoDB);
                 })
                 .setOnCancelListener(() -> {
+                    Log.e(TAG, "Cancel download " + ConstantInOB.neutrinoDB);
                 })
                 .setOnProgressListener(new OnProgressListener() {
                     @SuppressLint({"SetTextI18n", "DefaultLocale"})
@@ -421,21 +423,29 @@ public class SplashActivity extends AppBaseActivity {
 
                     @Override
                     public void onError(Error error) {
-
+                        Log.e(TAG, error.toString());
                     }
                 });
     }
 
     public void downloadFilterHeaderBinFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        Log.e(TAG,ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.regFilterHeaderBin);
-        PRDownloader.download(ConstantInOB.downloadBaseUrl  + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
+        String filePath = downloadDirectoryPath + ConstantInOB.regFilterHeaderBin;
+        File file = new File(filePath);
+        if(file.exists()){
+            downloadDBFile();
+            return;
+        }
+
+        PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_filter_header));
                 })
                 .setOnPauseListener(() -> {
+                    Log.e(TAG, "Pause download " + ConstantInOB.regFilterHeaderBin);
                 })
                 .setOnCancelListener(() -> {
+                    Log.e(TAG, "Cancel download " + ConstantInOB.regFilterHeaderBin);
                 })
                 .setOnProgressListener(new OnProgressListener() {
                     @SuppressLint({"SetTextI18n", "DefaultLocale"})
@@ -453,9 +463,10 @@ public class SplashActivity extends AppBaseActivity {
                         downloadDBFile();
                     }
 
+
                     @Override
                     public void onError(Error error) {
-
+                        Log.e(TAG, error.toString());
                     }
                 });
 
@@ -472,17 +483,20 @@ public class SplashActivity extends AppBaseActivity {
                         @Override
                         public void onError(Exception e) {
                             LogUtils.e(TAG, "------------------getStateError------------------" + e.getMessage());
+                            startNode();
                             e.printStackTrace();
                         }
 
                         @Override
                         public void onResponse(byte[] bytes) {
                             if (bytes == null) {
+                                switchActivityFinish(UnlockActivity.class,mBundle);
                                 return;
                             }
                             try {
                                 Stateservice.GetStateResponse getStateResponse = Stateservice.GetStateResponse.parseFrom(bytes);
                                 Stateservice.WalletState state = getStateResponse.getState();
+                                Log.e(TAG, state.toString());
                                 switch (state) {
                                     case LOCKED:
                                         switchActivityFinish(UnlockActivity.class, mBundle);
@@ -499,14 +513,16 @@ public class SplashActivity extends AppBaseActivity {
                         }
                     });
                 } else if (e.getMessage().equals("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
-                    startNode();
+
                 }
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
             }
 
             @Override
             public void onResponse(byte[] bytes) {
-                switchActivityFinish(UnlockActivity.class, mBundle);
+                runOnUiThread(()->{
+                    subscribeWalletState();
+                });
                 LogUtils.e(TAG, "------------------startonSuccess------------------");
             }
         });
@@ -541,7 +557,10 @@ public class SplashActivity extends AppBaseActivity {
                 downloadView.setVisibility(View.VISIBLE);
                 downloadHeaderBinFile();
             } else {
-                startNode();
+                handler.postDelayed(()->{
+                    startNode();
+                },Constants.SPLASH_SLEEP_TIME);
+
             }
         }
     }
@@ -550,5 +569,31 @@ public class SplashActivity extends AppBaseActivity {
     @OnClick(R.id.refresh_btn)
     public void clickRefreshBtn() {
         actionAfterPromise();
+    }
+
+    @Override
+    protected void onPause() {
+
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+    }
+
+    public void subscribeWalletState (){
+        WalletState.WalletStateCallback walletStateCallback = walletState -> {
+            switch (walletState){
+                case 0:
+                case 255:
+                case 1:
+                    switchActivityFinish(UnlockActivity.class);
+                    break;
+            }
+        };
+        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
+        WalletState.getInstance().subscribeWalletState(mContext);
     }
 }

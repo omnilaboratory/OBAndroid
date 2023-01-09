@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.http.HttpUtils;
@@ -35,7 +36,9 @@ import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepTwoActivity;
 import com.omni.wallet.utils.FilesUtils;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.ObdLogFileObserverCheckStarted;
+import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.utils.Wallet;
+import com.omni.wallet.utils.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.json.JSONException;
@@ -48,11 +51,14 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import lnrpc.Stateservice;
 import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
+import obdmobile.RecvStream;
 
 public class UnlockActivity extends AppBaseActivity {
+    String TAG = UnlockActivity.class.getSimpleName();
     Context ctx = UnlockActivity.this;
     String localPass = "";
     String localSeed = "";
@@ -71,38 +77,12 @@ public class UnlockActivity extends AppBaseActivity {
     private boolean mCanClick = true;
     @BindView(R.id.bottom_btn_group)
     public RelativeLayout bottomBtnGroup;
-    ObdLogFileObserverCheckStarted obdLogFileObserverCheckStarted;
-    SharedPreferences blockData = null;
-
-    @SuppressLint("LongLogTag")
-    private final SharedPreferences.OnSharedPreferenceChangeListener isOpenedSharePreferenceChangeListener = (sharedPreferences, key) -> {
-        if (key.equals("isOpened")) {
-            Boolean isOpened = sharedPreferences.getBoolean("isOpened", false);
-            if (isOpened) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        obdLogFileObserverCheckStarted.stopWatching();
-                    }
-                }).start();
-
-                mLoadingDialog.dismiss();
-                switchActivityFinish(AccountLightningActivity.class);
-            }
-
-        }
-    };
 
 
     @Override
     protected Drawable getWindowBackground() {
         return ContextCompat.getDrawable(mContext, R.color.color_f9f9f9);
     }
-
-//    @Override
-//    protected int titleId() {
-//        return R.string.unlock;
-//    }
 
     @Override
     protected int getContentView() {
@@ -124,22 +104,20 @@ public class UnlockActivity extends AppBaseActivity {
         walletAddress = User.getInstance().getWalletAddress(mContext);
         initWalletType = User.getInstance().getInitWalletType(mContext);
         isStartCreate = User.getInstance().getStartCreate(mContext);
-        if(initWalletType.isEmpty()){
+        if (initWalletType.isEmpty()) {
             bottomBtnGroup.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             bottomBtnGroup.setVisibility(View.INVISIBLE);
         }
-        
-        blockData = ctx.getSharedPreferences("blockData", MODE_PRIVATE);
-        SharedPreferences.Editor editor = blockData.edit();
-        editor.putBoolean("isOpened", false);
-        editor.commit();
+        runOnUiThread(() -> {
+            subscribeState();
+        });
+
 
     }
 
     @Override
     protected void onDestroy() {
-        blockData.unregisterOnSharedPreferenceChangeListener(isOpenedSharePreferenceChangeListener);
         super.onDestroy();
     }
 
@@ -168,6 +146,52 @@ public class UnlockActivity extends AppBaseActivity {
         switchActivity(ForgetPwdActivity.class);
     }
 
+
+
+    public void unlockWallet(String passMd5) {
+        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
+        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                Log.e("unlock failed", "unlock failed");
+                runOnUiThread(
+                        () -> {
+                            PublicUtils.closeLoading(mLoadingDialog);
+                            if(e.getMessage().equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
+                                switchActivity(AccountLightningActivity.class);
+                            }
+                        }
+                );
+
+                e.printStackTrace();
+
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+            }
+        });
+    }
+
+    public boolean checkedPassMatched(String inputPass){
+        boolean isMatched = false;
+        if(inputPass.equals(localPass)){
+            isMatched = true;
+        }else{
+            isMatched = false;
+        }
+        return isMatched;
+    }
+
+    public void passWrongShow (){
+        PublicUtils.closeLoading(mLoadingDialog);
+        String toastString = getResources().getString(R.string.toast_unlock_error);
+        Toast checkPassToast = Toast.makeText(UnlockActivity.this, toastString, Toast.LENGTH_LONG);
+        checkPassToast.setGravity(Gravity.TOP, 0, 20);
+        checkPassToast.show();
+    }
+
+
     /**
      * click unlock button
      * 点击Unlock
@@ -176,130 +200,108 @@ public class UnlockActivity extends AppBaseActivity {
     public void clickUnlock() {
         String passwordString = mPwdEdit.getText().toString();
         String passMd5 = Md5Util.getMD5Str(passwordString);
-        mLoadingDialog.show();
-        Log.e("walletAddress",walletAddress);
-        if (localPass.isEmpty()){
-            if (initWalletType.equals("create")){
-                if (localSeed.isEmpty()){
-                    switchActivity(CreateWalletStepOneActivity.class);
-                }else if(!seedChecked){
-                    switchActivity(CreateWalletStepTwoActivity.class);
-                }else if (!isStartCreate){
-                    switchActivity(CreateWalletStepThreeActivity.class);
-                }
-            }else if (initWalletType.equals("recovery")){
-                String recoverySeedString = User.getInstance().getRecoverySeedString(mContext);
-                String backupFilePath = User.getInstance().getChannelBackupPath(mContext);
-                if (recoverySeedString.isEmpty()){
-                    switchActivity(RecoverWalletStepOneActivity.class);
-                }else if(backupFilePath.isEmpty()){
-                    switchActivity(RestoreChannelActivity.class);
-                }else if(!isStartCreate){
-                    switchActivity(RecoverWalletStepTwoActivity.class);
-                }
-            }else{
-                boolean isShowing = mLoadingDialog.isShowing();
-                if(isShowing){
-                    mLoadingDialog.dismiss();
-                    ToastUtils.showToast(mContext,"Your wallet is uninitialized, please create or recover your wallet!");
-                }else {
-                    ToastUtils.showToast(mContext,"Your wallet is uninitialized, please create or recover your wallet!");
-                }
+        boolean passIsMatched = checkedPassMatched(passMd5);
+        PublicUtils.showLoading(mLoadingDialog);
 
-            }
-        }else{
-            if(localPass.equals(passMd5)){
-                if(walletAddress.isEmpty()){
-                    if (initWalletType.equals("create")){
-                        if(!isCreated){
-                            String dataPath = ctx.getExternalCacheDir() + "/data/chain/bitcoin/regtest";
-                            List<BackupFile> backupFileList = FilesUtils.getDirectoryAndFile(dataPath,mContext);
-                            for (int i = 0;i<backupFileList.size();i++){
-                                BackupFile backupFileInfo = backupFileList.get(i);
-                                String fileName = backupFileInfo.getFilename();
-                                if (!fileName.equals("macaroons.db")){
-                                    String fileNamePath = dataPath + "/" + fileName;
-                                    File file = new File(fileNamePath);
-                                    if (file.exists()){
-                                        file.delete();
-                                    }
-                                }
-                            }
-                            switchActivity(CreateWalletStepThreeActivity.class);
-                        }else if(!isSynced){
-                            switchActivity(BackupBlockProcessActivity.class);
-                        }else {
-                            switchActivity(BackupBlockProcessActivity.class);
-                        }
-                    }else if(initWalletType.equals("recovery")){
-                        if(!isCreated){
-                            String dataPath = ctx.getExternalCacheDir() + "/data/chain/bitcoin/regtest";
-                            List<BackupFile> backupFileList = FilesUtils.getDirectoryAndFile(dataPath,mContext);
-                            for (int i = 0;i<backupFileList.size();i++){
-                                BackupFile backupFileInfo = backupFileList.get(i);
-                                String fileName = backupFileInfo.getFilename();
-                                if (!fileName.equals("macaroons.db")){
-                                    String fileNamePath = dataPath + "/" + fileName;
-                                    File file = new File(fileNamePath);
-                                    if (file.exists()){
-                                        file.delete();
-                                    }
-                                }
-                            }
-                            switchActivity(RecoverWalletStepTwoActivity.class);
-                        }else if(!isSynced){
+        if (initWalletType.equals("create")) {
+            if (localSeed.isEmpty()){
+                PublicUtils.closeLoading(mLoadingDialog);
+                switchActivity(CreateWalletStepOneActivity.class);
+            }else{
+                if (!seedChecked){
+                    PublicUtils.closeLoading(mLoadingDialog);
+                    switchActivity(CreateWalletStepTwoActivity.class);
+                }else{
+                    if (!isStartCreate){
+                        PublicUtils.closeLoading(mLoadingDialog);
+                        switchActivity(CreateWalletStepThreeActivity.class);
+                    }else{
+                        if(passIsMatched){
+                            PublicUtils.closeLoading(mLoadingDialog);
                             switchActivity(BackupBlockProcessActivity.class);
                         }else{
-                            switchActivity(BackupBlockProcessActivity.class);
-                        }
-                    }else{
-                        boolean isShowing = mLoadingDialog.isShowing();
-                        if(isShowing){
-                            mLoadingDialog.dismiss();
-                            ToastUtils.showToast(mContext,"Your wallet is uninitialized, please create or recover your wallet!");
-                        }else {
-                            ToastUtils.showToast(mContext,"Your wallet is uninitialized, please create or recover your wallet!");
+                            passWrongShow();
                         }
                     }
-                }else{
-                    boolean isOpened = blockData.getBoolean("isOpened",false);
-                    if (isOpened){
-                        mLoadingDialog.dismiss();
-                        switchActivity(AccountLightningActivity.class);
-                    }else{
-                        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
-                        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
-                            @Override
-                            public void onError(Exception e) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (mLoadingDialog.isShowing()) {
-                                            mLoadingDialog.dismiss();
-                                        }
-                                    }
-                                });
-                                Log.e("unlock failed", "unlock failed");
-                                e.printStackTrace();
-
-                            }
-
-                            @Override
-                            public void onResponse(byte[] bytes) {
-                                getTotalBlockHeight();
-                            }
-                        });
-                    }
-                    
                 }
+            }
+
+        } else if (initWalletType.equals("recovery")) {
+            String recoverySeedString = User.getInstance().getRecoverySeedString(mContext);
+            if (recoverySeedString.isEmpty()){
+                PublicUtils.closeLoading(mLoadingDialog);
+                switchActivity(RecoverWalletStepOneActivity.class);
             }else{
-                mLoadingDialog.dismiss();
+                if (!isStartCreate){
+                    PublicUtils.closeLoading(mLoadingDialog);
+                    switchActivity(RecoverWalletStepTwoActivity.class);
+                }else{
+                    if(passIsMatched){
+                        PublicUtils.closeLoading(mLoadingDialog);
+                        switchActivity(BackupBlockProcessActivity.class);
+                    }else{
+                        passWrongShow();
+                    }
+                }
+            }
+        } else if (initWalletType.equals("created")) {
+            if(passIsMatched){
+                unlockWallet(passMd5);
+            }else{
+                PublicUtils.closeLoading(mLoadingDialog);
                 String toastString = getResources().getString(R.string.toast_unlock_error);
                 Toast checkPassToast = Toast.makeText(UnlockActivity.this, toastString, Toast.LENGTH_LONG);
                 checkPassToast.setGravity(Gravity.TOP, 0, 20);
                 checkPassToast.show();
             }
+        }else if(initWalletType.equals("recovered")){
+            if(passIsMatched){
+                unlockWallet(passMd5);
+            }else{
+                PublicUtils.closeLoading(mLoadingDialog);
+                String toastString = getResources().getString(R.string.toast_unlock_error);
+                Toast checkPassToast = Toast.makeText(UnlockActivity.this, toastString, Toast.LENGTH_LONG);
+                checkPassToast.setGravity(Gravity.TOP, 0, 20);
+                checkPassToast.show();
+            }
+        }else{
+            Log.e(TAG,"InitWalletType:" + initWalletType);
+            PublicUtils.closeLoading(mLoadingDialog);
+            ToastUtils.showToast(mContext,"Your wallet is not initial please create or recovery your wallet!");
         }
+}
+
+    public void subscribeState() {
+        WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
+            switch (walletState){
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    runOnUiThread(()->{
+                        if(User.getInstance().isRestoredChannel(mContext)){
+                            PublicUtils.closeLoading(mLoadingDialog);
+                            switchActivity(AccountLightningActivity.class);
+                        }else{
+                            PublicUtils.closeLoading(mLoadingDialog);
+                            switchActivity(RestoreChannelActivity.class);
+                        }
+
+                    });
+                    break;
+                case 255:
+                    break;
+                default:
+                    break;
+            }
+        };
+        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
+        WalletState.getInstance().subscribeWalletState(mContext);
     }
 
     /**
@@ -308,7 +310,7 @@ public class UnlockActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_create)
     public void clickCreate() {
-        User.getInstance().setInitWalletType(mContext,"create");
+        User.getInstance().setInitWalletType(mContext, "create");
         switchActivity(CreateWalletStepOneActivity.class);
     }
 
@@ -318,7 +320,7 @@ public class UnlockActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_recover)
     public void clickRecover() {
-        User.getInstance().setInitWalletType(mContext,"recovery");
+        User.getInstance().setInitWalletType(mContext, "recovery");
         switchActivity(RecoverWalletStepOneActivity.class);
     }
 
@@ -331,67 +333,4 @@ public class UnlockActivity extends AppBaseActivity {
         switchActivity(ForgetPwdActivity.class);
     }
 
-    public void getTotalBlockHeight() {
-        String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
-        HttpUtils.with(ctx)
-                .postString()
-                .url("http://" + Wallet.BTC_HOST_ADDRESS_REGTEST + ":18332")
-                .addContent(jsonStr)
-                .execute(new EngineCallback() {
-
-                    @Override
-                    public void onPreExecute(Context context, Map<String, Object> params) {
-
-                    }
-
-                    @Override
-                    public void onCancel(Context context) {
-
-                    }
-
-                    @Override
-                    public void onError(Context context, String errorCode, String errorMsg) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(Context context, String result) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONObject jsonObject1 = new JSONObject(jsonObject.getString("result"));
-                            String block = jsonObject1.getString("block");
-                            int totalBlock = Integer.parseInt(block);
-                            String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/regtest/lnd.log";
-//                            String fileLocal = ctx.getExternalCacheDir() + "/logs/bitcoin/testnet/lnd.log";
-                            obdLogFileObserverCheckStarted = new ObdLogFileObserverCheckStarted(fileLocal, ctx, totalBlock);
-                            blockData.registerOnSharedPreferenceChangeListener(isOpenedSharePreferenceChangeListener);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    obdLogFileObserverCheckStarted.startWatching();
-                                }
-                            });
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onSuccess(Context context, byte[] result) {
-
-                    }
-
-                    @Override
-                    public void onProgressInThread(Context context, Progress progress) {
-
-                    }
-
-                    @Override
-                    public void onFileSuccess(Context context, String filePath) {
-
-                    }
-                });
-    }
 }

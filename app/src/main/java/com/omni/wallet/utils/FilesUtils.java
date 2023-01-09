@@ -9,10 +9,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import lnrpc.LightningOuterClass;
-import obdmobile.Callback;
-import obdmobile.Obdmobile;
-
 public class FilesUtils {
     private String path;
 
@@ -20,26 +16,31 @@ public class FilesUtils {
         List<BackupFile> fileInfoList = new ArrayList<>();
         File file = new File(path);
         File[] tempList = file.listFiles();
-        for (int i = 0; i < tempList.length; i++) {
-            String filename = tempList[i].getName();
-            long lastEdit = tempList[i].lastModified();
-            String lastEditTime = TimeFormatUtil.formatTimeAndDateLong(lastEdit / 1000, context);
-            BackupFile backupFile = null;
-            if (!filename.equals("Android")) {
-                if (tempList[i].isDirectory()) {
-                    backupFile = new BackupFile(false, "directory", filename, lastEditTime, file);
-                } else {
-                    if (filename.endsWith(".db")) {
-                        backupFile = new BackupFile(false, "db", filename, lastEditTime, file);
-                    } else if (filename.endsWith(".OBBackupChannel")) {
-                        backupFile = new BackupFile(false, "OBBackupChannel", filename, lastEditTime, file);
+        if(tempList.length > 0){
+            for (int i = 0; i < tempList.length; i++) {
+                String filename = tempList[i].getName();
+                long lastEdit = tempList[i].lastModified();
+                String lastEditTime = TimeFormatUtil.formatTimeAndDateLong(lastEdit / 1000, context);
+                BackupFile backupFile = null;
+                if (!filename.equals("Android")) {
+                    if (tempList[i].isDirectory()) {
+                        backupFile = new BackupFile(false, "directory", filename, lastEditTime, file);
                     } else {
-                        backupFile = new BackupFile(false, "else", filename, lastEditTime, file);
+                        if (filename.endsWith(".db")) {
+                            backupFile = new BackupFile(false, "db", filename, lastEditTime, file);
+                        } else if (filename.endsWith(".OBBackupChannel")) {
+                            backupFile = new BackupFile(false, "OBBackupChannel", filename, lastEditTime, file);
+                        } else {
+                            backupFile = new BackupFile(false, "else", filename, lastEditTime, file);
+                        }
                     }
+                    fileInfoList.add(backupFile);
                 }
-                fileInfoList.add(backupFile);
             }
+        }else{
+            fileInfoList.clear();
         }
+
 
         return fileInfoList;
     }

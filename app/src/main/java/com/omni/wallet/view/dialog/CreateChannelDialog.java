@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -418,20 +419,17 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         Obdmobile.oB_OpenChannel(openChannelRequest.toByteArray(), new RecvStream() {
             @Override
             public void onError(Exception e) {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLoadingDialog.dismiss();
-                        LogUtils.e(TAG, "Error opening channel: " + e.getMessage());
-                        if (e.getMessage().toLowerCase().contains("pending channels exceed maximum")) {
-                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_pending_max));
-                        } else if (e.getMessage().toLowerCase().contains("terminated")) {
-                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_timeout));
-                        } else if (e.getMessage().toLowerCase().contains("funding amount is too large")) {
-                            ToastUtils.showToast(mContext, e.getMessage());
-                        } else {
-                            ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open));
-                        }
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    mLoadingDialog.dismiss();
+                    LogUtils.e(TAG, "Error opening channel: " + e.getMessage());
+                    if (e.getMessage().toLowerCase().contains("pending channels exceed maximum")) {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_pending_max));
+                    } else if (e.getMessage().toLowerCase().contains("terminated")) {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open_timeout));
+                    } else if (e.getMessage().toLowerCase().contains("funding amount is too large")) {
+                        ToastUtils.showToast(mContext, e.getMessage());
+                    } else {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open));
                     }
                 });
             }
@@ -452,7 +450,6 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
                             bundle.putString(ChannelsActivity.KEY_PUBKEY, User.getInstance().getFromPubKey(mContext));
                             Intent intent = new Intent(mContext, ChannelsActivity.class);
-                            BackupUtils.getInstance().BackupChannelToFile(mContext);
                             intent.putExtras(bundle);
                             mContext.startActivity(intent);
                         } catch (InvalidProtocolBufferException e) {

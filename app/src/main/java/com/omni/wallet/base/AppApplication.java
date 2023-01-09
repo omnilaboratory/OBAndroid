@@ -3,10 +3,12 @@ package com.omni.wallet.base;
 import android.content.Context;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
+import android.util.Log;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.baselibrary.base.BaseApplication;
 import com.omni.wallet.baselibrary.common.Constants;
 import com.omni.wallet.baselibrary.http.HttpUtils;
@@ -19,6 +21,7 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.utils.BackupUtils;
 import com.omni.wallet.utils.Wallet;
 
 import org.greenrobot.eventbus.EventBus;
@@ -29,8 +32,10 @@ import org.json.JSONObject;
 import java.util.Map;
 
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
+import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
+import obdmobile.RecvStream;
 
 /**
  * Application
@@ -102,29 +107,6 @@ public class AppApplication extends BaseApplication {
          */
         LogUtils.e(TAG, "------------------getFilesDir------------------" + getApplicationContext().getFilesDir());
         LogUtils.e(TAG, "------------------getExternalCacheDir------------------" + getApplicationContext().getExternalCacheDir());
-        /*Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + Wallet.START_NODE_OMNI, new Callback() {
-            @Override
-            public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-//                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
-            }
-        });*/
-
-//        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
-//            @Override
-//            public void onError(Exception e) {
-//                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
-//            }
-//
-//            @Override
-//            public void onResponse(byte[] bytes) {
-////                LogUtils.e(TAG, "------------------startonResponse-----------------" + bytes.toString());
-//            }
-//        });
         PRDownloaderConfig config = PRDownloaderConfig.newBuilder()
                 .setConnectTimeout(30000)
                 .setReadTimeout(30000)
@@ -147,6 +129,7 @@ public class AppApplication extends BaseApplication {
                 getBtcPrice();
                 // 在此处添加执行的代码
                 handler.postDelayed(this, 60000);// 60s后执行
+                BackupUtils.getInstance().backupChannelToFile(mContext);
             }
         };
         handler.postDelayed(runnable, 0);// 打开定时器立即执行

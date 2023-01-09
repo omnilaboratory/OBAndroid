@@ -49,6 +49,9 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String SEED_CHECKED = "seedChecked";
     private static final String RECOVERY_SEED_STRING ="recoverySeedString";
     private static final String START_CREATE = "startCreate";
+    private static final String WALLET_STATE = "walletState";
+    private static final String RESTORED_CHANNEL = "restoredChannel";
+
 
     /**
      * 版本信息本地化
@@ -382,5 +385,21 @@ public class PreferencesUtils extends BasePreferencesUtils {
 
     public static Boolean getStartCreate(Context context) {
         return getBoolean(SETTINGS, context, START_CREATE);
+    }
+
+    public static int getWalletState(Context context){
+        return  getInt(SETTINGS,context,WALLET_STATE);
+    }
+
+    public static void saveWalletState(Context context,int value){
+        putInt(SETTINGS,context,WALLET_STATE,value);
+    }
+
+    public static boolean getRestoredChannel(Context context){
+        return getBoolean(SETTINGS,context,RESTORED_CHANNEL);
+    }
+
+    public static void saveRestoredChannel(Context context,boolean value){
+         putBoolean(SETTINGS,context,RESTORED_CHANNEL,value);
     }
 }

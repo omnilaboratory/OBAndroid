@@ -2,6 +2,7 @@ package com.omni.wallet.utils;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
@@ -16,22 +17,24 @@ import java.nio.file.Files;
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
+import obdmobile.RecvStream;
 
 public class BackupUtils {
+    private final static String TAG = BackupUtils.class.getSimpleName();
     private final static String basePath = Environment.getExternalStorageDirectory() + "";
     private final static String directoryName = "OBBackup";
     private final static String channelFileName = "channelBackupFile.OBBackupChannel";
-    
-    private BackupUtils(){
-        
+
+    private BackupUtils() {
+
     }
-    
+
     private static BackupUtils mInstance;
-    
-    public static BackupUtils getInstance(){
-        if (mInstance == null){
-            synchronized (BackupUtils.class){
-                if (mInstance == null){
+
+    public static BackupUtils getInstance() {
+        if (mInstance == null) {
+            synchronized (BackupUtils.class) {
+                if (mInstance == null) {
                     mInstance = new BackupUtils();
                 }
             }
@@ -50,37 +53,37 @@ public class BackupUtils {
     public String getDirectoryName() {
         return directoryName;
     }
-    
-    public Boolean BackupChannelToFile(Context context){
-        final boolean[] isBackupChannelFileOver = {false};
-        LightningOuterClass.ExportChannelBackupRequest exportChannelBackupRequest = LightningOuterClass.ExportChannelBackupRequest.newBuilder().build();
-        Obdmobile.exportAllChannelBackups(exportChannelBackupRequest.toByteArray(), new Callback() {
+
+    public void backupChannelToFile(Context context) {
+        Obdmobile.subscribeChannelBackups(null, new RecvStream() {
             @Override
             public void onError(Exception e) {
-                isBackupChannelFileOver[0] = false;
-                ToastUtils.showToast(context,"Backup channel failed,please backup channel later.");
+                Log.e(TAG,e.getMessage());
                 e.printStackTrace();
             }
 
             @Override
             public void onResponse(byte[] bytes) {
                 try {
-                    String directoryPath = basePath + "/" +directoryName;
+                    String directoryPath = basePath + "/" + directoryName;
                     String channelFilePath = directoryPath + "/" + channelFileName;
                     File directoryFile = new File(directoryPath);
 
-                    if (!directoryFile.exists()){
+                    if (!directoryFile.exists()) {
                         directoryFile.mkdir();
                     }
 
                     File channelFile = new File(channelFilePath);
-                    if (channelFile.exists()){
+                    if (channelFile.exists()) {
                         channelFile.delete();
                     }
+                    Log.e(TAG, "backup file");
                     LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(bytes);
+                    LightningOuterClass.ChanBackupSnapshot newChanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.newBuilder()
+                            .setMultiChanBackup(chanBackupSnapshot.getMultiChanBackup())
+                            .build();
                     OutputStream outputStream = new FileOutputStream(channelFilePath);
-                    chanBackupSnapshot.writeTo(outputStream);
-                    isBackupChannelFileOver[0] = true;
+                    newChanBackupSnapshot.writeTo(outputStream);
                 } catch (InvalidProtocolBufferException | FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -88,6 +91,5 @@ public class BackupUtils {
                 }
             }
         });
-        return isBackupChannelFileOver[0];
     }
 }

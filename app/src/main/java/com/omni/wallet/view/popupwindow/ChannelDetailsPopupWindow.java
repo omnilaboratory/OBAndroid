@@ -356,7 +356,6 @@ public class ChannelDetailsPopupWindow {
                         try {
                             LightningOuterClass.CloseStatusUpdate resp = LightningOuterClass.CloseStatusUpdate.parseFrom(bytes);
                             LogUtils.e(TAG, "------------------closeChannelOnResponse-----------------" + resp);
-                            BackupUtils.getInstance().BackupChannelToFile(mContext);
                             EventBus.getDefault().post(new CloseChannelEvent());
                             mBasePopWindow.dismiss();
                             mLoadingDialog.dismiss();

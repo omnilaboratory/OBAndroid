@@ -439,35 +439,6 @@ public class AccountLightningActivity extends AppBaseActivity {
                 LinearLayout lvContent = holder.getView(R.id.lv_item_content);
                 lvContent.setPadding(0, 0, 0, 100);
             }
-//
-//
-//            Integer tokenImageSourceId = Integer.parseInt(item.get("tokenImageSource").toString());
-//            Integer networkImageSource = Integer.parseInt(item.get("networkImageSource").toString());
-//            String assetsAmount = item.get("amount").toString();
-//            String assetsValue = item.get("value").toString();
-//            holder.setImageResource(R.id.iv_asset_logo, tokenImageSourceId);
-//            holder.setImageResource(R.id.iv_asset_net, networkImageSource);
-//            holder.setText(R.id.tv_asset_amount, assetsAmount);
-//            holder.setText(R.id.tv_asset_value, assetsValue);
-//            if (networkImageSource == R.mipmap.icon_network_link_black) {
-//                holder.setOnItemClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Bundle bundle = new Bundle();
-//                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "link");
-//                        switchActivity(BalanceDetailActivity.class, bundle);
-//                    }
-//                });
-//            } else {
-//                holder.setOnItemClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Bundle bundle = new Bundle();
-//                        bundle.putString(BalanceDetailActivity.KEY_NETWORK, "lightning");
-//                        switchActivity(BalanceDetailActivity.class, bundle);
-//                    }
-//                });
-//            }
             // TODO: 2022/11/14 暂定待修改与完善
             if (item.getPropertyid() == 0) {
                 holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_btc_logo_small);

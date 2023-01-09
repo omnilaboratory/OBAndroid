@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.framelibrary.utils.PreferencesUtils;
+import com.omni.wallet.thirdsupport.zxing.Preferences;
 
 import okio.ByteString;
 
@@ -85,6 +86,10 @@ public class User {
     private Boolean seedChecked;
     
     private Boolean startCreate;
+
+    private int walletState;
+
+    private boolean restoredChannel;
 
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
@@ -397,6 +402,32 @@ public class User {
         this.startCreate = startCreate;
     }
 
+    public void setWalletState(Context context,int walletState){
+        PreferencesUtils.saveWalletState(context,walletState);
+        this.walletState = walletState;
+    }
+
+    public int getWalletState(Context context){
+        walletState = PreferencesUtils.getWalletState(context);
+        if (walletState == -1){
+            walletState = -1;
+        }
+        return walletState;
+    }
+
+    public boolean isRestoredChannel(Context context) {
+        restoredChannel = PreferencesUtils.getRestoredChannel(context);
+        if (restoredChannel == false){
+            restoredChannel = false;
+        }
+        return restoredChannel;
+    }
+
+    public void setRestoredChannel(Context context,boolean restoredChannel) {
+        PreferencesUtils.saveRestoredChannel(context,restoredChannel);
+        this.restoredChannel = restoredChannel;
+    }
+
     /**
      * 清空用户登录相关信息
      */
@@ -410,6 +441,7 @@ public class User {
         // 姓名
         setRealName(context, "");
     }
+
 
     /**
      * 用户是否登录

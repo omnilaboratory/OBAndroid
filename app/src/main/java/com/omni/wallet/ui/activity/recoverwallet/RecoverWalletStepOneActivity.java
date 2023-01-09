@@ -186,7 +186,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
         SharedPreferences.Editor editor = secretData.edit();
         editor.putString("seeds",seedsString);
         editor.commit();
-//        switchActivity(RecoverWalletStepTwoActivity.class);
-        switchActivity(RestoreChannelActivity.class);
+        switchActivity(RecoverWalletStepTwoActivity.class);
+//        switchActivity(RestoreChannelActivity.class);
     }
 }
