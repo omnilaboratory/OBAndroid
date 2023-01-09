@@ -32,6 +32,7 @@ import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
+import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
@@ -42,6 +43,7 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.PaymentRequestUtil;
+import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.dialog.SendDialog;
@@ -69,8 +71,6 @@ import invoicesrpc.InvoicesOuterClass;
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
-
-import static lnrpc.LightningOuterClass.Payment.PaymentStatus.SUCCEEDED;
 
 public class BalanceDetailActivity extends AppBaseActivity {
     private static final String TAG = AccountLightningActivity.class.getSimpleName();
@@ -173,7 +173,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TextView mReceiverTv;
     private List<LightningOuterClass.Payment> mTransactionsData = new ArrayList<>();
     private TransactionsAdapter mTransactionsAdapter;
-    private List<LightningOuterClass.Payment> mToBePaidData = new ArrayList<>();
+    private List<InvoiceEntity> mToBePaidData = new ArrayList<>();
     private ToBePaidAdapter mToBePaidAdapter;
     private List<LightningOuterClass.Invoice> mMyInvoicesData = new ArrayList<>();
     private MyInvoicesAdapter mMyInvoicesAdapter;
@@ -430,6 +430,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             for (int i = 0; i < txidList.size(); i++) {
                 getOmniTransactions(txidList.get(i));
             }
+            oBListTransactions();
         } else {
             oBListTransactions();
         }
@@ -462,7 +463,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             mTransactionsAssetAdapter.notifyDataSetChanged();
                         }
                     });
-                    oBListTransactions();
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -569,8 +569,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 getPendingTxsAsset();
             }
         } else if (network.equals("lightning")) {
-            mToBePaidAdapter = new ToBePaidAdapter(mContext, mToBePaidData, R.layout.layout_item_to_be_paid_list);
-            mToBePaidRecyclerView.setAdapter(mToBePaidAdapter);
             fetchPaymentsFromLND();
         }
     }
@@ -705,52 +703,36 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * 请求支付列表各个状态的接口
      */
     public void fetchPaymentsFromLND() {
-        LightningOuterClass.ListPaymentsRequest paymentsRequest;
+        mToBePaidData.clear();
         if (assetId == 0) {
-            paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
-                    .setAssetId((int) assetId)
-                    .setIsQueryAsset(false)
-                    .setIncludeIncomplete(false)
-                    .build();
+            SharedPreferences sp = mContext.getSharedPreferences("SP_BTC_INVOICE_LIST", Activity.MODE_PRIVATE);
+            String btcInvoiceListJson = sp.getString("btcInvoiceListKey", "");
+            if (!StringUtils.isEmpty(btcInvoiceListJson)) {
+                Gson gson = new Gson();
+                mToBePaidData = gson.fromJson(btcInvoiceListJson, new TypeToken<List<InvoiceEntity>>() {
+                }.getType()); //将json字符串转换成List集合
+                removeDuplicateInvoice(mToBePaidData);
+                LogUtils.e(TAG, "========btcInvoice=====" + btcInvoiceListJson);
+                mToBePaidNumTv.setText(mToBePaidData.size() + "");
+                mToBePaidAdapter = new ToBePaidAdapter(mContext, mToBePaidData, R.layout.layout_item_to_be_paid_list);
+                mToBePaidRecyclerView.setAdapter(mToBePaidAdapter);
+                mToBePaidAdapter.notifyDataSetChanged();
+            }
         } else {
-            paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
-                    .setAssetId((int) assetId)
-                    .setIsQueryAsset(true)
-                    .setIncludeIncomplete(false)
-                    .build();
+            SharedPreferences sp = mContext.getSharedPreferences("SP_INVOICE_LIST", Activity.MODE_PRIVATE);
+            String invoiceListJson = sp.getString("invoiceListKey", "");
+            if (!StringUtils.isEmpty(invoiceListJson)) {
+                Gson gson = new Gson();
+                mToBePaidData = gson.fromJson(invoiceListJson, new TypeToken<List<InvoiceEntity>>() {
+                }.getType()); //将json字符串转换成List集合
+                removeDuplicateInvoice(mToBePaidData);
+                LogUtils.e(TAG, "========invoice=====" + invoiceListJson);
+                mToBePaidNumTv.setText(mToBePaidData.size() + "");
+                mToBePaidAdapter = new ToBePaidAdapter(mContext, mToBePaidData, R.layout.layout_item_to_be_paid_list);
+                mToBePaidRecyclerView.setAdapter(mToBePaidAdapter);
+                mToBePaidAdapter.notifyDataSetChanged();
+            }
         }
-        Obdmobile.oB_ListPayments(paymentsRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------toBePaidPaymentsOnError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                if (bytes == null) {
-                    return;
-                }
-                try {
-                    LightningOuterClass.ListPaymentsResponse resp = LightningOuterClass.ListPaymentsResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------toBePaidPaymentsOnResponse-----------------" + resp);
-                    mToBePaidData.clear();
-                    for (LightningOuterClass.Payment payment : resp.getPaymentsList()) {
-                        if (payment.getStatus() != SUCCEEDED) {
-                            mToBePaidData.add(payment);
-                        }
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mToBePaidNumTv.setText(mToBePaidData.size() + "");
-                            mToBePaidAdapter.notifyDataSetChanged();
-                        }
-                    });
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     /**
@@ -963,23 +945,23 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * the adapter of to be paid list
      * 未支付列表适配器
      */
-    private class ToBePaidAdapter extends CommonRecyclerAdapter<LightningOuterClass.Payment> {
+    private class ToBePaidAdapter extends CommonRecyclerAdapter<InvoiceEntity> {
 
-        public ToBePaidAdapter(Context context, List<LightningOuterClass.Payment> data, int layoutId) {
+        public ToBePaidAdapter(Context context, List<InvoiceEntity> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, final int position, final LightningOuterClass.Payment item) {
-            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
+        public void convert(ViewHolder holder, final int position, final InvoiceEntity item) {
+            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getDate() + ""));
             DecimalFormat df = new DecimalFormat("0.00######");
             if (item.getAssetId() == 0) {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getValueMsat() / 1000)) / 100000000));
+                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount() / 1000)) / 100000000));
             } else {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getValueMsat())) / 100000000));
+                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
             }
-            if (item.getPaymentRequest() != null && !item.getPaymentRequest().isEmpty()) {
-                holder.setText(R.id.tv_receiver, PaymentRequestUtil.getMemo(item.getPaymentRequest()));
+            if (item.getInvoice() != null && !item.getInvoice().isEmpty()) {
+                holder.setText(R.id.tv_receiver, PaymentRequestUtil.getMemo(item.getInvoice()));
             } else {
                 holder.setText(R.id.tv_receiver, "unknown");
             }
@@ -991,31 +973,43 @@ public class BalanceDetailActivity extends AppBaseActivity {
                      * Used to delete a payment probe.
                      * 删除付款
                      */
-                    LightningOuterClass.DeletePaymentRequest deletePaymentRequest = LightningOuterClass.DeletePaymentRequest.newBuilder()
-                            .setPaymentHash(byteStringFromHex(item.getPaymentHash()))
-                            .setFailedHtlcsOnly(false)
-                            .build();
-                    Obdmobile.deletePayment(deletePaymentRequest.toByteArray(), new Callback() {
-                        @Override
-                        public void onError(Exception e) {
-                            LogUtils.e(TAG, "------------------deletePaymentOnError------------------" + e.getMessage());
+                    menuLayout.quickClose();
+                    if (item.getAssetId() == 0) {
+                        mToBePaidData.remove(position);
+                        mToBePaidAdapter.notifyRemoveItem(position);
+                        mToBePaidNumTv.setText(mToBePaidData.size() + "");
+                        if (mToBePaidData.size() == 0) {
+                            mToBePaidAdapter.notifyDataSetChanged();
+                            mToBePaidNumTv.setText("0");
                         }
-
-                        @Override
-                        public void onResponse(byte[] bytes) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    menuLayout.quickClose();
-                                    mToBePaidData.remove(position);
-                                    mToBePaidAdapter.notifyRemoveItem(position);
-                                    if (mToBePaidData.size() == 0) {
-                                        mToBePaidAdapter.notifyDataSetChanged();
-                                    }
-                                }
-                            });
+                        Gson gson = new Gson();
+                        String jsonStr = gson.toJson(mToBePaidData);
+                        SharedPreferences sp = mContext.getSharedPreferences("SP_BTC_INVOICE_LIST", Activity.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("btcInvoiceListKey", jsonStr);
+                        editor.commit();
+                    } else {
+                        mToBePaidData.remove(position);
+                        mToBePaidAdapter.notifyRemoveItem(position);
+                        mToBePaidNumTv.setText(mToBePaidData.size() + "");
+                        if (mToBePaidData.size() == 0) {
+                            mToBePaidAdapter.notifyDataSetChanged();
+                            mToBePaidNumTv.setText("0");
                         }
-                    });
+                        Gson gson = new Gson();
+                        String jsonStr = gson.toJson(mToBePaidData);
+                        SharedPreferences sp = mContext.getSharedPreferences("SP_INVOICE_LIST", Activity.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("invoiceListKey", jsonStr);
+                        editor.commit();
+                    }
+                }
+            });
+            holder.getView(R.id.layout_to_be_paid_list).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mPayInvoiceDialog = new PayInvoiceDialog(mContext);
+                    mPayInvoiceDialog.show(pubkey, assetId, UriUtil.generateLightningUri(item.getInvoice()));
                 }
             });
         }
@@ -1026,7 +1020,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
         byte[] hexBytes = BaseEncoding.base16().decode(hexString.toUpperCase());
         return ByteString.copyFrom(hexBytes);
     }
-
 
     /**
      * the adapter of Pending Txs
@@ -1569,6 +1562,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPayInvoiceSuccessEvent(PayInvoiceSuccessEvent event) {
         fetchTransactionsFromLND();
+        fetchPaymentsFromLND();
     }
 
     /**
@@ -1613,11 +1607,29 @@ public class BalanceDetailActivity extends AppBaseActivity {
         initBalanceAccount();
     }
 
-    // 循环重复数据
+    /**
+     * @备注： 循环删除重复数据
+     * @description: Circular deletion of duplicate data
+     */
     public static void removeDuplicate(List list) {
         for (int i = 0; i < list.size() - 1; i++) {
             for (int j = list.size() - 1; j > i; j--) {
                 if (list.get(j).equals(list.get(i))) {
+                    list.remove(j);
+                }
+            }
+        }
+        System.out.println(list);
+    }
+
+    /**
+     * @备注： 循环删除重复数据
+     * @description: Circular deletion of duplicate data
+     */
+    public static void removeDuplicateInvoice(List<InvoiceEntity> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = list.size() - 1; j > i; j--) {
+                if (list.get(j).getInvoice().equals(list.get(i).getInvoice())) {
                     list.remove(j);
                 }
             }

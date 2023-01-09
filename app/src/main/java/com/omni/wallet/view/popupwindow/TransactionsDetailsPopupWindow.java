@@ -9,7 +9,9 @@ import android.widget.TextView;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.utils.MonetaryUtil;
+import com.omni.wallet.framelibrary.entity.User;
+
+import java.text.DecimalFormat;
 
 import lnrpc.LightningOuterClass;
 
@@ -38,6 +40,8 @@ public class TransactionsDetailsPopupWindow {
 //            mBasePopWindow.setBackgroundDrawable(new ColorDrawable(0xD1123A50));
             mBasePopWindow.setAnimationStyle(R.style.popup_anim_style);
 
+            TextView typeTv = rootView.findViewById(R.id.tv_type);
+            ImageView typeIv = rootView.findViewById(R.id.iv_type);
             TextView statusTv = rootView.findViewById(R.id.tv_status);
             TextView nonceTv = rootView.findViewById(R.id.tv_nonce);
             TextView fromAddressTv = rootView.findViewById(R.id.tv_from_address);
@@ -52,22 +56,37 @@ public class TransactionsDetailsPopupWindow {
             TextView feeTypeTv = rootView.findViewById(R.id.tv_fee_type);
             TextView totalAmountTv = rootView.findViewById(R.id.tv_total_amount);
 
-            // TODO: 2022/11/28 待完善
+            typeTv.setText("SENT");
+            typeIv.setImageResource(R.mipmap.icon_failed_green);
             if (payment.getAssetId() == 0) {
                 assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
                 assetTypeTv.setText("BTC");
+                amountTypeTv.setText("BTC");
+                feeTypeTv.setText("satoshis");
             } else {
                 assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
                 assetTypeTv.setText("doallar");
+                amountTypeTv.setText("doallar");
+                feeTypeTv.setText("unit");
             }
-            LightningOuterClass.Hop lastHop = payment.getHtlcs(0).getRoute().getHops(payment.getHtlcs(0).getRoute().getHopsCount() - 1);
-            String payee = lastHop.getPubKey();
-            fromAddressTv.setText(payee);
-            txIdTv.setText(payment.getPaymentPreimage());
-            amountTv.setText(MonetaryUtil.getInstance().getPrimaryDisplayAmountAndUnit(payment.getValueMsat()));
-            feeTv.setText(MonetaryUtil.getInstance().getPrimaryDisplayAmountAndUnit(payment.getFeeMsat()));
+            LightningOuterClass.Hop firstHop = payment.getHtlcs(0).getRoute().getHops(0);
+            LightningOuterClass.Hop lastHop = payment.getHtlcs(0).getRoute().getHops(1);
+            String fromAddress = firstHop.getPubKey();
+            String toAddress = lastHop.getPubKey();
+            fromAddressTv.setText(fromAddress);
+            toAddressTv.setText(toAddress);
+            txIdTv.setText(payment.getPaymentHash());
             long totalAmount = payment.getValueMsat() + payment.getFeeMsat();
-            totalAmountTv.setText(MonetaryUtil.getInstance().getPrimaryDisplayAmountAndUnit(totalAmount));
+            DecimalFormat df = new DecimalFormat("0.00######");
+            if (payment.getAssetId() == 0) {
+                amountTv.setText(df.format(Double.parseDouble(String.valueOf(payment.getValueMsat() / 1000)) / 100000000));
+                feeTv.setText(df.format(Double.parseDouble(String.valueOf(payment.getFeeMsat() / 1000)) / 100000000));
+                totalAmountTv.setText(df.format(Double.parseDouble(String.valueOf(totalAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            } else {
+                amountTv.setText(df.format(Double.parseDouble(String.valueOf(payment.getValueMsat())) / 100000000));
+                feeTv.setText(df.format(Double.parseDouble(String.valueOf(payment.getFeeMsat())) / 100000000));
+                totalAmountTv.setText(df.format(Double.parseDouble(String.valueOf(totalAmount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            }
 
             // click explorer button
             // 点击explorer

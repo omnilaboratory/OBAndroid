@@ -1,16 +1,11 @@
 package com.omni.wallet.ui.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,8 +52,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import lnrpc.LightningOuterClass;
+import lnrpc.Stateservice;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
+import obdmobile.RecvStream;
 
 public class AccountLightningActivity extends AppBaseActivity {
     private static final String TAG = AccountLightningActivity.class.getSimpleName();
@@ -149,6 +146,24 @@ public class AccountLightningActivity extends AppBaseActivity {
     protected void onResume() {
         super.onResume();
         getAssetAndBtcData();
+        Stateservice.SubscribeStateRequest subscribeStateRequest = Stateservice.SubscribeStateRequest.newBuilder().build();
+        Obdmobile.subscribeState(subscribeStateRequest.toByteArray(), new RecvStream() {
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                try {
+                    Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
+                    int stateValue = subscribeStateResponse.getStateValue();
+                    LogUtils.e("state value",Integer.toString(stateValue));
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -722,7 +737,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginOutEvent(LoginOutEvent event) {
-        switchActivityFinish(UnlockActivity.class);
+        switchActivityFinish(SplashActivity.class);
     }
 
     @Override
