@@ -147,6 +147,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     protected void onDestroy() {
         PublicUtils.closeLoading(mLoadingDialog);
         unregisterReceiver(networkChangeReceiver);
+        blockData.unregisterOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
         super.onDestroy();
     }
 
@@ -161,6 +162,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @SuppressLint("SetTextI18n")
     private void updateSyncDataView(int syncedHeight){
+        Log.e(TAG,"update_synced_Height");
         double totalHeight =  totalBlockHeight;
         double currentHeight =  syncedHeight;
         if(syncedHeight>totalBlockHeight){
@@ -253,7 +255,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                             JSONObject jsonObject = new JSONObject(result);
                             JSONObject jsonObject1 = new JSONObject(jsonObject.getString("result"));
                             String block = jsonObject1.getString("block");
-                            blockData.registerOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
                             totalBlockHeight = Integer.parseInt(block);
                             runOnUiThread(() -> {
                                 doExplainTv.setText(ctx.getString(R.string.sync_block));
@@ -261,9 +262,8 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                                 commitContentRL.setVisibility(View.VISIBLE);
                                 commitNumSyncView.setText(block);
                                 syncBlockNumView.setText(block);
-                                updateSyncDataView(0);
                                 obdLogFileObserver.startWatching();
-
+                                blockData.registerOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
                             });
 
                         } catch (JSONException e) {
@@ -311,7 +311,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                         qrAddressTv.setText(address);
                         qrAddressIv.setImageBitmap(mQRBitmap);
                         obdLogFileObserver.stopWatching();
-                        blockData.unregisterOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
                         User.getInstance().setWalletAddress(mContext,address);
                         if(initWalletType.equals("create")){
                             User.getInstance().setInitWalletType(mContext,"created");
@@ -374,6 +373,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                     unlockWallet();
                     break;
                 case 2:
+                case 3:
                     getTotalBlockHeight();
                 case 4:
                     if(User.getInstance().getWalletAddress(mContext).isEmpty()){
