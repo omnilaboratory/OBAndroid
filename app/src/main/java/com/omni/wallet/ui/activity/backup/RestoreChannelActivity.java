@@ -283,7 +283,7 @@ public class RestoreChannelActivity extends AppBaseActivity {
             if (file.exists()){
                 try {
                     inputStream = new FileInputStream(file);
-                    chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(inputStream);
+                    chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseDelimitedFrom(inputStream);
                     Obdmobile.verifyChanBackup(chanBackupSnapshot.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
@@ -354,13 +354,12 @@ public class RestoreChannelActivity extends AppBaseActivity {
             InputStream inputStream = null;
             try {
                 inputStream = new FileInputStream(file);
-                LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(inputStream);
+                LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseDelimitedFrom(inputStream);
+                Log.d(TAG,chanBackupSnapshot.toString());
                 LightningOuterClass.MultiChanBackup multiChanBackup =  chanBackupSnapshot.getMultiChanBackup();
-                LightningOuterClass.ChannelBackups channelBackups = chanBackupSnapshot.getSingleChanBackups();
 
                 LightningOuterClass.RestoreChanBackupRequest restoreChanBackupRequest = LightningOuterClass.RestoreChanBackupRequest.newBuilder()
                         .setMultiChanBackup(multiChanBackup.getMultiChanBackup())
-                        .setChanBackups(channelBackups)
                         .build();
                 Log.e(TAG, "multi Channel restoreChanBackupRequest Str" + String.valueOf(restoreChanBackupRequest));
                 Obdmobile.restoreChannelBackups(restoreChanBackupRequest.toByteArray(), new Callback() {
@@ -383,9 +382,6 @@ public class RestoreChannelActivity extends AppBaseActivity {
                             User.getInstance().setRestoredChannel(mContext,true);
                             switchActivity(AccountLightningActivity.class);
                         });
-
-
-
                     }
                 });
             } catch (FileNotFoundException e) {

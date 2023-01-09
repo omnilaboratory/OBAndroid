@@ -72,7 +72,6 @@ public class WalletState {
                 try {
                     Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
                     int walletState = subscribeStateResponse.getStateValue();
-                    Log.e(TAG,"wallet state" + walletState);
                     User.getInstance().setWalletState(context,walletState);
                     walletStateCallback.callback(walletState);
                 } catch (InvalidProtocolBufferException e) {

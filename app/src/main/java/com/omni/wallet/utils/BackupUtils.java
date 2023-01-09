@@ -5,17 +5,16 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.omni.wallet.baselibrary.utils.ToastUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 
 import lnrpc.LightningOuterClass;
-import obdmobile.Callback;
 import obdmobile.Obdmobile;
 import obdmobile.RecvStream;
 
@@ -77,13 +76,17 @@ public class BackupUtils {
                     if (channelFile.exists()) {
                         channelFile.delete();
                     }
+                    channelFile.canWrite();
+                    channelFile.canRead();
                     Log.e(TAG, "backup file");
                     LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(bytes);
+                    Log.e(TAG,"write:" + chanBackupSnapshot.getMultiChanBackup().toString());
                     LightningOuterClass.ChanBackupSnapshot newChanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.newBuilder()
                             .setMultiChanBackup(chanBackupSnapshot.getMultiChanBackup())
                             .build();
-                    OutputStream outputStream = new FileOutputStream(channelFilePath);
-                    newChanBackupSnapshot.writeTo(outputStream);
+                    OutputStream outputStream = new FileOutputStream(channelFile);
+                    newChanBackupSnapshot.writeDelimitedTo(outputStream);
+
                 } catch (InvalidProtocolBufferException | FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
