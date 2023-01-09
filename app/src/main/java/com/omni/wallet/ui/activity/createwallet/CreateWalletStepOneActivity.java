@@ -56,7 +56,6 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
     }
   
     private void createSeeds() {
-        Log.e("create error:","123456789");
         mLoadingDialog.show();
         Walletunlocker.GenSeedRequest genSeedRequest = Walletunlocker.GenSeedRequest.newBuilder().build();
         Obdmobile.genSeed(genSeedRequest.toByteArray(), new Callback() {

@@ -92,6 +92,8 @@ public class SplashActivity extends AppBaseActivity {
 
     NetworkChangeReceiver.CallBackNetWork callBackNetWork = null;
 
+    int downloadingId = -1;
+
 
     @Override
     protected boolean isFullScreenStyle() {
@@ -131,12 +133,14 @@ public class SplashActivity extends AppBaseActivity {
                         ToastUtils.showToast(mContext, "Network is wifi!");
                     }
                     networkIsConnected = true;
+                    PRDownloader.resume(downloadingId);
                     break;
                 case ConnectivityManager.TYPE_MOBILE:
                     if (!networkIsConnected) {
                         refreshBtnImageView.setVisibility(View.VISIBLE);
                         ToastUtils.showToast(mContext, "Network is mobile!");
                     }
+                    PRDownloader.resume(downloadingId);
                     networkIsConnected = true;
                     break;
                 case ConnectivityManager.TYPE_BLUETOOTH:
@@ -150,6 +154,7 @@ public class SplashActivity extends AppBaseActivity {
                 case ConnectivityManager.TYPE_WIMAX:
                 case -1:
                     networkIsConnected = false;
+                    PRDownloader.pause(downloadingId);
                     Log.e(TAG, "Network is disconnected!");
                     ToastUtils.showToast(mContext, "Network is disconnected!");
                     break;
@@ -352,7 +357,7 @@ public class SplashActivity extends AppBaseActivity {
          downloadDBFile();
          return;
         }
-        PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
+        downloadingId = PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_header));
                 })
@@ -395,7 +400,7 @@ public class SplashActivity extends AppBaseActivity {
             startNode();
             return;
         }
-        PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
+        downloadingId = PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_db));
                 })
@@ -437,7 +442,7 @@ public class SplashActivity extends AppBaseActivity {
             return;
         }
 
-        PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
+        downloadingId = PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_filter_header));
                 })
@@ -579,7 +584,6 @@ public class SplashActivity extends AppBaseActivity {
 
     @Override
     protected void onResume() {
-
         super.onResume();
     }
 
@@ -596,4 +600,5 @@ public class SplashActivity extends AppBaseActivity {
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
         WalletState.getInstance().subscribeWalletState(mContext);
     }
+
 }

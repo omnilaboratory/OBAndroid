@@ -284,14 +284,18 @@ public class UnlockActivity extends AppBaseActivity {
                     break;
                 case 4:
                     runOnUiThread(()->{
-                        if(User.getInstance().isRestoredChannel(mContext)){
+                        if (initWalletType.equals("created")){
                             PublicUtils.closeLoading(mLoadingDialog);
                             switchActivity(AccountLightningActivity.class);
-                        }else{
-                            PublicUtils.closeLoading(mLoadingDialog);
-                            switchActivity(RestoreChannelActivity.class);
+                        }else if(initWalletType.equals("recovered")){
+                            if(User.getInstance().isRestoredChannel(mContext)){
+                                PublicUtils.closeLoading(mLoadingDialog);
+                                switchActivity(AccountLightningActivity.class);
+                            }else{
+                                PublicUtils.closeLoading(mLoadingDialog);
+                                switchActivity(RestoreChannelActivity.class);
+                            }
                         }
-
                     });
                     break;
                 case 255:
@@ -301,7 +305,6 @@ public class UnlockActivity extends AppBaseActivity {
             }
         };
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
-        WalletState.getInstance().subscribeWalletState(mContext);
     }
 
     /**

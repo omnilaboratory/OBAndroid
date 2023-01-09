@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.framelibrary.entity.User;
@@ -19,6 +20,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class WalletState {
     private static final String SETTING = "setting";
+    private static final String TAG = WalletState.class.getSimpleName();
     WalletStateCallback walletStateCallback;
     @SuppressLint("CommitPrefEdits")
     public WalletState() {
@@ -52,6 +54,7 @@ public class WalletState {
     }
 
 
+
     public void subscribeWalletState(Context context){
         Stateservice.SubscribeStateRequest subscribeStateRequest = Stateservice.SubscribeStateRequest.newBuilder().build();
         Obdmobile.subscribeState(subscribeStateRequest.toByteArray(),new RecvStream(){
@@ -69,6 +72,7 @@ public class WalletState {
                 try {
                     Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
                     int walletState = subscribeStateResponse.getStateValue();
+                    Log.e(TAG,"wallet state" + walletState);
                     User.getInstance().setWalletState(context,walletState);
                     walletStateCallback.callback(walletState);
                 } catch (InvalidProtocolBufferException e) {

@@ -289,6 +289,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
 
     public void newAddressToWallet (){
+        Log.e(TAG,"new Address count");
         LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
         Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
             @Override
@@ -367,6 +368,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     
     public void subscribeState(){
         WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
+            Log.e(TAG,"wallet state changed:" + walletState);
             switch (walletState){
                 case 1:
                     unlockWallet();
@@ -374,7 +376,10 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                 case 2:
                     getTotalBlockHeight();
                 case 4:
-                    newAddressToWallet();
+                    if(User.getInstance().getWalletAddress(mContext).isEmpty()){
+                        newAddressToWallet();
+                    }
+
                     break;
                 default:
                     break;
@@ -382,7 +387,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             }
         };
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
-        WalletState.getInstance().subscribeWalletState(mContext);
     }
 
     NetworkChangeReceiver.CallBackNetWork callBackNetWork = new NetworkChangeReceiver.CallBackNetWork() {
