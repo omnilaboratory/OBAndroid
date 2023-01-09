@@ -65,8 +65,8 @@ public class TransactionsDetailsPopupWindow {
                 feeTypeTv.setText("satoshis");
             } else {
                 assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-                assetTypeTv.setText("doallar");
-                amountTypeTv.setText("doallar");
+                assetTypeTv.setText("dollar");
+                amountTypeTv.setText("dollar");
                 feeTypeTv.setText("unit");
             }
             LightningOuterClass.Hop firstHop = payment.getHtlcs(0).getRoute().getHops(0);

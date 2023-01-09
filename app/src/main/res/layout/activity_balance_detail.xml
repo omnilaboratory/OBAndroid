@@ -174,7 +174,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_10"
-                    android:text="doallar"
+                    android:text="dollar"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
             </LinearLayout>
@@ -252,7 +252,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
-                        android:text="doallar"
+                        android:text="dollar"
                         android:textColor="@color/color_06d78f"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>
@@ -314,7 +314,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:text="doallar lightning network"
+                android:text="dollar lightning network"
                 android:textColor="@color/color_black"
                 android:textSize="@dimen/text_16"/>
         </RelativeLayout>
@@ -570,7 +570,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/main_5"
-                                    android:text="doallar"
+                                    android:text="dollar"
                                     android:textColor="@color/color_06d78f"
                                     android:textSize="@dimen/text_16"/>
                             </LinearLayout>
@@ -627,7 +627,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:text="doallar lightning network"
+                            android:text="dollar lightning network"
                             android:textColor="@color/color_black"
                             android:textSize="@dimen/text_16"/>
                     </RelativeLayout>
@@ -858,7 +858,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/main_5"
-                                    android:text="doallar"
+                                    android:text="dollar"
                                     android:textColor="@color/color_06d78f"
                                     android:textSize="@dimen/text_16"/>
                             </LinearLayout>
@@ -915,7 +915,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:text="doallar lightning network"
+                            android:text="dollar lightning network"
                             android:textColor="@color/color_black"
                             android:textSize="@dimen/text_16"/>
                     </RelativeLayout>
@@ -1095,7 +1095,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/main_5"
-                                    android:text="doallar"
+                                    android:text="dollar"
                                     android:textColor="@color/color_06d78f"
                                     android:textSize="@dimen/text_16"/>
                             </LinearLayout>
@@ -1152,7 +1152,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:text="doallar lightning network"
+                            android:text="dollar lightning network"
                             android:textColor="@color/color_black"
                             android:textSize="@dimen/text_16"/>
                     </RelativeLayout>

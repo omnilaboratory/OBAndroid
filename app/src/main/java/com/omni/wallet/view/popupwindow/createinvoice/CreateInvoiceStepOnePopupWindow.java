@@ -130,8 +130,8 @@ public class CreateInvoiceStepOnePopupWindow {
             amountUnitTv.setText("BTC");
         } else {
             assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeTv.setText("doallar");
-            amountUnitTv.setText("doallar");
+            assetTypeTv.setText("dollar");
+            amountUnitTv.setText("dollar");
         }
         getChannelBalance(mAssetId);
         RelativeLayout selectAssetLayout = rootView.findViewById(R.id.layout_select_asset);
@@ -148,8 +148,8 @@ public class CreateInvoiceStepOnePopupWindow {
                             amountUnitTv.setText("BTC");
                         } else {
                             assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-                            assetTypeTv.setText("doallar");
-                            amountUnitTv.setText("doallar");
+                            assetTypeTv.setText("dollar");
+                            amountUnitTv.setText("dollar");
                         }
                         mAssetId = item.getPropertyid();
                         getChannelBalance(mAssetId);
@@ -307,8 +307,8 @@ public class CreateInvoiceStepOnePopupWindow {
             amountUnitSuccessTv.setText("BTC");
         } else {
             assetTypeSuccessIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeSuccessTv.setText("doallar");
-            amountUnitSuccessTv.setText("doallar");
+            assetTypeSuccessTv.setText("dollar");
+            amountUnitSuccessTv.setText("dollar");
         }
         amountSuccessTv.setText(amountInput);
         timeSuccessTv.setText(timeInput);
@@ -400,8 +400,8 @@ public class CreateInvoiceStepOnePopupWindow {
             amountUnitFailedTv.setText("BTC");
         } else {
             assetTypeFailedIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeFailedTv.setText("doallar");
-            amountUnitFailedTv.setText("doallar");
+            assetTypeFailedTv.setText("dollar");
+            amountUnitFailedTv.setText("dollar");
         }
         amountFailedTv.setText(amountInput);
         timeFailedTv.setText(timeInput);

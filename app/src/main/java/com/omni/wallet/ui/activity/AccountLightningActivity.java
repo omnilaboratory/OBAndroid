@@ -87,8 +87,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     private List<Integer> outputIndexList = new ArrayList<Integer>();
     private List<ByteString> fundingTxIdBytesList = new ArrayList<ByteString>();
     private List<String> fundingTxIdStrList = new ArrayList<String>();
-    
-    
+
+
     MenuPopupWindow mMenuPopupWindow;
     FundPopupWindow mFundPopupWindow;
     AccountManagePopupWindow mAccountManagePopupWindow;
@@ -158,7 +158,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                 try {
                     Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
                     int stateValue = subscribeStateResponse.getStateValue();
-                    LogUtils.e("state value",Integer.toString(stateValue));
+                    LogUtils.e("state value", Integer.toString(stateValue));
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -453,6 +453,9 @@ public class AccountLightningActivity extends AppBaseActivity {
             if (position == blockData.size() && item.getType() == 1) {
                 LinearLayout lvContent = holder.getView(R.id.lv_item_content);
                 lvContent.setPadding(0, 0, 0, 100);
+            } else {
+                LinearLayout lvContent = holder.getView(R.id.lv_item_content);
+                lvContent.setPadding(0, 0, 0, 0);
             }
             // TODO: 2022/11/14 暂定待修改与完善
             if (item.getPropertyid() == 0) {

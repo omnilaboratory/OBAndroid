@@ -185,9 +185,9 @@ public class ChannelDetailsPopupWindow {
             mTotalReceived.setText(channel.getRemoteConstraints().getChanReserveSat() + " sat");
         } else {
             mAssetLogo.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetUnit.setText("doallar");
-            mLocalBalanceUnit.setText("doallar");
-            mRemoteBalanceUnit.setText("doallar");
+            mAssetUnit.setText("dollar");
+            mLocalBalanceUnit.setText("dollar");
+            mRemoteBalanceUnit.setText("dollar");
             long availableCapacity = channel.getAssetCapacity() - channel.getCommitFee();
             setBalances(channel.getLocalAssetBalance(), channel.getRemoteAssetBalance(), availableCapacity);
             // activity
@@ -281,9 +281,9 @@ public class ChannelDetailsPopupWindow {
             mRemoteBalanceUnit.setText("BTC");
         } else {
             mAssetLogo.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetUnit.setText("doallar");
-            mLocalBalanceUnit.setText("doallar");
-            mRemoteBalanceUnit.setText("doallar");
+            mAssetUnit.setText("dollar");
+            mLocalBalanceUnit.setText("dollar");
+            mRemoteBalanceUnit.setText("dollar");
         }
         mFundingTransaction.setText(channelPoint.substring(0, channelPoint.indexOf(':')));
     }
