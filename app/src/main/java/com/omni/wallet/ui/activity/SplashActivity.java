@@ -37,11 +37,19 @@ import com.omni.wallet.utils.FilesUtils;
 import com.omni.wallet.utils.NetworkChangeReceiver;
 import com.omni.wallet.utils.WalletState;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -93,6 +101,10 @@ public class SplashActivity extends AppBaseActivity {
     NetworkChangeReceiver.CallBackNetWork callBackNetWork = null;
 
     int downloadingId = -1;
+
+    boolean isStartDownload = false;
+
+    Map<String, String> manifestInfo = new HashMap<>();
 
 
     @Override
@@ -209,7 +221,7 @@ public class SplashActivity extends AppBaseActivity {
                          * To home page after 3s
                          * 延时3秒跳转主页
                          */
-                        actionAfterPromise();
+                        getManifestFile();
                     }
 
                     @Override
@@ -349,13 +361,66 @@ public class SplashActivity extends AppBaseActivity {
         super.onDestroy();
     }
 
+    public void getManifestFile() {
+        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+        String filePath = downloadDirectoryPath + "manifest.txt";
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        } else {
+            PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build()
+                    .start(new OnDownloadListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.O)
+                        @Override
+                        public void onDownloadComplete() {
+                            try {
+                                BufferedReader bfr;
+                                bfr = new BufferedReader(new FileReader(downloadDirectoryPath + "manifest.txt"));
+                                String line = bfr.readLine();
+                                StringBuilder sb = new StringBuilder();
+                                while (line != null) {
+                                    String oldLine = line;
+                                    sb.append(line);
+                                    sb.append("\n");
+                                    Log.e(TAG, line);
+                                    String[] lineArray = oldLine.split(" {2}");
+                                    if (lineArray[1].endsWith(ConstantInOB.blockHeaderBin)) {
+                                        manifestInfo.put(ConstantInOB.blockHeader, lineArray[0]);
+                                    } else if (lineArray[1].endsWith(ConstantInOB.neutrinoDB)) {
+                                        manifestInfo.put(ConstantInOB.neutrino, lineArray[0]);
+                                    } else if (lineArray[1].endsWith(ConstantInOB.regFilterHeaderBin)) {
+                                        manifestInfo.put(ConstantInOB.regFilterHeader, lineArray[0]);
+                                    }
+                                    line = bfr.readLine();
+                                    if (line == null) {
+                                        actionAfterPromise();
+                                    }
+                                }
+
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onError(Error error) {
+                            Log.e(TAG, error.toString());
+                        }
+                    });
+        }
+
+    }
+
+
     public void downloadHeaderBinFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
         String filePath = downloadDirectoryPath + ConstantInOB.blockHeaderBin;
         File file = new File(filePath);
-        if(file.exists()){
-         downloadDBFile();
-         return;
+        if (file.exists()) {
+            downloadDBFile();
+            return;
         }
         downloadingId = PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
@@ -380,7 +445,17 @@ public class SplashActivity extends AppBaseActivity {
                 .start(new OnDownloadListener() {
                     @Override
                     public void onDownloadComplete() {
-                        downloadFilterHeaderBinFile();
+                        String fileMd5 = manifestInfo.get(ConstantInOB.blockHeader);
+                        Log.e(TAG, fileMd5);
+                        boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
+                        if (checkFileMd5Matched) {
+                            downloadFilterHeaderBinFile();
+                        } else {
+                            File file1 = new File(filePath);
+                            file1.delete();
+                            file1.exists();
+                            downloadHeaderBinFile();
+                        }
                     }
 
                     @Override
@@ -396,7 +471,7 @@ public class SplashActivity extends AppBaseActivity {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
         String filePath = downloadDirectoryPath + ConstantInOB.neutrinoDB;
         File file = new File(filePath);
-        if(file.exists()){
+        if (file.exists()) {
             startNode();
             return;
         }
@@ -423,7 +498,18 @@ public class SplashActivity extends AppBaseActivity {
                 .start(new OnDownloadListener() {
                     @Override
                     public void onDownloadComplete() {
-                        startNode();
+                        String fileMd5 = manifestInfo.get(ConstantInOB.neutrino);
+                        Log.e(TAG, fileMd5);
+                        boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
+                        if (checkFileMd5Matched) {
+                            startNode();
+                        } else {
+                            File file1 = new File(filePath);
+                            file1.delete();
+                            file1.exists();
+                            downloadDBFile();
+                        }
+
                     }
 
                     @Override
@@ -437,13 +523,14 @@ public class SplashActivity extends AppBaseActivity {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
         String filePath = downloadDirectoryPath + ConstantInOB.regFilterHeaderBin;
         File file = new File(filePath);
-        if(file.exists()){
+        if (file.exists()) {
             downloadDBFile();
             return;
         }
 
         downloadingId = PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
+                    isStartDownload = true;
                     doExplainTv.setText(mContext.getString(R.string.download_filter_header));
                 })
                 .setOnPauseListener(() -> {
@@ -465,7 +552,17 @@ public class SplashActivity extends AppBaseActivity {
                 .start(new OnDownloadListener() {
                     @Override
                     public void onDownloadComplete() {
-                        downloadDBFile();
+                        String fileMd5 = manifestInfo.get(ConstantInOB.regFilterHeader);
+                        Log.e(TAG, fileMd5);
+                        boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
+                        if (checkFileMd5Matched) {
+                            downloadDBFile();
+                        } else {
+                            File file1 = new File(filePath);
+                            file1.delete();
+                            file1.exists();
+                            downloadFilterHeaderBinFile();
+                        }
                     }
 
 
@@ -495,7 +592,7 @@ public class SplashActivity extends AppBaseActivity {
                         @Override
                         public void onResponse(byte[] bytes) {
                             if (bytes == null) {
-                                switchActivityFinish(UnlockActivity.class,mBundle);
+                                switchActivityFinish(UnlockActivity.class, mBundle);
                                 return;
                             }
                             try {
@@ -525,7 +622,7 @@ public class SplashActivity extends AppBaseActivity {
 
             @Override
             public void onResponse(byte[] bytes) {
-                runOnUiThread(()->{
+                runOnUiThread(() -> {
                     subscribeWalletState();
                 });
                 LogUtils.e(TAG, "------------------startonSuccess------------------");
@@ -550,6 +647,9 @@ public class SplashActivity extends AppBaseActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void actionAfterPromise() {
 //        startNode();
+        if (isStartDownload) {
+            return;
+        }
         String initWalletType = User.getInstance().getInitWalletType(mContext);
         long nowMillis = Calendar.getInstance().getTimeInMillis();
         if (initWalletType.equals("")) {
@@ -562,12 +662,13 @@ public class SplashActivity extends AppBaseActivity {
                 downloadView.setVisibility(View.VISIBLE);
                 downloadHeaderBinFile();
             } else {
-                handler.postDelayed(()->{
+                handler.postDelayed(() -> {
                     startNode();
-                },Constants.SPLASH_SLEEP_TIME);
+                }, Constants.SPLASH_SLEEP_TIME);
 
             }
         }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -578,7 +679,6 @@ public class SplashActivity extends AppBaseActivity {
 
     @Override
     protected void onPause() {
-
         super.onPause();
     }
 
@@ -587,9 +687,14 @@ public class SplashActivity extends AppBaseActivity {
         super.onResume();
     }
 
-    public void subscribeWalletState (){
+    @Override
+    protected void onExitApplication() {
+        super.onExitApplication();
+    }
+
+    public void subscribeWalletState() {
         WalletState.WalletStateCallback walletStateCallback = walletState -> {
-            switch (walletState){
+            switch (walletState) {
                 case 0:
                 case 255:
                 case 1:
