@@ -25,6 +25,7 @@ import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
@@ -372,6 +373,7 @@ public class CreateInvoiceStepOnePopupWindow {
         rootView.findViewById(R.id.iv_facebook_share).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ToastUtils.showToast(mContext, "Not yet open, please wait");
                 shareLayout.setVisibility(View.GONE);
             }
         });
@@ -382,6 +384,7 @@ public class CreateInvoiceStepOnePopupWindow {
         rootView.findViewById(R.id.iv_twitter_share).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mContext.startActivity(ShareUtil.getTwitterIntent(mContext, qrCodeUrl));
                 shareLayout.setVisibility(View.GONE);
             }
         });
@@ -423,13 +426,46 @@ public class CreateInvoiceStepOnePopupWindow {
             }
         });
         /**
+         * for fail page
+         * 失败页面
+         */
+        RelativeLayout shareFailedLayout = rootView.findViewById(R.id.layout_share_failed);
+        rootView.findViewById(R.id.layout_parent).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareFailedLayout.setVisibility(View.GONE);
+            }
+        });
+        /**
          * @描述： 点击失败页share to
          * @desc: click share to button in failed page
          */
         rootView.findViewById(R.id.layout_share_to).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                shareFailedLayout.setVisibility(View.VISIBLE);
+            }
+        });
+        /**
+         * @描述： 点击失败页 facebook
+         * @desc: click facebook button in fail page
+         */
+        rootView.findViewById(R.id.iv_facebook_share_failed).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastUtils.showToast(mContext, "Not yet open, please wait");
+                shareFailedLayout.setVisibility(View.GONE);
+            }
+        });
+        /**
+         * @描述： 点击失败页 twitter
+         * @desc: click twitter button in fail page
+         */
+        rootView.findViewById(R.id.iv_twitter_share_failed).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContext.startActivity(ShareUtil.getTwitterIntent(mContext, message));
+                shareFailedLayout.setVisibility(View.GONE);
             }
         });
     }

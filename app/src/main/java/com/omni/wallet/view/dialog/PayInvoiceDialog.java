@@ -26,6 +26,7 @@ import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.RefConstants;
+import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.UriUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -779,7 +780,8 @@ public class PayInvoiceDialog {
         mAlertDialog.findViewById(R.id.iv_facebook_share).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAlertDialog.dismiss();
+                ToastUtils.showToast(mContext, "Not yet open, please wait");
+//                mAlertDialog.dismiss();
                 shareLayout.setVisibility(View.GONE);
             }
         });
@@ -790,7 +792,8 @@ public class PayInvoiceDialog {
         mAlertDialog.findViewById(R.id.iv_twitter_share).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAlertDialog.dismiss();
+                mContext.startActivity(ShareUtil.getTwitterIntent(mContext, lnInvoice));
+//                mAlertDialog.dismiss();
                 shareLayout.setVisibility(View.GONE);
             }
         });

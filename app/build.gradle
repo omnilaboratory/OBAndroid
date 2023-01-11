@@ -145,6 +145,7 @@ dependencies {
     implementation project(':baselibrary')
     implementation project(':framelibrary')
     implementation project(':thirdsupport')
+    implementation project(':MPChartLib')
     // ARouter
     annotationProcessor dependencies.ArouterAnnotation
     // butterKnife

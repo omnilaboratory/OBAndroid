@@ -8,13 +8,16 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
+import com.omni.wallet.utils.ShareUtil;
 
 /**
  * Fund的弹窗
@@ -73,6 +76,41 @@ public class FundPopupWindow {
                         copySuccessToast.setGravity(Gravity.TOP, 0, 30);
                         copySuccessToast.show();
                     }
+                }
+            });
+            RelativeLayout shareLayout = rootView.findViewById(R.id.layout_share);
+            rootView.findViewById(R.id.layout_son).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    shareLayout.setVisibility(View.GONE);
+                }
+            });
+            rootView.findViewById(R.id.layout_share_fund).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    shareLayout.setVisibility(View.VISIBLE);
+                }
+            });
+            /**
+             * @描述： 点击 facebook
+             * @desc: click facebook button
+             */
+            rootView.findViewById(R.id.iv_facebook_share).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToastUtils.showToast(mContext, "Not yet open, please wait");
+                    shareLayout.setVisibility(View.GONE);
+                }
+            });
+            /**
+             * @描述： 点击页 twitter
+             * @desc: click twitter button
+             */
+            rootView.findViewById(R.id.iv_twitter_share).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mContext.startActivity(ShareUtil.getTwitterIntent(mContext, address));
+                    shareLayout.setVisibility(View.GONE);
                 }
             });
             if (mFundPopupWindow.isShowing()) {

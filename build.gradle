@@ -8,6 +8,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.4'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         // ButterKnife
         classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0-rc2'
         // Needed for gRPC

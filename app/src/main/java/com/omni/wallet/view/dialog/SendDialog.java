@@ -34,6 +34,7 @@ import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.ScanSendActivity;
+import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.ValidateBitcoinAddress;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.popupwindow.SelectAssetPopupWindow;
@@ -866,11 +867,40 @@ public class SendDialog implements Wallet.ScanSendListener {
                 showStepThree();
             }
         });
+        RelativeLayout shareLayout = mAlertDialog.findViewById(R.id.layout_share);
+        mAlertDialog.findViewById(R.id.layout_parent).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareLayout.setVisibility(View.GONE);
+            }
+        });
         // 点击explorer
         mAlertDialog.findViewById(R.id.layout_explorer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAlertDialog.dismiss();
+                shareLayout.setVisibility(View.VISIBLE);
+            }
+        });
+        /**
+         * @描述： 点击 facebook
+         * @desc: click facebook button
+         */
+        mAlertDialog.findViewById(R.id.iv_facebook_share).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastUtils.showToast(mContext, "Not yet open, please wait");
+                shareLayout.setVisibility(View.GONE);
+            }
+        });
+        /**
+         * @描述： 点击页 twitter
+         * @desc: click twitter button
+         */
+        mAlertDialog.findViewById(R.id.iv_twitter_share).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContext.startActivity(ShareUtil.getTwitterIntent(mContext, selectAddress));
+                shareLayout.setVisibility(View.GONE);
             }
         });
     }
