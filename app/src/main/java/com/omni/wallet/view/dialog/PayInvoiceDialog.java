@@ -144,6 +144,12 @@ public class PayInvoiceDialog {
                     return;
                 }
                 mLoadingDialog.show();
+                // TODO: 2023/1/9 待完善
+                new Handler().postDelayed(new Runnable() {
+                    public void run() {
+                        mLoadingDialog.dismiss();
+                    }
+                }, 3000);
                 // convert to lower case
                 lnInvoice = data.toLowerCase();
                 // Remove the "lightning:" uri scheme if it is present, LND needs it without uri scheme
@@ -197,6 +203,10 @@ public class PayInvoiceDialog {
                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                                         @Override
                                         public void run() {
+                                            if (e.getMessage().contains("self-payments not allowed")) {
+                                                updateInvoiceList();
+                                            }
+                                            EventBus.getDefault().post(new PayInvoiceFailedEvent());
                                             mLoadingDialog.dismiss();
                                             ToastUtils.showToast(mContext, e.getMessage());
                                         }
