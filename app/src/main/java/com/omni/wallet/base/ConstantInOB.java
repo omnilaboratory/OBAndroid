@@ -43,9 +43,16 @@ public class ConstantInOB {
             "--neutrino.connect=" + TEST_NET_BTC_HOST_ADDRESS +
             "--omnicoreproxy.rpchost=" + TEST_NET_OMNI_HOST_ADDRESS_PORT;
 
-    public static final String usingNeutrinoConfig = neutrinoTestNetConfig;
+//    testnet config
+
+    /*public static final String usingNeutrinoConfig = neutrinoTestNetConfig;
     public static final String usingDownloadBaseUrlTestNet = downloadBaseUrlTestNet;
-    public static final String usingBTCHostAddress = TEST_NET_BTC_HOST_ADDRESS;
+    public static final String usingBTCHostAddress = TEST_NET_BTC_HOST_ADDRESS;*/
+
+//    regTest config
+    public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
+    public static final String usingDownloadBaseUrlTestNet = downloadBaseUrl;
+    public static final String usingBTCHostAddress = BTCHostAddressRegTest;
 
     public static final long SECOND_MILLIS = 1000;
     public static final long MINUTE_MILLIS = 60 * SECOND_MILLIS;

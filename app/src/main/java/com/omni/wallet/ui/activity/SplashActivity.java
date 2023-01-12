@@ -19,6 +19,7 @@ import com.downloader.Error;
 import com.downloader.OnDownloadListener;
 import com.downloader.OnProgressListener;
 import com.downloader.PRDownloader;
+import com.downloader.request.DownloadRequest;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
@@ -100,12 +101,9 @@ public class SplashActivity extends AppBaseActivity {
 
     NetworkChangeReceiver.CallBackNetWork callBackNetWork = null;
 
-    int downloadingId = -1;
-
-    boolean isStartDownload = false;
-
     Map<String, String> manifestInfo = new HashMap<>();
 
+    boolean isDownloading  = false;
 
     @Override
     protected boolean isFullScreenStyle() {
@@ -145,14 +143,12 @@ public class SplashActivity extends AppBaseActivity {
                         ToastUtils.showToast(mContext, "Network is wifi!");
                     }
                     networkIsConnected = true;
-                    PRDownloader.resume(downloadingId);
                     break;
                 case ConnectivityManager.TYPE_MOBILE:
                     if (!networkIsConnected) {
                         refreshBtnImageView.setVisibility(View.VISIBLE);
                         ToastUtils.showToast(mContext, "Network is mobile!");
                     }
-                    PRDownloader.resume(downloadingId);
                     networkIsConnected = true;
                     break;
                 case ConnectivityManager.TYPE_BLUETOOTH:
@@ -166,7 +162,6 @@ public class SplashActivity extends AppBaseActivity {
                 case ConnectivityManager.TYPE_WIMAX:
                 case -1:
                     networkIsConnected = false;
-                    PRDownloader.pause(downloadingId);
                     Log.e(TAG, "Network is disconnected!");
                     ToastUtils.showToast(mContext, "Network is disconnected!");
                     break;
@@ -221,7 +216,9 @@ public class SplashActivity extends AppBaseActivity {
                          * To home page after 3s
                          * 延时3秒跳转主页
                          */
-                        getManifestFile();
+                        if(!isDownloading){
+                            getManifestFile();
+                        }
                     }
 
                     @Override
@@ -414,6 +411,7 @@ public class SplashActivity extends AppBaseActivity {
     }
 
 
+    @SuppressLint({"DefaultLocale", "SetTextI18n"})
     public void downloadHeaderBinFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
         String filePath = downloadDirectoryPath + ConstantInOB.blockHeaderBin;
@@ -422,49 +420,45 @@ public class SplashActivity extends AppBaseActivity {
             downloadDBFile();
             return;
         }
-        downloadingId = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
-                .setOnStartOrResumeListener(() -> {
-                    doExplainTv.setText(mContext.getString(R.string.download_header));
-                })
-                .setOnPauseListener(() -> {
-                    Log.e(TAG, "Pause download " + ConstantInOB.blockHeaderBin);
-                })
-                .setOnCancelListener(() -> {
-                    Log.e(TAG, "Cancel download " + ConstantInOB.blockHeaderBin);
-                })
-                .setOnProgressListener(new OnProgressListener() {
-                    @SuppressLint({"SetTextI18n", "DefaultLocale"})
-                    @Override
-                    public void onProgress(com.downloader.Progress progress) {
-                        double currentM = (double) progress.currentBytes / 1024 / 1024;
-                        double totalBytes = (double) progress.totalBytes / 1024 / 1024;
-                        syncBlockNumView.setText(String.format("%.2f", totalBytes) + "MB");
-                        updateDataView(currentM, totalBytes);
-                    }
-                })
-                .start(new OnDownloadListener() {
-                    @Override
-                    public void onDownloadComplete() {
-                        String fileMd5 = manifestInfo.get(ConstantInOB.blockHeader);
-                        Log.e(TAG, fileMd5);
-                        boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
-                        if (checkFileMd5Matched) {
-                            downloadFilterHeaderBinFile();
-                        } else {
-                            File file1 = new File(filePath);
-                            file1.delete();
-                            file1.exists();
-                            downloadHeaderBinFile();
-                        }
-                    }
+        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build();
+        final double[] totalBytes = {(double) downloadRequest.getTotalBytes() / 1024 / 1024};
+        downloadRequest.setOnStartOrResumeListener(() -> {
+            isDownloading = true;
+            doExplainTv.setText(mContext.getString(R.string.download_header));
+            totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
+            syncBlockNumView.setText(String.format("%.2f", totalBytes[0]) + "MB");
+        });
+        downloadRequest.setOnPauseListener(() -> {
+            Log.e(TAG, "Pause download " + ConstantInOB.blockHeaderBin);
+        });
+        downloadRequest.setOnCancelListener(() -> {
+            Log.e(TAG, "Cancel download " + ConstantInOB.blockHeaderBin);
+        });
+        downloadRequest.setOnProgressListener(progress -> {
+            double currentM = (double) progress.currentBytes / 1024 / 1024;
+            updateDataView(currentM, totalBytes[0]);
+        });
+        downloadRequest.start(new OnDownloadListener() {
+            @Override
+            public void onDownloadComplete() {
+                String fileMd5 = manifestInfo.get(ConstantInOB.blockHeader);
+                Log.e(TAG, fileMd5);
+                boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
+                if (checkFileMd5Matched) {
+                    downloadFilterHeaderBinFile();
+                } else {
+                    File file1 = new File(filePath);
+                    file1.delete();
+                    file1.exists();
+                    downloadHeaderBinFile();
+                }
+            }
 
-                    @Override
-                    public void onError(Error error) {
-                        Log.e(TAG, error.toString());
-
-                    }
-                });
-
+            @Override
+            public void onError(Error error) {
+                Log.e(TAG, error.toString());
+            }
+        });
     }
 
     public void downloadDBFile() {
@@ -475,48 +469,50 @@ public class SplashActivity extends AppBaseActivity {
             startNode();
             return;
         }
-        downloadingId = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
-                .setOnStartOrResumeListener(() -> {
-                    doExplainTv.setText(mContext.getString(R.string.download_db));
-                })
-                .setOnPauseListener(() -> {
-                    Log.e(TAG, "Pause download " + ConstantInOB.neutrinoDB);
-                })
-                .setOnCancelListener(() -> {
-                    Log.e(TAG, "Cancel download " + ConstantInOB.neutrinoDB);
-                })
-                .setOnProgressListener(new OnProgressListener() {
-                    @SuppressLint({"SetTextI18n", "DefaultLocale"})
-                    @Override
-                    public void onProgress(com.downloader.Progress progress) {
-                        double currentM = (double) progress.currentBytes / 1024 / 1024;
-                        double totalBytes = (double) progress.totalBytes / 1024 / 1024;
-                        syncBlockNumView.setText(String.format("%.2f", totalBytes) + "MB");
-                        updateDataView(currentM, totalBytes);
-                    }
-                })
-                .start(new OnDownloadListener() {
-                    @Override
-                    public void onDownloadComplete() {
-                        String fileMd5 = manifestInfo.get(ConstantInOB.neutrino);
-                        Log.e(TAG, fileMd5);
-                        boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
-                        if (checkFileMd5Matched) {
-                            startNode();
-                        } else {
-                            File file1 = new File(filePath);
-                            file1.delete();
-                            file1.exists();
-                            downloadDBFile();
-                        }
+        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build();
+        final double[] totalBytes = {0};
+        downloadRequest.setOnStartOrResumeListener(() -> {
+            isDownloading = true;
+            totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
+            doExplainTv.setText(mContext.getString(R.string.download_db));
+            syncBlockNumView.setText(String.format("%.2f", totalBytes[0]) + "MB");
+        });
+        downloadRequest.setOnPauseListener(() -> {
+            Log.e(TAG, "Pause download " + ConstantInOB.neutrinoDB);
+        });
+        downloadRequest.setOnCancelListener(() -> {
+            Log.e(TAG, "Cancel download " + ConstantInOB.neutrinoDB);
+        });
+        downloadRequest.setOnProgressListener(new OnProgressListener() {
+            @SuppressLint({"SetTextI18n", "DefaultLocale"})
+            @Override
+            public void onProgress(com.downloader.Progress progress) {
+                double currentM = (double) progress.currentBytes / 1024 / 1024;
+                updateDataView(currentM, totalBytes[0]);
+            }
+        });
+        downloadRequest.start(new OnDownloadListener() {
+            @Override
+            public void onDownloadComplete() {
+                String fileMd5 = manifestInfo.get(ConstantInOB.neutrino);
+                Log.e(TAG, fileMd5);
+                boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
+                if (checkFileMd5Matched) {
+                    startNode();
+                } else {
+                    File file1 = new File(filePath);
+                    file1.delete();
+                    file1.exists();
+                    downloadDBFile();
+                }
 
-                    }
+            }
 
-                    @Override
-                    public void onError(Error error) {
-                        Log.e(TAG, error.toString());
-                    }
-                });
+            @Override
+            public void onError(Error error) {
+                Log.e(TAG, error.toString());
+            }
+        });
     }
 
     public void downloadFilterHeaderBinFile() {
@@ -527,50 +523,50 @@ public class SplashActivity extends AppBaseActivity {
             downloadDBFile();
             return;
         }
+        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build();
+        final double[] totalBytes = {0};
+        downloadRequest.setOnStartOrResumeListener(() -> {
+            isDownloading = true;
+            totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
+            syncBlockNumView.setText(String.format("%.2f", totalBytes[0]) + "MB");
+            doExplainTv.setText(mContext.getString(R.string.download_filter_header));
+        });
+        downloadRequest.setOnPauseListener(() -> {
+            Log.e(TAG, "Pause download " + ConstantInOB.regFilterHeaderBin);
+        });
+        downloadRequest.setOnCancelListener(() -> {
+            Log.e(TAG, "Cancel download " + ConstantInOB.regFilterHeaderBin);
+        });
+        downloadRequest.setOnProgressListener(new OnProgressListener() {
+            @SuppressLint({"SetTextI18n", "DefaultLocale"})
+            @Override
+            public void onProgress(com.downloader.Progress progress) {
+                double currentM = (double) progress.currentBytes / 1024 / 1024;
+                updateDataView(currentM, totalBytes[0]);
+            }
+        });
+        downloadRequest.start(new OnDownloadListener() {
+            @Override
+            public void onDownloadComplete() {
+                String fileMd5 = manifestInfo.get(ConstantInOB.regFilterHeader);
+                Log.e(TAG, fileMd5);
+                boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
+                if (checkFileMd5Matched) {
+                    downloadDBFile();
+                } else {
+                    File file1 = new File(filePath);
+                    file1.delete();
+                    file1.exists();
+                    downloadFilterHeaderBinFile();
+                }
+            }
 
-        downloadingId = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
-                .setOnStartOrResumeListener(() -> {
-                    isStartDownload = true;
-                    doExplainTv.setText(mContext.getString(R.string.download_filter_header));
-                })
-                .setOnPauseListener(() -> {
-                    Log.e(TAG, "Pause download " + ConstantInOB.regFilterHeaderBin);
-                })
-                .setOnCancelListener(() -> {
-                    Log.e(TAG, "Cancel download " + ConstantInOB.regFilterHeaderBin);
-                })
-                .setOnProgressListener(new OnProgressListener() {
-                    @SuppressLint({"SetTextI18n", "DefaultLocale"})
-                    @Override
-                    public void onProgress(com.downloader.Progress progress) {
-                        double currentM = (double) progress.currentBytes / 1024 / 1024;
-                        double totalBytes = (double) progress.totalBytes / 1024 / 1024;
-                        syncBlockNumView.setText(String.format("%.2f", totalBytes) + "MB");
-                        updateDataView(currentM, totalBytes);
-                    }
-                })
-                .start(new OnDownloadListener() {
-                    @Override
-                    public void onDownloadComplete() {
-                        String fileMd5 = manifestInfo.get(ConstantInOB.regFilterHeader);
-                        Log.e(TAG, fileMd5);
-                        boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
-                        if (checkFileMd5Matched) {
-                            downloadDBFile();
-                        } else {
-                            File file1 = new File(filePath);
-                            file1.delete();
-                            file1.exists();
-                            downloadFilterHeaderBinFile();
-                        }
-                    }
 
-
-                    @Override
-                    public void onError(Error error) {
-                        Log.e(TAG, error.toString());
-                    }
-                });
+            @Override
+            public void onError(Error error) {
+                Log.e(TAG, error.toString());
+            }
+        });
 
     }
 
@@ -646,10 +642,6 @@ public class SplashActivity extends AppBaseActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void actionAfterPromise() {
-//        startNode();
-        if (isStartDownload) {
-            return;
-        }
         String initWalletType = User.getInstance().getInitWalletType(mContext);
         long nowMillis = Calendar.getInstance().getTimeInMillis();
         if (initWalletType.equals("")) {
@@ -668,7 +660,7 @@ public class SplashActivity extends AppBaseActivity {
 
             }
         }
-
+//        startNode();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
