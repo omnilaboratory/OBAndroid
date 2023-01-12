@@ -3,6 +3,7 @@ package com.omni.wallet.view.popupwindow;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -10,18 +11,20 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
-import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.entity.event.LoginOutEvent;
+import com.omni.wallet.entity.event.LockEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 
 import lnrpc.LightningOuterClass;
+import lnrpc.Stateservice;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
@@ -62,16 +65,23 @@ public class NodeInfoPopupWindow {
             TextView portsTv = rootView.findViewById(R.id.tv_node_ports);
             TextView zmqpubrawblockTv = rootView.findViewById(R.id.tv_node_zmqpubrawblock);
             TextView zmqpubrawtxTv = rootView.findViewById(R.id.tv_node_zmqpubrawtx);
+            getNodeInfo(pubKey);
             versionTv.setText(User.getInstance().getNodeVersion(mContext).substring(0, User.getInstance().getNodeVersion(mContext).indexOf(" ")));
             backendTv.setText("omnicoreproxy");
             modeTv.setText("SeedBackup");
             netWorkTv.setText(User.getInstance().getNetwork(mContext));
-            rpchostTv.setText("43.138.107.248:18332");
+            // 网络类型
+            // Network type
+            if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+                rpchostTv.setText(ConstantInOB.TEST_NET_OMNI_HOST_ADDRESS_PORT);
+            } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+                rpchostTv.setText(ConstantInOB.OMNIHostAddressPortRegTest);
+            } else if (User.getInstance().getNetwork(mContext).equals("mainnet")) {
+                rpchostTv.setText(ConstantInOB.OMNIHostAddressPortRegTest);
+            }
             portsTv.setText("9735:9735");
             zmqpubrawblockTv.setText("omnicoreproxy.zmqpubrawblock=tcp://43.138.107.248:28332");
             zmqpubrawtxTv.setText("omnicoreproxy.zmqpubrawtx=tcp://43.138.107.248:28333");
-            getNodeInfo(pubKey);
-
             // 点击copy
             rootView.findViewById(R.id.layout_copy).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -91,36 +101,35 @@ public class NodeInfoPopupWindow {
                 @Override
                 public void onClick(View v) {
                     mLoadingDialog.show();
-                    LightningOuterClass.StopRequest stopRequest = LightningOuterClass.StopRequest.newBuilder().build();
-                    Obdmobile.stopDaemon(stopRequest.toByteArray(), new Callback() {
-                        @Override
-                        public void onError(Exception e) {
-                            LogUtils.e(TAG, "------------------stopDaemonOnError------------------" + e.getMessage());
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mBasePopWindow.dismiss();
-                                    mLoadingDialog.dismiss();
-                                    ToastUtils.showToast(mContext, e.getMessage());
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onResponse(byte[] bytes) {
-                            LogUtils.e(TAG, "------------------stopDaemonOnResponse-----------------");
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    EventBus.getDefault().post(new LoginOutEvent());
-                                    mBasePopWindow.dismiss();
-                                    mLoadingDialog.dismiss();
-//                                    Intent intent = new Intent(mContext, UnlockActivity.class);
-//                                    mContext.startActivity(intent);
-                                }
-                            });
-                        }
-                    });
+                    startNode();
+//                    LightningOuterClass.StopRequest stopRequest = LightningOuterClass.StopRequest.newBuilder().build();
+//                    Obdmobile.stopDaemon(stopRequest.toByteArray(), new Callback() {
+//                        @Override
+//                        public void onError(Exception e) {
+//                            LogUtils.e(TAG, "------------------stopDaemonOnError------------------" + e.getMessage());
+//                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    mBasePopWindow.dismiss();
+//                                    mLoadingDialog.dismiss();
+//                                    ToastUtils.showToast(mContext, e.getMessage());
+//                                }
+//                            });
+//                        }
+//
+//                        @Override
+//                        public void onResponse(byte[] bytes) {
+//                            LogUtils.e(TAG, "------------------stopDaemonOnResponse-----------------");
+//                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    EventBus.getDefault().post(new LoginOutEvent());
+//                                    mBasePopWindow.dismiss();
+//                                    mLoadingDialog.dismiss();
+//                                }
+//                            });
+//                        }
+//                    });
                 }
             });
 
@@ -167,6 +176,92 @@ public class NodeInfoPopupWindow {
                 });
             }
         });
+    }
+
+    public void startNode() {
+        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------startOnError------------------" + e.getMessage());
+                if (e.getMessage().contains("lnd already started")) {
+                    Stateservice.GetStateRequest getStateRequest = Stateservice.GetStateRequest.newBuilder().build();
+                    Obdmobile.getState(getStateRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------getStateOnError------------------" + e.getMessage());
+                            startNode();
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                EventBus.getDefault().post(new LockEvent());
+                                mBasePopWindow.dismiss();
+                                mLoadingDialog.dismiss();
+                                return;
+                            }
+                            try {
+                                Stateservice.GetStateResponse getStateResponse = Stateservice.GetStateResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------getStateOnResponse------------------" + getStateResponse);
+                                Stateservice.WalletState state = getStateResponse.getState();
+                                Log.e(TAG, state.toString());
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        switch (state) {
+                                            case LOCKED:
+                                                EventBus.getDefault().post(new LockEvent());
+                                                mBasePopWindow.dismiss();
+                                                mLoadingDialog.dismiss();
+                                                break;
+                                            case UNLOCKED:
+                                            case RPC_ACTIVE:
+                                            case SERVER_ACTIVE:
+                                                mBasePopWindow.dismiss();
+                                                mLoadingDialog.dismiss();
+                                                break;
+                                        }
+                                    }
+                                });
+                            } catch (InvalidProtocolBufferException ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
+                } else if (e.getMessage().equals("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
+                    EventBus.getDefault().post(new LockEvent());
+                    mBasePopWindow.dismiss();
+                    mLoadingDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                LogUtils.e(TAG, "------------------startOnSuccess------------------");
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        subscribeWalletState();
+                    }
+                });
+            }
+        });
+    }
+
+    public void subscribeWalletState() {
+        WalletState.WalletStateCallback walletStateCallback = walletState -> {
+            switch (walletState) {
+                case 0:
+                case 255:
+                case 1:
+                    EventBus.getDefault().post(new LockEvent());
+                    mBasePopWindow.dismiss();
+                    mLoadingDialog.dismiss();
+                    break;
+            }
+        };
+        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
+        WalletState.getInstance().subscribeWalletState(mContext);
     }
 
     public void release() {

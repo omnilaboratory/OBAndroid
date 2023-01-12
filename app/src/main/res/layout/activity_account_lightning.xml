@@ -190,6 +190,11 @@
                     android:src="@mipmap/icon_arrow_down_black"/>
             </RelativeLayout>
 
+            <com.omni.wallet.view.AssetTrendChartView
+                android:id="@+id/layout_asset_trend_chart_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/main_32"

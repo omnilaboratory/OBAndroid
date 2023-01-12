@@ -249,7 +249,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/main_38"
                 android:letterSpacing="0.05"
-                android:text="@string/disconnect"
+                android:text="@string/reboot_first_upper"
                 android:textColor="@color/color_black"
                 android:textSize="@dimen/text_16"/>
 

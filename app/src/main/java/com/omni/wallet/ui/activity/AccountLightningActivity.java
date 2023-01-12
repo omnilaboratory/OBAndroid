@@ -20,8 +20,10 @@ import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
+import com.omni.wallet.entity.event.LockEvent;
 import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.entity.event.OpenChannelEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
@@ -31,6 +33,7 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.UriUtil;
+import com.omni.wallet.view.AssetTrendChartView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
@@ -76,6 +79,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     TextView mBalanceAmountTv;
     @BindView(R.id.tv_wallet_address)
     TextView mWalletAddressTv;
+    @BindView(R.id.layout_asset_trend_chart_view)
+    AssetTrendChartView mAssetTrendChartView;
     @BindView(R.id.recycler_assets_list_block)
     public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock(The Recycler View Block for Assets List)
     private List<ListAssetItemEntity> blockData = new ArrayList<>();
@@ -124,6 +129,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext))) + "%");
         mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
         initRecyclerView();
+        setAssetTrendChartViewShow();
     }
 
     private void initRecyclerView() {
@@ -134,6 +140,59 @@ public class AccountLightningActivity extends AppBaseActivity {
         mRecyclerViewBlock.setAdapter(mAdapter);
     }
 
+    // TODO: 2023/1/12 待完善
+    private void setAssetTrendChartViewShow() {
+        List<AssetTrendEntity> list = new ArrayList<>();
+        AssetTrendEntity entity1 = new AssetTrendEntity();
+        entity1.setTime("Jan");
+        entity1.setAsset("5");
+        AssetTrendEntity entity2 = new AssetTrendEntity();
+        entity2.setTime("Feb");
+        entity2.setAsset("2");
+        AssetTrendEntity entity3 = new AssetTrendEntity();
+        entity3.setTime("Mar");
+        entity3.setAsset("7");
+        AssetTrendEntity entity4 = new AssetTrendEntity();
+        entity4.setTime("Apr");
+        entity4.setAsset("2");
+        AssetTrendEntity entity5 = new AssetTrendEntity();
+        entity5.setTime("May");
+        entity5.setAsset("4");
+        AssetTrendEntity entity6 = new AssetTrendEntity();
+        entity6.setTime("Jun");
+        entity6.setAsset("5");
+        AssetTrendEntity entity7 = new AssetTrendEntity();
+        entity7.setTime("Jul");
+        entity7.setAsset("8");
+        AssetTrendEntity entity8 = new AssetTrendEntity();
+        entity8.setTime("Aug");
+        entity8.setAsset("4");
+        AssetTrendEntity entity9 = new AssetTrendEntity();
+        entity9.setTime("Sep");
+        entity9.setAsset("6");
+        AssetTrendEntity entity10 = new AssetTrendEntity();
+        entity10.setTime("Oct");
+        entity10.setAsset("7");
+        AssetTrendEntity entity11 = new AssetTrendEntity();
+        entity11.setTime("Nov");
+        entity11.setAsset("10");
+        AssetTrendEntity entity12 = new AssetTrendEntity();
+        entity12.setTime("Dec");
+        entity12.setAsset("7");
+        list.add(entity1);
+        list.add(entity2);
+        list.add(entity3);
+        list.add(entity4);
+        list.add(entity5);
+        list.add(entity6);
+        list.add(entity7);
+        list.add(entity8);
+        list.add(entity9);
+        list.add(entity10);
+        list.add(entity11);
+        list.add(entity12);
+        mAssetTrendChartView.setViewShow(list);
+    }
 
     @Override
     protected void initData() {
@@ -741,6 +800,15 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginOutEvent(LoginOutEvent event) {
         switchActivityFinish(SplashActivity.class);
+    }
+
+    /**
+     * 锁住钱包后的消息通知监听
+     * Message notification monitoring after lock
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLockEvent(LockEvent event) {
+        switchActivityFinish(UnlockActivity.class);
     }
 
     @Override

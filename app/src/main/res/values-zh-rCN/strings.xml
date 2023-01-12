@@ -266,6 +266,7 @@
     <string name="add_to_addressbook_upper">ADD TO ADDRESSBOOK</string>
     <string name="nickname">Nickname</string>
     <string name="save_upper">SAVE</string>
+    <string name="reboot_first_upper">Reboot</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

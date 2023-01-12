@@ -49,6 +49,7 @@ import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
+import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsAssetPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsChainPopupWindow;
@@ -83,6 +84,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
     ImageView mNetworkIv;
     @BindView(R.id.tv_network_type)
     TextView mNetworkTypeTv;
+    @BindView(R.id.iv_more)
+    ImageView mMoreIv;
     @BindView(R.id.tv_network)
     TextView mNetworkTv;
     @BindView(R.id.iv_token_info)
@@ -209,6 +212,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TransactionsDetailsAssetPopupWindow mTransactionsDetailsAssetPopupWindow;
     TokenInfoPopupWindow mTokenInfoPopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
+    MenuPopupWindow mMenuPopupWindow;
 
     PayInvoiceDialog mPayInvoiceDialog;
     CreateChannelDialog mCreateChannelDialog;
@@ -430,10 +434,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
             for (int i = 0; i < txidList.size(); i++) {
                 getOmniTransactions(txidList.get(i));
             }
-            oBListTransactions();
-        } else {
-            oBListTransactions();
+//            oBListTransactions();
         }
+//        else {
+//            oBListTransactions();
+//        }
     }
 
     private void getOmniTransactions(String txid) {
@@ -1289,6 +1294,16 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * click three point button
+     * 点击三个点按钮
+     */
+    @OnClick(R.id.layout_more)
+    public void clickMore() {
+        mMenuPopupWindow = new MenuPopupWindow(mContext);
+        mMenuPopupWindow.show(mMoreIv, balanceAmount, User.getInstance().getWalletAddress(mContext), pubkey);
+    }
+
+    /**
      * 点击copy图标按钮
      * click copy icon btn
      *
@@ -1316,15 +1331,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
     public void copyQRCode() {
         FundPopupWindow mFundPopupWindow = new FundPopupWindow(mContext);
         mFundPopupWindow.show(mParentLayout, User.getInstance().getWalletAddress(mContext));
-    }
-
-    /**
-     * click more button
-     * 点击More按钮
-     */
-    @OnClick(R.id.layout_more)
-    public void clickMore() {
-
     }
 
     /**
@@ -1641,6 +1647,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        if (mMenuPopupWindow != null) {
+            mMenuPopupWindow.release();
+        }
         if (mPayInvoiceStepOnePopupWindow != null) {
             mPayInvoiceStepOnePopupWindow.release();
         }

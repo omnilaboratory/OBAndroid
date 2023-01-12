@@ -2,11 +2,7 @@
 package com.github.mikephil.charting.formatter;
 
 import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.utils.ViewPortHandler;
 
-import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Collection;
 
 /**
