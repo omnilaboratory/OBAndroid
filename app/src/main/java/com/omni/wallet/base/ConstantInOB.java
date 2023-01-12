@@ -7,8 +7,8 @@ public class ConstantInOB {
     public static String regTestLogPath = "/logs/bitcoin/regtest/lnd.log";
     public static String testLogPath = "/logs/bitcoin/testnet/lnd.log";
     public static String downloadDirectory = "/data/chain/bitcoin/regtest/";
-    public static String OMNIHostAddressRegTest= "43.138.107.248";
-    public static String OMNIHostAddressPortRegTest= "43.138.107.248:18332";
+    public static String OMNIHostAddressRegTest = "43.138.107.248";
+    public static String OMNIHostAddressPortRegTest = "43.138.107.248:18332";
     public static String BTCHostAddressRegTest = "43.138.107.248";
     public static String BTCHostAddressPortRegTest = "43.138.107.248:18332";
     public static String blockHeaderBin = "block_headers.bin";
@@ -18,30 +18,45 @@ public class ConstantInOB {
     public static String regFilterHeaderBin = "reg_filter_headers.bin";
     public static String regFilterHeader = "reg_filter_headers";
     public static String downloadBaseUrl = "https://cache.oblnd.top/neutrino-regtest/";
+    public static String downloadBaseUrlTestNet = "https://cache.oblnd.top/neutrino-testnet/";
+    public static String TEST_NET_BTC_HOST_ADDRESS="192.144.199.67 ";
+    public static String TEST_NET_OMNI_HOST_ADDRESS_PORT="192.144.199.67:18332";
+
+
 
     public static final String neutrinoRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=neutrino " +
-            "--neutrino.connect="+BTCHostAddressRegTest+
+            "--neutrino.connect=" + BTCHostAddressRegTest +
             "--omnicoreproxy.rpchost=" + OMNIHostAddressPortRegTest;
 
     public static final String normalRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
-            "--omnicoreproxy.rpchost=" +BTCHostAddressRegTest +":18332 "+
-            "--omnicoreproxy.zmqpubrawblock=tcp://" +BTCHostAddressRegTest +":28332 "+
-            "--omnicoreproxy.zmqpubrawtx=tcp://" +BTCHostAddressRegTest +":28333";
+            "--omnicoreproxy.rpchost=" + BTCHostAddressRegTest + ":18332 " +
+            "--omnicoreproxy.zmqpubrawblock=tcp://" + BTCHostAddressRegTest + ":28332 " +
+            "--omnicoreproxy.zmqpubrawtx=tcp://" + BTCHostAddressRegTest + ":28333";
+
+    public static final String neutrinoTestNetConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
+            "--autopilot.active --maxpendingchannels=100 " +
+            "--bitcoin.active --bitcoin.testnet --bitcoin.node=neutrino " +
+            "--neutrino.connect=" + TEST_NET_BTC_HOST_ADDRESS +
+            "--omnicoreproxy.rpchost=" + TEST_NET_OMNI_HOST_ADDRESS_PORT;
+
+    public static final String usingNeutrinoConfig = neutrinoTestNetConfig;
+    public static final String usingDownloadBaseUrlTestNet = downloadBaseUrlTestNet;
+    public static final String usingBTCHostAddress = TEST_NET_BTC_HOST_ADDRESS;
 
     public static final long SECOND_MILLIS = 1000;
     public static final long MINUTE_MILLIS = 60 * SECOND_MILLIS;
     public static final long HOUR_MILLIS = 60 * MINUTE_MILLIS;
     public static final long DAY_MILLIS = 24 * HOUR_MILLIS;
     public static final long WEEK_MILLIS = 7 * DAY_MILLIS;
-    
-    
-    public ConstantInOB(Context context){
+
+
+    public ConstantInOB(Context context) {
         basePath = context.getExternalCacheDir() + "";
-    }        
+    }
 
     public String getBasePath() {
         return basePath;
@@ -54,20 +69,20 @@ public class ConstantInOB {
     public String getTestLogPath() {
         return basePath + testLogPath;
     }
-    
-    public String getBlockHeaderBinPath(){
+
+    public String getBlockHeaderBinPath() {
         return basePath + downloadDirectory + "/" + blockHeaderBin;
     }
 
-    public String getNeutrinoDBPath(){
+    public String getNeutrinoDBPath() {
         return basePath + downloadDirectory + "/" + neutrinoDB;
     }
 
-    public String getRegFilterHeaderBinPath(){
+    public String getRegFilterHeaderBinPath() {
         return basePath + downloadDirectory + "/" + regFilterHeaderBin;
     }
-    
-    public String getDownloadDirectoryPath(){
+
+    public String getDownloadDirectoryPath() {
         return basePath + downloadDirectory;
     }
 }

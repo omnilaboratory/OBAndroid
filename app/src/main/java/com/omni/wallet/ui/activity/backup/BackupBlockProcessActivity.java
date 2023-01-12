@@ -231,7 +231,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
         HttpUtils.with(ctx)
                 .postString()
-                .url("http://"+Wallet.BTC_HOST_ADDRESS_REGTEST+":18332")
+                .url("http://"+ConstantInOB.usingBTCHostAddress+":18332")
                 .addContent(jsonStr)
                 .execute(new EngineCallback() {
                     @Override
@@ -337,7 +337,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
     
     public void startOBMobile(){
-        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
+        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());

@@ -368,7 +368,7 @@ public class SplashActivity extends AppBaseActivity {
         if (file.exists()) {
             file.delete();
         } else {
-            PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build()
+            PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build()
                     .start(new OnDownloadListener() {
                         @RequiresApi(api = Build.VERSION_CODES.O)
                         @Override
@@ -422,7 +422,7 @@ public class SplashActivity extends AppBaseActivity {
             downloadDBFile();
             return;
         }
-        downloadingId = PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
+        downloadingId = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_header));
                 })
@@ -438,7 +438,7 @@ public class SplashActivity extends AppBaseActivity {
                     public void onProgress(com.downloader.Progress progress) {
                         double currentM = (double) progress.currentBytes / 1024 / 1024;
                         double totalBytes = (double) progress.totalBytes / 1024 / 1024;
-                        syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
+                        syncBlockNumView.setText(String.format("%.2f", totalBytes) + "MB");
                         updateDataView(currentM, totalBytes);
                     }
                 })
@@ -475,7 +475,7 @@ public class SplashActivity extends AppBaseActivity {
             startNode();
             return;
         }
-        downloadingId = PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
+        downloadingId = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build()
                 .setOnStartOrResumeListener(() -> {
                     doExplainTv.setText(mContext.getString(R.string.download_db));
                 })
@@ -491,7 +491,7 @@ public class SplashActivity extends AppBaseActivity {
                     public void onProgress(com.downloader.Progress progress) {
                         double currentM = (double) progress.currentBytes / 1024 / 1024;
                         double totalBytes = (double) progress.totalBytes / 1024 / 1024;
-                        syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
+                        syncBlockNumView.setText(String.format("%.2f", totalBytes) + "MB");
                         updateDataView(currentM, totalBytes);
                     }
                 })
@@ -528,7 +528,7 @@ public class SplashActivity extends AppBaseActivity {
             return;
         }
 
-        downloadingId = PRDownloader.download(ConstantInOB.downloadBaseUrl + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
+        downloadingId = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build()
                 .setOnStartOrResumeListener(() -> {
                     isStartDownload = true;
                     doExplainTv.setText(mContext.getString(R.string.download_filter_header));
@@ -545,7 +545,7 @@ public class SplashActivity extends AppBaseActivity {
                     public void onProgress(com.downloader.Progress progress) {
                         double currentM = (double) progress.currentBytes / 1024 / 1024;
                         double totalBytes = (double) progress.totalBytes / 1024 / 1024;
-                        syncBlockNumView.setText(String.format("%.0f", totalBytes) + "MB");
+                        syncBlockNumView.setText(String.format("%.2f", totalBytes) + "MB");
                         updateDataView(currentM, totalBytes);
                     }
                 })
@@ -575,7 +575,7 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     public void startNode() {
-        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
+        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
             @Override
             public void onError(Exception e) {
                 if (e.getMessage().equals("lnd already started")) {
@@ -641,7 +641,7 @@ public class SplashActivity extends AppBaseActivity {
         RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth, innerHeight);
         rvProcessInner.setLayoutParams(rlInnerParam);
 
-        syncedBlockNumView.setText(String.format("%.0f", currentMb) + "MB");
+        syncedBlockNumView.setText(String.format("%.2f", currentMb) + "MB");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -674,6 +674,7 @@ public class SplashActivity extends AppBaseActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @OnClick(R.id.refresh_btn)
     public void clickRefreshBtn() {
+        refreshBtnImageView.setVisibility(View.INVISIBLE);
         actionAfterPromise();
     }
 
