@@ -365,7 +365,7 @@ public class SplashActivity extends AppBaseActivity {
         if (file.exists()) {
             file.delete();
         } else {
-            PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build()
+            PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build()
                     .start(new OnDownloadListener() {
                         @RequiresApi(api = Build.VERSION_CODES.O)
                         @Override
@@ -420,7 +420,7 @@ public class SplashActivity extends AppBaseActivity {
             downloadDBFile();
             return;
         }
-        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build();
+        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build();
         final double[] totalBytes = {(double) downloadRequest.getTotalBytes() / 1024 / 1024};
         downloadRequest.setOnStartOrResumeListener(() -> {
             isDownloading = true;
@@ -469,7 +469,7 @@ public class SplashActivity extends AppBaseActivity {
             startNode();
             return;
         }
-        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build();
+        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build();
         final double[] totalBytes = {0};
         downloadRequest.setOnStartOrResumeListener(() -> {
             isDownloading = true;
@@ -523,7 +523,7 @@ public class SplashActivity extends AppBaseActivity {
             downloadDBFile();
             return;
         }
-        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrlTestNet + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build();
+        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build();
         final double[] totalBytes = {0};
         downloadRequest.setOnStartOrResumeListener(() -> {
             isDownloading = true;
@@ -687,12 +687,19 @@ public class SplashActivity extends AppBaseActivity {
 
     public void subscribeWalletState() {
         WalletState.WalletStateCallback walletStateCallback = walletState -> {
+            Log.e(TAG,String.valueOf(walletState));
             switch (walletState) {
                 case 0:
                 case 255:
                 case 1:
+                case 3:
+                case 2:
                     switchActivityFinish(UnlockActivity.class);
                     break;
+                case 4:
+                    switchActivityFinish(AccountLightningActivity.class);
+                default:
+                    switchActivityFinish(UnlockActivity.class);
             }
         };
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);

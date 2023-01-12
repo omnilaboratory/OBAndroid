@@ -118,7 +118,7 @@ public class FilesUtils {
         File file = new File(filePath);
         fileMd5 = getFileMD5(file);
         return fileMd5;
-    };
+    }
 
 
     public static String getFileMD5(File file) {

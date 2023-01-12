@@ -24,9 +24,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.base.ConstantInOB;
-import com.omni.wallet.baselibrary.http.HttpUtils;
-import com.omni.wallet.baselibrary.http.callback.EngineCallback;
-import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
@@ -37,14 +34,8 @@ import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.NetworkChangeReceiver;
 import com.omni.wallet.utils.ObdLogFileObserver;
 import com.omni.wallet.utils.PublicUtils;
-import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.utils.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -94,12 +85,12 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     boolean isSynced = false;
     boolean isCreated = false;
     String walletAddress = "";
-    int totalBlockHeight = 0;
     ConstantInOB constantInOB = null;
     ConnectivityManager connectivityManager = null;
     boolean networkIsConnected = true;
     NetworkChangeReceiver networkChangeReceiver = null;
     String initWalletType = "";
+    long totalBlock = 0;
 
     @Override
     protected Drawable getWindowBackground(){
@@ -111,26 +102,50 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         return R.layout.activity_backup_block_process;
     }
 
+    WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
+        switch (walletState){
+            case 1:
+                unlockWallet();
+                break;
+            case 4:
+                if(User.getInstance().getWalletAddress(mContext).isEmpty()){
+                    newAddressToWallet();
+                }
+
+                break;
+            default:
+                break;
+
+        }
+    };
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void initView() {
+        User user = User.getInstance();
         constantInOB = new ConstantInOB(mContext);
         String fileLocal = constantInOB.getRegTestLogPath();
         obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
         blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
-        isSynced = User.getInstance().getSynced(mContext);
-        isCreated = User.getInstance().getCreated(mContext);
-        walletAddress = User.getInstance().getWalletAddress(mContext);
+        isSynced = user.getSynced(mContext);
+        isCreated = user.getCreated(mContext);
+        walletAddress = user.getWalletAddress(mContext);
         mLoadingDialog = new LoadingDialog(mContext);
-        String passwordMd5 = User.getInstance().getPasswordMd5(mContext);
+        String passwordMd5 = user.getPasswordMd5(mContext);
         connectivityManager = getSystemService(ConnectivityManager.class);
         Log.e("password",passwordMd5);
-        initWalletType = User.getInstance().getInitWalletType(mContext);
+        initWalletType = user.getInitWalletType(mContext);
+        totalBlock = user.getTotalBlock(mContext);
+        commitNumSyncView.setText(String.valueOf(totalBlock));
+        syncBlockNumView.setText(String.valueOf(totalBlock));
+        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
         runOnUiThread(()->{
-            subscribeState();
+            obdLogFileObserver.startWatching();
         });
-
+        runOnUiThread(()->{
+            blockData.registerOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
+        });
     }
     @Override
     protected void initData() {
@@ -161,12 +176,12 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     };
 
     @SuppressLint("SetTextI18n")
-    private void updateSyncDataView(int syncedHeight){
+    private void updateSyncDataView(long syncedHeight){
         Log.e(TAG,"update_synced_Height");
-        double totalHeight =  totalBlockHeight;
+        double totalHeight =  totalBlock;
         double currentHeight =  syncedHeight;
-        if(syncedHeight>totalBlockHeight){
-            syncedHeight = totalBlockHeight;
+        if(syncedHeight>totalBlock){
+            syncedHeight = totalBlock;
             currentHeight = totalHeight;
         }
         double percent = (currentHeight/totalHeight * 100);
@@ -177,8 +192,8 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         syncPercentView.setText(percentString + "%");
         RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth,innerHeight);
         rvProcessInner.setLayoutParams(rlInnerParam);
-        syncedBlockNumView.setText(Integer.toString(syncedHeight));
-        commitNumSyncedView.setText(Integer.toString(syncedHeight));
+        syncedBlockNumView.setText(Long.toString(syncedHeight));
+        commitNumSyncedView.setText(Long.toString(syncedHeight));
         
         if(totalHeight == currentHeight){
             User.getInstance().setSynced(mContext,true);
@@ -227,66 +242,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     }
 
-    public void getTotalBlockHeight (){
-        String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
-        HttpUtils.with(ctx)
-                .postString()
-                .url("http://"+ConstantInOB.usingBTCHostAddress+":18332")
-                .addContent(jsonStr)
-                .execute(new EngineCallback() {
-                    @Override
-                    public void onPreExecute(Context context, Map<String, Object> params) {
-
-                    }
-
-                    @Override
-                    public void onCancel(Context context) {
-
-                    }
-
-                    @Override
-                    public void onError(Context context, String errorCode, String errorMsg) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(Context context, String result) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONObject jsonObject1 = new JSONObject(jsonObject.getString("result"));
-                            String block = jsonObject1.getString("block");
-                            totalBlockHeight = Integer.parseInt(block);
-                            runOnUiThread(() -> {
-                                doExplainTv.setText(ctx.getString(R.string.sync_block));
-                                typeSyncTV.setText(ctx.getString(R.string.block));
-                                commitContentRL.setVisibility(View.VISIBLE);
-                                commitNumSyncView.setText(block);
-                                syncBlockNumView.setText(block);
-                                obdLogFileObserver.startWatching();
-                                blockData.registerOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
-                            });
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onSuccess(Context context, byte[] result) {
-
-                    }
-
-                    @Override
-                    public void onProgressInThread(Context context, Progress progress) {
-
-                    }
-
-                    @Override
-                    public void onFileSuccess(Context context, String filePath) {
-
-                    }
-                });
-    }
 
     public void newAddressToWallet (){
         Log.e(TAG,"new Address count");
@@ -312,6 +267,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                         qrAddressIv.setImageBitmap(mQRBitmap);
                         obdLogFileObserver.stopWatching();
                         User.getInstance().setWalletAddress(mContext,address);
+                        updateSyncDataView(totalBlock);
                         if(initWalletType.equals("create")){
                             User.getInstance().setInitWalletType(mContext,"created");
                         }else if(initWalletType.equals("recovery")){
@@ -364,29 +320,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             }
         });
     }
-    
-    public void subscribeState(){
-        WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
-            switch (walletState){
-                case 1:
-                    unlockWallet();
-                    break;
-                case 2:
-                case 3:
-                    getTotalBlockHeight();
-                case 4:
-                    if(User.getInstance().getWalletAddress(mContext).isEmpty()){
-                        newAddressToWallet();
-                    }
 
-                    break;
-                default:
-                    break;
-
-            }
-        };
-        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
-    }
 
     NetworkChangeReceiver.CallBackNetWork callBackNetWork = new NetworkChangeReceiver.CallBackNetWork() {
         @Override

@@ -91,6 +91,8 @@ public class User {
 
     private boolean restoredChannel;
 
+    private long totalBlock;
+
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
         return token;
@@ -417,7 +419,7 @@ public class User {
 
     public boolean isRestoredChannel(Context context) {
         restoredChannel = PreferencesUtils.getRestoredChannel(context);
-        if (restoredChannel == false){
+        if (!restoredChannel) {
             restoredChannel = false;
         }
         return restoredChannel;
@@ -426,6 +428,19 @@ public class User {
     public void setRestoredChannel(Context context,boolean restoredChannel) {
         PreferencesUtils.saveRestoredChannel(context,restoredChannel);
         this.restoredChannel = restoredChannel;
+    }
+
+    public long getTotalBlock(Context context){
+        totalBlock = PreferencesUtils.getTotalBlock(context);
+        if (totalBlock == -1){
+            totalBlock = 0;
+        }
+        return totalBlock;
+    }
+
+    public void setTotalBlock (Context context,long totalBlock){
+        PreferencesUtils.saveTotalBlock(context,totalBlock);
+        this.totalBlock = totalBlock;
     }
 
     /**

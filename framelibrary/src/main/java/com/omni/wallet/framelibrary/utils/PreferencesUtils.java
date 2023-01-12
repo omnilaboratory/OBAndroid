@@ -51,6 +51,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String START_CREATE = "startCreate";
     private static final String WALLET_STATE = "walletState";
     private static final String RESTORED_CHANNEL = "restoredChannel";
+    private static final String TOTAL_BLOCK = "totalBlock";
 
 
     /**
@@ -397,6 +398,14 @@ public class PreferencesUtils extends BasePreferencesUtils {
 
     public static boolean getRestoredChannel(Context context){
         return getBoolean(SETTINGS,context,RESTORED_CHANNEL);
+    }
+
+    public static void saveTotalBlock(Context context,long value){
+        putLong(SETTINGS,context,TOTAL_BLOCK,value);
+    }
+
+    public static long getTotalBlock(Context context){
+        return getLong(SETTINGS,context,TOTAL_BLOCK);
     }
 
     public static void saveRestoredChannel(Context context,boolean value){

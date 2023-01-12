@@ -22,7 +22,6 @@ import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.BackupUtils;
-import com.omni.wallet.utils.Wallet;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
@@ -32,10 +31,6 @@ import org.json.JSONObject;
 import java.util.Map;
 
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
-import lnrpc.LightningOuterClass;
-import obdmobile.Callback;
-import obdmobile.Obdmobile;
-import obdmobile.RecvStream;
 
 /**
  * Application
@@ -126,13 +121,67 @@ public class AppApplication extends BaseApplication {
                     User.getInstance().setUsdtPrice(mContext,"1");
                 }
 
+
                 getBtcPrice();
                 // 在此处添加执行的代码
                 handler.postDelayed(this, 60000);// 60s后执行
                 BackupUtils.getInstance().backupChannelToFile(mContext);
+                getTotalBlock();
             }
         };
         handler.postDelayed(runnable, 0);// 打开定时器立即执行
+    }
+
+    public void getTotalBlock(){
+        String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
+        HttpUtils.with(mContext)
+                .postString()
+                .url("http://"+ConstantInOB.usingBTCHostAddress+":18332")
+                .addContent(jsonStr)
+                .execute(new EngineCallback() {
+                    @Override
+                    public void onPreExecute(Context context, Map<String, Object> params) {
+
+                    }
+
+                    @Override
+                    public void onCancel(Context context) {
+
+                    }
+
+                    @Override
+                    public void onError(Context context, String errorCode, String errorMsg) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, String result) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            JSONObject jsonObject1 = new JSONObject(jsonObject.getString("result"));
+                            String block = jsonObject1.getString("block");
+                            Log.e(TAG,"Total block:"+block);
+                            User.getInstance().setTotalBlock(mContext,Long.parseLong(block));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, byte[] result) {
+
+                    }
+
+                    @Override
+                    public void onProgressInThread(Context context, Progress progress) {
+
+                    }
+
+                    @Override
+                    public void onFileSuccess(Context context, String filePath) {
+
+                    }
+                });
     }
 
     /**

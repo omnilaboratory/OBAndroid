@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
@@ -12,7 +11,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.framelibrary.entity.User;
 
 import lnrpc.Stateservice;
-import obdmobile.Callback;
 import obdmobile.Obdmobile;
 import obdmobile.RecvStream;
 
@@ -60,6 +58,7 @@ public class WalletState {
         Obdmobile.subscribeState(subscribeStateRequest.toByteArray(),new RecvStream(){
             @Override
             public void onError(Exception e) {
+                Log.e(TAG,e.getMessage());
                 e.printStackTrace();
             }
 
@@ -67,12 +66,13 @@ public class WalletState {
             @Override
             public void onResponse(byte[] bytes) {
                 if (bytes == null){
+                    Log.e(TAG,"get null state");
+                    walletStateCallback.callback(-1);
                     return;
                 }
                 try {
                     Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
                     int walletState = subscribeStateResponse.getStateValue();
-                    User.getInstance().setWalletState(context,walletState);
                     walletStateCallback.callback(walletState);
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
