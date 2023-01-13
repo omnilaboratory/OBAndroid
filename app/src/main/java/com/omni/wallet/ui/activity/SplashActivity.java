@@ -358,16 +358,16 @@ public class SplashActivity extends AppBaseActivity {
         super.onDestroy();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void getManifestFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
         String filePath = downloadDirectoryPath + "manifest.txt";
         File file = new File(filePath);
         if (file.exists()) {
-            file.delete();
+            actionAfterPromise();
         } else {
             PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build()
                     .start(new OnDownloadListener() {
-                        @RequiresApi(api = Build.VERSION_CODES.O)
                         @Override
                         public void onDownloadComplete() {
                             try {
