@@ -250,14 +250,24 @@ public class NodeInfoPopupWindow {
 
     public void subscribeWalletState() {
         WalletState.WalletStateCallback walletStateCallback = walletState -> {
+            Log.e(TAG, String.valueOf(walletState));
             switch (walletState) {
                 case 0:
                 case 255:
                 case 1:
+                case 2:
+                case 3:
                     EventBus.getDefault().post(new LockEvent());
                     mBasePopWindow.dismiss();
                     mLoadingDialog.dismiss();
                     break;
+                case 4:
+                    mBasePopWindow.dismiss();
+                    mLoadingDialog.dismiss();
+                default:
+                    EventBus.getDefault().post(new LockEvent());
+                    mBasePopWindow.dismiss();
+                    mLoadingDialog.dismiss();
             }
         };
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);

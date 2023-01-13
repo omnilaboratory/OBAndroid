@@ -3,18 +3,20 @@ package com.omni.wallet.view.dialog;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
@@ -30,7 +32,6 @@ import com.omni.wallet.lightning.LightningNodeUri;
 import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.ui.activity.ScanChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
-import com.omni.wallet.utils.BackupUtils;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.popupwindow.SelectAssetUnitPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
@@ -39,6 +40,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import lnrpc.LightningOuterClass;
@@ -73,6 +75,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     long mBalanceAmount;
     String mWalletAddress;
     LoadingDialog mLoadingDialog;
+    private List<String> txidList;
 
     public CreateChannelDialog(Context context) {
         this.mContext = context;
@@ -419,6 +422,9 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         Obdmobile.oB_OpenChannel(openChannelRequest.toByteArray(), new RecvStream() {
             @Override
             public void onError(Exception e) {
+                if (e.getMessage().equals("EOF")) {
+                    return;
+                }
                 new Handler(Looper.getMainLooper()).post(() -> {
                     mLoadingDialog.dismiss();
                     LogUtils.e(TAG, "Error opening channel: " + e.getMessage());
@@ -442,6 +448,30 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                         try {
                             LightningOuterClass.OpenStatusUpdate resp = LightningOuterClass.OpenStatusUpdate.parseFrom(bytes);
                             LogUtils.e(TAG, "Open channel update: " + resp.getUpdateCase().getNumber());
+                            LogUtils.e(TAG, "Open channel update: " + resp.getChanPending().getTxidStr());
+                            if (assetId != 0) {
+                                // 存储txid
+                                SharedPreferences txidSp = mContext.getSharedPreferences("SP_TXID_LIST", Activity.MODE_PRIVATE);
+                                String txidListJson = txidSp.getString("txidListKey", "");
+                                if (StringUtils.isEmpty(txidListJson)) {
+                                    txidList = new ArrayList<>();
+                                    txidList.add(resp.getChanPending().getTxidStr());
+                                    Gson gson = new Gson();
+                                    String jsonStr = gson.toJson(txidList);
+                                    SharedPreferences.Editor editor = txidSp.edit();
+                                    editor.putString("txidListKey", jsonStr);
+                                    editor.commit();
+                                } else {
+                                    Gson gson = new Gson();
+                                    txidList = gson.fromJson(txidListJson, new TypeToken<List<String>>() {
+                                    }.getType());
+                                    txidList.add(resp.getChanPending().getTxidStr());
+                                    String jsonStr = gson.toJson(txidList);
+                                    SharedPreferences.Editor editor = txidSp.edit();
+                                    editor.putString("txidListKey", jsonStr);
+                                    editor.commit();
+                                }
+                            }
                             EventBus.getDefault().post(new OpenChannelEvent());
                             mLoadingDialog.dismiss();
                             mAlertDialog.dismiss();

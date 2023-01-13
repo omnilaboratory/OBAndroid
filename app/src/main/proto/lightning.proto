@@ -2109,6 +2109,7 @@ message CloseStatusUpdate {
 message PendingUpdate {
     bytes txid = 1;
     uint32 output_index = 2;
+    string txid_str = 3;
 }
 
 message ReadyForPsbtFunding {

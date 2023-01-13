@@ -29,6 +29,7 @@ import com.omni.wallet.entity.event.OpenChannelEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.entity.event.SelectAccountEvent;
 import com.omni.wallet.entity.event.SendSuccessEvent;
+import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
@@ -788,6 +789,17 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBtcAndUsdtEvent(BtcAndUsdtEvent event) {
+        DecimalFormat df = new DecimalFormat("0.00");
+        mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext))) + "%");
+        getAssetAndBtcData();
+    }
+
+    /**
+     * 余额变化后的消息通知监听
+     * Message notification monitoring after update balance
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateBalanceEvent(UpdateBalanceEvent event) {
         DecimalFormat df = new DecimalFormat("0.00");
         mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext))) + "%");
         getAssetAndBtcData();

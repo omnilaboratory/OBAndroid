@@ -8,7 +8,6 @@ import android.util.Log;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.baselibrary.base.BaseApplication;
 import com.omni.wallet.baselibrary.common.Constants;
 import com.omni.wallet.baselibrary.http.HttpUtils;
@@ -19,6 +18,7 @@ import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
+import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.BackupUtils;
@@ -39,6 +39,7 @@ public class AppApplication extends BaseApplication {
     private static final String TAG = AppApplication.class.getSimpleName();
     private static AppApplication mContext;
     Handler handler = new Handler();
+    Handler balanceHandler = new Handler();
 
     public AppApplication() {
         mContext = this;
@@ -130,6 +131,16 @@ public class AppApplication extends BaseApplication {
             }
         };
         handler.postDelayed(runnable, 0);// 打开定时器立即执行
+        // 更新余额的定时监听
+        Runnable balanceRunnable = new Runnable() {
+            @Override
+            public void run() {
+                EventBus.getDefault().post(new UpdateBalanceEvent());
+                // 在此处添加执行的代码
+                balanceHandler.postDelayed(this, 360000);// 360s后执行
+            }
+        };
+        handler.postDelayed(balanceRunnable, 0);// 打开定时器立即执行
     }
 
     public void getTotalBlock(){
