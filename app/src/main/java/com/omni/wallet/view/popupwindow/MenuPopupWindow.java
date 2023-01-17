@@ -18,6 +18,7 @@ import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.event.LockEvent;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
@@ -129,6 +130,15 @@ public class MenuPopupWindow {
                     mMenuPopWindow.dismiss();
                     NodeInfoPopupWindow mNodeInfoPopupWindow = new NodeInfoPopupWindow(mContext);
                     mNodeInfoPopupWindow.show(view, pubKey);
+                }
+            });
+//            select directory
+            rootView.findViewById(R.id.backup_directory_select).setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    mMenuPopWindow.dismiss();
+                    Intent intent = new Intent(mContext, BackupChannelActivity.class);
+                    mContext.startActivity(intent);
                 }
             });
             // disconnect

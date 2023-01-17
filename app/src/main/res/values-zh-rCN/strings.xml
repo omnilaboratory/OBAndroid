@@ -77,6 +77,7 @@
     <string name="profile">Profile</string>
     <string name="preference">Preference</string>
     <string name="node_info">Node Info</string>
+    <string name="backup_directory">Backup Directory</string>
     <string name="disconnect">Disconnect</string>
     <string name="lock">Lock</string>
     <string name="settings">SETTINGS</string>
@@ -265,7 +266,7 @@
     <string name="executed">Executed</string>
     <string name="add_to_addressbook_upper">ADD TO ADDRESSBOOK</string>
     <string name="nickname">Nickname</string>
-    <string name="save_upper">SAVE</string>
+    <string name="save_upper">保存</string>
     <string name="reboot_first_upper">Reboot</string>
 
     <plurals name="duration_second">
@@ -320,6 +321,7 @@
 
     <!--restore page-->
     <string name="restore_desc">选择您的通道数据文件以恢复您闪电节点</string>
+    <string name="backup_desc">选择您的闪电通道备份文件存储位置</string>
 
     <!--common 通用-->
     <string name="aets">≈</string>

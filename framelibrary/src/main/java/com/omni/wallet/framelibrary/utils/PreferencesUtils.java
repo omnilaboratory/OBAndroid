@@ -37,7 +37,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
 
     private static final String MACAROON_STRING = "macaroonString";
 
-    private static final String CHANNEL_BACKUP_PATH = "channelBackupPath";
+    private static final String CHANNEL_BACKUP_PATH_ARRAY = "channelBackupPathArray";
 
     private static final String SEED_STRING =  "seedString";
 
@@ -325,11 +325,11 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     public static String getChannelBackupPath(Context context) {
-        return getString(SETTINGS, context, CHANNEL_BACKUP_PATH);
+        return getString(SETTINGS, context, CHANNEL_BACKUP_PATH_ARRAY);
     }
 
     public static void saveChannelBackupPath(Context context, String value) {
-        putString(SETTINGS, context, CHANNEL_BACKUP_PATH, value);
+        putString(SETTINGS, context, CHANNEL_BACKUP_PATH_ARRAY, value);
     }
 
     public static String getSeedString(Context context) {

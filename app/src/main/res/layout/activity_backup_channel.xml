@@ -38,7 +38,7 @@
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/restore_desc"
+            android:text="@string/backup_desc"
             android:textSize="18sp"
             android:textColor="@color/color_description_blue"
             android:letterSpacing="0.3"
@@ -94,16 +94,6 @@
                     android:textAlignment="textEnd"
                     android:maxLines="1"
                     tools:ignore="RtlCompat" />
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/btn_up_down"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/main_20">
-                <ImageView
-                    android:layout_width="@dimen/main_24"
-                    android:layout_height="@dimen/main_24"
-                    android:src="@mipmap/arrow_up_down"/>
             </RelativeLayout>
         </LinearLayout>
         <android.support.v7.widget.RecyclerView
@@ -191,7 +181,7 @@
                             android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/next_upper"/>
+                            android:text="@string/save_upper"/>
                     </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>

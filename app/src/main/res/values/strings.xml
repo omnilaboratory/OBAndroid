@@ -76,6 +76,7 @@
     <string name="profile">Profile</string>
     <string name="preference">Preference</string>
     <string name="node_info">Node Info</string>
+    <string name="backup_directory">Backup Directory</string>
     <string name="disconnect">Disconnect</string>
     <string name="lock">Lock</string>
     <string name="settings">SETTINGS</string>
@@ -319,6 +320,9 @@
     
     <!--restore page-->
     <string name="restore_desc">Select your channel database file to restore your lightning node</string>
+
+    <!--backup page-->
+    <string name="backup_desc">Select the directory where you will save the backup channel file.</string>
 
     <!--common-->
     <string name="aets">≈</string>

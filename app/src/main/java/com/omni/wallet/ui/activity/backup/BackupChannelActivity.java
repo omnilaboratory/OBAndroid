@@ -1,12 +1,8 @@
 package com.omni.wallet.ui.activity.backup;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.UiThread;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,12 +13,15 @@ import android.widget.TextView;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.utils.ActivityUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.listItems.BackupFile;
-import com.omni.wallet.ui.activity.channel.ChannelsActivity;
+import com.omni.wallet.utils.BackupUtils;
 import com.omni.wallet.utils.FilesUtils;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,8 +38,8 @@ import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
 public class BackupChannelActivity extends AppBaseActivity {
+    private static final String TAG = BackupChannelActivity.class.getSimpleName();
     private List<String> pathList = new ArrayList();
-
     @BindView(R.id.tv_path_show)
     TextView pathShow;
     @BindView(R.id.recycler_file_list)
@@ -48,10 +47,12 @@ public class BackupChannelActivity extends AppBaseActivity {
     private List<BackupFile> directoryData = new ArrayList();
     private MyAdapter myAdapter;
     String selectedFilePath = "";
+    LoadingDialog mLoadingDialog;
+    String userSetBackupDirectory = "";
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_restore_channel;
+        return R.layout.activity_backup_channel;
     }
 
     @Override
@@ -61,8 +62,19 @@ public class BackupChannelActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-        String storagePath = Environment.getExternalStorageDirectory() + "";
-        pathList.add(storagePath);
+        mLoadingDialog = new LoadingDialog(mContext);
+        userSetBackupDirectory = User.getInstance().getChannelBackupPathArray(mContext);
+        Log.e(TAG,userSetBackupDirectory);
+        if(!userSetBackupDirectory.isEmpty()){
+            String[] directoryArray =  userSetBackupDirectory.split(" ");
+            for (int i = 0; i < directoryArray.length; i++) {
+                pathList.add(directoryArray[i]);
+                Log.e(TAG,directoryArray[i]);
+            }
+        }else{
+            String storagePath = Environment.getExternalStorageDirectory() + "";
+            pathList.add(storagePath);
+        }
         String pathFull = "";
         for (int i = 0; i < pathList.size(); i++) {
             if (i == 0) {
@@ -203,77 +215,85 @@ public class BackupChannelActivity extends AppBaseActivity {
     
     @OnClick(R.id.btn_back)
     public void clickBtnBack(){
-        finish();
+        ActivityUtils.getInstance().finishActivity(BackupChannelActivity.class);
     }
     
     @OnClick(R.id.btn_next)
     public void clickBtnNext(){
+        mLoadingDialog.show();
+        String arrayString = "";
+        String path = "";
+        for (int i = 0; i < pathList.size(); i++) {
+            if(i>0){
+                path = path + "/" + pathList.get(i);
+                arrayString = arrayString + " " + pathList.get(i);
+            }else{
+                path = pathList.get(i);
+                arrayString = pathList.get(i);
+            }
+        }
 
-        LightningOuterClass.ExportChannelBackupRequest exportChannelBackupRequest = LightningOuterClass.ExportChannelBackupRequest.newBuilder().build();
-
-        Obdmobile.exportAllChannelBackups(exportChannelBackupRequest.toByteArray(), new Callback() {
+        User.getInstance().setChannelBackupPathArray(mContext,arrayString);
+        LightningOuterClass.ChanBackupExportRequest chanBackupExportRequest = LightningOuterClass.ChanBackupExportRequest.newBuilder().build();
+        Obdmobile.exportAllChannelBackups(chanBackupExportRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
+                Log.e(TAG,e.getMessage());
                 e.printStackTrace();
             }
 
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @SuppressLint("LongLogTag")
             @Override
             public void onResponse(byte[] bytes) {
-                if(bytes==null){
-                    return;
-                }
                 try {
-                    LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(bytes);
-
-                    String filename = "channelBackupFile.OBBackupChannel";
-//                    String path = Environment.getExternalStorageDirectory() + "/" + filename;
-                    String newPath =  "";
-                    
-                    for (int i = 0; i < pathList.size(); i++) {
-                        if (i == 0) {
-                            newPath += pathList.get(i);
-                        } else {
-                            newPath = newPath + "/" + pathList.get(i);
+                    String basePath = BackupUtils.getInstance().getBasePath();
+                    String directoryName = BackupUtils.getInstance().getDirectoryName();
+                    String channelFileName = BackupUtils.getInstance().getChannelFileName();
+                    String directoryPath = "";
+                    String userSettingDirectory =  BackupUtils.getInstance().getUserSettingDirectory(mContext);
+                    if(userSettingDirectory.isEmpty()){
+                        directoryPath = basePath + "/" + directoryName;
+                    }else {
+                        String[] userSettingDirectoryArray = userSettingDirectory.split(" ");
+                        for (int i = 0; i < userSettingDirectoryArray.length; i++) {
+                            if(i>0){
+                                directoryPath = directoryPath + "/" + userSettingDirectoryArray[i];
+                            }else{
+                                directoryPath = userSettingDirectoryArray[i];
+                            }
                         }
-                    };
-                    String path = newPath + "/" + filename;
-                    Log.e("channelBackUpPath",path);
-                    File file = new File(path);
-                    if(file.exists()){
-                        file.delete();
                     }
-                    OutputStream outputStream = new FileOutputStream(path);
-                    chanBackupSnapshot.writeTo(outputStream);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String newPath =  "";
+                    String channelFilePath = directoryPath + "/" + channelFileName;
+                    File directoryFile = new File(directoryPath);
+                    if (!directoryFile.exists()) {
+                        directoryFile.mkdir();
+                    }
 
-                            for (int i = 0; i < pathList.size(); i++) {
-                                if (i == 0) {
-                                    newPath += pathList.get(i);
-                                } else {
-                                    newPath = newPath + "/" + pathList.get(i);
-                                }
-                            };
-                            ToastUtils.showToast(mContext,"Backup channels success,your backup file is already created in " + newPath);
-                            switchActivity(ChannelsActivity.class);
-
+                    File channelFile = new File(channelFilePath);
+                    if (channelFile.exists()) {
+                        channelFile.delete();
+                    }
+                    channelFile.canWrite();
+                    channelFile.canRead();
+                    LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(bytes);
+                    LightningOuterClass.ChanBackupSnapshot newChanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.newBuilder()
+                            .setMultiChanBackup(chanBackupSnapshot.getMultiChanBackup())
+                            .build();
+                    OutputStream outputStream = new FileOutputStream(channelFile);
+                    newChanBackupSnapshot.writeDelimitedTo(outputStream);
+                    runOnUiThread(()->{
+                        ToastUtils.showToast(mContext,"Set backup file save directory and backup file successful!");
+                        if(mLoadingDialog.isShowing()){
+                            mLoadingDialog.dismiss();
                         }
                     });
-                    
-
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                } catch (FileNotFoundException e) {
+                } catch (InvalidProtocolBufferException | FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
+
     }
 }
 

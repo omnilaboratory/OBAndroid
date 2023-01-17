@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.omni.wallet.framelibrary.entity.User;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,6 +52,11 @@ public class BackupUtils {
         return directoryName;
     }
 
+    public String getUserSettingDirectory(Context context){
+        String channelBackupPath = User.getInstance().getChannelBackupPathArray(context);
+        return channelBackupPath;
+    }
+
     public void backupChannelToFile(Context context) {
         Obdmobile.subscribeChannelBackups(null, new RecvStream() {
             @Override
@@ -62,10 +68,16 @@ public class BackupUtils {
             @Override
             public void onResponse(byte[] bytes) {
                 try {
-                    String directoryPath = basePath + "/" + directoryName;
+                    String directoryPath = "";
+                    String userSettingDirectory =  getUserSettingDirectory(context);
+                    Log.e(TAG,userSettingDirectory);
+                    if(userSettingDirectory.isEmpty()){
+                        directoryPath = basePath + "/" + directoryName;
+                    }else {
+                        directoryPath = userSettingDirectory;
+                    }
                     String channelFilePath = directoryPath + "/" + channelFileName;
                     File directoryFile = new File(directoryPath);
-
                     if (!directoryFile.exists()) {
                         directoryFile.mkdir();
                     }
@@ -76,9 +88,7 @@ public class BackupUtils {
                     }
                     channelFile.canWrite();
                     channelFile.canRead();
-                    Log.e(TAG, "backup file");
                     LightningOuterClass.ChanBackupSnapshot chanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.parseFrom(bytes);
-                    Log.e(TAG,"write:" + chanBackupSnapshot.getMultiChanBackup().toString());
                     LightningOuterClass.ChanBackupSnapshot newChanBackupSnapshot = LightningOuterClass.ChanBackupSnapshot.newBuilder()
                             .setMultiChanBackup(chanBackupSnapshot.getMultiChanBackup())
                             .build();
@@ -93,4 +103,5 @@ public class BackupUtils {
             }
         });
     }
+
 }

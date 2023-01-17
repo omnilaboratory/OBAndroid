@@ -71,7 +71,7 @@ public class User {
     
     private String macaroonString;
     
-    private String channelBackupPath;
+    private String channelBackupPathArray;
     
     private String seedString;
     
@@ -300,17 +300,17 @@ public class User {
         this.macaroonString = macaroonString;
     }
 
-    public String getChannelBackupPath(Context context) {
-        channelBackupPath = PreferencesUtils.getChannelBackupPath(context);
-        if(channelBackupPath == null){
-            channelBackupPath = "";
+    public String getChannelBackupPathArray(Context context) {
+        channelBackupPathArray = PreferencesUtils.getChannelBackupPath(context);
+        if(channelBackupPathArray == null){
+            channelBackupPathArray = "";
         }
-        return channelBackupPath;
+        return channelBackupPathArray;
     }
 
-    public void setChannelBackupPath(Context context,String channelBackupPath) {
+    public void setChannelBackupPathArray(Context context,String channelBackupPath) {
         PreferencesUtils.saveChannelBackupPath(context, channelBackupPath);
-        this.channelBackupPath = channelBackupPath;
+        this.channelBackupPathArray = channelBackupPath;
     }
 
     public void setPasswordMd5(Context context,String passwordMd5) {
