@@ -11,7 +11,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import java.util.ArrayList;
@@ -136,21 +135,6 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
         });
     }
 
-
-    /**
-     * 汉：点击copy图标复制地址
-     * En：Click copy icon button,duplicate user`s wallet address to clipboard
-     * author:Tong ChangHui
-     * E-mail:tch081092@gmail.com
-     * date:2022-10-08
-     */
-    @OnClick(R.id.btn_copy)
-    public void clickCopy() {
-        //接收需要复制成功的提示语
-        //Get the notice when you copy success
-        String toastString = getResources().getString(R.string.toast_create_copy_success);
-        CopyUtil.SelfCopy(CreateWalletStepOneActivity.this,seedsString,toastString);
-    }
 
     /**
      * 点击Back

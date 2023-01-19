@@ -1,33 +1,51 @@
 package com.omni.wallet.ui.activity.createwallet;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.inputmethod.EditorInfo;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.template.DisablePasteEditText;
-import com.omni.wallet.utils.NumberFormatter;
+import com.omni.wallet.listItems.SelectSeedItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import butterknife.BindView;
 import butterknife.OnClick;
 
 public class CreateWalletStepTwoActivity extends AppBaseActivity {
+
+    final String TAG = CreateWalletStepTwoActivity.class.getSimpleName();
     private ArrayList<EditText> list = new ArrayList<>();
 
+    @BindView(R.id.seed_inputs_grid_view)
+    GridView seedInputsGridView;
+
+    @BindView(R.id.seed_select_grid_view)
+    GridView seedSelectGridView;
+
     Context ctx = CreateWalletStepTwoActivity.this;
-    String[] seedList;
+    List<SelectSeedItem> seedList = new ArrayList<>();
+    List<String> seedsInputList = new ArrayList<>();
+    String[] gotSeedArray;
+    SeedsInputAdapter seedsInputAdapter;
+    SeedsSelectAdapter seedsSelectAdapter;
 
 
     @Override
@@ -43,83 +61,74 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        seedsInputAdapter = new SeedsInputAdapter(mContext);
+        seedsSelectAdapter = new SeedsSelectAdapter(mContext);
+        for (int i = 0; i < 24; i++) {
+            seedsInputList.add("");
+        }
+        initSeedArray();
+        initSeedsInputGridView();
+        initSeedsSelectGridView();
 
     }
 
 
     @Override
-    protected void initData() {
-        initEvForSeeds();
-    }
-    
-    @SuppressLint("LongLogTag")
-    private void initEvForSeeds(){
-        /**
-         * 从xml文件中读取seeds
-         * Get seeds form xml file
-         */
+    protected void initData() { }
+
+    public void initSeedArray(){
         String seedsString = User.getInstance().getSeedString(mContext);
-        seedList = seedsString.split(" ");
+        gotSeedArray = seedsString.split(" ");
+        List<String> gotSeedList = new ArrayList<>();
+        for (int i = 0; i < gotSeedArray.length; i++) {
+            gotSeedList.add(gotSeedArray[i]);
+        }
+        Collections.shuffle(gotSeedList);
+        for (int i = 0; i < gotSeedList.size(); i++) {
+            String seed = gotSeedList.get(i);
+            SelectSeedItem seedItem = new SelectSeedItem(seed,false,-1);
+            seedList.add(seedItem);
+        }
 
-        /**
-         * 动态渲染24个输入框
-         * Dynamically render 24 input boxes
-         */
-        LinearLayout editListContent = findViewById(R.id.edit_text_Content);
+    }
 
-
-        for (int row = 1; row <= 8; row++) {
-            RelativeLayout rowContent = new RelativeLayout(this);
-            RelativeLayout.LayoutParams rowContentParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            rowContent.setLayoutParams(rowContentParams);
-
-            LinearLayout rowInner = new LinearLayout(this);
-            LinearLayout.LayoutParams rowInnerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
-            rowInnerParams.setMargins(0,0,0,10);
-            rowInner.setOrientation(LinearLayout.HORIZONTAL);
-            rowInner.setLayoutParams(rowInnerParams);
-            for (int cell = 1; cell <= 3; cell++) {
-                String noNum = NumberFormatter.formatNo(2, (row - 1) * 3 + cell) + ".";
-                RelativeLayout cellContent = new RelativeLayout(this);
-                LinearLayout.LayoutParams cellContentParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
-                cellContent.setLayoutParams(cellContentParams);
-
-                LinearLayout cellInner = new LinearLayout(this);
-                LinearLayout.LayoutParams cellInnerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                cellInner.setOrientation(LinearLayout.HORIZONTAL);
-                cellInner.setLayoutParams(cellInnerParams);
-
-                TextView noText = new TextView(this);
-                RelativeLayout.LayoutParams noTextParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                noText.setTextColor(getResources().getColor(R.color.color_white));
-                noText.setTextSize(20.0f);
-                noText.setText(noNum);
-                noText.setLayoutParams(noTextParams);
-
-                EditText cellEditText = new DisablePasteEditText(this);
-                LinearLayout.LayoutParams cellEditTextParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
-                cellEditText.setBackground(null);
-                cellEditText.setHint(getResources().getString(R.string.create_seed_input_hit));
-                cellEditText.setTextSize(16.0f);
-                cellEditText.setTextColor(getResources().getColor(R.color.color_white));
-                cellEditText.setHintTextColor(getResources().getColor(R.color.color_white));
-                cellEditText.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-                cellEditText.setLayoutParams(cellEditTextParams);
-
-                cellInner.addView(noText);
-                cellInner.addView(cellEditText);
-                cellContent.addView(cellInner);
-                rowInner.addView(cellContent);
-
-                list.add(cellEditText);
+    public void initSeedsSelectGridView() {
+        seedSelectGridView.setAdapter(seedsSelectAdapter);
+        seedSelectGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int willSetIndex = 0;
+                SelectSeedItem selectSeedItem = seedList.get(position);
+                boolean isSelected = selectSeedItem.isSelected();
+                int selectInt = selectSeedItem.getSelectIndex();
+                String seedString = selectSeedItem.getSeed();
+                for (int i = 0; i<seedsInputList.size();i++){
+                    if (seedsInputList.get(i).isEmpty()){
+                        willSetIndex = i;
+                        break;
+                    }
+                }
+                if(isSelected){
+                    selectSeedItem.setSelected(false);
+                    selectSeedItem.setSelectIndex(-1);
+                    seedsInputList.set(selectInt,"");
+                }else{
+                    selectSeedItem.setSelected(true);
+                    selectSeedItem.setSelectIndex(willSetIndex);
+                    seedsInputList.set(willSetIndex,seedString);
+                }
+                runOnUiThread(()->{
+                    seedsSelectAdapter.notifyDataSetChanged();
+                    seedsInputAdapter.notifyDataSetChanged();
+                });
 
             }
-            rowContent.addView(rowInner);
-            editListContent.addView(rowContent);
-        }
+        });
     }
 
-
+    public void initSeedsInputGridView() {
+        seedInputsGridView.setAdapter(seedsInputAdapter);
+    }
 
     /**
      * 点击Back
@@ -136,51 +145,133 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
-        Boolean checkResult = true;
-        for (int i = 0; i < list.size(); i++) {
-            String inputItemText = list.get(i).getText().toString();
-            String seed_no = "seed_" + Integer.toString(i);
-            Log.d(seed_no, seedList[i]);
-            if (inputItemText.equals(seedList[i])) {
-                Log.d(Integer.toString(i), inputItemText);
-            } else {
+        boolean checkResult = true;
+        for (int j = 0;j<gotSeedArray.length;j++){
+            if(!gotSeedArray[j].equals(seedsInputList.get(j))){
                 checkResult = false;
                 String toastTextHead = getResources().getString(R.string.toast_check_seeds_wrong_head);
                 String toastTextEnd = getResources().getString(R.string.toast_check_seeds_wrong_end);
-                String toastText = toastTextHead + Integer.toString(i+1) + "" + toastTextEnd;
+                String toastText = toastTextHead + Integer.toString(j+1) + "" + toastTextEnd;
                 Toast checkWrongToast = Toast.makeText(CreateWalletStepTwoActivity.this,toastText,Toast.LENGTH_LONG);
                 checkWrongToast.setGravity(Gravity.TOP,0,40);
                 checkWrongToast.show();
-                Log.d(seed_no, "wrong");
                 break;
             }
-
         }
-        if (checkResult) {
+        if(checkResult){
             User.getInstance().setSeedChecked(mContext,true);
             switchActivity(CreateWalletStepThreeActivity.class);
-        }
-
-    }
-
-
-    /**
-     *测试专用，点击test_enter所在view将自动填写所有seed，为了方便测试，完成后删除下方代码
-     * Code for test,when click test enter view while auto-fill all seed.Before public apk delete follow code.
-     */
-    @OnClick(R.id.description_text_test)
-    public void clickForEnterSeeds(){
-        
-        for (int i = 0; i < list.size(); i++) {
-            Log.e("seed item",seedList[i]);
-            list.get(i).setText(seedList[i]);
         }
     }
 
     @OnClick(R.id.description_text_clear)
-    public void clickForClearSeeds(){
+    public void clickForClearSeeds() {
         for (int i = 0; i < list.size(); i++) {
             list.get(i).setText("");
+        }
+    }
+
+    class SeedsInputAdapter extends BaseAdapter {
+
+        private Context mContext;
+
+        public SeedsInputAdapter(Context context) {
+            this.mContext = context;
+        }
+
+        @Override
+        public int getCount() {
+            return seedsInputList != null ? seedsInputList.size() : 0;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return seedsInputList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder;
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.layout_item_input_seed, null);
+                viewHolder = new ViewHolder(convertView);
+                convertView.setTag(viewHolder);
+
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+            viewHolder.setText(R.id.seed_idx, (position + 1) + ".");
+            TextView textView = viewHolder.getView(R.id.seed_text);
+            if (!seedsInputList.get(position).isEmpty()) {
+                textView.setText(seedsInputList.get(position));
+                if (seedsInputList.get(position).equals(gotSeedArray[position])){
+                    textView.setTextColor(Color.WHITE);
+                }else{
+                    textView.setTextColor(Color.RED);
+                }
+            } else {
+                textView.setText("------");
+                textView.setTextColor(Color.WHITE);
+            }
+
+            return convertView;
+        }
+    }
+
+    class SeedsSelectAdapter extends BaseAdapter {
+
+        private Context mContext;
+
+        public SeedsSelectAdapter(Context context) {
+            this.mContext = context;
+        }
+
+        @Override
+        public int getCount() {
+            return seedList != null ? seedList.size() : 0;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return seedList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder;
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.layout_item_select_seed, null);
+                viewHolder = new ViewHolder(convertView);
+                convertView.setTag(viewHolder);
+
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+            boolean isSelected = seedList.get(position).isSelected();
+            viewHolder.setText(R.id.select_seed_text, seedList.get(position).getSeed());
+            LinearLayout contentView = viewHolder.getView(R.id.select_seed_view_content);
+            TextView textView = viewHolder.getView(R.id.select_seed_text);
+            if(isSelected){
+                contentView.setBackground(getDrawable(R.drawable.bg_btn_round_blue_4));
+                textView.setTextColor(Color.WHITE);
+            }else{
+                contentView.setBackground(getDrawable(R.drawable.bg_btn_round_white_4));
+                textView.setTextColor(Color.BLACK);
+            }
+
+            return convertView;
         }
     }
 
