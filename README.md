@@ -1,7 +1,7 @@
 # OBAndroid
 
 
-OBAndroid is an [OmniBOLT](https://github.com/omnilaboratory/obd) Lightning wallet for android devices. It provides a platform for simple, instantaneous Bitcoin/Omnilayer asset payments. OBAndroid is now in developer beta, and will be in public beta in Nov/Dec 2022, available on Android only.  
+OBAndroid is a self-custodial [OmniBOLT](https://github.com/omnilaboratory/obd) Lightning wallet for android devices. It provides a platform for simple, instantaneous Bitcoin/Omnilayer asset payments. OBAndroid is now in developer beta, and will be in public beta in Nov/Dec 2022, available on Android only.  
 
 <p align="center">
   <img width="500" alt="obwallet screenshots" src="https://github.com/omnilaboratory/obd/blob/master/docs/prototype/obwalletscreenshots.png">
@@ -9,7 +9,8 @@ OBAndroid is an [OmniBOLT](https://github.com/omnilaboratory/obd) Lightning wall
 
 ## Features
 
-- [x] obd-lnd on Android and cloud
+- [x] Self-custodial
+- [x] obd-lnd on Android
 - [x] Mainnet, testnet, regtest
 - [x] Bitcoin/Omnilayer wallet(layer 1): store, pay, receive, backup, restore
 - [x] Bitcoin lightning payment(layer 2)  
@@ -31,9 +32,27 @@ OBAndroid is an [OmniBOLT](https://github.com/omnilaboratory/obd) Lightning wall
 
 ## Compatibility
 
+#### Bitcoin and Omnilayer addresses
+
+For onchain transactions, the receiving address of omni assets must be `p2pkh`, that is:  
+1. Mainnet: address starting with `1`  
+2. Testnet: address starting with 'm' or 'n'  
+3. Regtest: address starting with 'm' or 'n'  
+
+BECH32 addresses(starting with `bc`) are not supported by the Omnilayer, and sending omni assets to BECH32 addresses will result in permanent fund loss. OBAndroid protects users from such dangerous operations.
+
+Bitcoin transactions support all legal BTC receiving addresses, including bech32 (starting with bc) addresses.
+
+#### Invoice format
+
+The currently supported invoice format is [OmniBOLT 7](https://github.com/omnilaboratory/OmniBOLT-spec/blob/master/OmniBOLT-07-Hierarchical-Deterministic-(HD)-wallet.md#invoice-encoding).  
+
+BOLT 11 lacks asset awareness and is not supported by OBAndroid at this stage, paying BTC/satoshi to a BOLT 11 invoice will cause the payment to fail.  
+
+#### obd and lnd versions
+
 Full OBAndroid functionality depends on running a certain version of obd on mobile devices. View the table below to ensure that you run the correct version of obd with the relevant OBAndroid release. The bundled version will always come with the correct, compatible versioning. To connect to remote obd nodes, you should check the compatibility dependency below. 
 
-The currently supported invoice format is [OmniBOLT 7](https://github.com/omnilaboratory/OmniBOLT-spec/blob/master/OmniBOLT-07-Hierarchical-Deterministic-(HD)-wallet.md#invoice-encoding). Paying btc/satoshi to a BOLT 11 invoice will cause the payment to fail.  
 
 
 | OBWallet		|	obd				  |	 
