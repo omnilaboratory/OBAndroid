@@ -152,7 +152,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     // TODO: 2023/1/12 待完善
     private void setAssetTrendChartViewShow() {
         AccountAssetsData accountAssetsData = AccountAssetsData.getInstance(mContext);
-        List<Map<String,Object>> allList = null;
+        /*List<Map<String,Object>> allList = null;
         try {
             allList = accountAssetsData.queryAmountForAll();
             List<AssetTrendEntity> list = new ArrayList<>();
@@ -175,9 +175,9 @@ public class AccountLightningActivity extends AppBaseActivity {
             mAssetTrendChartView.setViewShow(list);
         } catch (ParseException e) {
             e.printStackTrace();
-        }
+        }*/
 
-        /*List<AssetTrendEntity> list = new ArrayList<>();
+        List<AssetTrendEntity> list = new ArrayList<>();
         AssetTrendEntity entity1 = new AssetTrendEntity();
         entity1.setTime("Jan");
         entity1.setAsset("5");
@@ -226,7 +226,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         list.add(entity10);
         list.add(entity11);
         list.add(entity12);
-        mAssetTrendChartView.setViewShow(list);*/
+        mAssetTrendChartView.setViewShow(list);
     }
 
     @Override
