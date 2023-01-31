@@ -8,7 +8,6 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.omni.wallet.framelibrary.entity.User;
 
 import lnrpc.Stateservice;
 import obdmobile.Obdmobile;
@@ -73,6 +72,7 @@ public class WalletState {
                 try {
                     Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
                     int walletState = subscribeStateResponse.getStateValue();
+                    Log.e(TAG,String.valueOf(walletState));
                     walletStateCallback.callback(walletState);
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
