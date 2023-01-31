@@ -76,6 +76,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
                     for (int idx = 0;idx<seedArray.size();idx++){
                         seedsString = seedsString + seedArray.get(idx)+ " ";
                     }
+                    Log.e("seedString",seedsString);
                     User.getInstance().setSeedString(mContext,seedsString);
 //                    initTvForSeeds();
                     TextView textView01 = (TextView)findViewById(R.id.seed_text_1);
