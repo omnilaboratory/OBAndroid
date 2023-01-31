@@ -41,10 +41,8 @@ import com.omni.wallet.utils.WalletState;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,7 +55,6 @@ import butterknife.OnClick;
 import lnrpc.Stateservice;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
-import obdmobile.RecvStream;
 
 /**
  * The page for initial
@@ -66,6 +63,7 @@ import obdmobile.RecvStream;
 public class SplashActivity extends AppBaseActivity {
     private static final String TAG = SplashActivity.class.getSimpleName();
     private static Handler handler = new Handler();
+
     /**
      * refuse access dialog
      * 权限拒绝的对话框

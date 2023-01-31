@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,11 +16,15 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.data.AccountAssetsData;
+import com.omni.wallet.data.BTCData;
+import com.omni.wallet.data.DollarData;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
@@ -33,6 +38,7 @@ import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.AssetTrendChartView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
@@ -50,8 +56,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -143,7 +151,33 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     // TODO: 2023/1/12 待完善
     private void setAssetTrendChartViewShow() {
-        List<AssetTrendEntity> list = new ArrayList<>();
+        AccountAssetsData accountAssetsData = AccountAssetsData.getInstance(mContext);
+        List<Map<String,Object>> allList = null;
+        try {
+            allList = accountAssetsData.queryAmountForAll();
+            List<AssetTrendEntity> list = new ArrayList<>();
+            Log.e(TAG,"allList:" + allList.toString());
+            if(allList.size()==1){
+                AssetTrendEntity entity = new AssetTrendEntity();
+                String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills()- ConstantInOB.DAY_MILLIS,mContext);
+                entity.setTime(date);
+                entity.setAsset(Double.toString(0));
+                list.add(entity);
+            }
+            for (int i =0;i<allList.size();i++){
+                AssetTrendEntity entity = new AssetTrendEntity();
+                Map<String,Object> item = allList.get(i);
+                String date = TimeFormatUtil.formatDateLong(Long.parseLong((String) item.get("date")),mContext);
+                entity.setTime(date);
+                entity.setAsset(Double.toString((Double) item.get("value")));
+                list.add(entity);
+            }
+            mAssetTrendChartView.setViewShow(list);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        /*List<AssetTrendEntity> list = new ArrayList<>();
         AssetTrendEntity entity1 = new AssetTrendEntity();
         entity1.setTime("Jan");
         entity1.setAsset("5");
@@ -192,7 +226,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         list.add(entity10);
         list.add(entity11);
         list.add(entity12);
-        mAssetTrendChartView.setViewShow(list);
+        mAssetTrendChartView.setViewShow(list);*/
     }
 
     @Override
@@ -296,6 +330,12 @@ public class AccountLightningActivity extends AppBaseActivity {
                                 mBalanceValueTv.setText("$ " + df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                                 balanceAmount = resp.getConfirmedBalance();
                                 mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
+                                BTCData btcData = new BTCData(mContext);
+                                try {
+                                    btcData.updateAmount(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
                             }
                             blockData.clear();
                             ListAssetItemEntity entity = new ListAssetItemEntity();
@@ -335,11 +375,24 @@ public class AccountLightningActivity extends AppBaseActivity {
                                 LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
                                 blockData.clear();
                                 for (int i = 0; i < resp.getListList().size(); i++) {
+
                                     ListAssetItemEntity entity = new ListAssetItemEntity();
                                     entity.setAmount(resp.getListList().get(i).getBalance());
                                     entity.setPropertyid(resp.getListList().get(i).getPropertyid());
                                     entity.setType(1);
                                     blockData.add(entity);
+                                    switch (Long.toString(resp.getListList().get(i).getPropertyid())){
+                                        case "2147483651":
+                                            DollarData dollarData = new DollarData(mContext);
+                                            try {
+                                                dollarData.updateAmount(resp.getListList().get(i).getBalance() / 100000000);
+                                            } catch (ParseException e) {
+                                                e.printStackTrace();
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                     getChannelBalance(resp.getListList().get(i).getPropertyid());
                                 }
                                 allData.addAll(blockData);

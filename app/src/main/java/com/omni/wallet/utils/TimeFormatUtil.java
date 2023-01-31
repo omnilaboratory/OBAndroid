@@ -5,6 +5,9 @@ import android.content.Context;
 import com.omni.wallet.R;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class TimeFormatUtil {
@@ -86,5 +89,47 @@ public class TimeFormatUtil {
         }
 
         return formattedString;
+    }
+
+    public static long getYearFirstMills() {
+        Calendar c = Calendar.getInstance();
+        int year = c.getTime().getYear();
+        String yearDay = year + "-01-01";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date d = null;
+        try {
+             d = sdf.parse(yearDay);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long mills = d.getTime();
+        return mills;
+    }
+
+    public static String formatDateLong(long time, Context context) {
+        SimpleDateFormat sdf = null;
+        long yearDayMills = getYearFirstMills();
+        if(time-yearDayMills<0){
+            sdf = new SimpleDateFormat("yyyy-MM-dd");
+        }else{
+            sdf = new SimpleDateFormat("MM-dd");
+        }
+        String date = sdf.format(time);
+        return date;
+    }
+
+    public static String getNowDate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        String date = sdf.format(c.getTime());
+        return date;
+    }
+
+    public static long getCurrentDayMills() throws ParseException {
+        String nowDate = getNowDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date d = sdf.parse(nowDate);
+        long dateNum = d.getTime();
+        return dateNum;
     }
 }
