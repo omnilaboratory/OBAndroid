@@ -1,7 +1,6 @@
 package com.omni.wallet.base;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
 import android.util.Log;
@@ -18,10 +17,8 @@ import com.omni.wallet.baselibrary.http.interceptor.LogInterceptor;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
-import com.omni.wallet.data.AccountAssetsData;
 import com.omni.wallet.data.BTCData;
 import com.omni.wallet.data.DollarData;
-import com.omni.wallet.data.USDTData;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
@@ -146,7 +143,7 @@ public class AppApplication extends BaseApplication {
                 balanceHandler.postDelayed(this, 360000);// 360s后执行
             }
         };
-        handler.postDelayed(balanceRunnable, 0);// 打开定时器立即执行
+        balanceHandler.postDelayed(balanceRunnable, 0);// 打开定时器立即执行
     }
 
     public void getTotalBlock(){
