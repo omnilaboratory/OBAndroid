@@ -330,12 +330,12 @@ public class AccountLightningActivity extends AppBaseActivity {
                                 mBalanceValueTv.setText("$ " + df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                                 balanceAmount = resp.getConfirmedBalance();
                                 mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
-                                BTCData btcData = new BTCData(mContext);
+                                /*BTCData btcData = new BTCData(mContext);
                                 try {
                                     btcData.updateAmount(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000);
                                 } catch (ParseException e) {
                                     e.printStackTrace();
-                                }
+                                }*/
                             }
                             blockData.clear();
                             ListAssetItemEntity entity = new ListAssetItemEntity();
@@ -381,7 +381,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     entity.setPropertyid(resp.getListList().get(i).getPropertyid());
                                     entity.setType(1);
                                     blockData.add(entity);
-                                    switch (Long.toString(resp.getListList().get(i).getPropertyid())){
+                                    /*switch (Long.toString(resp.getListList().get(i).getPropertyid())){
                                         case "2147483651":
                                             DollarData dollarData = new DollarData(mContext);
                                             try {
@@ -392,7 +392,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                                             break;
                                         default:
                                             break;
-                                    }
+                                    }*/
                                     getChannelBalance(resp.getListList().get(i).getPropertyid());
                                 }
                                 allData.addAll(blockData);

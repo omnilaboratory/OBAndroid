@@ -220,7 +220,7 @@ public class AppApplication extends BaseApplication {
                     @Override
                     public void onError(Context context, String errorCode, String errorMsg)  {
                         Log.e(TAG,"getBTCPriceError:"+ errorMsg);
-                        try {
+                        /*try {
                             BTCData btcData = new BTCData(mContext);
                             if(btcData.checkDataIsEmpty()){
                                 btcData.insert(0,btcData.getLastPrice());
@@ -228,7 +228,7 @@ public class AppApplication extends BaseApplication {
                             getUsdtPrice();
                         } catch (ParseException e) {
                             e.printStackTrace();
-                        }
+                        }*/
                     }
 
                     @Override
@@ -241,18 +241,15 @@ public class AppApplication extends BaseApplication {
                             String priceChange24h = jsonObject.getString("price_change_percentage_24h");
                             User.getInstance().setBtcPrice(mContext,btcPrice);
                             User.getInstance().setBtcPriceChange(mContext,priceChange24h);
-                            BTCData btcData = new BTCData(mContext);
+                            /*BTCData btcData = new BTCData(mContext);
                             if(btcData.checkDataIsEmpty()){
                                 btcData.insert(0,Double.parseDouble(btcPrice));
                             }else{
                                 btcData.updatePrice(Double.parseDouble(btcPrice));
-                            }
+                            }*/
 
                             getUsdtPrice();
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (ParseException e) {
-                            Log.e(TAG,"dateError:" + e.toString());
                             e.printStackTrace();
                         }
                     }
@@ -296,14 +293,14 @@ public class AppApplication extends BaseApplication {
                     @Override
                     public void onError(Context context, String errorCode, String errorMsg) {
                         Log.e(TAG,"getUsdtPriceError:"+ errorMsg);
-                        try {
+                        /*try {
                             DollarData dollarData = new DollarData(mContext);
                             if(dollarData.checkDataIsEmpty()){
                                 dollarData.insert(0,dollarData.getLastPrice());
                             }
                         } catch (ParseException e) {
                             e.printStackTrace();
-                        }
+                        }*/
                     }
 
                     @Override
@@ -314,16 +311,14 @@ public class AppApplication extends BaseApplication {
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
                             String usdtPrice = jsonObject.getString("current_price");
                             User.getInstance().setUsdtPrice(mContext,usdtPrice);
-                            DollarData dollarData = new DollarData(mContext);
+                            /*DollarData dollarData = new DollarData(mContext);
                             if(dollarData.checkDataIsEmpty()){
                                 dollarData.insert(0,Double.parseDouble(usdtPrice));
                             }else{
                                 dollarData.updatePrice(Double.parseDouble(usdtPrice));
-                            }
+                            }*/
                             EventBus.getDefault().post(new BtcAndUsdtEvent());
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
