@@ -64,20 +64,17 @@
 
         </LinearLayout>
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/main_180"
+        android:layout_height="@dimen/main_240"
         android:layout_marginTop="@dimen/main_20">
-        <GridView
-            android:id="@+id/seed_select_grid_view"
+        <android.support.v4.view.ViewPager
+            android:id="@+id/seed_select_pager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="false"
-            android:numColumns="3"
-            android:verticalSpacing="@dimen/main_10"
-            android:paddingBottom="@dimen/main_10"/>
+            android:layout_height="@dimen/main_240"/>
     </LinearLayout>
+
+
 
     <RelativeLayout
         android:layout_width="match_parent"
