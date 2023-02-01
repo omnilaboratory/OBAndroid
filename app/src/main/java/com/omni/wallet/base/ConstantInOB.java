@@ -27,12 +27,14 @@ public class ConstantInOB {
     public static final String neutrinoRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=neutrino " +
+            "--enable-upfront-shutdown " +
             "--neutrino.connect=" + BTCHostAddressRegTest +
-            "--omnicoreproxy.rpchost=" + OMNIHostAddressPortRegTest;
+            " --omnicoreproxy.rpchost=" + OMNIHostAddressPortRegTest ;
 
     public static final String normalRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
+            "--enable-upfront-shutdown " +
             "--omnicoreproxy.rpchost=" + BTCHostAddressRegTest + ":18332 " +
             "--omnicoreproxy.zmqpubrawblock=tcp://" + BTCHostAddressRegTest + ":28332 " +
             "--omnicoreproxy.zmqpubrawtx=tcp://" + BTCHostAddressRegTest + ":28333";
@@ -40,8 +42,9 @@ public class ConstantInOB {
     public static final String neutrinoTestNetConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.testnet --bitcoin.node=neutrino " +
+            "--enable-upfront-shutdown " +
             "--neutrino.connect=" + TEST_NET_BTC_HOST_ADDRESS +
-            "--omnicoreproxy.rpchost=" + TEST_NET_OMNI_HOST_ADDRESS_PORT;
+            " --omnicoreproxy.rpchost=" + TEST_NET_OMNI_HOST_ADDRESS_PORT;
 
 //    testnet config
 
