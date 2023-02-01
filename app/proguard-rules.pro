@@ -152,9 +152,6 @@
 #保留使用@keep注解的类名和方法
 -keep,allowobfuscation @interface android.support.annotation.Keep
 -keep @android.support.annotation.Keep class *
--keepclassmember class * {
-@android.support.annotation.Keep *;
-}
 #---------------------------------------------------------------------------------------------------
 
 ################# 抑制所有警告 #################

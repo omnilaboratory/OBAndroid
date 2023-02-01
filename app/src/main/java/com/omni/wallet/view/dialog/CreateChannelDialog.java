@@ -100,7 +100,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
             mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
             showStepTwo();
         } else {
-            nodePubkey = "039ca4361e5292835a2a714e5e165bc635af6be91fb9fcd591d7b3c735011d88e6@43.138.107.248:9735";
+            nodePubkey = "0386790984cda19a179486bf45f7a1d7dc58964605b928e3d36cd7806ce3d31cdb@43.138.107.248:9735";
             showStepOne();
         }
         /**
@@ -332,7 +332,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         mAlertDialog.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nodePubkey = "039ca4361e5292835a2a714e5e165bc635af6be91fb9fcd591d7b3c735011d88e6@43.138.107.248:9735";
+                nodePubkey = "0386790984cda19a179486bf45f7a1d7dc58964605b928e3d36cd7806ce3d31cdb@43.138.107.248:9735";
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.VISIBLE);
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.GONE);
                 showStepOne();
