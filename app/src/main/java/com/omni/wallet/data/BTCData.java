@@ -73,14 +73,25 @@ public class BTCData {
         db.close();
     }
 
-    public void updatePriceAndAmount(double price, double amount) throws ParseException {
+    public void updateChannelAmount(double channel_amount) throws ParseException {
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
         }
         String date = Long.toString(TimeFormatUtil.getCurrentDayMills());
-        String sql = "update btc_data set price =?, amount =? where date=?";
-        db.execSQL(sql, new Object[]{price, amount, date});
+        String sql = "update btc_data set channel_amount =? where date=?";
+        db.execSQL(sql, new Object[]{channel_amount, date});
+        db.close();
+    }
+
+    public void updatePriceAndAmount(double price, double amount, double channel_amount) throws ParseException {
+        SQLiteDatabase db = mInstance.getWritableDatabase();
+        if (!db.isOpen()) {
+            return;
+        }
+        String date = Long.toString(TimeFormatUtil.getCurrentDayMills());
+        String sql = "update btc_data set price =?, amount =?,channel_amount =? where date=?";
+        db.execSQL(sql, new Object[]{price, amount, channel_amount, date});
         db.close();
     }
 
