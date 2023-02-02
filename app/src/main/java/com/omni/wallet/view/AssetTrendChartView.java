@@ -66,7 +66,7 @@ public class AssetTrendChartView extends LinearLayout {
             setVisibility(GONE);
             return;
         }
-        setVisibility(VISIBLE);
+        setVisibility(GONE);
         //
         //配置基本信息
         lineChart.getDescription().setEnabled(false);   //设置描述
