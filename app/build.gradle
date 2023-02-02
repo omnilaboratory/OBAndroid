@@ -57,9 +57,9 @@ android {
                 variant.outputs.all {
                     if (outputFileName.endsWith('.apk')) {
                         if ("debug".equalsIgnoreCase(variant.buildType.name)) {
-                            outputFileName = "OBWallet_${defaultConfig.versionName}_Test.apk"
+                            outputFileName = "OBAndroid_testnet_${defaultConfig.versionName}_beta.10_test.apk"
                         } else if ("release".equalsIgnoreCase(variant.buildType.name)) {
-                            outputFileName = "OBWallet_${defaultConfig.versionName}_Release.apk"
+                            outputFileName = "OBAndroid_testnet_${defaultConfig.versionName}_beta.10_release.apk"
                         }
                     }
                 }
@@ -76,9 +76,9 @@ android {
                 variant.outputs.all {
                     if (outputFileName.endsWith('.apk')) {
                         if ("debug".equalsIgnoreCase(variant.buildType.name)) {
-                            outputFileName = "OBWallet_${defaultConfig.versionName}_Test.apk"
+                            outputFileName = "OBAndroid_testnet_${defaultConfig.versionName}_beta.10_test.apk"
                         } else if ("release".equalsIgnoreCase(variant.buildType.name)) {
-                            outputFileName = "OBWallet_${defaultConfig.versionName}_Release.apk"
+                            outputFileName = "OBAndroid_testnet_${defaultConfig.versionName}_beta.10_release.apk"
                         }
                     }
                 }

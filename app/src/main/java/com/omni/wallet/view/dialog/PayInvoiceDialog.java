@@ -65,6 +65,7 @@ public class PayInvoiceDialog {
     private static final int PAYMENT_HASH_BYTE_LENGTH = 32;
     LightningOuterClass.Route route;
     String paymentHash;
+    String toNodeName;
     LoadingDialog mLoadingDialog;
     private List<InvoiceEntity> list;
     private List<InvoiceEntity> btcList;
@@ -183,6 +184,8 @@ public class PayInvoiceDialog {
                                 ToastUtils.showToast(mContext, "Probe send request was null");
                                 return;
                             }
+                            // To Node
+                            toNodeName = resp.getDescription();
                             /**
                              * @备注： 存储未支付的发票
                              * @description: Store Unpaid Invoices
@@ -225,12 +228,11 @@ public class PayInvoiceDialog {
                                                     @Override
                                                     public void run() {
                                                         route = payment.getHtlcs(0).getRoute();
-
-                                                        if (route.getTotalFeesMsat() % 1000 == 0) {
-                                                            feeSats = route.getTotalFeesMsat() / 1000;
-                                                        } else {
-                                                            feeSats = (route.getTotalFeesMsat() / 1000) + 1;
-                                                        }
+//                                                        if (route.getTotalFeesMsat() % 1000 == 0) {
+//                                                            feeSats = route.getTotalFeesMsat() / 1000;
+//                                                        } else {
+//                                                            feeSats = (route.getTotalFeesMsat() / 1000) + 1;
+//                                                        }
                                                         paymentHash = payment.getPaymentHash();
                                                         toNodeAddress = resp.getDestination();
                                                         if (mAssetId == 0) {
@@ -238,6 +240,7 @@ public class PayInvoiceDialog {
                                                         } else {
                                                             payAmount = resp.getAmount();
                                                         }
+                                                        feeSats = payAmount / 10000;
                                                         mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.VISIBLE);
                                                         mAlertDialog.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.GONE);
                                                         mLoadingDialog.dismiss();
@@ -257,7 +260,7 @@ public class PayInvoiceDialog {
                                                         } else {
                                                             payAmount = resp.getAmount();
                                                         }
-                                                        feeSats = calculateAbsoluteFeeLimit(payAmount);
+                                                        feeSats = payAmount / 10000;
                                                         mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.VISIBLE);
                                                         mAlertDialog.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.GONE);
                                                         mLoadingDialog.dismiss();
@@ -396,6 +399,11 @@ public class PayInvoiceDialog {
         }
         fromNodeAddress1Tv.setText(StringUtils.encodePubkey(mAddress));
         toNodeAddress1Tv.setText(StringUtils.encodePubkey(toNodeAddress));
+        if (StringUtils.isEmpty(toNodeName)) {
+            toNodeName1Tv.setText("None");
+        } else {
+            toNodeName1Tv.setText(toNodeName);
+        }
         DecimalFormat df = new DecimalFormat("0.00######");
         if (mAssetId == 0) {
             amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
@@ -701,6 +709,11 @@ public class PayInvoiceDialog {
         }
         fromNodeAddress2Tv.setText(StringUtils.encodePubkey(mAddress));
         toNodeAddress2Tv.setText(StringUtils.encodePubkey(toNodeAddress));
+        if (StringUtils.isEmpty(toNodeName)) {
+            toNodeName2Tv.setText("None");
+        } else {
+            toNodeName2Tv.setText(toNodeName);
+        }
         DecimalFormat df = new DecimalFormat("0.00######");
         if (mAssetId == 0) {
             amountPay1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000));
@@ -708,7 +721,7 @@ public class PayInvoiceDialog {
             amountPayFee1Tv.setText("$" + df.format(Double.parseDouble(String.valueOf(feeSats / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
             amountPay1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
-            amountPayExchange1Tv.setText("$" + df.format(Double.parseDouble(String.valueOf(payAmount / 1000)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            amountPayExchange1Tv.setText("$" + df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
             amountPayFee1Tv.setText("$" + df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
     }
