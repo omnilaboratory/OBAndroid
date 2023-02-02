@@ -53,9 +53,9 @@ public class ConstantInOB {
     public static final String usingBTCHostAddress = TEST_NET_BTC_HOST_ADDRESS;
 
 //    regTest neutrino config
-//    public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
-//    public static final String usingDownloadBaseUrl = downloadBaseUrl;
-//    public static final String usingBTCHostAddress = BTCHostAddressRegTest;
+    /*public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
+    public static final String usingDownloadBaseUrl = downloadBaseUrl;
+    public static final String usingBTCHostAddress = BTCHostAddressRegTest;*/
 
     public static final long SECOND_MILLIS = 1000;
     public static final long MINUTE_MILLIS = 60 * SECOND_MILLIS;
