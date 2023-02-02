@@ -19,7 +19,7 @@ public class ConstantInOB {
     public static String regFilterHeader = "reg_filter_headers";
     public static String downloadBaseUrl = "https://cache.oblnd.top/neutrino-regtest/";
     public static String downloadBaseUrlTestNet = "https://cache.oblnd.top/neutrino-testnet/";
-    public static String TEST_NET_BTC_HOST_ADDRESS="192.144.199.67 ";
+    public static String TEST_NET_BTC_HOST_ADDRESS="192.144.199.67";
     public static String TEST_NET_OMNI_HOST_ADDRESS_PORT="192.144.199.67:18332";
 
 
@@ -48,14 +48,14 @@ public class ConstantInOB {
 
 //    testnet config
 
-    /*public static final String usingNeutrinoConfig = neutrinoTestNetConfig;
+    public static final String usingNeutrinoConfig = neutrinoTestNetConfig;
     public static final String usingDownloadBaseUrl = downloadBaseUrlTestNet;
-    public static final String usingBTCHostAddress = TEST_NET_BTC_HOST_ADDRESS;*/
+    public static final String usingBTCHostAddress = TEST_NET_BTC_HOST_ADDRESS;
 
 //    regTest neutrino config
-    public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
-    public static final String usingDownloadBaseUrl = downloadBaseUrl;
-    public static final String usingBTCHostAddress = BTCHostAddressRegTest;
+//    public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
+//    public static final String usingDownloadBaseUrl = downloadBaseUrl;
+//    public static final String usingBTCHostAddress = BTCHostAddressRegTest;
 
     public static final long SECOND_MILLIS = 1000;
     public static final long MINUTE_MILLIS = 60 * SECOND_MILLIS;

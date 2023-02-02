@@ -179,7 +179,7 @@ public class NodeInfoPopupWindow {
     }
 
     public void startNode() {
-        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
+        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startOnError------------------" + e.getMessage());
