@@ -35,9 +35,9 @@ android {
     // 设置签名文件
     signingConfigs {
         release {
-            storeFile file('omniwallet.jks')
+            storeFile file('OBAndroid.jks')
             storePassword "111111"
-            keyAlias "XFLProperty"
+            keyAlias "OBAndroid"
             keyPassword "111111"
         }
     }
@@ -47,11 +47,11 @@ android {
             // 定义代码混淆文件 注意：proguard-rules.pro要放在主工程的目录下
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             // 是否混淆代码
-            minifyEnabled true
+            minifyEnabled false
             //是否zip对齐
             zipAlignEnabled true
             // 缩减resource文件
-            shrinkResources true
+            shrinkResources false
             // 设置打包后应用名称
             android.applicationVariants.all { variant ->
                 variant.outputs.all {
