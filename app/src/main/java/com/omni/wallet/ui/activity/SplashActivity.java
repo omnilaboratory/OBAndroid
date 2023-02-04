@@ -362,6 +362,35 @@ public class SplashActivity extends AppBaseActivity {
         String filePath = downloadDirectoryPath + "manifest.txt";
         File file = new File(filePath);
         if (file.exists()) {
+            BufferedReader bfr;
+            try {
+                bfr = new BufferedReader(new FileReader(downloadDirectoryPath + "manifest.txt"));
+                String line = bfr.readLine();
+                StringBuilder sb = new StringBuilder();
+                while (line != null) {
+                    String oldLine = line;
+                    sb.append(line);
+                    sb.append("\n");
+                    Log.e(TAG, line);
+                    String[] lineArray = oldLine.split(" {2}");
+                    if (lineArray[1].endsWith(ConstantInOB.blockHeaderBin)) {
+                        manifestInfo.put(ConstantInOB.blockHeader, lineArray[0]);
+                    } else if (lineArray[1].endsWith(ConstantInOB.neutrinoDB)) {
+                        manifestInfo.put(ConstantInOB.neutrino, lineArray[0]);
+                    } else if (lineArray[1].endsWith(ConstantInOB.regFilterHeaderBin)) {
+                        manifestInfo.put(ConstantInOB.regFilterHeader, lineArray[0]);
+                    }
+                    line = bfr.readLine();
+                    if (line == null) {
+                        actionAfterPromise();
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             actionAfterPromise();
         } else {
             PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build()
@@ -401,7 +430,18 @@ public class SplashActivity extends AppBaseActivity {
 
                         @Override
                         public void onError(Error error) {
-                            Log.e(TAG, error.toString());
+                            boolean connectionError = error.isConnectionError();
+                            boolean serverError =error.isServerError();
+                            if (connectionError){
+                                getManifestFile();
+                                Log.e(TAG, "Manifest download ConnectError");
+
+                            }else if(serverError){
+                                Log.e(TAG, "Manifest download ConnectError");
+                            }else{
+                                Log.e(TAG, "Manifest" + error.toString());
+                            }
+
                         }
                     });
         }
@@ -454,7 +494,17 @@ public class SplashActivity extends AppBaseActivity {
 
             @Override
             public void onError(Error error) {
-                Log.e(TAG, error.toString());
+                boolean connectionError = error.isConnectionError();
+                boolean serverError =error.isServerError();
+                if (connectionError){
+                    downloadHeaderBinFile();
+                    Log.e(TAG, "HeaderBin download ConnectError");
+
+                }else if(serverError){
+                    Log.e(TAG, "HeaderBin download ConnectError");
+                }else{
+                    Log.e(TAG, "HeaderBin" + error.toString());
+                }
             }
         });
     }
@@ -508,7 +558,17 @@ public class SplashActivity extends AppBaseActivity {
 
             @Override
             public void onError(Error error) {
-                Log.e(TAG, error.toString());
+                boolean connectionError = error.isConnectionError();
+                boolean serverError =error.isServerError();
+                if (connectionError){
+                    downloadDBFile();
+                    Log.e(TAG, "DBFile download ConnectError");
+
+                }else if(serverError){
+                    Log.e(TAG, "DBFile download ConnectError");
+                }else{
+                    Log.e(TAG, "DBFile" + error.toString());
+                }
             }
         });
     }
@@ -562,7 +622,17 @@ public class SplashActivity extends AppBaseActivity {
 
             @Override
             public void onError(Error error) {
-                Log.e(TAG, error.toString());
+                boolean connectionError = error.isConnectionError();
+                boolean serverError =error.isServerError();
+                if (connectionError){
+                    downloadFilterHeaderBinFile();
+                    Log.e(TAG, "FilterHeaderBin download ConnectError");
+
+                }else if(serverError){
+                    Log.e(TAG, "FilterHeaderBin download ConnectError");
+                }else{
+                    Log.e(TAG, "FilterHeaderBin" + error.toString());
+                }
             }
         });
 
@@ -630,7 +700,7 @@ public class SplashActivity extends AppBaseActivity {
         double totalWidth = rvMyProcessOuter.getWidth();
         int innerHeight = (int) rvMyProcessOuter.getHeight() - 2;
         int innerWidth = (int) (totalWidth * percent / 100);
-        String percentString = String.format("%.0f", percent);
+        String percentString = String.format("%.2f", percent);
         syncPercentView.setText(percentString + "%");
         RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth, innerHeight);
         rvProcessInner.setLayoutParams(rlInnerParam);

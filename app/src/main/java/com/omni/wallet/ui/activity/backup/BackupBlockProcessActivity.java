@@ -105,16 +105,15 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
 
     WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
+        Log.e(TAG,User.getInstance().getWalletAddress(mContext));
         switch (walletState){
             case 1:
                 unlockWallet();
                 break;
             case 4:
                 if(User.getInstance().getWalletAddress(mContext).isEmpty()){
-
                     newAddressToWallet();
                 }
-
                 break;
             default:
                 break;
@@ -250,78 +249,87 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         Log.e(TAG,"new Address count");
         String createType = User.getInstance().getInitWalletType(mContext);
         if(createType.equals("recovery")){
-            LightningOuterClass.ListAddressesRequest listAddressesRequest = LightningOuterClass.ListAddressesRequest.newBuilder().build();
-            Obdmobile.oB_ListAddresses(listAddressesRequest.toByteArray(), new Callback() {
-                @Override
-                public void onError(Exception e) {
-                    Log.e("getAddress Error",e.toString());
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(byte[] bytes) {
-                    if(bytes == null){
-                        return;
-                    }
-                    try {
-                        LightningOuterClass.ListAddressesResponse listAddressesResponse = LightningOuterClass.ListAddressesResponse.parseFrom(bytes);
-                        List<String> addresses = listAddressesResponse.getItemsList();
-                        String address = listAddressesResponse.getItems(0);
-                        Log.e(TAG,addresses.toString());
-                        newCreatedAddress = address;
-                        Bitmap mQRBitmap = CodeUtils.createQRCode(address, DisplayUtil.dp2px(mContext, 100));
-                        runOnUiThread(() -> {
-                            qrAddressTv.setText(address);
-                            qrAddressIv.setImageBitmap(mQRBitmap);
-                            obdLogFileObserver.stopWatching();
-                            User.getInstance().setWalletAddress(mContext,address);
-                            updateSyncDataView(totalBlock);
-                            User.getInstance().setInitWalletType(mContext,"recovered");
-                        });
-
-                    } catch (InvalidProtocolBufferException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
+            getOldAddress();
         }else{
-            LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
-            Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
-                @Override
-                public void onError(Exception e) {
-                    e.printStackTrace();
-                }
-                @Override
-                public void onResponse(byte[] bytes) {
-                    if(bytes == null){
-                        return;
-                    }
-                    try {
-                        LightningOuterClass.NewAddressResponse newAddressResponse = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
-                        String address = newAddressResponse.getAddress();
-                        newCreatedAddress = address;
-                        Bitmap mQRBitmap = CodeUtils.createQRCode(address, DisplayUtil.dp2px(mContext, 100));
-                        runOnUiThread(() -> {
-                            qrAddressTv.setText(address);
-                            qrAddressIv.setImageBitmap(mQRBitmap);
-                            obdLogFileObserver.stopWatching();
-                            User.getInstance().setWalletAddress(mContext,address);
-                            updateSyncDataView(totalBlock);
-                            User.getInstance().setInitWalletType(mContext,"created");
-
-                        });
-                        // save wallet address to local
-                        // 保存地址到本地
-
-                    } catch (InvalidProtocolBufferException e) {
-                        e.printStackTrace();
-
-                    }
-                }
-            });
+            newAddress();
         }
 
+    }
+
+    public void newAddress(){
+
+        LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
+        Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+            @Override
+            public void onResponse(byte[] bytes) {
+                if(bytes == null){
+                    return;
+                }
+                try {
+                    LightningOuterClass.NewAddressResponse newAddressResponse = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
+                    String address = newAddressResponse.getAddress();
+                    newCreatedAddress = address;
+                    Bitmap mQRBitmap = CodeUtils.createQRCode(address, DisplayUtil.dp2px(mContext, 100));
+                    runOnUiThread(() -> {
+                        qrAddressTv.setText(address);
+                        qrAddressIv.setImageBitmap(mQRBitmap);
+                        obdLogFileObserver.stopWatching();
+                        User.getInstance().setWalletAddress(mContext,address);
+                        updateSyncDataView(totalBlock);
+                        User.getInstance().setInitWalletType(mContext,"created");
+
+                    });
+                    // save wallet address to local
+                    // 保存地址到本地
+
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+
+                }
+            }
+        });
+    }
+
+    public void getOldAddress(){
+
+        LightningOuterClass.ListAddressesRequest listAddressesRequest = LightningOuterClass.ListAddressesRequest.newBuilder().build();
+        Obdmobile.oB_ListAddresses(listAddressesRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                Log.e("getAddress Error",e.toString());
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if(bytes == null){
+                    newAddress();
+                }
+                try {
+                    LightningOuterClass.ListAddressesResponse listAddressesResponse = LightningOuterClass.ListAddressesResponse.parseFrom(bytes);
+                    List<String> addresses = listAddressesResponse.getItemsList();
+                    String address = listAddressesResponse.getItems(0);
+                    Log.e(TAG,addresses.toString());
+                    newCreatedAddress = address;
+                    Bitmap mQRBitmap = CodeUtils.createQRCode(address, DisplayUtil.dp2px(mContext, 100));
+                    runOnUiThread(() -> {
+                        qrAddressTv.setText(address);
+                        qrAddressIv.setImageBitmap(mQRBitmap);
+                        obdLogFileObserver.stopWatching();
+                        User.getInstance().setWalletAddress(mContext,address);
+                        updateSyncDataView(totalBlock);
+                        User.getInstance().setInitWalletType(mContext,"recovered");
+                    });
+
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     
