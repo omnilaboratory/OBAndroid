@@ -29,7 +29,8 @@ public class ConstantInOB {
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=neutrino " +
             "--enable-upfront-shutdown " +
-//            "--tlsdisableautofill " +
+            "--tlsdisableautofill " +
+            "--norest "+
             "--neutrino.connect=" + BTCHostAddressRegTest +
             " --omnicoreproxy.rpchost=" + OMNIHostAddressPortRegTest ;
 
@@ -37,7 +38,8 @@ public class ConstantInOB {
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
             "--enable-upfront-shutdown " +
-//            "--tlsdisableautofill " +
+            "--tlsdisableautofill " +
+            "--norest "+
             "--omnicoreproxy.rpchost=" + BTCHostAddressRegTest + ":18332 " +
             "--omnicoreproxy.zmqpubrawblock=tcp://" + BTCHostAddressRegTest + ":28332 " +
             "--omnicoreproxy.zmqpubrawtx=tcp://" + BTCHostAddressRegTest + ":28333";
@@ -46,7 +48,8 @@ public class ConstantInOB {
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.testnet --bitcoin.node=neutrino " +
             "--enable-upfront-shutdown " +
-//            "--tlsdisableautofill " +
+            "--tlsdisableautofill " +
+            "--norest "+
             "--neutrino.connect=" + TEST_NET_BTC_HOST_ADDRESS +
             " --omnicoreproxy.rpchost=" + TEST_NET_OMNI_HOST_ADDRESS_PORT;
 
