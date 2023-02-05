@@ -8,7 +8,7 @@
     <GridView
         android:id="@+id/seed_select_grid_view_page"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/main_240"
+        android:layout_height="@dimen/main_180"
         android:clickable="false"
         android:numColumns="3"
         android:verticalSpacing="@dimen/main_10"

@@ -47,7 +47,7 @@
         android:gravity="center">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/main_230"
+            android:layout_height="@dimen/main_160"
             android:background="@drawable/bg_create_content_green"
             android:orientation="vertical"
             android:padding="20dp"
@@ -66,12 +66,12 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/main_240"
+        android:layout_height="@dimen/main_180"
         android:layout_marginTop="@dimen/main_20">
         <android.support.v4.view.ViewPager
             android:id="@+id/seed_select_pager"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/main_240"/>
+            android:layout_height="@dimen/main_180"/>
     </LinearLayout>
 
 
@@ -80,9 +80,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="30dp"
-        android:layout_marginBottom="30dp">
+        android:layout_marginBottom="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/select_seed_view_content"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/main_40"
+        android:layout_height="@dimen/main_30"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_marginStart="@dimen/main_10"
@@ -17,12 +17,13 @@
         <TextView
             android:id="@+id/select_seed_text"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/main_40"
-            android:lineHeight="@dimen/main_40"
-            android:text="1234567895274832546"
+            android:layout_height="@dimen/main_30"
+            android:lineHeight="@dimen/main_30"
+            android:text=" "
+            android:textSize="@dimen/main_14"
             android:textAlignment="center"
-            android:paddingTop="@dimen/main_10"
-            android:paddingBottom="@dimen/main_10"
+            android:paddingTop="@dimen/main_5"
+            android:paddingBottom="@dimen/main_5"
             android:paddingStart="@dimen/main_10"
             android:paddingEnd="@dimen/main_10"
             />
