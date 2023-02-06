@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.text.InputFilter;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -19,7 +20,9 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.utils.CheckInputRules;
+import com.omni.wallet.utils.InputFilters;
 import com.omni.wallet.utils.Md5Util;
+import com.omni.wallet.utils.PasswordFilter;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -54,7 +57,9 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-
+        PasswordFilter passwordFilter = new PasswordFilter();
+        mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
+        mConfirmPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
     }
 
     @Override

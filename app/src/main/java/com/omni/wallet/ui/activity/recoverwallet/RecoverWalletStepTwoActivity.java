@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.text.InputFilter;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -25,7 +26,9 @@ import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
 import com.omni.wallet.utils.BackupUtils;
 import com.omni.wallet.utils.CheckInputRules;
+import com.omni.wallet.utils.InputFilters;
 import com.omni.wallet.utils.Md5Util;
+import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import java.io.File;
@@ -74,6 +77,9 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
     @Override
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
+        PasswordFilter passwordFilter = new PasswordFilter();
+        mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
+        mConfirmPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
     }
 
     @Override

@@ -31,7 +31,7 @@
     <string name="important_alert">您的助记词很重要</string>
     <string name="create_step_two_description">助记词如果丢失了，您将无法找回您的钱包。为确保您已经准确的记录了您的助记词, 请根据序号输入助记词:  </string>
     <string name="create_seed_input_hit">————</string>
-    <string name="create_pass_input_hit">————————————</string>
+    <string name="create_pass_input_hit">----------------</string>
     <string name="pass_show_hind">pass show or hind</string>
     <!-- create wallet页面 -->
     <string name="create_wallet">创建钱包</string>

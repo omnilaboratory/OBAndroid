@@ -30,7 +30,7 @@
     <string name="important_alert">Your seed is important!</string>
     <string name="create_step_two_description">If you lose your seed you\'ll have no way to recover your wallet. To make sure that you have properly saved your seed, please retype words:  </string>
     <string name="create_seed_input_hit">————</string>
-    <string name="create_pass_input_hit">————————————</string>
+    <string name="create_pass_input_hit">----------------</string>
     <string name="pass_show_hind">pass show or hind</string>
     <!-- create wallet页面 -->
     <string name="create_wallet">Create Wallet</string>

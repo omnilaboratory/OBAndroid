@@ -116,10 +116,11 @@
                         android:hint="@string/create_pass_input_hit"
                         android:background="@null"
                         android:layout_marginEnd="10dp"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_14"
                         android:letterSpacing="0.05"
                         android:textColor="@color/color_description_blue"
                         android:textColorHint="@color/color_description_blue"
+                        android:maxLines="1"
                         android:textAlignment="center"/>
                     <ImageView
                         android:contentDescription="@string/pass_show_hind"
@@ -244,10 +245,11 @@
                         android:hint="@string/create_pass_input_hit"
                         android:background="@null"
                         android:layout_marginEnd="10dp"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_14"
                         android:letterSpacing="0.05"
                         android:textColor="@color/color_description_blue"
                         android:textColorHint="@color/color_description_blue"
+                        android:maxLines="1"
                         android:textAlignment="center"/>
                     <ImageView
                         android:contentDescription="@string/pass_show_hind"

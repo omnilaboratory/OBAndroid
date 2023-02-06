@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.text.InputFilter;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -34,8 +35,10 @@ import com.omni.wallet.ui.activity.createwallet.CreateWalletStepTwoActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepTwoActivity;
 import com.omni.wallet.utils.FilesUtils;
+import com.omni.wallet.utils.InputFilters;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.ObdLogFileObserverCheckStarted;
+import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.utils.WalletState;
@@ -92,6 +95,8 @@ public class UnlockActivity extends AppBaseActivity {
     @Override
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
+        PasswordFilter passwordFilter = new PasswordFilter();
+        mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
     }
 
     @Override
