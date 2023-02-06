@@ -36,8 +36,10 @@ import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.PaymentEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
+import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
+import com.omni.wallet.entity.event.RebootEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
@@ -50,7 +52,7 @@ import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
-import com.omni.wallet.view.popupwindow.MenuPopupWindow;
+import com.omni.wallet.view.popupwindow.Menu1PopupWindow;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsAssetPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsChainPopupWindow;
@@ -75,7 +77,7 @@ import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
 public class BalanceDetailActivity extends AppBaseActivity {
-    private static final String TAG = AccountLightningActivity.class.getSimpleName();
+    private static final String TAG = BalanceDetailActivity.class.getSimpleName();
 
     @BindView(R.id.layout_parent)
     RelativeLayout mParentLayout;
@@ -215,7 +217,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TransactionsDetailsAssetPopupWindow mTransactionsDetailsAssetPopupWindow;
     TokenInfoPopupWindow mTokenInfoPopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
-    MenuPopupWindow mMenuPopupWindow;
+    Menu1PopupWindow mMenuPopupWindow;
 
     PayInvoiceDialog mPayInvoiceDialog;
     CreateChannelDialog mCreateChannelDialog;
@@ -1382,7 +1384,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @OnClick(R.id.layout_more)
     public void clickMore() {
-        mMenuPopupWindow = new MenuPopupWindow(mContext);
+        mMenuPopupWindow = new Menu1PopupWindow(mContext);
         mMenuPopupWindow.show(mMoreIv, balanceAmount, User.getInstance().getWalletAddress(mContext), pubkey);
     }
 
@@ -1694,6 +1696,24 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBtcAndUsdtEvent(BtcAndUsdtEvent event) {
         initBalanceAccount();
+    }
+
+    /**
+     * 退出登录后的消息通知监听
+     * Message notification monitoring after login out
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoginOutEvent(LoginOutEvent event) {
+        switchActivityFinish(UnlockActivity.class);
+    }
+
+    /**
+     * 重启节点后的消息通知监听
+     * Message notification monitoring after reboot
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRebootEvent(RebootEvent event) {
+        finish();
     }
 
     /**

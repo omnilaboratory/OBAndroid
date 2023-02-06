@@ -269,6 +269,7 @@
     <string name="nickname">Nickname</string>
     <string name="save_upper">保存</string>
     <string name="reboot_first_upper">Reboot</string>
+    <string name="create_channel_tip">You have not created a channel for this asset, please create at least one channel with the liquidity node first and with enough funds, and then continue to pay (or create an invoice). </string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

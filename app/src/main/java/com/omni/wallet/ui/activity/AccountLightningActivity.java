@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,21 +15,19 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.data.AccountAssetsData;
-import com.omni.wallet.data.BTCData;
-import com.omni.wallet.data.DollarData;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.LockEvent;
 import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.entity.event.OpenChannelEvent;
+import com.omni.wallet.entity.event.RebootEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.entity.event.SelectAccountEvent;
 import com.omni.wallet.entity.event.SendSuccessEvent;
@@ -38,7 +35,6 @@ import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
-import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.AssetTrendChartView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
@@ -56,10 +52,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -864,7 +858,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginOutEvent(LoginOutEvent event) {
-        switchActivityFinish(SplashActivity.class);
+        finish();
     }
 
     /**
@@ -874,6 +868,15 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLockEvent(LockEvent event) {
         switchActivityFinish(UnlockActivity.class);
+    }
+
+    /**
+     * 重启节点后的消息通知监听
+     * Message notification monitoring after reboot
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRebootEvent(RebootEvent event) {
+        finish();
     }
 
     @Override

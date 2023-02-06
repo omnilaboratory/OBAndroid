@@ -14,7 +14,7 @@ import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.entity.event.LockEvent;
+import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
@@ -26,17 +26,19 @@ import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
 /**
- * popup window for Menu
- * Menu的弹窗
+ * 汉: Menu的弹窗
+ * En: popup window for Menu
+ * author: guoyalei
+ * date: 2023/2/6
  */
-public class MenuPopupWindow {
-    private static final String TAG = MenuPopupWindow.class.getSimpleName();
+public class Menu1PopupWindow {
+    private static final String TAG = Menu1PopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mMenuPopWindow;
     LoadingDialog mLoadingDialog;
 
-    public MenuPopupWindow(Context context) {
+    public Menu1PopupWindow(Context context) {
         this.mContext = context;
     }
 
@@ -124,7 +126,7 @@ public class MenuPopupWindow {
                 @Override
                 public void onClick(View v) {
                     mMenuPopWindow.dismiss();
-                    NodeInfoPopupWindow mNodeInfoPopupWindow = new NodeInfoPopupWindow(mContext);
+                    NodeInfo1PopupWindow mNodeInfoPopupWindow = new NodeInfo1PopupWindow(mContext);
                     mNodeInfoPopupWindow.show(view, pubKey);
                 }
             });
@@ -177,7 +179,7 @@ public class MenuPopupWindow {
             rootView.findViewById(R.id.layout_lock).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EventBus.getDefault().post(new LockEvent());
+                    EventBus.getDefault().post(new LoginOutEvent());
                 }
             });
             if (mMenuPopWindow.isShowing()) {
@@ -195,7 +197,7 @@ public class MenuPopupWindow {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        EventBus.getDefault().post(new LockEvent());
+                        EventBus.getDefault().post(new LoginOutEvent());
                         mMenuPopWindow.dismiss();
                         mLoadingDialog.dismiss();
                     }
@@ -208,7 +210,7 @@ public class MenuPopupWindow {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        EventBus.getDefault().post(new LockEvent());
+                        EventBus.getDefault().post(new LoginOutEvent());
                         mMenuPopWindow.dismiss();
                         mLoadingDialog.dismiss();
                     }
