@@ -67,6 +67,7 @@ public class WalletState {
 
                 if (bytes == null){
                     Log.e(TAG,"get null state");
+                    walletStateCallback.callback(-1);
                     return;
                 }
                 try {
