@@ -228,6 +228,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @OnClick(R.id.btn_start)
     public void clickStart(){
+        Log.e(TAG,"click start");
         if(newCreatedAddress.isEmpty()){
             String toastMsg = "Block is syncing now,please wait a moment!";
             Toast copySuccessToast = Toast.makeText(ctx,toastMsg,Toast.LENGTH_LONG);
@@ -235,6 +236,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             copySuccessToast.show();
         }else{
 //            switchActivityFinish(AccountLightningActivity.class);
+            Log.e(TAG,"click start initWalletType:" + initWalletType);
             if(initWalletType.equals("initialed")){
                 switchActivityFinish(AccountLightningActivity.class);
             }else if(initWalletType.equals("toBeRestoreChannel")){
@@ -283,7 +285,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                         User.getInstance().setWalletAddress(mContext,address);
                         updateSyncDataView(totalBlock);
                         User.getInstance().setInitWalletType(mContext,"initialed");
-
+                        initWalletType = "initialed";
                     });
                     // save wallet address to local
                     // 保存地址到本地
@@ -325,6 +327,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                         User.getInstance().setWalletAddress(mContext,address);
                         updateSyncDataView(totalBlock);
                         User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
+                        initWalletType = "toBeRestoreChannel";
                     });
 
                 } catch (InvalidProtocolBufferException e) {
