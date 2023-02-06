@@ -628,7 +628,12 @@ public class SplashActivity extends AppBaseActivity {
             public void onError(Exception e) {
                 if (e.getMessage().equals("lnd already started")) {
                     runOnUiThread(() -> {
-                        subscribeWalletState();
+                        String walletInitType = User.getInstance().getInitWalletType(mContext);
+                        if (walletInitType.equals("initialed")) {
+                            switchActivityFinish(UnlockActivity.class);
+                        } else {
+                            switchActivityFinish(InitWalletMenuActivity.class);
+                        }
                     });
                 } else if (e.getMessage().equals("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
 
@@ -714,12 +719,11 @@ public class SplashActivity extends AppBaseActivity {
                     switchActivityFinish(AccountLightningActivity.class);
                     break;
                 case 255:
-                case -1:
                     if (walletInitType.equals("initialed")) {
-                        switchActivityFinish(UnlockActivity.class, mBundle);
+                        switchActivityFinish(UnlockActivity.class);
                         break;
                     } else {
-                        switchActivityFinish(InitWalletMenuActivity.class, mBundle);
+                        switchActivityFinish(InitWalletMenuActivity.class);
                         break;
                     }
 
