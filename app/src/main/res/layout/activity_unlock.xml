@@ -83,6 +83,7 @@
                         android:letterSpacing="0.05"
                         android:textColor="@color/color_description_blue"
                         android:textColorHint="@color/color_description_blue"
+                        android:inputType="textVisiblePassword"
                         android:maxLines="1"
                         android:textAlignment="center"/>
                     <ImageView

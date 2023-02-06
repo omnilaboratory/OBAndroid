@@ -118,6 +118,7 @@
                         android:textColor="@color/color_description_blue"
                         android:textColorHint="@color/color_description_blue"
                         android:maxLines="1"
+                        android:inputType="textVisiblePassword"
                         android:textAlignment="center"/>
                     <ImageView
                         android:contentDescription="@string/pass_show_hind"
@@ -245,6 +246,7 @@
                         android:textColor="@color/color_description_blue"
                         android:textColorHint="@color/color_description_blue"
                         android:maxLines="1"
+                        android:inputType="textVisiblePassword"
                         android:textAlignment="center"/>
                     <ImageView
                         android:contentDescription="@string/pass_show_hind"
