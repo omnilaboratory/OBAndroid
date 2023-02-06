@@ -269,7 +269,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
 
                             @Override
                             public void onResponse(byte[] bytes) {
-                                switchActivity(AccountLightningActivity.class);
+                                switchActivityFinish(AccountLightningActivity.class);
                             }
                         });
                         
@@ -280,10 +280,6 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
                     
                 }
             });
-            
-            
-            
-            switchActivity(AccountLightningActivity.class);
         }else{
             String checkSetPassWrongString = "";
             if(strongerPwd<0){

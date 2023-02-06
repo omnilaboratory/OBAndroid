@@ -153,7 +153,7 @@ public class UnlockActivity extends AppBaseActivity {
                         () -> {
                             PublicUtils.closeLoading(mLoadingDialog);
                             if(e.getMessage().equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
-                                switchActivity(AccountLightningActivity.class);
+                                switchActivityFinish(AccountLightningActivity.class);
                             }
                         }
                 );
@@ -214,7 +214,7 @@ public class UnlockActivity extends AppBaseActivity {
                 case 4:
                     runOnUiThread(()->{
                         PublicUtils.closeLoading(mLoadingDialog);
-                        switchActivity(AccountLightningActivity.class);
+                        switchActivityFinish(AccountLightningActivity.class);
                     });
                     break;
                 default:

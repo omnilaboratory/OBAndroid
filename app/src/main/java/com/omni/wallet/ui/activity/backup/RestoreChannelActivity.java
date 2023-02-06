@@ -332,12 +332,12 @@ public class RestoreChannelActivity extends AppBaseActivity {
             }else{
                 PublicUtils.closeLoading(mLoadingDialog);
                 User.getInstance().setRestoredChannel(mContext,true);
-                switchActivity(AccountLightningActivity.class);
+                switchActivityFinish(AccountLightningActivity.class);
             }
         }else{
             PublicUtils.closeLoading(mLoadingDialog);
             User.getInstance().setRestoredChannel(mContext,true);
-            switchActivity(AccountLightningActivity.class);
+            switchActivityFinish(AccountLightningActivity.class);
         }
         
     }
@@ -381,7 +381,7 @@ public class RestoreChannelActivity extends AppBaseActivity {
                             ToastUtils.showToast(mContext,"The channels are recover successfully!");
                             User.getInstance().setRestoredChannel(mContext,true);
                             User.getInstance().setInitWalletType(mContext,"initialed");
-                            switchActivity(AccountLightningActivity.class);
+                            switchActivityFinish(AccountLightningActivity.class);
                         });
                     }
                 });
