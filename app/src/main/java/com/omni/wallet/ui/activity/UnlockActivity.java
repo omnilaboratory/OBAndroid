@@ -1,8 +1,6 @@
 package com.omni.wallet.ui.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
@@ -10,55 +8,28 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.baselibrary.http.HttpUtils;
-import com.omni.wallet.baselibrary.http.callback.EngineCallback;
-import com.omni.wallet.baselibrary.http.progress.entity.Progress;
-import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.listItems.BackupFile;
-import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
-import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
-import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
-import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
-import com.omni.wallet.ui.activity.createwallet.CreateWalletStepTwoActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
-import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepTwoActivity;
-import com.omni.wallet.utils.FilesUtils;
-import com.omni.wallet.utils.InputFilters;
 import com.omni.wallet.utils.Md5Util;
-import com.omni.wallet.utils.ObdLogFileObserverCheckStarted;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
-import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.utils.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import butterknife.BindView;
 import butterknife.OnClick;
-import lnrpc.Stateservice;
 import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
-import obdmobile.RecvStream;
 
 public class UnlockActivity extends AppBaseActivity {
     String TAG = UnlockActivity.class.getSimpleName();
