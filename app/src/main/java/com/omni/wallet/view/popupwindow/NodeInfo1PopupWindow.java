@@ -14,7 +14,7 @@ import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.entity.event.LockEvent;
+import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
@@ -27,19 +27,19 @@ import obdmobile.Obdmobile;
 
 /**
  * 汉: 节点详情的弹窗
- * En: NodeInfoPopupWindow
+ * En: NodeInfoPopup1Window
  * author: guoyalei
- * date: 2022/11/29
+ * date: 2023/2/6
  */
-public class NodeInfoPopupWindow {
-    private static final String TAG = NodeInfoPopupWindow.class.getSimpleName();
+public class NodeInfo1PopupWindow {
+    private static final String TAG = NodeInfo1PopupWindow.class.getSimpleName();
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
     TextView nameTv;
     LoadingDialog mLoadingDialog;
 
-    public NodeInfoPopupWindow(Context context) {
+    public NodeInfo1PopupWindow(Context context) {
         this.mContext = context;
     }
 
@@ -183,7 +183,7 @@ public class NodeInfoPopupWindow {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        EventBus.getDefault().post(new LockEvent());
+                        EventBus.getDefault().post(new LoginOutEvent());
                         mBasePopWindow.dismiss();
                         mLoadingDialog.dismiss();
                     }
@@ -196,7 +196,7 @@ public class NodeInfoPopupWindow {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        EventBus.getDefault().post(new LockEvent());
+                        EventBus.getDefault().post(new LoginOutEvent());
                         mBasePopWindow.dismiss();
                         mLoadingDialog.dismiss();
                     }

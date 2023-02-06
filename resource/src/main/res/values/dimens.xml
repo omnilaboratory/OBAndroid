@@ -1011,6 +1011,7 @@
     <dimen name="main_540">540dp</dimen>
     <dimen name="main_550">550dp</dimen>
     <dimen name="main_560">560dp</dimen>
+    <dimen name="main_590">590dp</dimen>
     <dimen name="main_610">610dp</dimen>
 
     <!--负数-->

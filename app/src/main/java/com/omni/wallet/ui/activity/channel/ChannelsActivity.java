@@ -21,10 +21,11 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.entity.event.CloseChannelEvent;
+import com.omni.wallet.entity.event.RebootEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.ScanActivity;
-import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
+import com.omni.wallet.ui.activity.UnlockActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.utils.Wallet;
@@ -33,7 +34,7 @@ import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.ChannelDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
-import com.omni.wallet.view.popupwindow.MenuPopupWindow;
+import com.omni.wallet.view.popupwindow.Menu2PopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
@@ -72,7 +73,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     private ChannelItemAdapter mAdapter;
     private List<ChannelListItem> mChannelItems = new ArrayList<>();
 
-    MenuPopupWindow mMenuPopupWindow;
+    Menu2PopupWindow mMenuPopupWindow;
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     ChannelDetailsPopupWindow mChannelDetailsPopupWindow;
     SelectNodePopupWindow mSelectNodePopupWindow;
@@ -301,7 +302,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
      */
     @OnClick(R.id.iv_menu)
     public void clickMemu() {
-        mMenuPopupWindow = new MenuPopupWindow(mContext);
+        mMenuPopupWindow = new Menu2PopupWindow(mContext);
         mMenuPopupWindow.show(mMenuIv, balanceAmount, walletAddress, pubkey);
     }
 
@@ -416,6 +417,15 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     public void onCloseChannelEvent(CloseChannelEvent event) {
         Wallet.getInstance().fetchChannelsFromLND();
         updateChannelsDisplayList();
+    }
+
+    /**
+     * 重启节点后的消息通知监听
+     * Message notification monitoring after reboot
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRebootEvent(RebootEvent event) {
+        switchActivityFinish(UnlockActivity.class);
     }
 
     @Override

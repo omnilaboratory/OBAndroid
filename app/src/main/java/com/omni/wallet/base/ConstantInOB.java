@@ -62,7 +62,7 @@ public class ConstantInOB {
     public static final String usingDownloadDirectory = downloadDirectoryTestNet;
 
 //    regTest neutrino config
-   /* public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
+    /*public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
     public static final String usingDownloadBaseUrl = downloadBaseUrl;
     public static final String usingBTCHostAddress = BTCHostAddressRegTest;
     public static final String usingLogPath = regTestLogPath;
