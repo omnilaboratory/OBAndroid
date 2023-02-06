@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="13dp"
             android:gravity="center_vertical"
-            android:text="@string/create_step_two_description"
+            android:text="@string/forget_description"
             android:textColor="#FF4A92FF"
             android:textSize="18sp" />
 

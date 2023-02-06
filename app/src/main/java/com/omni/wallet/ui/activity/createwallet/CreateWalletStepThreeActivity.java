@@ -281,6 +281,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                         ByteString macaroon = initWalletResponse.getAdminMacaroon();
                         User.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8());
                         User.getInstance().setCreated(mContext,true);
+                        User.getInstance().setInitWalletType(mContext,"createStepThree");
                         switchActivity(BackupBlockProcessActivity.class);
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();

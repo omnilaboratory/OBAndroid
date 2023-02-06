@@ -104,11 +104,6 @@ public class UnlockActivity extends AppBaseActivity {
         walletAddress = User.getInstance().getWalletAddress(mContext);
         initWalletType = User.getInstance().getInitWalletType(mContext);
         isStartCreate = User.getInstance().getStartCreate(mContext);
-        if (initWalletType.isEmpty()) {
-            bottomBtnGroup.setVisibility(View.VISIBLE);
-        } else {
-            bottomBtnGroup.setVisibility(View.INVISIBLE);
-        }
         runOnUiThread(() -> {
             subscribeState();
         });
@@ -202,103 +197,25 @@ public class UnlockActivity extends AppBaseActivity {
         String passMd5 = Md5Util.getMD5Str(passwordString);
         boolean passIsMatched = checkedPassMatched(passMd5);
         PublicUtils.showLoading(mLoadingDialog);
-
-        if (initWalletType.equals("create")) {
-            if (localSeed.isEmpty()){
-                PublicUtils.closeLoading(mLoadingDialog);
-                switchActivity(CreateWalletStepOneActivity.class);
-            }else{
-                if (!seedChecked){
-                    PublicUtils.closeLoading(mLoadingDialog);
-                    switchActivity(CreateWalletStepTwoActivity.class);
-                }else{
-                    if (!isStartCreate){
-                        PublicUtils.closeLoading(mLoadingDialog);
-                        switchActivity(CreateWalletStepThreeActivity.class);
-                    }else{
-                        if(passIsMatched){
-                            PublicUtils.closeLoading(mLoadingDialog);
-                            switchActivity(BackupBlockProcessActivity.class);
-                        }else{
-                            passWrongShow();
-                        }
-                    }
-                }
-            }
-
-        } else if (initWalletType.equals("recovery")) {
-            String recoverySeedString = User.getInstance().getRecoverySeedString(mContext);
-            if (recoverySeedString.isEmpty()){
-                PublicUtils.closeLoading(mLoadingDialog);
-                switchActivity(RecoverWalletStepOneActivity.class);
-            }else{
-                if (!isStartCreate){
-                    PublicUtils.closeLoading(mLoadingDialog);
-                    switchActivity(RecoverWalletStepTwoActivity.class);
-                }else{
-                    if(passIsMatched){
-                        PublicUtils.closeLoading(mLoadingDialog);
-                        switchActivity(BackupBlockProcessActivity.class);
-                    }else{
-                        passWrongShow();
-                    }
-                }
-            }
-        } else if (initWalletType.equals("created")) {
-            if(passIsMatched){
-                unlockWallet(passMd5);
-            }else{
-                PublicUtils.closeLoading(mLoadingDialog);
-                String toastString = getResources().getString(R.string.toast_unlock_error);
-                Toast checkPassToast = Toast.makeText(UnlockActivity.this, toastString, Toast.LENGTH_LONG);
-                checkPassToast.setGravity(Gravity.TOP, 0, 20);
-                checkPassToast.show();
-            }
-        }else if(initWalletType.equals("recovered")){
-            if(passIsMatched){
-                unlockWallet(passMd5);
-            }else{
-                PublicUtils.closeLoading(mLoadingDialog);
-                String toastString = getResources().getString(R.string.toast_unlock_error);
-                Toast checkPassToast = Toast.makeText(UnlockActivity.this, toastString, Toast.LENGTH_LONG);
-                checkPassToast.setGravity(Gravity.TOP, 0, 20);
-                checkPassToast.show();
-            }
+        if (passIsMatched){
+            unlockWallet(passMd5);
         }else{
-            Log.e(TAG,"InitWalletType:" + initWalletType);
             PublicUtils.closeLoading(mLoadingDialog);
-            ToastUtils.showToast(mContext,"Your wallet is not initial please create or recovery your wallet!");
+            String toastString = getResources().getString(R.string.toast_unlock_error);
+            Toast checkPassToast = Toast.makeText(UnlockActivity.this, toastString, Toast.LENGTH_LONG);
+            checkPassToast.setGravity(Gravity.TOP, 0, 20);
+            checkPassToast.show();
         }
 }
 
     public void subscribeState() {
         WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
             switch (walletState){
-                case 0:
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
                 case 4:
                     runOnUiThread(()->{
-                        if (initWalletType.equals("created")){
-                            PublicUtils.closeLoading(mLoadingDialog);
-                            switchActivity(AccountLightningActivity.class);
-                        }else if(initWalletType.equals("recovered")){
-                            if(User.getInstance().isRestoredChannel(mContext)){
-                                PublicUtils.closeLoading(mLoadingDialog);
-                                switchActivity(AccountLightningActivity.class);
-                            }else{
-                                PublicUtils.closeLoading(mLoadingDialog);
-                                switchActivity(RestoreChannelActivity.class);
-                            }
-                        }
+                        PublicUtils.closeLoading(mLoadingDialog);
+                        switchActivity(AccountLightningActivity.class);
                     });
-                    break;
-                case 255:
                     break;
                 default:
                     break;

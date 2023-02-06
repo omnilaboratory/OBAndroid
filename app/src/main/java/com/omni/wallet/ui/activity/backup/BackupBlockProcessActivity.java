@@ -235,9 +235,9 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             copySuccessToast.show();
         }else{
 //            switchActivityFinish(AccountLightningActivity.class);
-            if(initWalletType.equals("create")){
+            if(initWalletType.equals("initialedByCreate")){
                 switchActivity(AccountLightningActivity.class);
-            }else if(initWalletType.equals("recovery")){
+            }else if(initWalletType.equals("initialedByRecovery")){
                 switchActivity(RestoreChannelActivity.class);
             }
         }
@@ -250,8 +250,10 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         String createType = User.getInstance().getInitWalletType(mContext);
         if(createType.equals("recovery")){
             getOldAddress();
+
         }else{
             newAddress();
+
         }
 
     }
@@ -280,7 +282,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                         obdLogFileObserver.stopWatching();
                         User.getInstance().setWalletAddress(mContext,address);
                         updateSyncDataView(totalBlock);
-                        User.getInstance().setInitWalletType(mContext,"created");
+                        User.getInstance().setInitWalletType(mContext,"initialed");
 
                     });
                     // save wallet address to local
@@ -322,7 +324,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                         obdLogFileObserver.stopWatching();
                         User.getInstance().setWalletAddress(mContext,address);
                         updateSyncDataView(totalBlock);
-                        User.getInstance().setInitWalletType(mContext,"recovered");
+                        User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
                     });
 
                 } catch (InvalidProtocolBufferException e) {

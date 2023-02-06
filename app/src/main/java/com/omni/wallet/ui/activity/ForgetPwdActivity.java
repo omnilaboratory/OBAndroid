@@ -40,7 +40,7 @@ public class ForgetPwdActivity extends AppBaseActivity {
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_recover_wallet_step_one;
+        return R.layout.activity_forget_pwd;
     }
 
     @Override

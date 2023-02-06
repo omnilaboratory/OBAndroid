@@ -64,19 +64,20 @@ public class WalletState {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(byte[] bytes) {
+
                 if (bytes == null){
                     Log.e(TAG,"get null state");
-                    walletStateCallback.callback(-1);
                     return;
                 }
                 try {
                     Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
                     int walletState = subscribeStateResponse.getStateValue();
-                    Log.e(TAG,String.valueOf(walletState));
                     walletStateCallback.callback(walletState);
+                    Log.e(TAG,String.valueOf(walletState));
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
+
             }
         });
     }

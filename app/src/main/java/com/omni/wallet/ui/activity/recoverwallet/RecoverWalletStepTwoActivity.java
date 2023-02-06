@@ -277,7 +277,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                         Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
                         ByteString macaroon = initWalletResponse.getAdminMacaroon();
                         User.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8());
-                        User.getInstance().setInitWalletType(mContext,"recovery");
+                        User.getInstance().setInitWalletType(mContext,"recoveryStepTwo");
                         User.getInstance().setCreated(mContext,true);
                         User.getInstance().setSeedChecked(mContext,true);
                         User.getInstance().setSeedString(mContext,seedsString);

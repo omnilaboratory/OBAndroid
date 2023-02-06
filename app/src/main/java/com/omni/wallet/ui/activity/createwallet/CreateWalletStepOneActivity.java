@@ -71,7 +71,6 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
                     List genSeedResponseList =  genSeedResponse.getCipherSeedMnemonicList();
                     for (int i = 0; i<genSeedResponseList.size();i++){
                         seedArray.add(genSeedResponseList.get(i).toString());
-                        Log.e("seed item",genSeedResponseList.get(i).toString());
                     }
                     for (int idx = 0;idx<seedArray.size();idx++){
                         seedsString = seedsString + seedArray.get(idx)+ " ";
@@ -152,6 +151,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
+        User.getInstance().setInitWalletType(mContext,"createStepOne");
         switchActivity(CreateWalletStepTwoActivity.class);
     }
 }

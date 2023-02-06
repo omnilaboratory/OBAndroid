@@ -228,7 +228,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
             }
         }
         if(checkResult){
-            User.getInstance().setSeedChecked(mContext,true);
+            User.getInstance().setInitWalletType(mContext,"createStepTwo");
             switchActivity(CreateWalletStepThreeActivity.class);
         }
     }

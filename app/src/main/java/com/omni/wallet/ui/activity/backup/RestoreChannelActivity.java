@@ -380,6 +380,7 @@ public class RestoreChannelActivity extends AppBaseActivity {
                             PublicUtils.closeLoading(mLoadingDialog);
                             ToastUtils.showToast(mContext,"The channels are recover successfully!");
                             User.getInstance().setRestoredChannel(mContext,true);
+                            User.getInstance().setInitWalletType(mContext,"initialed");
                             switchActivity(AccountLightningActivity.class);
                         });
                     }

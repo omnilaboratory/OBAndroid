@@ -185,6 +185,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
         SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
         SharedPreferences.Editor editor = secretData.edit();
         editor.putString("seeds",seedsString);
+        User.getInstance().setInitWalletType(mContext,"recoveryStepOne");
         editor.commit();
         switchActivity(RecoverWalletStepTwoActivity.class);
 //        switchActivity(RestoreChannelActivity.class);

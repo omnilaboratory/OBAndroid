@@ -24,6 +24,7 @@
     <string name="confirm_pwd">Confirm Password</string>
     <string name="verify_seed">Verify Seed</string>
     <string name="reset_password">Reset Password</string>
+    <string name="forget_description">请输入24个助记词以恢复您的钱包!</string>
     <!-- create页面 -->
     <string name="create_new_wallet">Create New Wallet</string>
     <string name="recover_your_wallet">Recover Your Wallet</string>

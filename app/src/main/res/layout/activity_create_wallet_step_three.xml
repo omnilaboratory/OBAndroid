@@ -39,7 +39,7 @@
             android:layout_width="295dp"
             android:layout_height="wrap_content"
             android:text="@string/unlock_description"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_18"
             android:textColor="@color/color_description_blue"
             android:letterSpacing="0.3"
             android:textAlignment="center" />
@@ -82,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/pwd_upper"
                         android:textAllCaps="false"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_18"
                         android:letterSpacing="0.1"
                         android:layout_marginEnd="10dp"
                         android:textColor="@color/color_key"/>
@@ -188,6 +188,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/empty"
                             android:textColor="@color/color_todo_grey"
+                            android:textSize="@dimen/text_12"
                             android:textStyle="bold"/>
                     </RelativeLayout>
                 </LinearLayout>
@@ -213,7 +214,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/pwd_upper_repeat"
                         android:textAllCaps="false"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_18"
                         android:letterSpacing="0.1"
                         android:layout_marginEnd="10dp"
                         android:textColor="@color/color_key"
@@ -310,7 +311,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/back_upper"
                         android:textColor="@color/color_black"
-                        android:textSize="18sp" />
+                        android:textSize="@dimen/text_18" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -339,7 +340,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/next_upper"
                         android:textColor="@color/color_black"
-                        android:textSize="18sp" />
+                        android:textSize="@dimen/text_18" />
                 </LinearLayout>
 
             </LinearLayout>

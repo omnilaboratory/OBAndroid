@@ -36,6 +36,7 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.AppVersionUtils;
 import com.omni.wallet.utils.FilesUtils;
 import com.omni.wallet.utils.NetworkChangeReceiver;
+import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.utils.WalletState;
 
 import java.io.BufferedReader;
@@ -101,7 +102,7 @@ public class SplashActivity extends AppBaseActivity {
 
     Map<String, String> manifestInfo = new HashMap<>();
 
-    boolean isDownloading  = false;
+    boolean isDownloading = false;
 
     @Override
     protected boolean isFullScreenStyle() {
@@ -214,7 +215,7 @@ public class SplashActivity extends AppBaseActivity {
                          * To home page after 3s
                          * 延时3秒跳转主页
                          */
-                        if(!isDownloading){
+                        if (!isDownloading) {
                             getManifestFile();
                         }
                     }
@@ -250,21 +251,6 @@ public class SplashActivity extends AppBaseActivity {
                 Manifest.permission.READ_PHONE_STATE);
     }
 
-    /**
-     * To next page
-     * 跳转下一页
-     */
-    private void turnToNextPage() {
-        if (User.getInstance().isLogin(mContext) & !StringUtils.isEmpty(User.getInstance().getFirstLogin(mContext))) {
-            switchActivityFinish(UnlockActivity.class, mBundle);
-//            switchActivityFinish(RestoreChannelActivity.class, mBundle);
-//            switchActivityFinish(BackupChannelActivity.class, mBundle);
-        } else {
-            switchActivityFinish(UnlockActivity.class, mBundle);
-//            switchActivityFinish(RestoreChannelActivity.class, mBundle);
-//            switchActivityFinish(BackupChannelActivity.class, mBundle);
-        }
-    }
 
     /**
      * When be refused by permission, show ask for permission dialog.
@@ -391,7 +377,6 @@ public class SplashActivity extends AppBaseActivity {
                 e.printStackTrace();
             }
 
-            actionAfterPromise();
         } else {
             PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build()
                     .start(new OnDownloadListener() {
@@ -431,14 +416,14 @@ public class SplashActivity extends AppBaseActivity {
                         @Override
                         public void onError(Error error) {
                             boolean connectionError = error.isConnectionError();
-                            boolean serverError =error.isServerError();
-                            if (connectionError){
+                            boolean serverError = error.isServerError();
+                            if (connectionError) {
                                 getManifestFile();
                                 Log.e(TAG, "Manifest download ConnectError");
 
-                            }else if(serverError){
+                            } else if (serverError) {
                                 Log.e(TAG, "Manifest download ConnectError");
-                            }else{
+                            } else {
                                 Log.e(TAG, "Manifest" + error.toString());
                             }
 
@@ -447,7 +432,6 @@ public class SplashActivity extends AppBaseActivity {
         }
 
     }
-
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
     public void downloadHeaderBinFile() {
@@ -495,79 +479,15 @@ public class SplashActivity extends AppBaseActivity {
             @Override
             public void onError(Error error) {
                 boolean connectionError = error.isConnectionError();
-                boolean serverError =error.isServerError();
-                if (connectionError){
+                boolean serverError = error.isServerError();
+                if (connectionError) {
                     downloadHeaderBinFile();
                     Log.e(TAG, "HeaderBin download ConnectError");
 
-                }else if(serverError){
+                } else if (serverError) {
                     Log.e(TAG, "HeaderBin download ConnectError");
-                }else{
-                    Log.e(TAG, "HeaderBin" + error.toString());
-                }
-            }
-        });
-    }
-
-    public void downloadDBFile() {
-        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        String filePath = downloadDirectoryPath + ConstantInOB.neutrinoDB;
-        File file = new File(filePath);
-        if (file.exists()) {
-            startNode();
-            return;
-        }
-        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build();
-        final double[] totalBytes = {0};
-        downloadRequest.setOnStartOrResumeListener(() -> {
-            isDownloading = true;
-            totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
-            doExplainTv.setText(mContext.getString(R.string.download_db));
-            syncBlockNumView.setText(String.format("%.2f", totalBytes[0]) + "MB");
-        });
-        downloadRequest.setOnPauseListener(() -> {
-            Log.e(TAG, "Pause download " + ConstantInOB.neutrinoDB);
-        });
-        downloadRequest.setOnCancelListener(() -> {
-            Log.e(TAG, "Cancel download " + ConstantInOB.neutrinoDB);
-        });
-        downloadRequest.setOnProgressListener(new OnProgressListener() {
-            @SuppressLint({"SetTextI18n", "DefaultLocale"})
-            @Override
-            public void onProgress(com.downloader.Progress progress) {
-                double currentM = (double) progress.currentBytes / 1024 / 1024;
-                updateDataView(currentM, totalBytes[0]);
-            }
-        });
-        downloadRequest.start(new OnDownloadListener() {
-            @Override
-            public void onDownloadComplete() {
-                String fileMd5 = manifestInfo.get(ConstantInOB.neutrino);
-                Log.e(TAG, fileMd5);
-                boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
-                if (checkFileMd5Matched) {
-                    startNode();
                 } else {
-                    File file1 = new File(filePath);
-                    file1.delete();
-                    file1.exists();
-                    downloadDBFile();
-                }
-
-            }
-
-            @Override
-            public void onError(Error error) {
-                boolean connectionError = error.isConnectionError();
-                boolean serverError =error.isServerError();
-                if (connectionError){
-                    downloadDBFile();
-                    Log.e(TAG, "DBFile download ConnectError");
-
-                }else if(serverError){
-                    Log.e(TAG, "DBFile download ConnectError");
-                }else{
-                    Log.e(TAG, "DBFile" + error.toString());
+                    Log.e(TAG, "HeaderBin" + error.toString());
                 }
             }
         });
@@ -623,14 +543,14 @@ public class SplashActivity extends AppBaseActivity {
             @Override
             public void onError(Error error) {
                 boolean connectionError = error.isConnectionError();
-                boolean serverError =error.isServerError();
-                if (connectionError){
+                boolean serverError = error.isServerError();
+                if (connectionError) {
                     downloadFilterHeaderBinFile();
                     Log.e(TAG, "FilterHeaderBin download ConnectError");
 
-                }else if(serverError){
+                } else if (serverError) {
                     Log.e(TAG, "FilterHeaderBin download ConnectError");
-                }else{
+                } else {
                     Log.e(TAG, "FilterHeaderBin" + error.toString());
                 }
             }
@@ -638,45 +558,77 @@ public class SplashActivity extends AppBaseActivity {
 
     }
 
+    public void downloadDBFile() {
+        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+        String filePath = downloadDirectoryPath + ConstantInOB.neutrinoDB;
+        File file = new File(filePath);
+        if (file.exists()) {
+            startNode();
+            return;
+        }
+        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build();
+        final double[] totalBytes = {0};
+        downloadRequest.setOnStartOrResumeListener(() -> {
+            isDownloading = true;
+            totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
+            doExplainTv.setText(mContext.getString(R.string.download_db));
+            syncBlockNumView.setText(String.format("%.2f", totalBytes[0]) + "MB");
+        });
+        downloadRequest.setOnPauseListener(() -> {
+            Log.e(TAG, "Pause download " + ConstantInOB.neutrinoDB);
+        });
+        downloadRequest.setOnCancelListener(() -> {
+            Log.e(TAG, "Cancel download " + ConstantInOB.neutrinoDB);
+        });
+        downloadRequest.setOnProgressListener(new OnProgressListener() {
+            @SuppressLint({"SetTextI18n", "DefaultLocale"})
+            @Override
+            public void onProgress(com.downloader.Progress progress) {
+                double currentM = (double) progress.currentBytes / 1024 / 1024;
+                updateDataView(currentM, totalBytes[0]);
+            }
+        });
+        downloadRequest.start(new OnDownloadListener() {
+            @Override
+            public void onDownloadComplete() {
+                String fileMd5 = manifestInfo.get(ConstantInOB.neutrino);
+                Log.e(TAG, fileMd5);
+                boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
+                if (checkFileMd5Matched) {
+                    startNode();
+                } else {
+                    File file1 = new File(filePath);
+                    file1.delete();
+                    file1.exists();
+                    downloadDBFile();
+                }
+
+            }
+
+            @Override
+            public void onError(Error error) {
+                boolean connectionError = error.isConnectionError();
+                boolean serverError = error.isServerError();
+                if (connectionError) {
+                    downloadDBFile();
+                    Log.e(TAG, "DBFile download ConnectError");
+
+                } else if (serverError) {
+                    Log.e(TAG, "DBFile download ConnectError");
+                } else {
+                    Log.e(TAG, "DBFile" + error.toString());
+                }
+            }
+        });
+    }
+
     public void startNode() {
         Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
             @Override
             public void onError(Exception e) {
                 if (e.getMessage().equals("lnd already started")) {
-
-                    Stateservice.GetStateRequest getStateRequest = Stateservice.GetStateRequest.newBuilder().build();
-                    Obdmobile.getState(getStateRequest.toByteArray(), new Callback() {
-                        @Override
-                        public void onError(Exception e) {
-                            LogUtils.e(TAG, "------------------getStateError------------------" + e.getMessage());
-                            startNode();
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onResponse(byte[] bytes) {
-                            if (bytes == null) {
-                                switchActivityFinish(UnlockActivity.class, mBundle);
-                                return;
-                            }
-                            try {
-                                Stateservice.GetStateResponse getStateResponse = Stateservice.GetStateResponse.parseFrom(bytes);
-                                Stateservice.WalletState state = getStateResponse.getState();
-                                Log.e(TAG, state.toString());
-                                switch (state) {
-                                    case LOCKED:
-                                        switchActivityFinish(UnlockActivity.class, mBundle);
-                                        break;
-                                    case UNLOCKED:
-                                    case RPC_ACTIVE:
-                                    case SERVER_ACTIVE:
-                                        switchActivityFinish(AccountLightningActivity.class, mBundle);
-                                        break;
-                                }
-                            } catch (InvalidProtocolBufferException ex) {
-                                ex.printStackTrace();
-                            }
-                        }
+                    runOnUiThread(() -> {
+                        subscribeWalletState();
                     });
                 } else if (e.getMessage().equals("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
 
@@ -704,7 +656,6 @@ public class SplashActivity extends AppBaseActivity {
         syncPercentView.setText(percentString + "%");
         RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth, innerHeight);
         rvProcessInner.setLayoutParams(rlInnerParam);
-
         syncedBlockNumView.setText(String.format("%.2f", currentMb) + "MB");
     }
 
@@ -754,20 +705,26 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     public void subscribeWalletState() {
+        Log.e(TAG, "do subscribe action");
+        String walletInitType = User.getInstance().getInitWalletType(mContext);
         WalletState.WalletStateCallback walletStateCallback = walletState -> {
-            Log.e(TAG,String.valueOf(walletState));
+            Log.e(TAG,"walletState:" + String.valueOf(walletState));
             switch (walletState) {
-                case 0:
-                case 255:
-                case 1:
-                case 3:
-                case 2:
-                    switchActivityFinish(UnlockActivity.class);
-                    break;
                 case 4:
                     switchActivityFinish(AccountLightningActivity.class);
+                    break;
+                case 255:
+                case -1:
+                    if (walletInitType.equals("initialed")) {
+                        switchActivityFinish(UnlockActivity.class, mBundle);
+                        break;
+                    } else {
+                        switchActivityFinish(InitWalletMenuActivity.class, mBundle);
+                        break;
+                    }
+
                 default:
-                    switchActivityFinish(UnlockActivity.class);
+                    break;
             }
         };
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
