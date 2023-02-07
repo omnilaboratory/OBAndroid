@@ -1,7 +1,6 @@
 package com.omni.wallet.view.popupwindow.createinvoice;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
@@ -16,21 +15,16 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
-import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
-import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.ListAssetItemEntity;
-import com.omni.wallet.entity.event.CreateInvoiceEvent;
-import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.utils.CopyUtil;
-import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
 import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
 
-import org.greenrobot.eventbus.EventBus;
+import java.util.Random;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -87,6 +81,8 @@ public class CreateLuckyPacketPopupWindow {
             rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Random rand = new Random();
+                    int randNum = rand.nextInt(3);
                     mBasePopWindow.dismiss();
                 }
             });
@@ -208,79 +204,78 @@ public class CreateLuckyPacketPopupWindow {
                 timeInput = amountTimeEdit.getText().toString();
                 numberInput = numberEdit.getText().toString();
                 timeType = timeButton.getText().toString();
-                if (StringUtils.isEmpty(amountInput)) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
-                    return;
-                }
-                if (amountInput.equals("0")) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
-                    return;
-                }
-                // TODO: 2022/11/23 最大值最小值的判断需要完善一下
-                if (Long.parseLong(amountInput) - assetBalanceMax > 0) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
-                    return;
-                }
-                if (StringUtils.isEmpty(numberInput)) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_number));
-                    return;
-                }
-                if (StringUtils.isEmpty(timeInput)) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
-                    return;
-                }
-                mLoadingDialog.show();
-                LightningOuterClass.Invoice asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
-                        .setAssetId((int) mAssetId)
-                        .setAmount(Long.parseLong(amountEdit.getText().toString()))
-                        .setMemo(numberEdit.getText().toString())
-                        .setExpiry(Long.parseLong("86400")) // in seconds
-                        .setPrivate(false)
-                        .build();
-                Obdmobile.oB_AddInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
-                    @Override
-                    public void onError(Exception e) {
-                        LogUtils.e(TAG, "------------------addInvoiceOnError------------------" + e.getMessage());
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                mLoadingDialog.dismiss();
-                                rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
-                                rootView.findViewById(R.id.lv_lucky_packet_failed).setVisibility(View.VISIBLE);
-                                rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-                                rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                showStepFailed(rootView, e.getMessage());
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onResponse(byte[] bytes) {
-                        if (bytes == null) {
-                            return;
-                        }
-                        try {
-                            LightningOuterClass.AddInvoiceResponse resp = LightningOuterClass.AddInvoiceResponse.parseFrom(bytes);
-                            LogUtils.e(TAG, "------------------addInvoiceOnResponse-----------------" + resp);
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    EventBus.getDefault().post(new CreateInvoiceEvent());
-                                    qrCodeUrl = UriUtil.generateLightningUri(resp.getPaymentRequest());
-                                    mLoadingDialog.dismiss();
-                                    rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.VISIBLE);
-                                    rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                    showStepSuccess(rootView);
-                                }
-                            });
-                        } catch (InvalidProtocolBufferException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
+//                if (StringUtils.isEmpty(amountInput)) {
+//                    ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
+//                    return;
+//                }
+//                if (amountInput.equals("0")) {
+//                    ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
+//                    return;
+//                }
+//                // TODO: 2022/11/23 最大值最小值的判断需要完善一下
+//                if (Long.parseLong(amountInput) - assetBalanceMax > 0) {
+//                    ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
+//                    return;
+//                }
+//                if (StringUtils.isEmpty(numberInput)) {
+//                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_number));
+//                    return;
+//                }
+//                if (StringUtils.isEmpty(timeInput)) {
+//                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
+//                    return;
+//                }
+//                mLoadingDialog.show();
+//                LightningOuterClass.Invoice asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
+//                        .setAssetId((int) mAssetId)
+//                        .setAmount(Long.parseLong(amountEdit.getText().toString()))
+//                        .setMemo(numberEdit.getText().toString())
+//                        .setExpiry(Long.parseLong("86400")) // in seconds
+//                        .setPrivate(false)
+//                        .build();
+//                Obdmobile.oB_AddInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
+//                    @Override
+//                    public void onError(Exception e) {
+//                        LogUtils.e(TAG, "------------------addInvoiceOnError------------------" + e.getMessage());
+//                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                mLoadingDialog.dismiss();
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onResponse(byte[] bytes) {
+//                        if (bytes == null) {
+//                            return;
+//                        }
+//                        try {
+//                            LightningOuterClass.AddInvoiceResponse resp = LightningOuterClass.AddInvoiceResponse.parseFrom(bytes);
+//                            LogUtils.e(TAG, "------------------addInvoiceOnResponse-----------------" + resp);
+//                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    EventBus.getDefault().post(new CreateInvoiceEvent());
+//                                    qrCodeUrl = UriUtil.generateLightningUri(resp.getPaymentRequest());
+//                                    mLoadingDialog.dismiss();
+//                                    rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
+//                                    rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.VISIBLE);
+//                                    rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+//                                    rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+//                                    showStepSuccess(rootView);
+//                                }
+//                            });
+//                        } catch (InvalidProtocolBufferException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                });
+                rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
+                rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                showStepSuccess(rootView);
             }
         });
     }
@@ -310,8 +305,8 @@ public class CreateLuckyPacketPopupWindow {
         timeSuccessTv.setText(timeInput);
         timeUnitSuccessTv.setText(timeType);
         paymentSuccessTv.setText(qrCodeUrl);
-        Bitmap mQRBitmap = CodeUtils.createQRCode(qrCodeUrl, DisplayUtil.dp2px(mContext, 100));
-        qrCodeIv.setImageBitmap(mQRBitmap);
+//        Bitmap mQRBitmap = CodeUtils.createQRCode(qrCodeUrl, DisplayUtil.dp2px(mContext, 100));
+//        qrCodeIv.setImageBitmap(mQRBitmap);
 
         copyIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -379,55 +374,6 @@ public class CreateLuckyPacketPopupWindow {
             @Override
             public void onClick(View v) {
                 shareLayout.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    private void showStepFailed(View rootView, String message) {
-        ImageView assetTypeFailedIv = rootView.findViewById(R.id.iv_asset_type_failed);
-        TextView assetTypeFailedTv = rootView.findViewById(R.id.tv_asset_type_failed);
-        TextView amountFailedTv = rootView.findViewById(R.id.tv_amount_failed);
-        TextView amountUnitFailedTv = rootView.findViewById(R.id.tv_amount_unit_failed);
-        TextView numberFailedTv = rootView.findViewById(R.id.tv_number_failed);
-        TextView timeFailedTv = rootView.findViewById(R.id.tv_time_failed);
-        TextView timeUnitFailedTv = rootView.findViewById(R.id.tv_time_unit_failed);
-        if (mAssetId == 0) {
-            assetTypeFailedIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            assetTypeFailedTv.setText("BTC");
-            amountUnitFailedTv.setText("BTC");
-        } else {
-            assetTypeFailedIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeFailedTv.setText("dollar");
-            amountUnitFailedTv.setText("dollar");
-        }
-        amountFailedTv.setText(amountInput);
-        numberFailedTv.setText(numberInput);
-        timeFailedTv.setText(timeInput);
-        timeUnitFailedTv.setText(timeType);
-        TextView messageFailedTv = rootView.findViewById(R.id.tv_failed_message);
-        messageFailedTv.setText(message);
-        /**
-         * @描述： 点击Back
-         * @desc: click back button
-         */
-        rootView.findViewById(R.id.layout_back_to_one).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.lv_lucky_packet_failed).setVisibility(View.GONE);
-                rootView.findViewById(R.id.layout_cancel).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.layout_close).setVisibility(View.GONE);
-                showStepOne(rootView);
-            }
-        });
-        /**
-         * @描述： 点击失败页share to
-         * @desc: click share to button in failed page
-         */
-        rootView.findViewById(R.id.layout_share_to).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
             }
         });
     }

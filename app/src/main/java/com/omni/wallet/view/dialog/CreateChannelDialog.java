@@ -20,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
@@ -100,7 +101,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
             mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
             showStepTwo();
         } else {
-            nodePubkey = "025767c2a772bb48f04117625c2da759d55d3e287c101602452c5228c975111594@192.144.199.67:9735";
+            nodePubkey = ConstantInOB.usingCenterNodePubkey;
             showStepOne();
         }
         /**
@@ -332,7 +333,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         mAlertDialog.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nodePubkey = "025767c2a772bb48f04117625c2da759d55d3e287c101602452c5228c975111594@192.144.199.67:9735";
+                nodePubkey = ConstantInOB.usingCenterNodePubkey;
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.VISIBLE);
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.GONE);
                 showStepOne();

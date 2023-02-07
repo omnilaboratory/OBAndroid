@@ -22,6 +22,8 @@ public class ConstantInOB {
     public static String downloadBaseUrlTestNet = "https://cache.oblnd.top/neutrino-testnet/";
     public static String TEST_NET_BTC_HOST_ADDRESS="192.144.199.67";
     public static String TEST_NET_OMNI_HOST_ADDRESS_PORT="192.144.199.67:18332";
+    public static String testCenterNodePubkey="025767c2a772bb48f04117625c2da759d55d3e287c101602452c5228c975111594@192.144.199.67:9735";
+    public static String regCenterNodePubkey="0386790984cda19a179486bf45f7a1d7dc58964605b928e3d36cd7806ce3d31cdb@43.138.107.248:9735";
 
 
 
@@ -59,7 +61,8 @@ public class ConstantInOB {
     public static final String usingDownloadBaseUrl = downloadBaseUrlTestNet;
     public static final String usingBTCHostAddress = TEST_NET_BTC_HOST_ADDRESS;
     public static final String usingLogPath = testLogPath;
-    public static final String usingDownloadDirectory = downloadDirectoryTestNet;*/
+    public static final String usingDownloadDirectory = downloadDirectoryTestNet;
+    public static final String usingCenterNodePubkey = testCenterNodePubkey;*/
 
 //    regTest neutrino config
     public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
@@ -67,6 +70,7 @@ public class ConstantInOB {
     public static final String usingBTCHostAddress = BTCHostAddressRegTest;
     public static final String usingLogPath = regTestLogPath;
     public static final String usingDownloadDirectory = downloadDirectoryRegTest;
+    public static final String usingCenterNodePubkey = regCenterNodePubkey;
 
     public static final long SECOND_MILLIS = 1000;
     public static final long MINUTE_MILLIS = 60 * SECOND_MILLIS;
