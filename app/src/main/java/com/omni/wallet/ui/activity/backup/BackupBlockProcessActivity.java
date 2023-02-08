@@ -327,6 +327,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                 if(bytes == null){
                     Log.e(TAG, "getOldAddress: no address");
                     newAddress();
+                    return;
                 }
                 try {
                     LightningOuterClass.ListAddressesResponse listAddressesResponse = LightningOuterClass.ListAddressesResponse.parseFrom(bytes);
