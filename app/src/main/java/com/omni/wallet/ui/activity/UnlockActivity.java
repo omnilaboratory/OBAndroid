@@ -1,6 +1,7 @@
 package com.omni.wallet.ui.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
@@ -8,14 +9,19 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.protobuf.ByteString;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
@@ -24,6 +30,10 @@ import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.utils.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -68,10 +78,21 @@ public class UnlockActivity extends AppBaseActivity {
         mLoadingDialog = new LoadingDialog(mContext);
         PasswordFilter passwordFilter = new PasswordFilter();
         mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
+        TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE){
+                    clickUnlock();
+                }
+                return true;
+            }
+        };
+        mPwdEdit.setOnEditorActionListener(listener);
     }
 
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
         localPass = User.getInstance().getPasswordMd5(mContext);
         localSeed = User.getInstance().getSeedString(mContext);
         isCreated = User.getInstance().getCreated(mContext);
@@ -80,7 +101,9 @@ public class UnlockActivity extends AppBaseActivity {
         walletAddress = User.getInstance().getWalletAddress(mContext);
         initWalletType = User.getInstance().getInitWalletType(mContext);
         isStartCreate = User.getInstance().getStartCreate(mContext);
+
         runOnUiThread(() -> {
+            WalletState.getInstance().setWalletStateCallback(null);
             subscribeState();
         });
 
@@ -89,6 +112,7 @@ public class UnlockActivity extends AppBaseActivity {
 
     @Override
     protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -114,11 +138,10 @@ public class UnlockActivity extends AppBaseActivity {
 
     @OnClick(R.id.tv_pass_text)
     public void clickToForgetPassword() {
-        switchActivity(ForgetPwdActivity.class);
+        Intent intent = new Intent();
+        intent.setClass(mContext,ForgetPwdActivity.class);
+        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
-
-
-
     public void unlockWallet(String passMd5) {
         Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
         Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
@@ -140,6 +163,7 @@ public class UnlockActivity extends AppBaseActivity {
 
             @Override
             public void onResponse(byte[] bytes) {
+
             }
         });
     }
@@ -207,7 +231,9 @@ public class UnlockActivity extends AppBaseActivity {
     @OnClick(R.id.btn_create)
     public void clickCreate() {
         User.getInstance().setInitWalletType(mContext, "create");
-        switchActivity(CreateWalletStepOneActivity.class);
+        Intent intent = new Intent();
+        intent.setClass(mContext,CreateWalletStepOneActivity.class);
+        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
 
     /**
@@ -217,7 +243,9 @@ public class UnlockActivity extends AppBaseActivity {
     @OnClick(R.id.btn_recover)
     public void clickRecover() {
         User.getInstance().setInitWalletType(mContext, "recovery");
-        switchActivity(RecoverWalletStepOneActivity.class);
+        Intent intent = new Intent();
+        intent.setClass(mContext,RecoverWalletStepOneActivity.class);
+        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
 
     /**
@@ -226,7 +254,12 @@ public class UnlockActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btv_forget_button)
     public void clickForgetPass() {
-        switchActivity(ForgetPwdActivity.class);
+        Intent intent = new Intent();
+        intent.setClass(mContext,ForgetPwdActivity.class);
+        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+        finish();
+    }
 }

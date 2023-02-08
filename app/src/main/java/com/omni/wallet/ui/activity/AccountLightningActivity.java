@@ -15,6 +15,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
@@ -24,6 +25,7 @@ import com.omni.wallet.data.AccountAssetsData;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.entity.event.LockEvent;
 import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.entity.event.OpenChannelEvent;
@@ -127,6 +129,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().post(new CloseUselessActivityEvent());
         mLoadingDialog = new LoadingDialog(mContext);
         DecimalFormat df = new DecimalFormat("0.00");
         mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext))) + "%");

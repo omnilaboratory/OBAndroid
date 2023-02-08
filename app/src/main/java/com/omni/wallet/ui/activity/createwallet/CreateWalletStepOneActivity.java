@@ -10,8 +10,13 @@ import android.widget.TextView;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.view.dialog.LoadingDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +50,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         mLoadingDialog = new LoadingDialog(mContext);
         
     }
@@ -53,7 +59,13 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
     protected void initData() {
         createSeeds();
     }
-  
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
     private void createSeeds() {
         mLoadingDialog.show();
         Walletunlocker.GenSeedRequest genSeedRequest = Walletunlocker.GenSeedRequest.newBuilder().build();
@@ -154,4 +166,9 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
         User.getInstance().setInitWalletType(mContext,"createStepOne");
         switchActivity(CreateWalletStepTwoActivity.class);
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+            finish();
+        }
 }

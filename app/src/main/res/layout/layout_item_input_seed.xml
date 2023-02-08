@@ -30,6 +30,7 @@
         android:text="----"
         android:textColor="@color/color_white"
         android:maxLines="1"
+        android:singleLine="true"
         android:textSize="@dimen/main_14"
         android:textStyle="bold" />
 </LinearLayout>

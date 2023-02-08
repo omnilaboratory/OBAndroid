@@ -22,8 +22,13 @@ import android.widget.Toast;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.listItems.SelectSeedItem;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,6 +76,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         seedsInputAdapter = new SeedsInputAdapter(mContext);
         seedsSelectAdapter = new SeedsSelectAdapter(mContext);
         seedsSelectAdapterForPageTwo = new SeedsSelectAdapterForPageTwo(mContext);
@@ -84,6 +90,11 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
 
     @Override
     protected void initData() { }
@@ -428,5 +439,10 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
         }
 
     }
+    
+    @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+            finish();
+        }
 
 }

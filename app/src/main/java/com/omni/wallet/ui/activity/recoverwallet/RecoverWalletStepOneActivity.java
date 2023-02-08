@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
@@ -19,12 +21,18 @@ import android.widget.Toast;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.template.DisablePasteEditText;
 import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
 import com.omni.wallet.utils.CheckRules;
 import com.omni.wallet.utils.NumberFormatter;
+import com.omni.wallet.utils.SeedFilter;
 import com.omni.wallet.utils.Wallet;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -57,8 +65,15 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
         initEditViewForSeeds();
         
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     /**
@@ -96,7 +111,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
                 TextView noText = new TextView(this);
                 RelativeLayout.LayoutParams noTextParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 noText.setTextColor(getResources().getColor(R.color.color_white));
-                noText.setTextSize(16.0f);
+                noText.setTextSize(14.0f);
                 noText.setText(noNum);
                 noText.setLayoutParams(noTextParams);
 
@@ -106,8 +121,11 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
                 cellEditText.setHint(getResources().getString(R.string.create_seed_input_hit));
                 cellEditText.setTextColor(getResources().getColor(R.color.color_white));
                 cellEditText.setHintTextColor(getResources().getColor(R.color.color_white));
-                cellEditText.setTextSize(16.0f);
+                cellEditText.setTextSize(14.0f);
                 cellEditText.setLayoutParams(cellEditTextParams);
+                cellEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+                SeedFilter seedFilter = new SeedFilter();
+                cellEditText.setFilters(new InputFilter[]{seedFilter});
 
                 cellInner.addView(noText);
                 cellInner.addView(cellEditText);
@@ -135,14 +153,13 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
         ClipData.Item item = clipData.getItemAt(0);
 
         if(item!=null){
-
             String seedsString = item.getText().toString();
             boolean checkStringFlag = CheckRules.checkSeedString(seedsString);
             if(checkStringFlag){
-                String[] seedsArr = seedsString.split(" ");
+                String[] seedsArr = seedsString.trim().split(" ");
                 for (int i = 0;i<seedsArr.length;i++){
                     EditText et = list.get(i);
-                    et.setText(seedsArr[i]);
+                    et.setText(seedsArr[i].trim());
                 }
             }else{
                 Toast errorToast = Toast.makeText(RecoverWalletStepOneActivity.this,getResources().getString(R.string.toast_recover_paste_error),Toast.LENGTH_LONG);
@@ -189,5 +206,9 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
         editor.commit();
         switchActivity(RecoverWalletStepTwoActivity.class);
 //        switchActivity(RestoreChannelActivity.class);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+        finish();
     }
 }

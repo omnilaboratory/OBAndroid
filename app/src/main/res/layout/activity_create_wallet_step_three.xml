@@ -252,6 +252,7 @@
                         android:textColorHint="@color/color_description_blue"
                         android:maxLines="1"
                         android:inputType="textVisiblePassword"
+                        android:imeOptions="actionDone"
                         android:textAlignment="center"/>
                     <ImageView
                         android:contentDescription="@string/pass_show_hind"

@@ -5,6 +5,7 @@ import android.widget.LinearLayout;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
 import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
@@ -13,6 +14,10 @@ import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepTwoActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepTwoActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -39,6 +44,7 @@ public class InitWalletMenuActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         walletType = User.getInstance().getInitWalletType(mContext);
         if(walletType.equals("createStepOne")||walletType.equals("createStepTwo")||walletType.equals("createStepThree")){
             welcomeContent.setVisibility(View.GONE);
@@ -58,6 +64,12 @@ public class InitWalletMenuActivity extends AppBaseActivity {
     @Override
     protected void initData() {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     @OnClick(R.id.btn_create)
@@ -104,4 +116,9 @@ public class InitWalletMenuActivity extends AppBaseActivity {
                 break;
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+            finish();
+        }
 }

@@ -21,6 +21,7 @@ import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.listItems.BackupFile;
 import com.omni.wallet.ui.activity.AccountLightningActivity;
@@ -28,6 +29,10 @@ import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepTwoActivity;
 import com.omni.wallet.utils.FilesUtils;
 import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.view.dialog.LoadingDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -72,6 +77,7 @@ public class RestoreChannelActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         mLoadingDialog = new LoadingDialog(mContext);
         String storagePath = Environment.getExternalStorageDirectory() + "";
 
@@ -104,7 +110,13 @@ public class RestoreChannelActivity extends AppBaseActivity {
     protected void initData() {
 
     }
-    
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
     private void initRecyclerView(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -393,4 +405,9 @@ public class RestoreChannelActivity extends AppBaseActivity {
 
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+            finish();
+        }
 }

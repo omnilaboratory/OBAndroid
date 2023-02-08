@@ -27,6 +27,7 @@ import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.ui.activity.AccountLightningActivity;
@@ -36,6 +37,10 @@ import com.omni.wallet.utils.ObdLogFileObserver;
 import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.utils.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -151,6 +156,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
         networkChangeReceiver = new NetworkChangeReceiver();
         runOnUiThread(() -> {
             IntentFilter intentFilter = new IntentFilter();
@@ -162,6 +168,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @Override
     protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
         PublicUtils.closeLoading(mLoadingDialog);
         unregisterReceiver(networkChangeReceiver);
         blockData.unregisterOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
@@ -250,7 +257,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     public void newAddressToWallet (){
         Log.e(TAG,"new Address count");
         String createType = User.getInstance().getInitWalletType(mContext);
-        if(createType.equals("recovery")){
+        if(createType.equals("recoveryStepTwo")){
             getOldAddress();
 
         }else{
@@ -284,8 +291,15 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                         obdLogFileObserver.stopWatching();
                         User.getInstance().setWalletAddress(mContext,address);
                         updateSyncDataView(totalBlock);
-                        User.getInstance().setInitWalletType(mContext,"initialed");
-                        initWalletType = "initialed";
+                        if(initWalletType.equals("recoveryStepTwo")){
+                            User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
+                            initWalletType = "toBeRestoreChannel";
+                        }else{
+                            User.getInstance().setInitWalletType(mContext,"initialed");
+                            initWalletType = "initialed";
+                        }
+
+
                     });
                     // save wallet address to local
                     // 保存地址到本地
@@ -299,7 +313,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
 
     public void getOldAddress(){
-
+        Log.e(TAG, "getOldAddress: ");
         LightningOuterClass.ListAddressesRequest listAddressesRequest = LightningOuterClass.ListAddressesRequest.newBuilder().build();
         Obdmobile.oB_ListAddresses(listAddressesRequest.toByteArray(), new Callback() {
             @Override
@@ -311,13 +325,12 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             @Override
             public void onResponse(byte[] bytes) {
                 if(bytes == null){
+                    Log.e(TAG, "getOldAddress: no address");
                     newAddress();
                 }
                 try {
                     LightningOuterClass.ListAddressesResponse listAddressesResponse = LightningOuterClass.ListAddressesResponse.parseFrom(bytes);
-                    List<String> addresses = listAddressesResponse.getItemsList();
                     String address = listAddressesResponse.getItems(0);
-                    Log.e(TAG,addresses.toString());
                     newCreatedAddress = address;
                     Bitmap mQRBitmap = CodeUtils.createQRCode(address, DisplayUtil.dp2px(mContext, 100));
                     runOnUiThread(() -> {
@@ -435,5 +448,8 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             }
         });
     }
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+            finish();
+        }
 }

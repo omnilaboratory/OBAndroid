@@ -6,7 +6,7 @@ public class PasswordFilter extends LoginFilter.PasswordFilterGMail {
     public PasswordFilter() {
         super();
     }
-
+    //set password useful char
     @Override
     public boolean isAllowed(char c) {
         if ('0' <= c && '9' >= c)

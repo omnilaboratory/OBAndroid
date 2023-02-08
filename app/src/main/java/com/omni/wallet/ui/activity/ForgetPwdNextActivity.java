@@ -1,6 +1,8 @@
 package com.omni.wallet.ui.activity;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
@@ -9,7 +11,9 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,9 +23,19 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
+import com.omni.wallet.utils.PublicUtils;
+import com.omni.wallet.utils.WalletState;
+import com.omni.wallet.view.dialog.LoadingDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -31,6 +45,7 @@ import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
 public class ForgetPwdNextActivity extends AppBaseActivity {
+    public final static String TAG = ForgetPwdNextActivity.class.getSimpleName();
     Context ctx = ForgetPwdNextActivity.this;
     @BindView(R.id.password_input)
     public EditText mPwdEdit;
@@ -42,6 +57,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
     public ImageView mConfirmPwdEyeIv;
     private boolean mCanClick = true;
     private boolean mConfirmCanClick = true;
+    LoadingDialog mLoadingDialog;
 
     @Override
     protected Drawable getWindowBackground() {
@@ -56,9 +72,24 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
+        mLoadingDialog = new LoadingDialog(mContext);
         PasswordFilter passwordFilter = new PasswordFilter();
         mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
         mConfirmPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
+        TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE){
+                    clickForward();
+                }
+                return true;
+            }
+        };
+        mConfirmPwdEdit.setOnEditorActionListener(listener);
+        runOnUiThread(() -> {
+            subscribeState();
+        });
     }
 
     @Override
@@ -66,6 +97,11 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
 
     /**
      * passwordInput 值变更
@@ -226,19 +262,19 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
+        mLoadingDialog.show();
         String password = mPwdEdit.getText().toString();
         int strongerPwd = CheckInputRules.checkePwd(password);
         TextView passwordViewRepeat = findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
+            Log.e(TAG,"start change password");
             /**
              * 使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
              * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
              */
-            SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
-            SharedPreferences.Editor editor = secretData.edit();
             String newPassMd5String = Md5Util.getMD5Str(password);
-            String oldPassMd5String = secretData.getString("password", "");
+            String oldPassMd5String = User.getInstance().getPasswordMd5(mContext);
             Walletunlocker.ChangePasswordRequest changePasswordRequest = Walletunlocker.ChangePasswordRequest.newBuilder()
                     .setCurrentPassword(ByteString.copyFromUtf8(oldPassMd5String))
                     .setNewPassword(ByteString.copyFromUtf8(newPassMd5String))
@@ -246,25 +282,31 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
             Obdmobile.changePassword(changePasswordRequest.toByteArray(), new Callback() {
                 @Override
                 public void onError(Exception e) {
+                    runOnUiThread(
+                            () -> {
+                                PublicUtils.closeLoading(mLoadingDialog);
+                            }
+                    );
                     e.printStackTrace();
                 }
 
                 @Override
                 public void onResponse(byte[] bytes) {
                     if(bytes == null){
+                        runOnUiThread(
+                                () -> {
+                                    PublicUtils.closeLoading(mLoadingDialog);
+                                }
+                        );
                         return;
                     }
                     try {
                         Walletunlocker.ChangePasswordResponse changePasswordResponse = Walletunlocker.ChangePasswordResponse.parseFrom(bytes);
                         String macaroon = changePasswordResponse.getAdminMacaroon().toString();
                         Log.e("macaroon",macaroon);
-                        editor.putString("password",newPassMd5String);
-                        editor.commit();
-                        SharedPreferences macaroonData = ctx.getSharedPreferences("macaroonData", MODE_PRIVATE);
-                        SharedPreferences.Editor macaroonDataEditor = macaroonData.edit();
-                        macaroonDataEditor.putString("macaroon", macaroon.toString());
-                        macaroonDataEditor.commit();
-                        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(newPassMd5String)).build();
+                        User.getInstance().setPasswordMd5(mContext,newPassMd5String);
+                        User.getInstance().setMacaroonString(mContext,macaroon);
+                       /* Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(newPassMd5String)).build();
                         Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
                             @Override
                             public void onError(Exception e) {
@@ -273,11 +315,15 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
 
                             @Override
                             public void onResponse(byte[] bytes) {
-                                switchActivityFinish(AccountLightningActivity.class);
                             }
-                        });
-                        
+                        });*/
+
                     } catch (InvalidProtocolBufferException e) {
+                        runOnUiThread(
+                                () -> {
+                                    PublicUtils.closeLoading(mLoadingDialog);
+                                }
+                        );
                         e.printStackTrace();
                     }
                     
@@ -294,7 +340,28 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
             Toast checkSetPassToast = Toast.makeText(ForgetPwdNextActivity.this,checkSetPassWrongString,Toast.LENGTH_LONG);
             checkSetPassToast.setGravity(Gravity.TOP,0,30);
             checkSetPassToast.show();
+            mLoadingDialog.dismiss();
         }
 
     }
+
+    public void subscribeState() {
+        WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
+            switch (walletState){
+                case 4:
+                    runOnUiThread(()->{
+                        switchActivity(AccountLightningActivity.class);
+                    });
+                    break;
+                default:
+                    break;
+            }
+        };
+        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+        finish();
+    }
+
 }

@@ -85,6 +85,7 @@
                         android:textColorHint="@color/color_description_blue"
                         android:inputType="textVisiblePassword"
                         android:maxLines="1"
+                        android:imeOptions="actionDone"
                         android:textAlignment="center"/>
                     <ImageView
                         android:id="@+id/pass_switch"
