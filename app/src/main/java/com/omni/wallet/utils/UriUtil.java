@@ -9,6 +9,7 @@ public class UriUtil {
     public static final String URI_PREFIX_LIGHTNING = "lightning:";
     public static final String URI_PREFIX_BITCOIN = "bitcoin:";
     public static final String URI_PREFIX_LNDCONNECT = "lndconnect://";
+    public static final String URI_PREFIX_LUCKY_PACKET = "luckypacket:";
 
     public static String generateLightningUri(@NonNull String data) {
         if (isLightningUri(data)) {
@@ -16,6 +17,14 @@ public class UriUtil {
         }
 
         return URI_PREFIX_LIGHTNING + data;
+    }
+
+    public static String generateLuckyPacketUri(@NonNull String data) {
+        if (isLuckyPacketUri(data)) {
+            return data;
+        }
+
+        return URI_PREFIX_LUCKY_PACKET + data;
     }
 
     public static String generateBitcoinUri(@NonNull String data) {
@@ -38,6 +47,10 @@ public class UriUtil {
         return hasPrefix(URI_PREFIX_LIGHTNING, data);
     }
 
+    public static boolean isLuckyPacketUri(@NonNull String data) {
+        return hasPrefix(URI_PREFIX_LUCKY_PACKET, data);
+    }
+
     public static boolean isBitcoinUri(@NonNull String data) {
         return hasPrefix(URI_PREFIX_BITCOIN, data);
     }
@@ -53,6 +66,8 @@ public class UriUtil {
             return data.substring(URI_PREFIX_BITCOIN.length());
         } else if (isLNDConnectUri(data)) {
             return data.substring(URI_PREFIX_LNDCONNECT.length());
+        } else if (isLuckyPacketUri(data)) {
+            return data.substring(URI_PREFIX_LUCKY_PACKET.length());
         } else {
             return data;
         }

@@ -1,6 +1,7 @@
 package com.omni.wallet.view.popupwindow.createinvoice;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
@@ -15,11 +16,14 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.ListAssetItemEntity;
+import com.omni.wallet.thirdsupport.zxing.util.RedCodeUtils;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
 import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
@@ -81,8 +85,6 @@ public class CreateLuckyPacketPopupWindow {
             rootView.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Random rand = new Random();
-                    int randNum = rand.nextInt(3);
                     mBasePopWindow.dismiss();
                 }
             });
@@ -225,57 +227,65 @@ public class CreateLuckyPacketPopupWindow {
 //                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
 //                    return;
 //                }
-//                mLoadingDialog.show();
-//                LightningOuterClass.Invoice asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
-//                        .setAssetId((int) mAssetId)
-//                        .setAmount(Long.parseLong(amountEdit.getText().toString()))
-//                        .setMemo(numberEdit.getText().toString())
-//                        .setExpiry(Long.parseLong("86400")) // in seconds
-//                        .setPrivate(false)
-//                        .build();
-//                Obdmobile.oB_AddInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
-//                    @Override
-//                    public void onError(Exception e) {
-//                        LogUtils.e(TAG, "------------------addInvoiceOnError------------------" + e.getMessage());
-//                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                mLoadingDialog.dismiss();
-//                            }
-//                        });
-//                    }
-//
-//                    @Override
-//                    public void onResponse(byte[] bytes) {
-//                        if (bytes == null) {
-//                            return;
-//                        }
-//                        try {
-//                            LightningOuterClass.AddInvoiceResponse resp = LightningOuterClass.AddInvoiceResponse.parseFrom(bytes);
-//                            LogUtils.e(TAG, "------------------addInvoiceOnResponse-----------------" + resp);
-//                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    EventBus.getDefault().post(new CreateInvoiceEvent());
-//                                    qrCodeUrl = UriUtil.generateLightningUri(resp.getPaymentRequest());
-//                                    mLoadingDialog.dismiss();
-//                                    rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
-//                                    rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.VISIBLE);
-//                                    rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-//                                    rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-//                                    showStepSuccess(rootView);
-//                                }
-//                            });
-//                        } catch (InvalidProtocolBufferException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                });
-                rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
-                rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-                rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                showStepSuccess(rootView);
+                Random rand = new Random();
+                double randAmount = rand.nextDouble() * (Double.parseDouble(amountInput) / Double.parseDouble(numberInput));
+                LogUtils.e("===============1=============", (long) (Double.parseDouble(StringUtils.formatDouble2(randAmount)) * 100000000)+"");
+                mLoadingDialog.show();
+                LightningOuterClass.Invoice asyncInvoiceRequest;
+                if (mAssetId == 0) {
+                    asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
+                            .setAssetId((int) mAssetId)
+                            .setValueMsat((long) (Double.parseDouble(StringUtils.formatDouble2(randAmount)) * 100000000 * 1000))
+                            .setMemo("memo")
+                            .setExpiry(Long.parseLong("86400")) // in seconds
+                            .setPrivate(false)
+                            .build();
+                } else {
+                    asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
+                            .setAssetId((int) mAssetId)
+                            .setAmount((long) (Double.parseDouble(StringUtils.formatDouble2(randAmount)) * 100000000))
+                            .setMemo("memo")
+                            .setExpiry(Long.parseLong("86400")) // in seconds
+                            .setPrivate(false)
+                            .build();
+                }
+                Obdmobile.oB_AddInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        LogUtils.e(TAG, "------------------addInvoiceOnError------------------" + e.getMessage());
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mLoadingDialog.dismiss();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        if (bytes == null) {
+                            return;
+                        }
+                        try {
+                            LightningOuterClass.AddInvoiceResponse resp = LightningOuterClass.AddInvoiceResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------addInvoiceOnResponse-----------------" + resp);
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    qrCodeUrl = UriUtil.generateLuckyPacketUri(resp.getPaymentRequest());
+                                    mLoadingDialog.dismiss();
+                                    rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
+                                    rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.VISIBLE);
+                                    rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                    rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                    showStepSuccess(rootView);
+                                }
+                            });
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }
@@ -305,8 +315,8 @@ public class CreateLuckyPacketPopupWindow {
         timeSuccessTv.setText(timeInput);
         timeUnitSuccessTv.setText(timeType);
         paymentSuccessTv.setText(qrCodeUrl);
-//        Bitmap mQRBitmap = CodeUtils.createQRCode(qrCodeUrl, DisplayUtil.dp2px(mContext, 100));
-//        qrCodeIv.setImageBitmap(mQRBitmap);
+        Bitmap mQRBitmap = RedCodeUtils.createQRCode(qrCodeUrl, DisplayUtil.dp2px(mContext, 100));
+        qrCodeIv.setImageBitmap(mQRBitmap);
 
         copyIv.setOnClickListener(new View.OnClickListener() {
             @Override

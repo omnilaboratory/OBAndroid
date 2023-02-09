@@ -50,15 +50,15 @@
     <string name="text_dialog_doing">正在处理&#8230;</string>
 
     <!--上拉加载下拉刷新-->
-    <string name="text_load_more">上拉加载更多</string>
-    <string name="text_load_pull">下拉即可刷新</string>
-    <string name="text_load_release">释放即可刷新</string>
-    <string name="text_refreshing">正在刷新&#8230;</string>
-    <string name="text_refresh_done">刷新完成</string>
-    <string name="text_loading">正在加载&#8230;</string>
-    <string name="text_load_done">加载完成</string>
-    <string name="text_load_no_data">没有更多了~</string>
-    <string name="text_load_in_the_end">已经到底了</string>
+    <string name="text_load_more">Pull up to load more</string>
+    <string name="text_load_pull">Pull down to refresh</string>
+    <string name="text_load_release">Release to refresh</string>
+    <string name="text_refreshing">Refreshing&#8230;</string>
+    <string name="text_refresh_done">Refresh complete</string>
+    <string name="text_loading">Loading&#8230;</string>
+    <string name="text_load_done">Loading completed</string>
+    <string name="text_load_no_data">No more</string>
+    <string name="text_load_in_the_end">Have reached the end</string>
 
     <!--//============================分割线==============================//-->
 </resources>

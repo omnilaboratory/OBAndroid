@@ -28,7 +28,6 @@ import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
-import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
@@ -1496,9 +1495,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @OnClick(R.id.layout_lucky_packet)
     public void clickLuckyPacket() {
-        ToastUtils.showToast(mContext, "Not yet open, please wait");
-//        mCreateLuckyPacketPopupWindow = new CreateLuckyPacketPopupWindow(mContext);
-//        mCreateLuckyPacketPopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
+//        ToastUtils.showToast(mContext, "Not yet open, please wait");
+        mCreateLuckyPacketPopupWindow = new CreateLuckyPacketPopupWindow(mContext);
+        mCreateLuckyPacketPopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
     }
 
 
