@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.omni.wallet.baselibrary.view.banner.BannerViewPager
+    <com.omni.testnet.baselibrary.view.banner.BannerViewPager
         android:id="@+id/banner_vp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

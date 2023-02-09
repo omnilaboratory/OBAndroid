@@ -209,38 +209,38 @@
 #---------------------------------1.实体类---------------------------------
 #不混淆的实体类
 #baseLibrary
--keep class com.omni.wallet.baselibrary.entity.** {*;}
--dontwarn com.omni.wallet.baselibrary.entity.**
+-keep class testnet.baselibrary.entity.** {*;}
+-dontwarn testnet.baselibrary.entity.**
 #frameLibrary
--keep class com.omni.wallet.framelibrary.entity.** {*;}
--dontwarn  com.omni.wallet.framelibrary.entity.**
+-keep class testnet.framelibrary.entity.** {*;}
+-dontwarn  testnet.framelibrary.entity.**
 #gallery
--keep class com.omni.wallet.gallery.entity.** {*;}
--dontwarn  com.omni.wallet.gallery.entity.**
+-keep class testnet.gallery.entity.** {*;}
+-dontwarn  testnet.gallery.entity.**
 #app
--keep class com.omni.wallet.entity.** {*;}
--dontwarn com.omni.wallet.entity.**
--keep class com.omni.wallet.view.filterMenu.buildingClaimFilterMenu.entity.** {*;}
--dontwarn com.omni.wallet.view.filterMenu.buildingClaimFilterMenu.entity.**
--keep class com.omni.wallet.view.filterMenu.buildingFilterMenu.entity.** {*;}
--dontwarn com.omni.wallet.view.filterMenu.buildingFilterMenu.entity.**
--keep class com.omni.wallet.view.filterMenu.UserJourneyFilterMenu.entity.** {*;}
--dontwarn com.omni.wallet.view.filterMenu.UserJourneyFilterMenu.entity.**
+-keep class testnet.entity.** {*;}
+-dontwarn testnet.entity.**
+-keep class testnet.view.filterMenu.buildingClaimFilterMenu.entity.** {*;}
+-dontwarn testnet.view.filterMenu.buildingClaimFilterMenu.entity.**
+-keep class testnet.view.filterMenu.buildingFilterMenu.entity.** {*;}
+-dontwarn testnet.view.filterMenu.buildingFilterMenu.entity.**
+-keep class testnet.view.filterMenu.UserJourneyFilterMenu.entity.** {*;}
+-dontwarn testnet.view.filterMenu.UserJourneyFilterMenu.entity.**
 #thirdSuppord
--keep class com.omni.wallet.thirdsupport.umeng.share.bean.** {*;}
--dontwarn  com.omni.wallet.thirdsupport.umeng.share.bean.**
--keep class com.omni.wallet.thirdsupport.umeng.push.entity.** {*;}
--dontwarn  com.omni.wallet.thirdsupport.umeng.push.entity.**
--keep class com.omni.wallet.thirdsupport.location.entity.** {*;}
--dontwarn com.omni.wallet.thirdsupport.location.entity.**
--keep class com.omni.wallet.thirdsupport.tiktok.auth.bean.** {*;}
--dontwarn com.omni.wallet.thirdsupport.tiktok.auth.bean.**
--keep class com.omni.wallet.thirdsupport.tiktok.share.bean.** {*;}
--dontwarn com.omni.wallet.thirdsupport.tiktok.share.bean.**
+-keep class testnet.thirdsupport.umeng.share.bean.** {*;}
+-dontwarn  testnet.thirdsupport.umeng.share.bean.**
+-keep class testnet.thirdsupport.umeng.push.entity.** {*;}
+-dontwarn  testnet.thirdsupport.umeng.push.entity.**
+-keep class testnet.thirdsupport.location.entity.** {*;}
+-dontwarn testnet.thirdsupport.location.entity.**
+-keep class testnet.thirdsupport.tiktok.auth.bean.** {*;}
+-dontwarn testnet.thirdsupport.tiktok.auth.bean.**
+-keep class testnet.thirdsupport.tiktok.share.bean.** {*;}
+-dontwarn testnet.thirdsupport.tiktok.share.bean.**
 
 #IM
--keep class com.omni.wallet.im.entity.** {*;}
--dontwarn com.omni.wallet.im.entity.**
+-keep class testnet.im.entity.** {*;}
+-dontwarn testnet.im.entity.**
 
 
 
@@ -508,7 +508,7 @@ public static java.lang.String TABLENAME;
 
 #SDK需要引用导入工程的资源文件，通过了反射机制得到资源引用文件R.java，
 #但是在开发者通过proguard等混淆/优化工具处理apk时，proguard可能会将R.java删除，如果遇到这个问题，请添加如下配置
--keep public class com.omni.wallet.R$*{
+-keep public class testnet.R$*{
     public static final int *;
 }
 

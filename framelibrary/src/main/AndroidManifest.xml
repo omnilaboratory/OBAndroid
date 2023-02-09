@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.omni.wallet.framelibrary">
+    package="com.omni.testnet.framelibrary">
     <!--联网权限-->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- 读取手机联网状态 -->
@@ -38,7 +38,7 @@
         <!--主要原因是7.0对于安全以及6.0之后动态申请权限的考虑，这个Provider是用来指定一些路径的-->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.omni.wallet.fileProvider"
+            android:authorities="com.omni.testnet.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -47,7 +47,7 @@
         </provider>
         <!--日志上传服务-->
         <service
-            android:name="com.omni.wallet.framelibrary.service.LogService"
+            android:name="com.omni.testnet.framelibrary.service.LogService"
             android:process=":log" />
 
     </application>

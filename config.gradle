@@ -1,7 +1,7 @@
 ext {
     // app 相关版本控制
     versions = [
-            applicationId   : "com.omni.wallet",
+            applicationId   : "com.omni.testnet",
             minSdkVersion   : 21,
             targetSdkVersion: 28,
             compileVersion  : 28,

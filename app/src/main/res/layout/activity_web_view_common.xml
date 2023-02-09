@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.omni.wallet.baselibrary.view.webView.CustomWebView
+    <com.omni.testnet.baselibrary.view.webView.CustomWebView
         android:id="@+id/web_view_common"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <com.omni.wallet.baselibrary.view.datePicker.NumberPicker
+    <com.omni.testnet.baselibrary.view.datePicker.NumberPicker
         android:id="@+id/year_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
         app:textSize="20sp"
         app:verticalSpacing="30dp" />
 
-    <com.omni.wallet.baselibrary.view.datePicker.NumberPicker
+    <com.omni.testnet.baselibrary.view.datePicker.NumberPicker
         android:id="@+id/month_picker"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
         app:textSize="20sp"
         app:verticalSpacing="30dp" />
 
-    <com.omni.wallet.baselibrary.view.datePicker.NumberPicker
+    <com.omni.testnet.baselibrary.view.datePicker.NumberPicker
         android:id="@+id/day_picker"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
         app:textSize="20sp"
         app:verticalSpacing="30dp" />
 
-    <com.omni.wallet.baselibrary.view.datePicker.NumberPicker
+    <com.omni.testnet.baselibrary.view.datePicker.NumberPicker
         android:id="@+id/hour_picker"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
         app:textSize="20sp"
         app:verticalSpacing="30dp" />
 
-    <com.omni.wallet.baselibrary.view.datePicker.NumberPicker
+    <com.omni.testnet.baselibrary.view.datePicker.NumberPicker
         android:id="@+id/minute_picker"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

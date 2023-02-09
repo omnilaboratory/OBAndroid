@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.omni.wallet"
+<manifest package="com.omni.testnet"
           xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools">
 
@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <application
-        android:name=".base.AppApplication"
+        android:name="com.omni.testnet.base.AppApplication"
         android:allowBackup="false"
         android:configChanges="orientation"
         android:hardwareAccelerated="true"
@@ -26,7 +26,7 @@
         tools:replace="android:label,android:icon,android:theme">
         
         <activity
-            android:name=".ui.activity.SplashActivity"
+            android:name="com.omni.testnet.ui.activity.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -42,117 +42,117 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <!-- url唤醒App的Scheme和host -->
                 <data
-                    android:host="com.omni.wallet"
+                    android:host="com.omni.testnet"
                     android:scheme="content"/>
             </intent-filter>
         </activity>
         <!-- Unlock页面 -->
         <activity
-            android:name=".ui.activity.UnlockActivity"
+            android:name="com.omni.testnet.ui.activity.UnlockActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activity.InitWalletMenuActivity"
+            android:name="com.omni.testnet.ui.activity.InitWalletMenuActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- Set Pass页面 -->
         <!-- ForgetPwd页面 -->
         <activity
-            android:name=".ui.activity.ForgetPwdActivity"
+            android:name="com.omni.testnet.ui.activity.ForgetPwdActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- ForgetPwdNext页面 -->
         <activity
-            android:name=".ui.activity.ForgetPwdNextActivity"
+            android:name="com.omni.testnet.ui.activity.ForgetPwdNextActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- Create页面 -->
         <activity
-            android:name=".ui.activity.CreateActivity"
+            android:name="com.omni.testnet.ui.activity.CreateActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- CreateWalletStepOne页面 -->
         <activity
-            android:name=".ui.activity.createwallet.CreateWalletStepOneActivity"
+            android:name="com.omni.testnet.ui.activity.createwallet.CreateWalletStepOneActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- CreateWalletStepTwo页面 -->
         <activity
-            android:name=".ui.activity.createwallet.CreateWalletStepTwoActivity"
+            android:name="com.omni.testnet.ui.activity.createwallet.CreateWalletStepTwoActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- CreateWalletStepThree页面 -->
         <activity
-            android:name=".ui.activity.createwallet.CreateWalletStepThreeActivity"
+            android:name="com.omni.testnet.ui.activity.createwallet.CreateWalletStepThreeActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- ChooseBackupType页面 -->
         <activity
-            android:name=".ui.activity.ChooseBackupTypeActivity"
+            android:name="com.omni.testnet.ui.activity.ChooseBackupTypeActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- RecoverWalletStepOne页面 -->
         <activity
-            android:name=".ui.activity.recoverwallet.RecoverWalletStepOneActivity"
+            android:name="com.omni.testnet.ui.activity.recoverwallet.RecoverWalletStepOneActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- RecoverWalletStepTwo页面 -->
         <activity
-            android:name=".ui.activity.recoverwallet.RecoverWalletStepTwoActivity"
+            android:name="com.omni.testnet.ui.activity.recoverwallet.RecoverWalletStepTwoActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- GetBlockData页面 -->
         <activity
-            android:name=".ui.activity.GetBlockDataActivity"
+            android:name="com.omni.testnet.ui.activity.GetBlockDataActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- AccountLightning页面 -->
         <activity
-            android:name=".ui.activity.AccountLightningActivity"
+            android:name="com.omni.testnet.ui.activity.AccountLightningActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- Channels页面 -->
         <activity
-            android:name=".ui.activity.channel.ChannelsActivity"
+            android:name="com.omni.testnet.ui.activity.channel.ChannelsActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- backupBlock页面 -->
         <activity
-            android:name=".ui.activity.backup.BackupBlockProcessActivity"
+            android:name="com.omni.testnet.ui.activity.backup.BackupBlockProcessActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- BalanceDetail页面 -->
         <activity
-            android:name=".ui.activity.BalanceDetailActivity"
+            android:name="com.omni.testnet.ui.activity.BalanceDetailActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- ScanQRCode页面 -->
         <activity
-            android:name=".ui.activity.ScanActivity"
+            android:name="com.omni.testnet.ui.activity.ScanActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- Search页面 -->
         <activity
-            android:name=".ui.activity.SearchActivity"
+            android:name="com.omni.testnet.ui.activity.SearchActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- ScanQRCode Channel页面 -->
         <activity
-            android:name=".ui.activity.ScanChannelActivity"
+            android:name="com.omni.testnet.ui.activity.ScanChannelActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <!-- ScanQRCode Send页面 -->
         <activity
-            android:name=".ui.activity.ScanSendActivity"
+            android:name="com.omni.testnet.ui.activity.ScanSendActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <activity 
-            android:name=".ui.activity.backup.RestoreChannelActivity"
+            android:name="com.omni.testnet.ui.activity.backup.RestoreChannelActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.activity.backup.BackupChannelActivity"
+            android:name="com.omni.testnet.ui.activity.backup.BackupChannelActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
     </application>
