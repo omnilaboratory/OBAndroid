@@ -344,11 +344,13 @@ public class RestoreChannelActivity extends AppBaseActivity {
             }else{
                 PublicUtils.closeLoading(mLoadingDialog);
                 User.getInstance().setRestoredChannel(mContext,true);
+                User.getInstance().setInitWalletType(mContext,"initialed");
                 switchActivityFinish(AccountLightningActivity.class);
             }
         }else{
             PublicUtils.closeLoading(mLoadingDialog);
             User.getInstance().setRestoredChannel(mContext,true);
+            User.getInstance().setInitWalletType(mContext,"initialed");
             switchActivityFinish(AccountLightningActivity.class);
         }
         
