@@ -52,6 +52,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String WALLET_STATE = "walletState";
     private static final String RESTORED_CHANNEL = "restoredChannel";
     private static final String TOTAL_BLOCK = "totalBlock";
+    private static final String ASSETS_COUNT = "assetsCount";
 
 
     /**
@@ -410,5 +411,13 @@ public class PreferencesUtils extends BasePreferencesUtils {
 
     public static void saveRestoredChannel(Context context,boolean value){
          putBoolean(SETTINGS,context,RESTORED_CHANNEL,value);
+    }
+
+    public static int getAssetsCount(Context context) {
+        return getInt(SETTINGS,context,ASSETS_COUNT);
+    }
+
+    public static void saveAssetsCount(Context context, int value) {
+        putInt(SETTINGS,context,ASSETS_COUNT,value);
     }
 }
