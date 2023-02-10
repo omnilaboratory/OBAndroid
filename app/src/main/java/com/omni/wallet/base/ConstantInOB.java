@@ -27,7 +27,6 @@ public class ConstantInOB {
     public static String regCenterNodePubkey="0386790984cda19a179486bf45f7a1d7dc58964605b928e3d36cd7806ce3d31cdb@43.138.107.248:9735";
 
 
-
     public static final String neutrinoRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=neutrino " +
@@ -66,7 +65,7 @@ public class ConstantInOB {
     public static final String usingCenterNodePubkey = testCenterNodePubkey;
 
 //    regTest neutrino config
-    /*public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
+   /* public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
     public static final String usingDownloadBaseUrl = downloadBaseUrl;
     public static final String usingBTCHostAddress = BTCHostAddressRegTest;
     public static final String usingLogPath = regTestLogPath;

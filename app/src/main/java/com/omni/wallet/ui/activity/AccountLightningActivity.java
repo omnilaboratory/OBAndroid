@@ -15,13 +15,12 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
-import com.omni.wallet.data.AccountAssetsData;
+import com.omni.wallet.data.AssetsActions;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
@@ -38,6 +37,7 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.UriUtil;
+import com.omni.wallet.utils.WalletServiceUtil;
 import com.omni.wallet.view.AssetTrendChartView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
@@ -148,7 +148,6 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     // TODO: 2023/1/12 待完善
     private void setAssetTrendChartViewShow() {
-        AccountAssetsData accountAssetsData = AccountAssetsData.getInstance(mContext);
         /*List<Map<String,Object>> allList = null;
         try {
             allList = accountAssetsData.queryAmountForAll();
@@ -231,6 +230,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         EventBus.getDefault().register(this);
         getInfo();
         setDefaultAddress();
+
     }
 
     @Override
