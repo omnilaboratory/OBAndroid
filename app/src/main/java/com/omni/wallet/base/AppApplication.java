@@ -17,8 +17,6 @@ import com.omni.wallet.baselibrary.http.interceptor.LogInterceptor;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
-import com.omni.wallet.data.BTCData;
-import com.omni.wallet.data.DollarData;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
@@ -30,7 +28,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.util.Map;
 
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;

@@ -27,7 +27,6 @@ public class ConstantInOB {
     public static String regLiquidityNodePubkey="0386790984cda19a179486bf45f7a1d7dc58964605b928e3d36cd7806ce3d31cdb@43.138.107.248:9735";
 
 
-
     public static final String neutrinoRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=neutrino " +

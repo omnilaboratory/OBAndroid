@@ -1,8 +1,10 @@
 package com.omni.wallet.ui.activity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.google.protobuf.ByteString;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
@@ -14,6 +16,8 @@ import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepTwoActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepTwoActivity;
+import com.omni.wallet.utils.PublicUtils;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -21,6 +25,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import lnrpc.Walletunlocker;
+import obdmobile.Callback;
+import obdmobile.Obdmobile;
 
 public class InitWalletMenuActivity extends AppBaseActivity {
 
@@ -37,6 +44,8 @@ public class InitWalletMenuActivity extends AppBaseActivity {
 
     String walletType;
 
+    LoadingDialog mLoadingDialog;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_init_wallet_menu;
@@ -44,6 +53,7 @@ public class InitWalletMenuActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        mLoadingDialog = new LoadingDialog(mContext);
         EventBus.getDefault().register(this);
         walletType = User.getInstance().getInitWalletType(mContext);
         if(walletType.equals("createStepOne")||walletType.equals("createStepTwo")||walletType.equals("createStepThree")){
@@ -92,7 +102,7 @@ public class InitWalletMenuActivity extends AppBaseActivity {
                 switchActivity(CreateWalletStepThreeActivity.class);
                 break;
             case "createStepThree" :
-                switchActivity(BackupBlockProcessActivity.class);
+                unlockWalletToBackupBlockProcess();
                 break;
             default:
                 break;
@@ -107,14 +117,70 @@ public class InitWalletMenuActivity extends AppBaseActivity {
                 switchActivity(RecoverWalletStepTwoActivity.class);
                 break;
             case "recoveryStepTwo" :
-                switchActivity(BackupBlockProcessActivity.class);
+                unlockWalletToBackupBlockProcess();
                 break;
             case "toBeRestoreChannel":
-                switchActivity(RestoreChannelActivity.class);
+                unlockWalletToRestoreChannel();
                 break;
             default:
                 break;
         }
+    }
+
+    public void unlockWalletToRestoreChannel(){
+        mLoadingDialog.show();
+        String passMd5 = User.getInstance().getPasswordMd5(mContext);
+        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
+        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                Log.e("unlock failed", "unlock failed");
+                runOnUiThread(
+                        () -> {
+                            PublicUtils.closeLoading(mLoadingDialog);
+                            if(e.getMessage().equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
+                                switchActivity(RestoreChannelActivity.class);
+                            }
+                        }
+                );
+
+                e.printStackTrace();
+
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                switchActivity(RestoreChannelActivity.class);
+            }
+        });
+    }
+
+    public void unlockWalletToBackupBlockProcess(){
+        mLoadingDialog.show();
+        String passMd5 = User.getInstance().getPasswordMd5(mContext);
+        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
+        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                Log.e("unlock failed", "unlock failed");
+                runOnUiThread(
+                        () -> {
+                            PublicUtils.closeLoading(mLoadingDialog);
+                            if(e.getMessage().equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
+                                switchActivity(BackupBlockProcessActivity.class);
+                            }
+                        }
+                );
+
+                e.printStackTrace();
+
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                switchActivity(BackupBlockProcessActivity.class);
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

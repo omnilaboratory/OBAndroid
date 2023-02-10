@@ -122,4 +122,9 @@ public class UtilFunctions {
                 (byte) (value >> 8),
                 (byte) value};
     }
+
+    public static double parseAmount(long value,int decimal){
+        double doubleValue = Double.parseDouble(String.valueOf(value));
+        return doubleValue/Math.pow(10,decimal);
+    }
 }

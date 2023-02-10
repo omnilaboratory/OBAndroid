@@ -21,7 +21,6 @@ import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.refreshView.RefreshLayout;
-import com.omni.wallet.data.AccountAssetsData;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
@@ -157,7 +156,6 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     // TODO: 2023/1/12 待完善
     private void setAssetTrendChartViewShow() {
-        AccountAssetsData accountAssetsData = AccountAssetsData.getInstance(mContext);
         /*List<Map<String,Object>> allList = null;
         try {
             allList = accountAssetsData.queryAmountForAll();
@@ -251,6 +249,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         EventBus.getDefault().register(this);
         getInfo();
         setDefaultAddress();
+
     }
 
     @Override

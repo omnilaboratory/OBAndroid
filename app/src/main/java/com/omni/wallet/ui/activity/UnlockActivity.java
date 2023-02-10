@@ -28,6 +28,7 @@ import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
+import com.omni.wallet.utils.UtilFunctions;
 import com.omni.wallet.utils.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
 

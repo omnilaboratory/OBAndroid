@@ -93,6 +93,8 @@ public class User {
 
     private long totalBlock;
 
+//    Useful token amount
+    private int assetsCount;
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
         return token;
@@ -441,6 +443,19 @@ public class User {
     public void setTotalBlock (Context context,long totalBlock){
         PreferencesUtils.saveTotalBlock(context,totalBlock);
         this.totalBlock = totalBlock;
+    }
+
+    public int getAssetsCount(Context context){
+        assetsCount = PreferencesUtils.getAssetsCount(context);
+        if(assetsCount == -1){
+            assetsCount = 0;
+        }
+        return assetsCount;
+    }
+
+    public void setAssetsCount(Context context,int count){
+        PreferencesUtils.saveAssetsCount(context,count);
+        this.assetsCount = count;
     }
 
     /**
