@@ -180,6 +180,13 @@ public class ScanActivity extends AppBaseActivity {
                     event.setData(result);
                     EventBus.getDefault().post(event);
                     finish();
+                } else if (result.startsWith("luckypacket:")) {
+                    ScanResultEvent event = new ScanResultEvent();
+                    event.setCode(scanCode);
+                    event.setType("receiveLuckyPacket");
+                    event.setData(result);
+                    EventBus.getDefault().post(event);
+                    finish();
                 } else if (nodeUri != null) { //开通通道
                     ScanResultEvent event = new ScanResultEvent();
                     event.setCode(scanCode);

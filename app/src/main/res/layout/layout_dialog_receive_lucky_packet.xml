@@ -13,6 +13,64 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
+        <RelativeLayout
+            android:id="@+id/lv_lucky_packet_waiting"
+            android:layout_width="@dimen/main_320"
+            android:layout_height="@dimen/main_500"
+            android:background="@drawable/bg_white_rectangle_round_20"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_45"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.25"
+                    android:text="@string/lucky_packet_upper"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/text_18" />
+
+                <ImageView
+                    android:layout_width="@dimen/main_24"
+                    android:layout_height="@dimen/main_24"
+                    android:layout_marginTop="@dimen/main_20"
+                    android:src="@mipmap/icon_failed_red"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/main_20"
+                    android:layout_marginLeft="@dimen/main_50"
+                    android:layout_marginRight="@dimen/main_50"
+                    android:text="Waiting"
+                    android:singleLine="true"
+                    android:ellipsize="middle"
+                    android:textColor="@color/color_99_transparent"
+                    android:textSize="@dimen/text_24" />
+
+                <LinearLayout
+                    android:layout_width="@dimen/main_214"
+                    android:layout_height="@dimen/main_152"
+                    android:layout_marginTop="@dimen/main_45"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:background="@mipmap/img_red_packet_close">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_36"
+                        android:layout_height="@dimen/main_36"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:src="@mipmap/icon_heart_white"/>
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
         <LinearLayout
             android:id="@+id/lv_lucky_packet_success"
             android:layout_width="@dimen/main_320"
@@ -20,7 +78,7 @@
             android:gravity="center_horizontal"
             android:background="@drawable/bg_white_rectangle_round_20"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -232,6 +290,7 @@
                     android:src="@mipmap/icon_failed_red"/>
 
                 <TextView
+                    android:id="@+id/tv_failed_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/main_20"

@@ -61,7 +61,7 @@ public class RedCodeUtils {
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put( EncodeHintType.CHARACTER_SET, "utf-8");
         //容错级别
-        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
         //设置空白边距的宽度
         hints.put(EncodeHintType.MARGIN, 1); //default is 4
         return createQRCode(content,heightPix,logo,hints);
