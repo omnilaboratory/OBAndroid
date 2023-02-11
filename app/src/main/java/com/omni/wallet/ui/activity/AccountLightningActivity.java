@@ -42,6 +42,7 @@ import com.omni.wallet.view.AssetTrendChartView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
+import com.omni.wallet.view.dialog.ReceiveLuckyPacketDialog;
 import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.AccountManagePopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
@@ -135,7 +136,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         // 初始化下拉刷新
         mRefreshLayout.setRefreshListener(new MyRefreshListener());
         mRefreshLayout.addRefreshHeader(new LayoutRefreshView());
-        mRefreshLayout.autoRefresh();
+//        mRefreshLayout.autoRefresh();
         //
         EventBus.getDefault().post(new CloseUselessActivityEvent());
         mLoadingDialog = new LoadingDialog(mContext);
@@ -806,6 +807,36 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     mPayInvoiceDialog.show(pubkey, resp.getAssetId(), event.getData());
 //                                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
 //                                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, resp.getAssetId(), event.getData());
+                                } catch (InvalidProtocolBufferException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                });
+            } else if (event.getType().equals("receiveLuckyPacket")) {
+                LightningOuterClass.PayReqString decodePaymentRequest = LightningOuterClass.PayReqString.newBuilder()
+                        .setPayReq(UriUtil.removeURI(event.getData().toLowerCase()))
+                        .build();
+                Obdmobile.decodePayReq(decodePaymentRequest.toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        LogUtils.e(TAG, "------------------decodePaymentOnError------------------" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        if (bytes == null) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
+                                    LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
+                                    ReceiveLuckyPacketDialog mReceiveLuckyPacketDialog = new ReceiveLuckyPacketDialog(mContext);
+                                    mReceiveLuckyPacketDialog.show(pubkey, resp.getAssetId(), event.getData());
                                 } catch (InvalidProtocolBufferException e) {
                                     e.printStackTrace();
                                 }

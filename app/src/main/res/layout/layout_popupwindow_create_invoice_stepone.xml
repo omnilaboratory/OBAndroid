@@ -1005,6 +1005,7 @@
                     android:layout_height="@dimen/main_100"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/main_15"
+                    android:scaleType="fitXY"
                     android:src="@mipmap/icon_qr_code_default"/>
 
                 <RelativeLayout

@@ -19,15 +19,21 @@ import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.ListAssetItemEntity;
+import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.thirdsupport.zxing.util.RedCodeUtils;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
 import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.text.DecimalFormat;
 import java.util.Random;
 
 import lnrpc.LightningOuterClass;
@@ -45,6 +51,7 @@ public class CreateLuckyPacketPopupWindow {
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
+    TextView assetMaxTv;
     TextView mCanSendTv;
     TextView mCanReceiveTv;
     ProgressBar mProgressBar;
@@ -52,7 +59,8 @@ public class CreateLuckyPacketPopupWindow {
     SelectTimePopupWindow mSelectTimePopupWindow;
     String mAddress;
     long mAssetId;
-    long assetBalanceMax;
+    String assetBalanceMax;
+    String canReceive;
     String amountInput;
     String timeInput;
     String timeType;
@@ -76,7 +84,6 @@ public class CreateLuckyPacketPopupWindow {
             mLoadingDialog = new LoadingDialog(mContext);
             mAddress = address;
             mAssetId = assetId;
-            assetBalanceMax = balanceAccount;
             showStepOne(rootView);
             /**
              * @描述： 点击cancel
@@ -110,8 +117,7 @@ public class CreateLuckyPacketPopupWindow {
         addressTv.setText(StringUtils.encodePubkey(mAddress));
         ImageView assetTypeIv = rootView.findViewById(R.id.iv_asset_type);
         TextView assetTypeTv = rootView.findViewById(R.id.tv_asset_type);
-        TextView assetMaxTv = rootView.findViewById(R.id.tv_asset_max);
-        assetMaxTv.setText(assetBalanceMax + "");
+        assetMaxTv = rootView.findViewById(R.id.tv_asset_max);
         mCanSendTv = rootView.findViewById(R.id.tv_can_send);
         mCanReceiveTv = rootView.findViewById(R.id.tv_can_receive);
         mProgressBar = rootView.findViewById(R.id.progressbar);
@@ -149,8 +155,7 @@ public class CreateLuckyPacketPopupWindow {
                             amountUnitTv.setText("dollar");
                         }
                         mAssetId = item.getPropertyid();
-                        assetBalanceMax = item.getAmount();
-                        assetMaxTv.setText(assetBalanceMax + "");
+                        getChannelBalance(mAssetId);
                     }
                 });
                 mSelectChannelBalancePopupWindow.show(v);
@@ -159,7 +164,7 @@ public class CreateLuckyPacketPopupWindow {
         amountMaxTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                amountEdit.setText(assetBalanceMax + "");
+                amountEdit.setText(assetBalanceMax);
             }
         });
         timeButton.setOnClickListener(new View.OnClickListener() {
@@ -206,37 +211,37 @@ public class CreateLuckyPacketPopupWindow {
                 timeInput = amountTimeEdit.getText().toString();
                 numberInput = numberEdit.getText().toString();
                 timeType = timeButton.getText().toString();
-//                if (StringUtils.isEmpty(amountInput)) {
-//                    ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
-//                    return;
-//                }
-//                if (amountInput.equals("0")) {
-//                    ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
-//                    return;
-//                }
-//                // TODO: 2022/11/23 最大值最小值的判断需要完善一下
-//                if (Long.parseLong(amountInput) - assetBalanceMax > 0) {
-//                    ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
-//                    return;
-//                }
-//                if (StringUtils.isEmpty(numberInput)) {
-//                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_number));
-//                    return;
-//                }
-//                if (StringUtils.isEmpty(timeInput)) {
-//                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
-//                    return;
-//                }
+                if (StringUtils.isEmpty(amountInput)) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
+                    return;
+                }
+                if (amountInput.equals("0")) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
+                    return;
+                }
+                // TODO: 2022/11/23 最大值最小值的判断需要完善一下
+                if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canReceive) * 100000000) > 0) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
+                    return;
+                }
+                if (StringUtils.isEmpty(numberInput)) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_number));
+                    return;
+                }
+                if (StringUtils.isEmpty(timeInput)) {
+                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
+                    return;
+                }
                 Random rand = new Random();
                 double randAmount = rand.nextDouble() * (Double.parseDouble(amountInput) / Double.parseDouble(numberInput));
-                LogUtils.e("===============1=============", (long) (Double.parseDouble(StringUtils.formatDouble2(randAmount)) * 100000000)+"");
+                LogUtils.e("===============1=============", (long) (Double.parseDouble(StringUtils.formatDouble2(randAmount)) * 100000000) + "");
                 mLoadingDialog.show();
                 LightningOuterClass.Invoice asyncInvoiceRequest;
                 if (mAssetId == 0) {
                     asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                             .setAssetId((int) mAssetId)
                             .setValueMsat((long) (Double.parseDouble(StringUtils.formatDouble2(randAmount)) * 100000000 * 1000))
-                            .setMemo("memo")
+                            .setMemo("lucky")
                             .setExpiry(Long.parseLong("86400")) // in seconds
                             .setPrivate(false)
                             .build();
@@ -244,7 +249,7 @@ public class CreateLuckyPacketPopupWindow {
                     asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                             .setAssetId((int) mAssetId)
                             .setAmount((long) (Double.parseDouble(StringUtils.formatDouble2(randAmount)) * 100000000))
-                            .setMemo("memo")
+                            .setMemo("lucky")
                             .setExpiry(Long.parseLong("86400")) // in seconds
                             .setPrivate(false)
                             .build();
@@ -257,6 +262,7 @@ public class CreateLuckyPacketPopupWindow {
                             @Override
                             public void run() {
                                 mLoadingDialog.dismiss();
+                                ToastUtils.showToast(mContext, e.getMessage());
                             }
                         });
                     }
@@ -272,6 +278,7 @@ public class CreateLuckyPacketPopupWindow {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    EventBus.getDefault().post(new CreateInvoiceEvent());
                                     qrCodeUrl = UriUtil.generateLuckyPacketUri(resp.getPaymentRequest());
                                     mLoadingDialog.dismiss();
                                     rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
@@ -373,6 +380,7 @@ public class CreateLuckyPacketPopupWindow {
         rootView.findViewById(R.id.iv_facebook_share).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ToastUtils.showToast(mContext, "Not yet open, please wait");
                 shareLayout.setVisibility(View.GONE);
             }
         });
@@ -383,6 +391,7 @@ public class CreateLuckyPacketPopupWindow {
         rootView.findViewById(R.id.iv_twitter_share).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mContext.startActivity(ShareUtil.getTwitterIntent(mContext, qrCodeUrl));
                 shareLayout.setVisibility(View.GONE);
             }
         });
@@ -412,8 +421,55 @@ public class CreateLuckyPacketPopupWindow {
                         try {
                             LightningOuterClass.ChannelBalanceResponse resp = LightningOuterClass.ChannelBalanceResponse.parseFrom(bytes);
                             LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
-                            mCanSendTv.setText(resp.getLocalBalance().getMsat() + "");
-                            mCanReceiveTv.setText(resp.getRemoteBalance().getMsat() + "");
+                            if (propertyid == 0) {
+                                if (resp.getLocalBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() / 1000)) / 100000000));
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00######");
+                                    mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() / 1000)) / 100000000));
+                                }
+                                if (resp.getRemoteBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00######");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
+                                }
+                                mCanReceiveTv.setText(canReceive);
+                                if (resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() / 1000 + resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00######");
+                                    assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() / 1000 + resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
+                                }
+                                assetMaxTv.setText(assetBalanceMax);
+                            } else {
+                                if (resp.getLocalBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat())) / 100000000));
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00######");
+                                    mCanSendTv.setText(df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat())) / 100000000));
+                                }
+                                if (resp.getRemoteBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00######");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
+                                }
+                                mCanReceiveTv.setText(canReceive);
+                                if (resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat())) / 100000000);
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00######");
+                                    assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat())) / 100000000);
+                                }
+                                assetMaxTv.setText(assetBalanceMax);
+                            }
                             /**
                              * @描述： 设置进度条
                              * @desc: set progress bar
