@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.utils.TimeFormatUtil;
@@ -30,8 +31,8 @@ public class AssetsValueDataDao {
         ContentValues values = new ContentValues();
         values.put("value", value);
         values.put("update_date", date);
-        db.insert("assets", null, values);
-        db.close();
+        db.insert("assets_value_data", null, values);
+//        db.close();
     }
 
     public void updateAssetValueData(double value,long date){
@@ -41,7 +42,7 @@ public class AssetsValueDataDao {
         }
         String sql = "update assets_value_data set value =? where update_date=?";
         db.execSQL(sql, new Object[]{value,date});
-        db.close();
+//        db.close();
     }
 
     public void updateAssetValueData(double value){
@@ -60,46 +61,85 @@ public class AssetsValueDataDao {
         Cursor cursor = db.rawQuery(sql, new String[]{});
         while (cursor.moveToNext()){
             Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getString(cursor.getColumnIndex("date")));
-            queryRow.put("value",cursor.getDouble(cursor.getColumnIndex("price")));
+            queryRow.put("date",cursor.getString(cursor.getColumnIndex("update_date")));
+            queryRow.put("value",cursor.getDouble(cursor.getColumnIndex("value")));
             queryList.add(queryRow);
         }
         cursor.close();
-        db.close();
+//        db.close();
         return queryList;
     }
 
     public List<Map<String ,Object>> queryAssetValueDataLast(){
         List<Map<String,Object>> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
-        String sql = "select * from assets_value_data order by date desc limit 1";
+        String sql = "select * from assets_value_data order by update_date desc limit 1";
         Cursor cursor = db.rawQuery(sql, new String[]{});
         while (cursor.moveToNext()){
             Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getString(cursor.getColumnIndex("date")));
-            queryRow.put("value",cursor.getDouble(cursor.getColumnIndex("price")));
+            queryRow.put("date",cursor.getLong(cursor.getColumnIndex("update_date")));
+            queryRow.put("value",cursor.getDouble(cursor.getColumnIndex("value")));
             queryList.add(queryRow);
         }
         cursor.close();
-        db.close();
+//        db.close();
         return queryList;
     }
 
     public void completeAssetData(){
         List<Map<String,Object>> lastDataList =  queryAssetValueDataLast();
-        Map<String,Object> data =  lastDataList.get(0);
-        long lastUpdateTime = (long) data.get("update_date");
-        double lastValue = (double) data.get("value");
-        try {
-            long nowDate = TimeFormatUtil.getCurrentDayMills();
-            int willCompleteNum = (int) (((nowDate - lastUpdateTime)/ ConstantInOB.DAY_MILLIS));
-            for (int i = 0; i < willCompleteNum; i++) {
-                long update_date = lastUpdateTime + ConstantInOB.DAY_MILLIS;
-                insertAssetValueData(lastValue,update_date);
+        Log.e(TAG, "completeAssetData: "+ lastDataList.toString());
+        if (lastDataList.size()>0){
+            Map<String,Object> data =  lastDataList.get(0);
+            Log.e(TAG, "completeAssetData: "+ data.toString());
+            long lastUpdateTime = (long) data.get("date");
+            double lastValue = (double) data.get("value");
+            try {
+                long nowDate = TimeFormatUtil.getCurrentDayMills();
+                int willCompleteNum = (int) (((nowDate - lastUpdateTime)/ ConstantInOB.DAY_MILLIS));
+                for (int i = 0; i < willCompleteNum; i++) {
+                    long update_date = lastUpdateTime + ConstantInOB.DAY_MILLIS;
+                    insertAssetValueData(lastValue,update_date);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
+
+    }
+
+    public Map<String,Double> queryChangeOfValue(){
+        List<Double> queryList = new ArrayList<>();
+        SQLiteDatabase db = mInstance.getWritableDatabase();
+        String sql = "select * from assets_value_data order by update_date desc limit 1";
+        Cursor cursor = db.rawQuery(sql, new String[]{});
+        while (cursor.moveToNext()){
+            queryList.add(cursor.getDouble(cursor.getColumnIndex("value")));
+        }
+        double value = queryList.get(0);
+        double changePercent = Math.floor((queryList.get(0) - queryList.get(1))/queryList.get(1)*10000)/100.0;
+        Map<String, Double> changeMap = new HashMap<>();
+        changeMap.put("value",value);
+        changeMap.put("percent",changePercent);
+        cursor.close();
+//        db.close();
+        return changeMap;
+    }
+
+    public List<Map<String ,Object>> queryAssetValueDataOneYear(){
+        List<Map<String,Object>> queryList = new ArrayList<>();
+        SQLiteDatabase db = mInstance.getWritableDatabase();
+        String sql = "select * from assets_value_data order by update_date desc limit 365";
+        Cursor cursor = db.rawQuery(sql, new String[]{});
+        while (cursor.moveToNext()){
+            Map<String,Object> queryRow = new HashMap<>();
+            queryRow.put("date",cursor.getLong(cursor.getColumnIndex("update_date")));
+            queryRow.put("value",cursor.getDouble(cursor.getColumnIndex("value")));
+            queryList.add(queryRow);
+        }
+        cursor.close();
+//        db.close();
+        return queryList;
     }
 
 }

@@ -8,9 +8,11 @@ import com.omni.wallet.baselibrary.http.HttpUtils;
 import com.omni.wallet.baselibrary.http.callback.EngineCallback;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.data.AssetsActions;
 import com.omni.wallet.data.AssetsDB;
 import com.omni.wallet.data.AssetsDao;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
+import com.omni.wallet.entity.event.InitChartEvent;
 import com.omni.wallet.framelibrary.entity.User;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,7 +47,7 @@ public class WalletServiceUtil {
     }
 
     public interface GetAssetChannelBalanceCallback{
-        void callback(Context context,String propertyId,long channelAmountLong);
+        void callback(Context context,String propertyId,long channelAmountLong,int index,int usingCount);
     }
 
     private static String TAG = WalletServiceUtil.class.getSimpleName();
@@ -165,6 +167,27 @@ public class WalletServiceUtil {
                     @Override
                     public void onError(Context context, String errorCode, String errorMsg) {
                         Log.e(TAG,"getPriceError:"+ errorMsg);
+                        for (int i = 0; i < usingAssetsList.size(); i++) {
+                            String id = (String) usingAssetsList.get(i).get("token_name");
+                            String propertyId = "";
+                            switch (id) {
+                                case "btc":
+                                    propertyId = (String) propertyMap.get("btc");
+                                    AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                                    break;
+                                case "ftoken":
+                                    propertyId = (String) propertyMap.get("ftoken");
+                                    AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
+                                    break;
+                                default:
+                                    propertyId = (String) propertyMap.get(id);
+                                    AssetsActions.updateAssetsPriceS(context, propertyId, 0);
+                                    break;
+                            }
+
+                        }
+                        EventBus.getDefault().post(new InitChartEvent());
+
                         /*try {
                             DollarData dollarData = new DollarData(mContext);
                             if(dollarData.checkDataIsEmpty()){
@@ -208,9 +231,10 @@ public class WalletServiceUtil {
         AssetsDao assetsDao = new AssetsDao(context);
         List<Map<String,Object>> assetsList =  assetsDao.getUsingAssetsList();
         for (int i = 0; i < assetsList.size(); i++) {
+            int index = i;
             String propertyId = (String) assetsList.get(i).get("property_id");
             LightningOuterClass.ChannelBalanceRequest channelBalanceRequest = LightningOuterClass.ChannelBalanceRequest.newBuilder()
-                    .setAssetId(Integer.parseInt(propertyId))
+                    .setAssetId((int)Long.parseLong(propertyId))
                     .build();
             Obdmobile.channelBalance(channelBalanceRequest.toByteArray(), new Callback() {
                 @Override
@@ -226,7 +250,7 @@ public class WalletServiceUtil {
                     try {
                         LightningOuterClass.ChannelBalanceResponse resp = LightningOuterClass.ChannelBalanceResponse.parseFrom(bytes);
                         long balance = resp.getLocalBalance().getMsat();
-                        callback.callback(context,propertyId,balance);
+                        callback.callback(context,propertyId,balance,index,assetsList.size());
 
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();

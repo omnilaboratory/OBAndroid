@@ -33,8 +33,8 @@ public class AssetsDataDao {
         values.put("amount", amount);
         values.put("channel_amount", channelAmount);
         values.put("update_date", date);
-        db.insert("assets", null, values);
-        db.close();
+        db.insert("assets_data", null, values);
+//        db.close();
     }
 
     public void insertAssetsData(String propertyId,double price,double amount,double channelAmount){
@@ -53,8 +53,10 @@ public class AssetsDataDao {
         }
         String sql = "update assets_data set price =? where property_id=? and update_date=?";
         db.execSQL(sql, new Object[]{price, propertyId,date});
-        db.close();
+//        db.close();
     }
+
+
 
     public void updateAssetDataPrice(String propertyId,double price){
         try {
@@ -72,7 +74,7 @@ public class AssetsDataDao {
         }
         String sql = "update assets_data set amount =? where property_id=? and update_date=?";
         db.execSQL(sql, new Object[]{amount, propertyId,date});
-        db.close();
+//        db.close();
     }
 
     public void updateAssetDataAmount(String propertyId,double amount){
@@ -91,7 +93,7 @@ public class AssetsDataDao {
         }
         String sql = "update assets_data set channel_amount =? where property_id=? and update_date=?";
         db.execSQL(sql, new Object[]{channelAmount, propertyId,date});
-        db.close();
+//        db.close();
     }
 
     public void updateAssetDataChannelAmount(String propertyId,double channelAmount){
@@ -117,7 +119,7 @@ public class AssetsDataDao {
             queryList.add(queryRow);
         }
         cursor.close();
-        db.close();
+//        db.close();
         return queryList;
     }
 
@@ -135,7 +137,7 @@ public class AssetsDataDao {
             queryList.add(queryRow);
         }
         cursor.close();
-        db.close();
+//        db.close();
         return queryList;
     }
 
@@ -153,7 +155,57 @@ public class AssetsDataDao {
             queryList.add(queryRow);
         }
         cursor.close();
-        db.close();
+//        db.close();
         return queryList;
     }
+
+    public boolean checkDataExist(String propertyId,long date){
+        boolean dataExist =false;
+        List<Map<String,Object>> queryList = new ArrayList<>();
+        SQLiteDatabase db = mInstance.getWritableDatabase();
+        String sql = "select * from assets_data where property_id=? and update_date = ? limit 1";
+        Cursor cursor = db.rawQuery(sql,new String[]{propertyId, String.valueOf(date)});
+        while (cursor.moveToNext()){
+            Map<String,Object> queryRow = new HashMap<>();
+            queryRow.put("date",cursor.getString(cursor.getColumnIndex("update_date")));
+            queryRow.put("price",cursor.getDouble(cursor.getColumnIndex("price")));
+            queryRow.put("amount",cursor.getDouble(cursor.getColumnIndex("amount")));
+            queryRow.put("channelAmount",cursor.getDouble(cursor.getColumnIndex("channel_amount")));
+            queryList.add(queryRow);
+        }
+        cursor.close();
+        if (queryList.size()>0) dataExist = true;
+        return dataExist;
+    }
+
+
+
+    public Map<String,Object> insertOrUpdateAssetDataByAmount(String propertyId,double amount,long date){
+        boolean dataExist = checkDataExist(propertyId,date);
+        double price = 0;
+        double channelAmount = 0;
+        if (dataExist){
+            updateAssetDataAmount(propertyId,amount);
+        }else{
+            List<Map<String,Object>> lastDataList = queryAssetLastDataByPropertyId(propertyId);
+            if (lastDataList.size()>0){
+                Map<String,Object> item = lastDataList.get(0);
+                price = (double) item.get("price");
+                channelAmount = (double) item.get("channelAmount");
+                insertAssetsData(propertyId,price,amount,channelAmount);
+            }else {
+                insertAssetsData(propertyId,0,amount,0);
+            }
+
+        }
+        Map<String ,Object> map = new HashMap<>();
+        map.put("price",price);
+        map.put("channelAmount",channelAmount);
+        map.put("amount",amount);
+        map.put("date",date);
+        return map;
+//        db.close();
+    }
+
+
 }

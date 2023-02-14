@@ -31,7 +31,7 @@ public class AssetsDao {
         values.put("token_name", tokenName);
         values.put("has_balance", 0);
         db.insert("assets", null, values);
-        db.close();
+//        db.close();
     }
 
     public void changeAssetIsUse (String propertyId,int hasBalance){
@@ -41,7 +41,7 @@ public class AssetsDao {
         }
         String sql = "update assets set has_balance =? where property_id=?";
         db.execSQL(sql, new Object[]{hasBalance, propertyId});
-        db.close();
+//        db.close();
     }
 
     public boolean checkAssetsExist(String propertyId,String tokenName){
@@ -52,7 +52,7 @@ public class AssetsDao {
         Cursor cursor = db.rawQuery(sql, new String[]{propertyId,tokenName});
         count = cursor.getCount();
         cursor.close();
-        db.close();
+//        db.close();
         if (count>0) isExist = true;
         return isExist;
     }
@@ -72,11 +72,11 @@ public class AssetsDao {
         while (cursor.moveToNext()){
             Map<String,Object> asset = new HashMap<>();
             asset.put("property_id",cursor.getString(cursor.getColumnIndex("property_id")));
-            asset.put("token_name",cursor.getDouble(cursor.getColumnIndex("token_name")));
+            asset.put("token_name",cursor.getString(cursor.getColumnIndex("token_name")));
             assetsList.add(asset);
         }
         cursor.close();
-        db.close();
+//        db.close();
         return assetsList;
     }
 
@@ -87,7 +87,7 @@ public class AssetsDao {
         Cursor cursor = db.rawQuery(sql, new String[]{});
         count = cursor.getCount();
         cursor.close();
-        db.close();
+//        db.close();
         return count;
     }
 
@@ -98,7 +98,7 @@ public class AssetsDao {
         Cursor cursor = db.rawQuery(sql, new String[]{});
         count = cursor.getCount();
         cursor.close();
-        db.close();
+//        db.close();
         return count;
     }
 
@@ -110,11 +110,11 @@ public class AssetsDao {
         while (cursor.moveToNext()){
             Map<String,Object> asset = new HashMap<>();
             asset.put("property_id",cursor.getString(cursor.getColumnIndex("property_id")));
-            asset.put("token_name",cursor.getDouble(cursor.getColumnIndex("token_name")));
+            asset.put("token_name",cursor.getString(cursor.getColumnIndex("token_name")));
             assetsList.add(asset);
         }
         cursor.close();
-        db.close();
+//        db.close();
         return assetsList;
     }
 }
