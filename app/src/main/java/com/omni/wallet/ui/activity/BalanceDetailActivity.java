@@ -33,6 +33,9 @@ import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
 import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.PaymentEntity;
+import com.omni.wallet.entity.TransactionAssetEntity;
+import com.omni.wallet.entity.TransactionChainEntity;
+import com.omni.wallet.entity.TransactionLightingEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.entity.event.LoginOutEvent;
@@ -46,6 +49,9 @@ import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.PaymentRequestUtil;
 import com.omni.wallet.utils.UriUtil;
+import com.omni.wallet.view.TransactionsAssetView;
+import com.omni.wallet.view.TransactionsChainView;
+import com.omni.wallet.view.TransactionsLightingView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.dialog.SendDialog;
@@ -66,7 +72,10 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -116,6 +125,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TextView mBalanceAccountExchange1Tv;
     @BindView(R.id.tv_balance_unit_exchange_1)
     TextView mBalanceUnitExchange1Tv;
+    @BindView(R.id.iv_asset_logo_1)
+    ImageView mAssetLogo1Iv;
     @BindView(R.id.tv_network_1)
     TextView mNetwork1Tv;
     @BindView(R.id.tv_balance_account_2)
@@ -178,17 +189,17 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TextView mReceiverTv;
     private List<PaymentEntity> mPayData = new ArrayList<>();
     private List<PaymentEntity> mReceiveData = new ArrayList<>();
-    private List<PaymentEntity> mTransactionsData = new ArrayList<>();
+    private List<TransactionLightingEntity> mTransactionsData = new ArrayList<>();
     private TransactionsAdapter mTransactionsAdapter;
     private List<InvoiceEntity> mToBePaidData = new ArrayList<>();
     private ToBePaidAdapter mToBePaidAdapter;
     private List<LightningOuterClass.Invoice> mMyInvoicesData = new ArrayList<>();
     private MyInvoicesAdapter mMyInvoicesAdapter;
-    private List<LightningOuterClass.Transaction> mTransactionsChainData = new ArrayList<>();
+    private List<TransactionChainEntity> mTransactionsChainData = new ArrayList<>();
     private TransactionsChainAdapter mTransactionsChainAdapter;
     private List<LightningOuterClass.Transaction> mPendingTxsChainData = new ArrayList<>();
     private PendingTxsChainAdapter mPendingTxsChainAdapter;
-    private List<LightningOuterClass.AssetTx> mTransactionsAssetData = new ArrayList<>();
+    private List<TransactionAssetEntity> mTransactionsAssetData = new ArrayList<>();
     private TransactionsAssetAdapter mTransactionsAssetAdapter;
     private List<LightningOuterClass.AssetTx> mPendingTxsAssetData = new ArrayList<>();
     private PendingTxsAssetAdapter mPendingTxsAssetAdapter;
@@ -299,6 +310,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         }
         if (assetId == 0) {
             mAssetLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
+            mAssetLogo1Iv.setImageResource(R.mipmap.icon_btc_logo_small);
             mAssetNameTv.setText("BTC");
             mBalanceUnitTv.setText("BTC");
             mBalanceUnit1Tv.setText("BTC");
@@ -307,6 +319,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mTokenInfoTv.setVisibility(View.GONE);
         } else {
             mAssetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
+            mAssetLogo1Iv.setImageResource(R.mipmap.icon_usdt_logo_small);
             mAssetNameTv.setText("dollar");
             mBalanceUnitTv.setText("dollar");
             mBalanceUnit1Tv.setText("dollar");
@@ -372,16 +385,16 @@ public class BalanceDetailActivity extends AppBaseActivity {
         mTransactionsRecyclerView.setLayoutManager(layoutManager);
         if (network.equals("link")) {
             if (assetId == 0) {
-                mTransactionsChainAdapter = new TransactionsChainAdapter(mContext, mTransactionsChainData, R.layout.layout_item_transactions_list);
+                mTransactionsChainAdapter = new TransactionsChainAdapter(mContext, mTransactionsChainData, R.layout.layout_item_transactions_list_chain);
                 mTransactionsRecyclerView.setAdapter(mTransactionsChainAdapter);
                 getTransactions();
             } else {
-                mTransactionsAssetAdapter = new TransactionsAssetAdapter(mContext, mTransactionsAssetData, R.layout.layout_item_transactions_list);
+                mTransactionsAssetAdapter = new TransactionsAssetAdapter(mContext, mTransactionsAssetData, R.layout.layout_item_transactions_list_asset);
                 mTransactionsRecyclerView.setAdapter(mTransactionsAssetAdapter);
                 listTransactions();
             }
         } else if (network.equals("lightning")) {
-            mTransactionsAdapter = new TransactionsAdapter(mContext, mTransactionsData, R.layout.layout_item_transactions_list);
+            mTransactionsAdapter = new TransactionsAdapter(mContext, mTransactionsData, R.layout.layout_item_transactions_list_lighting);
             mTransactionsRecyclerView.setAdapter(mTransactionsAdapter);
             fetchTransactionsFromLND();
         }
@@ -407,7 +420,32 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 try {
                     LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------getTransactionsOnResponse-----------------" + resp);
-                    mTransactionsChainData.addAll(resp.getTransactionsList());
+                    for (int i = 0; i < resp.getTransactionsList().size(); i++) {
+                        TransactionChainEntity entity = new TransactionChainEntity();
+                        entity.setTimeStamp(resp.getTransactionsList().get(i).getTimeStamp());
+                        entity.setList(Collections.singletonList(resp.getTransactionsList().get(i)));
+                        mTransactionsChainData.add(entity);
+                    }
+                    List<TransactionChainEntity> list = new ArrayList<>();
+                    Map<String, TransactionChainEntity> hashMap = new HashMap<>();
+                    for (TransactionChainEntity entity : mTransactionsChainData) {
+                        String key = DateUtils.MonthDay(entity.getTimeStamp() + "");
+                        if (hashMap.containsKey(key)) {
+                            List<LightningOuterClass.Transaction> transactionList = new ArrayList<>();
+                            transactionList.addAll(hashMap.get(key).getList());
+                            transactionList.addAll(entity.getList());
+                            entity.setList(transactionList);
+                            hashMap.put(key, entity);
+                        } else {
+                            hashMap.put(key, entity);
+                        }
+                    }
+                    for (Map.Entry<String, TransactionChainEntity> entry : hashMap.entrySet()) {
+                        list.add(entry.getValue());
+                    }
+                    LogUtils.e("========list========", String.valueOf(list));
+                    mTransactionsChainData.clear();
+                    mTransactionsChainData.addAll(list);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -465,7 +503,32 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     LogUtils.e(TAG, "------------------oB_GetOmniTransactionOnResponse-----------------" + resp);
                     List<LightningOuterClass.AssetTx> mData = new ArrayList<>();
                     mData.add(resp);
-                    mTransactionsAssetData.addAll(mData);
+                    for (int i = 0; i < mData.size(); i++) {
+                        TransactionAssetEntity entity = new TransactionAssetEntity();
+                        entity.setBlockTime(mData.get(i).getBlocktime());
+                        entity.setList(Collections.singletonList(mData.get(i)));
+                        mTransactionsAssetData.add(entity);
+                    }
+                    List<TransactionAssetEntity> list = new ArrayList<>();
+                    Map<String, TransactionAssetEntity> hashMap = new HashMap<>();
+                    for (TransactionAssetEntity entity : mTransactionsAssetData) {
+                        String key = DateUtils.MonthDay(entity.getBlockTime() + "");
+                        if (hashMap.containsKey(key)) {
+                            List<LightningOuterClass.AssetTx> assetTxList = new ArrayList<>();
+                            assetTxList.addAll(hashMap.get(key).getList());
+                            assetTxList.addAll(entity.getList());
+                            entity.setList(assetTxList);
+                            hashMap.put(key, entity);
+                        } else {
+                            hashMap.put(key, entity);
+                        }
+                    }
+                    for (Map.Entry<String, TransactionAssetEntity> entry : hashMap.entrySet()) {
+                        list.add(entry.getValue());
+                    }
+                    LogUtils.e("========assetTxList========", String.valueOf(list));
+                    mTransactionsAssetData.clear();
+                    mTransactionsAssetData.addAll(list);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -497,7 +560,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 try {
                     LightningOuterClass.ListTranscationsResponse resp = LightningOuterClass.ListTranscationsResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------listTranscationsOnResponse-----------------" + resp);
-                    mTransactionsAssetData.addAll(resp.getListList());
+//                    mTransactionsAssetData.addAll(resp.getListList());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -555,7 +618,32 @@ public class BalanceDetailActivity extends AppBaseActivity {
                         paymentEntity.setType(1);
                         mPayData.add(paymentEntity);
                     }
-                    mTransactionsData.addAll(Lists.reverse(mPayData));
+                    Collections.reverse(mPayData);
+                    for (int i = 0; i < mPayData.size(); i++) {
+                        TransactionLightingEntity entity = new TransactionLightingEntity();
+                        entity.setCreationDate(mPayData.get(i).getDate());
+                        entity.setList(Collections.singletonList(mPayData.get(i)));
+                        mTransactionsData.add(entity);
+                    }
+                    List<TransactionLightingEntity> list = new ArrayList<>();
+                    Map<String, TransactionLightingEntity> hashMap = new HashMap<>();
+                    for (TransactionLightingEntity entity : mTransactionsData) {
+                        String key = DateUtils.MonthDay(entity.getCreationDate() + "");
+                        if (hashMap.containsKey(key)) {
+                            List<PaymentEntity> paymentList = new ArrayList<>();
+                            paymentList.addAll(hashMap.get(key).getList());
+                            paymentList.addAll(entity.getList());
+                            entity.setList(paymentList);
+                            hashMap.put(key, entity);
+                        } else {
+                            hashMap.put(key, entity);
+                        }
+                    }
+                    for (Map.Entry<String, TransactionLightingEntity> entry : hashMap.entrySet()) {
+                        list.add(entry.getValue());
+                    }
+                    mTransactionsData.clear();
+                    mTransactionsData.addAll(list);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -615,7 +703,32 @@ public class BalanceDetailActivity extends AppBaseActivity {
                                 mReceiveData.add(paymentEntity);
                             }
                         }
-                        mTransactionsData.addAll(Lists.reverse(mReceiveData));
+                        Collections.reverse(mReceiveData);
+                        for (int i = 0; i < mReceiveData.size(); i++) {
+                            TransactionLightingEntity entity = new TransactionLightingEntity();
+                            entity.setCreationDate(mReceiveData.get(i).getDate());
+                            entity.setList(Collections.singletonList(mReceiveData.get(i)));
+                            mTransactionsData.add(entity);
+                        }
+                        List<TransactionLightingEntity> list = new ArrayList<>();
+                        Map<String, TransactionLightingEntity> hashMap = new HashMap<>();
+                        for (TransactionLightingEntity entity : mTransactionsData) {
+                            String key = DateUtils.MonthDay(entity.getCreationDate() + "");
+                            if (hashMap.containsKey(key)) {
+                                List<PaymentEntity> paymentList = new ArrayList<>();
+                                paymentList.addAll(hashMap.get(key).getList());
+                                paymentList.addAll(entity.getList());
+                                entity.setList(paymentList);
+                                hashMap.put(key, entity);
+                            } else {
+                                hashMap.put(key, entity);
+                            }
+                        }
+                        for (Map.Entry<String, TransactionLightingEntity> entry : hashMap.entrySet()) {
+                            list.add(entry.getValue());
+                        }
+                        mTransactionsData.clear();
+                        mTransactionsData.addAll(list);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -887,38 +1000,26 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * the adapter of activity list
      * 交易列表适配器
      */
-    private class TransactionsChainAdapter extends CommonRecyclerAdapter<LightningOuterClass.Transaction> {
+    private class TransactionsChainAdapter extends CommonRecyclerAdapter<TransactionChainEntity> {
 
-        public TransactionsChainAdapter(Context context, List<LightningOuterClass.Transaction> data, int layoutId) {
+        public TransactionsChainAdapter(Context context, List<TransactionChainEntity> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, final int position, final LightningOuterClass.Transaction item) {
-            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getTimeStamp() + ""));
-            DecimalFormat df = new DecimalFormat("0.00######");
-            if (item.getAmount() < 0) {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
-                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
-                    holder.setText(R.id.tv_state, "PENDING");
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
-                } else {
-                    holder.setText(R.id.tv_state, "SENT");
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
-                }
-            } else if (item.getAmount() > 0) {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
-                    holder.setText(R.id.tv_state, "PENDING");
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
-                } else {
-                    holder.setText(R.id.tv_state, "RECEIVED");
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
-                }
+        public void convert(ViewHolder holder, final int position, final TransactionChainEntity item) {
+            if ((DateUtils.dateFormat(item.getTimeStamp() * 1000L, DateUtils.YYYY_MM_DD)).equals(DateUtils.getTodayDate())) {
+                holder.setText(R.id.tv_time, "Today");
+            } else if ((DateUtils.dateFormat(item.getTimeStamp() * 1000L, DateUtils.YYYY_MM_DD)).equals(DateUtils.getYesterDate())) {
+                holder.setText(R.id.tv_time, "Yesterday");
+            } else {
+                holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getTimeStamp() + ""));
             }
-            holder.setOnItemClickListener(new View.OnClickListener() {
+            TransactionsChainView mTransactionsChainView = holder.getView(R.id.view_transactions_chain);
+            mTransactionsChainView.setViewShow(item.getList());
+            mTransactionsChainView.setCallback(new TransactionsChainView.ChainItemCallback() {
                 @Override
-                public void onClick(View v) {
+                public void onClickItem(LightningOuterClass.Transaction item) {
                     mTransactionsDetailsChainPopupWindow = new TransactionsDetailsChainPopupWindow(mContext);
                     mTransactionsDetailsChainPopupWindow.show(mParentLayout, item);
                 }
@@ -930,63 +1031,26 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * the adapter of activity list
      * 交易列表适配器
      */
-    private class TransactionsAssetAdapter extends CommonRecyclerAdapter<LightningOuterClass.AssetTx> {
+    private class TransactionsAssetAdapter extends CommonRecyclerAdapter<TransactionAssetEntity> {
 
-        public TransactionsAssetAdapter(Context context, List<LightningOuterClass.AssetTx> data, int layoutId) {
+        public TransactionsAssetAdapter(Context context, List<TransactionAssetEntity> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, final int position, final LightningOuterClass.AssetTx item) {
-            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getBlocktime() + ""));
-            DecimalFormat df = new DecimalFormat("0.00######");
-            if (item.getType().equals("Simple Send")) {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getAmount())));
-                if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
-                    holder.setText(R.id.tv_state, "PENDING");
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
-                } else {
-                    holder.setText(R.id.tv_state, "RECEIVED");
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
-                }
-            } else if (item.getType().equals("Send To Many")) {
-                if (item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
-                    holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getTotalamount())));
-                    if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
-                        holder.setText(R.id.tv_state, "PENDING");
-                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
-                    } else {
-                        holder.setText(R.id.tv_state, "SENT");
-                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
-                    }
-                } else if (!item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
-                    if (item.getReceiversList() != null) {
-                        if (item.getReceiversList().size() == 1) {
-                            if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
-                                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
-                            }
-                        } else if (item.getReceiversList().size() == 2) {
-                            if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
-                                    & !item.getReceivers(1).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
-                                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
-                            } else if (!item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
-                                    & item.getReceivers(1).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
-                                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getReceivers(1).getAmount())));
-                            }
-                        }
-                    }
-                    if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
-                        holder.setText(R.id.tv_state, "PENDING");
-                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
-                    } else {
-                        holder.setText(R.id.tv_state, "RECEIVED");
-                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
-                    }
-                }
+        public void convert(ViewHolder holder, final int position, final TransactionAssetEntity item) {
+            if ((DateUtils.dateFormat(item.getBlockTime() * 1000L, DateUtils.YYYY_MM_DD)).equals(DateUtils.getTodayDate())) {
+                holder.setText(R.id.tv_time, "Today");
+            } else if ((DateUtils.dateFormat(item.getBlockTime() * 1000L, DateUtils.YYYY_MM_DD)).equals(DateUtils.getYesterDate())) {
+                holder.setText(R.id.tv_time, "Yesterday");
+            } else {
+                holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getBlockTime() + ""));
             }
-            holder.setOnItemClickListener(new View.OnClickListener() {
+            TransactionsAssetView mTransactionsAssetView = holder.getView(R.id.view_transactions_asset);
+            mTransactionsAssetView.setViewShow(item.getList());
+            mTransactionsAssetView.setCallback(new TransactionsAssetView.AssetItemCallback() {
                 @Override
-                public void onClick(View v) {
+                public void onClickItem(LightningOuterClass.AssetTx item) {
                     mTransactionsDetailsAssetPopupWindow = new TransactionsDetailsAssetPopupWindow(mContext);
                     mTransactionsDetailsAssetPopupWindow.show(mParentLayout, item);
                 }
@@ -998,31 +1062,26 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * the adapter of activity list
      * 交易列表适配器
      */
-    private class TransactionsAdapter extends CommonRecyclerAdapter<PaymentEntity> {
+    private class TransactionsAdapter extends CommonRecyclerAdapter<TransactionLightingEntity> {
 
-        public TransactionsAdapter(Context context, List<PaymentEntity> data, int layoutId) {
+        public TransactionsAdapter(Context context, List<TransactionLightingEntity> data, int layoutId) {
             super(context, data, layoutId);
         }
 
         @Override
-        public void convert(ViewHolder holder, final int position, final PaymentEntity item) {
-            holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getDate() + ""));
-            DecimalFormat df = new DecimalFormat("0.00######");
-            if (item.getAssetId() == 0) {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount() / 1000)) / 100000000));
+        public void convert(ViewHolder holder, final int position, final TransactionLightingEntity item) {
+            if ((DateUtils.dateFormat(item.getCreationDate() * 1000L, DateUtils.YYYY_MM_DD)).equals(DateUtils.getTodayDate())) {
+                holder.setText(R.id.tv_time, "Today");
+            } else if ((DateUtils.dateFormat(item.getCreationDate() * 1000L, DateUtils.YYYY_MM_DD)).equals(DateUtils.getYesterDate())) {
+                holder.setText(R.id.tv_time, "Yesterday");
             } else {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
             }
-            if (item.getType() == 1) {
-                holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
-                holder.setText(R.id.tv_state, "SENT");
-            } else if (item.getType() == 2) {
-                holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
-                holder.setText(R.id.tv_state, "RECEIVED");
-            }
-//            holder.setOnItemClickListener(new View.OnClickListener() {
+            TransactionsLightingView mTransactionsLightingView = holder.getView(R.id.view_transactions_lighting);
+            mTransactionsLightingView.setViewShow(item.getList());
+//            mTransactionsLightingView.setCallback(new TransactionsLightingView.LightingItemCallback() {
 //                @Override
-//                public void onClick(View v) {
+//                public void onClickItem(PaymentEntity item) {
 //                    mTransactionsDetailsPopupWindow = new TransactionsDetailsPopupWindow(mContext);
 //                    mTransactionsDetailsPopupWindow.show(mParentLayout, item);
 //                }

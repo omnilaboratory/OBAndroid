@@ -46,7 +46,7 @@ public class DateUtils {
     }
 
     /**
-     * 十位时间戳字符串转月日
+     * 十位时间戳字符串转时秒
      */
     public static String Hourmin(String time) {
         SimpleDateFormat sdr = new SimpleDateFormat("HH:mm");
@@ -889,5 +889,29 @@ public class DateUtils {
 
         return format;
 
+    }
+
+    /**
+     * 得到昨天的日期
+     *
+     * @return
+     */
+    public static String getYesterDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String yestoday = sdf.format(calendar.getTime());
+        return yestoday;
+    }
+
+    /**
+     * 得到今天的日期
+     *
+     * @return
+     */
+    public static String getTodayDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String date = sdf.format(new Date());
+        return date;
     }
 }
