@@ -24,6 +24,7 @@ import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.baselibrary.view.refreshView.RefreshLayout;
 import com.omni.wallet.data.AssetsActions;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
@@ -40,6 +41,7 @@ import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.entity.event.UpdateAssetsDataEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.framelibrary.view.refreshlayout.LayoutRefreshView;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.PublicUtils;
@@ -49,6 +51,7 @@ import com.omni.wallet.view.AssetTrendChartView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
+import com.omni.wallet.view.dialog.ReceiveLuckyPacketDialog;
 import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.AccountManagePopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
@@ -85,6 +88,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     TextView mNetworkTypeTv;
     @BindView(R.id.iv_menu)
     ImageView mMenuIv;
+    @BindView(R.id.refresh_layout_account_lightning)
+    public RefreshLayout mRefreshLayout;
     @BindView(R.id.tv_balance_value)
     TextView mBalanceValueTv;
     @BindView(R.id.tv_price_change)
@@ -144,12 +149,29 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        // Initialize pull-down refresh
+        // 初始化下拉刷新
+        mRefreshLayout.setRefreshListener(new MyRefreshListener());
+        mRefreshLayout.addRefreshHeader(new LayoutRefreshView());
+//        mRefreshLayout.autoRefresh();
+        //
         EventBus.getDefault().post(new CloseUselessActivityEvent());
         mLoadingDialog = new LoadingDialog(mContext);
         DecimalFormat df = new DecimalFormat("0.00");
         mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext))) + "%");
         mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
         initRecyclerView();
+    }
+
+    /**
+     * Load the refresh listener
+     * 加载刷新的监听
+     */
+    private class MyRefreshListener implements RefreshLayout.OnRefreshListener {
+        @Override
+        public void onRefresh() {
+            getAssetAndBtcData();
+        }
     }
 
     @Override
@@ -323,6 +345,9 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     mAdapter.notifyDataSetChanged();
                                 }
                             });
+                            if (mRefreshLayout != null) {
+                                mRefreshLayout.stopRefresh();
+                            }
                         }
                     });
                     /**
@@ -428,6 +453,9 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     mAdapter.notifyDataSetChanged();
                                 }
                             });
+                            if (mRefreshLayout != null) {
+                                mRefreshLayout.stopRefresh();
+                            }
                         }
                     });
                 } catch (InvalidProtocolBufferException e) {
@@ -757,6 +785,36 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     mPayInvoiceDialog.show(pubkey, resp.getAssetId(), event.getData());
 //                                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
 //                                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, resp.getAssetId(), event.getData());
+                                } catch (InvalidProtocolBufferException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                });
+            } else if (event.getType().equals("receiveLuckyPacket")) {
+                LightningOuterClass.PayReqString decodePaymentRequest = LightningOuterClass.PayReqString.newBuilder()
+                        .setPayReq(UriUtil.removeURI(event.getData().toLowerCase()))
+                        .build();
+                Obdmobile.decodePayReq(decodePaymentRequest.toByteArray(), new Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        LogUtils.e(TAG, "------------------decodePaymentOnError------------------" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(byte[] bytes) {
+                        if (bytes == null) {
+                            return;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
+                                    LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
+                                    ReceiveLuckyPacketDialog mReceiveLuckyPacketDialog = new ReceiveLuckyPacketDialog(mContext);
+                                    mReceiveLuckyPacketDialog.show(pubkey, resp.getAssetId(), event.getData());
                                 } catch (InvalidProtocolBufferException e) {
                                     e.printStackTrace();
                                 }

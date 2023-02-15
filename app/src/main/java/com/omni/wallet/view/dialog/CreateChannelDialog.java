@@ -101,7 +101,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
             mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
             showStepTwo();
         } else {
-            nodePubkey = ConstantInOB.usingCenterNodePubkey;
+            nodePubkey = ConstantInOB.usingLiquidityNodePubkey;
             showStepOne();
         }
         /**
@@ -333,7 +333,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         mAlertDialog.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nodePubkey = ConstantInOB.usingCenterNodePubkey;
+                nodePubkey = ConstantInOB.usingLiquidityNodePubkey;
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.VISIBLE);
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.GONE);
                 showStepOne();

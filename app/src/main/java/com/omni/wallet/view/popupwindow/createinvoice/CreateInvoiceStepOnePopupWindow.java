@@ -316,6 +316,7 @@ public class CreateInvoiceStepOnePopupWindow {
         timeUnitSuccessTv.setText(timeType);
         paymentSuccessTv.setText(qrCodeUrl);
         Bitmap mQRBitmap = CodeUtils.createQRCode(qrCodeUrl, DisplayUtil.dp2px(mContext, 100));
+//        Bitmap mQRBitmap = CodeUtils.createQRCodeBitmap(qrCodeUrl, DisplayUtil.dp2px(mContext, 50), DisplayUtil.dp2px(mContext, 50),"UTF-8","L", "1", Color.BLACK, Color.WHITE);;
         qrCodeIv.setImageBitmap(mQRBitmap);
 
         copyIv.setOnClickListener(new View.OnClickListener() {

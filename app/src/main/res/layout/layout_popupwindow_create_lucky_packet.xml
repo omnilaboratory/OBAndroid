@@ -339,25 +339,27 @@
                                 android:textSize="@dimen/text_16"/>
                         </LinearLayout>
 
-                        <RelativeLayout
+                        <LinearLayout
                             android:layout_width="@dimen/main_179"
                             android:layout_height="@dimen/main_32"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/bg_black_rectangle_round_0_thin">
+                            android:background="@drawable/bg_black_rectangle_round_0_thin"
+                            android:orientation="horizontal">
 
                             <EditText
                                 android:id="@+id/edit_amount"
-                                android:layout_width="match_parent"
+                                android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_marginRight="@dimen/main_50"
+                                android:layout_weight="1000"
+                                android:layout_marginRight="@dimen/main_5"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
                                 android:gravity="center_vertical|right"
                                 android:background="@null"
                                 android:textColorHint="@color/color_99_transparent"
                                 android:hint="0"
-                                android:inputType="number"
+                                android:inputType="number|numberDecimal"
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16"/>
 
@@ -372,7 +374,7 @@
                                 android:text="dollar"
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16"/>
-                        </RelativeLayout>
+                        </LinearLayout>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -399,7 +401,7 @@
                             android:layout_centerVertical="true"
                             android:gravity="center_vertical|right"
                             android:inputType="number"
-                            android:text="0"
+                            android:hint="0"
                             android:textColorHint="@color/color_80p_transparent"
                             android:background="@drawable/bg_black_rectangle_round_0_thin"
                             android:textColor="@color/color_80p_transparent"
@@ -740,7 +742,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
+                        android:layout_marginTop="@dimen/main_5"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -799,6 +801,7 @@
                                 android:layout_width="@dimen/main_100"
                                 android:layout_height="@dimen/main_100"
                                 android:layout_centerInParent="true"
+                                android:scaleType="fitXY"
                                 android:src="@mipmap/icon_qr_code_red"/>
                         </RelativeLayout>
 

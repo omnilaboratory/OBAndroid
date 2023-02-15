@@ -796,6 +796,11 @@ public class SendDialog implements Wallet.ScanSendListener {
                 if (StringUtils.isEmpty(addrListJson)) {
                     list = new ArrayList<>();
                     AddressEntity entity = new AddressEntity();
+                    if (StringUtils.isEmpty(nickname)) {
+                        entity.setName("unname");
+                    } else {
+                        entity.setName(nickname);
+                    }
                     entity.setName(nickname);
                     entity.setAddress(selectAddress);
                     list.add(entity);
@@ -809,7 +814,11 @@ public class SendDialog implements Wallet.ScanSendListener {
                     list = gson.fromJson(addrListJson, new TypeToken<List<AddressEntity>>() {
                     }.getType());
                     AddressEntity entity = new AddressEntity();
-                    entity.setName(nickname);
+                    if (StringUtils.isEmpty(nickname)) {
+                        entity.setName("unname");
+                    } else {
+                        entity.setName(nickname);
+                    }
                     entity.setAddress(selectAddress);
                     list.add(entity);
                     String jsonStr = gson.toJson(list);
