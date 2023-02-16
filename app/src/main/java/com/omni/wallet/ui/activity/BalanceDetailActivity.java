@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bigkoo.pickerview.TimePickerView;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import com.google.gson.Gson;
@@ -71,8 +72,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,6 +191,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
     View mLineView;
     @BindView(R.id.tv_receiver)
     TextView mReceiverTv;
+    @BindView(R.id.tv_filter_time)
+    TextView mFilterTimeTv;
     private List<PaymentEntity> mPayData = new ArrayList<>();
     private List<PaymentEntity> mReceiveData = new ArrayList<>();
     private List<TransactionLightingEntity> mTransactionsData = new ArrayList<>();
@@ -217,6 +223,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     String network;
     private String pubkey;
     private List<String> txidList;
+    String filterTime;
 
     PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow;
     SendDialog mSendDialog;
@@ -231,6 +238,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
     PayInvoiceDialog mPayInvoiceDialog;
     CreateChannelDialog mCreateChannelDialog;
+    TimePickerView mTimePickerView;
 
     @Override
     protected void getBundleData(Bundle bundle) {
@@ -335,6 +343,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
         }
         mWalletAddressTv.setText(walletAddress);
         initBalanceAccount();
+        // 初始化日期选择器
+        filterTime = String.valueOf(DateUtils.getMonthFirstdayDateZero()).substring(0, 10);
+        mFilterTimeTv.setText(DateUtils.YearMonth(filterTime));
+        showTimePicker();
+        LogUtils.e(TAG, "------------------getCurrentMonth------------------" + filterTime);
     }
 
     private void initBalanceAccount() {
@@ -370,7 +383,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-        initTransactionsData();
+        initTransactionsData(filterTime);
         initToBePaidData();
         initMyInvoicesData();
     }
@@ -379,7 +392,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * initialize the list of activity
      * 初始化交易列表
      */
-    private void initTransactionsData() {
+    private void initTransactionsData(String time) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mTransactionsRecyclerView.setLayoutManager(layoutManager);
@@ -396,7 +409,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         } else if (network.equals("lightning")) {
             mTransactionsAdapter = new TransactionsAdapter(mContext, mTransactionsData, R.layout.layout_item_transactions_list_lighting);
             mTransactionsRecyclerView.setAdapter(mTransactionsAdapter);
-            fetchTransactionsFromLND();
+            fetchTransactionsFromLND(time);
         }
     }
 
@@ -578,7 +591,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * This will fetch lightning Transactions from LND.
      * 请求交易列表各个状态的接口
      */
-    public void fetchTransactionsFromLND() {
+    public void fetchTransactionsFromLND(String time) {
         mTransactionsData.clear();
         LightningOuterClass.ListPaymentsRequest paymentsRequest;
         if (assetId == 0) {
@@ -586,12 +599,14 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(false)
                     .setIncludeIncomplete(false)
+                    .setStartTime(Long.parseLong(time))
                     .build();
         } else {
             paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(true)
                     .setIncludeIncomplete(false)
+                    .setStartTime(Long.parseLong(time))
                     .build();
         }
         Obdmobile.oB_ListPayments(paymentsRequest.toByteArray(), new Callback() {
@@ -603,7 +618,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             @Override
             public void onResponse(byte[] bytes) {
                 if (bytes == null) {
-                    fetchReceiveInvoicesFromLND(100);
+                    fetchReceiveInvoicesFromLND(time, 100);
                     return;
                 }
                 try {
@@ -650,7 +665,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             mTransactionsAdapter.notifyDataSetChanged();
                         }
                     });
-                    fetchReceiveInvoicesFromLND(100);
+                    fetchReceiveInvoicesFromLND(time, 100);
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -662,19 +677,21 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * This will fetch all lightning invoices from LND.
      * 请求发票列表各个状态的接口
      */
-    private void fetchReceiveInvoicesFromLND(long lastIndex) {
+    private void fetchReceiveInvoicesFromLND(String time, long lastIndex) {
         LightningOuterClass.ListInvoiceRequest invoiceRequest;
         if (assetId == 0) {
             invoiceRequest = LightningOuterClass.ListInvoiceRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(false)
                     .setNumMaxInvoices(lastIndex)
+                    .setStartTime(Long.parseLong(time))
                     .build();
         } else {
             invoiceRequest = LightningOuterClass.ListInvoiceRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(true)
                     .setNumMaxInvoices(lastIndex)
+                    .setStartTime(Long.parseLong(time))
                     .build();
         }
         Obdmobile.oB_ListInvoices(invoiceRequest.toByteArray(), new Callback() {
@@ -736,7 +753,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             }
                         });
                     } else {
-                        fetchReceiveInvoicesFromLND(lastIndex + 100);
+                        fetchReceiveInvoicesFromLND(time, lastIndex + 100);
                     }
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
@@ -1015,6 +1032,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
             } else {
                 holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getTimeStamp() + ""));
             }
+            if (position == 0) {
+                holder.setViewVisibility(R.id.layout_amount, View.VISIBLE);
+                holder.setViewVisibility(R.id.layout_status, View.VISIBLE);
+            } else {
+                holder.setViewVisibility(R.id.layout_amount, View.INVISIBLE);
+                holder.setViewVisibility(R.id.layout_status, View.INVISIBLE);
+            }
             TransactionsChainView mTransactionsChainView = holder.getView(R.id.view_transactions_chain);
             mTransactionsChainView.setViewShow(item.getList());
             mTransactionsChainView.setCallback(new TransactionsChainView.ChainItemCallback() {
@@ -1046,6 +1070,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
             } else {
                 holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getBlockTime() + ""));
             }
+            if (position == 0) {
+                holder.setViewVisibility(R.id.layout_amount, View.VISIBLE);
+                holder.setViewVisibility(R.id.layout_status, View.VISIBLE);
+            } else {
+                holder.setViewVisibility(R.id.layout_amount, View.INVISIBLE);
+                holder.setViewVisibility(R.id.layout_status, View.INVISIBLE);
+            }
             TransactionsAssetView mTransactionsAssetView = holder.getView(R.id.view_transactions_asset);
             mTransactionsAssetView.setViewShow(item.getList());
             mTransactionsAssetView.setCallback(new TransactionsAssetView.AssetItemCallback() {
@@ -1076,6 +1107,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 holder.setText(R.id.tv_time, "Yesterday");
             } else {
                 holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getCreationDate() + ""));
+            }
+            if (position == 0) {
+                holder.setViewVisibility(R.id.layout_amount, View.VISIBLE);
+                holder.setViewVisibility(R.id.layout_status, View.VISIBLE);
+            } else {
+                holder.setViewVisibility(R.id.layout_amount, View.INVISIBLE);
+                holder.setViewVisibility(R.id.layout_status, View.INVISIBLE);
             }
             TransactionsLightingView mTransactionsLightingView = holder.getView(R.id.view_transactions_lighting);
             mTransactionsLightingView.setViewShow(item.getList());
@@ -1681,6 +1719,52 @@ public class BalanceDetailActivity extends AppBaseActivity {
     }
 
     /**
+     * 点击时间筛选的按钮
+     * Click the time filter button
+     */
+    @OnClick(R.id.layout_filter_time)
+    public void clickFilterTimeLayout() {
+        mTimePickerView.show();
+    }
+
+    // 显示时间
+    public void showTimePicker() {
+        //设置显示的日期
+        Calendar selectedDate = Calendar.getInstance();
+        Calendar startDate = Calendar.getInstance();
+        startDate.set(2023, 0, 1);
+        Calendar endDate = Calendar.getInstance();
+        endDate.set(2027, 11, 31);
+        mTimePickerView = new TimePickerView.Builder(this, new TimePickerView.OnTimeSelectListener() {
+            @Override
+            public void onTimeSelect(Date date, View v) {
+                filterTime = String.valueOf(DateUtils.getMonthBegin(date)).substring(0, 10);
+                mFilterTimeTv.setText(DateUtils.YearMonth(filterTime));
+                initTransactionsData(filterTime);
+                LogUtils.e("==========filterTime==========", filterTime);
+            }
+        }).setSubmitText("OK")
+                .setCancelText("Cancel")
+                .setCancelColor(Color.BLACK)
+                .setSubmitColor(Color.BLACK)
+                .setSubCalSize(16)
+                .setDate(selectedDate)
+                .setRangDate(startDate, endDate)
+                //.isDialog(true) //是否对话框样式显示（显示在页面中间）
+                //.isCyclic(true) //是否循环滚动
+                .setType(new boolean[]{true, true, false, false, false, false}) //显示“年月日时分秒”的哪几项
+                .setLabel("", "", "", "", "", "")
+                .isCenterLabel(false) //是否只显示选中的label文字，false则每项item全部都带有 label
+                .build();
+    }
+
+    private String getTime(Date date) {//可根据需要自行截取数据显示
+        LogUtils.e("getTime()", "choice date millis: " + date.getTime());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(date);
+    }
+
+    /**
      * 扫码后的消息通知监听
      * Message notification monitoring after Scan qrcode
      */
@@ -1710,7 +1794,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPayInvoiceSuccessEvent(PayInvoiceSuccessEvent event) {
-        fetchTransactionsFromLND();
+        fetchTransactionsFromLND(filterTime);
         fetchPaymentsFromLND();
     }
 

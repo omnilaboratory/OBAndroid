@@ -92,46 +92,46 @@ public class TransactionsAssetView extends LinearLayout {
             holder.setText(R.id.tv_time, DateUtils.Hourmin(item.getBlocktime() + ""));
             DecimalFormat df = new DecimalFormat("0.00######");
             if (item.getType().equals("Simple Send")) {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getAmount())));
+                holder.setText(R.id.tv_amount, "+ " + df.format(Double.parseDouble(item.getAmount())));
                 if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
-                    holder.setText(R.id.tv_state, "PENDING");
+                    holder.setText(R.id.tv_state, "Unnamed");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
                 } else {
-                    holder.setText(R.id.tv_state, "RECEIVED");
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
+                    holder.setText(R.id.tv_state, "Unnamed");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
                 }
             } else if (item.getType().equals("Send To Many")) {
                 if (item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
-                    holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getTotalamount())));
+                    holder.setText(R.id.tv_amount, "- " + df.format(Double.parseDouble(item.getTotalamount())));
                     if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
-                        holder.setText(R.id.tv_state, "PENDING");
+                        holder.setText(R.id.tv_state, "Unnamed");
                         holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
                     } else {
-                        holder.setText(R.id.tv_state, "SENT");
-                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
+                        holder.setText(R.id.tv_state, "Unnamed");
+                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
                     }
                 } else if (!item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
                     if (item.getReceiversList() != null) {
                         if (item.getReceiversList().size() == 1) {
                             if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
-                                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
+                                holder.setText(R.id.tv_amount, "+ " + df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
                             }
                         } else if (item.getReceiversList().size() == 2) {
                             if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
                                     & !item.getReceivers(1).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
-                                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
+                                holder.setText(R.id.tv_amount, "+ " + df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
                             } else if (!item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
                                     & item.getReceivers(1).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
-                                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getReceivers(1).getAmount())));
+                                holder.setText(R.id.tv_amount, "+ " + df.format(Double.parseDouble(item.getReceivers(1).getAmount())));
                             }
                         }
                     }
                     if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
-                        holder.setText(R.id.tv_state, "PENDING");
+                        holder.setText(R.id.tv_state, "Unnamed");
                         holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
                     } else {
-                        holder.setText(R.id.tv_state, "RECEIVED");
-                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
+                        holder.setText(R.id.tv_state, "Unnamed");
+                        holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
                     }
                 }
             }

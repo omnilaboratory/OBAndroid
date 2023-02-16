@@ -91,22 +91,22 @@ public class TransactionsChainView extends LinearLayout {
             holder.setText(R.id.tv_time, DateUtils.Hourmin(item.getTimeStamp() + ""));
             DecimalFormat df = new DecimalFormat("0.00######");
             if (item.getAmount() < 0) {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
+                holder.setText(R.id.tv_amount, "- " + df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
                 if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
-                    holder.setText(R.id.tv_state, "PENDING");
+                    holder.setText(R.id.tv_state, "Unnamed");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
                 } else {
-                    holder.setText(R.id.tv_state, "SENT");
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
+                    holder.setText(R.id.tv_state, "Unnamed");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
                 }
             } else if (item.getAmount() > 0) {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                holder.setText(R.id.tv_amount, "+ " + df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
                 if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
-                    holder.setText(R.id.tv_state, "PENDING");
+                    holder.setText(R.id.tv_state, "Unnamed");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
                 } else {
-                    holder.setText(R.id.tv_state, "RECEIVED");
-                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
+                    holder.setText(R.id.tv_state, "Unnamed");
+                    holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
                 }
             }
             holder.setOnItemClickListener(new OnClickListener() {

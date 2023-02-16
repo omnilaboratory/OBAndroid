@@ -13,12 +13,13 @@
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
-        <ImageView
-            android:id="@+id/iv_state"
+        <TextView
+            android:id="@+id/tv_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:src="@mipmap/icon_arrow_right_blue"/>
+            android:text="@string/sent"
+            android:textColor="@color/color_black"
+            android:textSize="@dimen/text_16"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -45,8 +46,9 @@
             android:id="@+id/tv_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_alignParentRight="true"
             android:text="0"
+            android:gravity="right"
             android:textColor="@color/color_black"
             android:textSize="@dimen/text_16"/>
     </RelativeLayout>
@@ -56,13 +58,11 @@
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/tv_state"
+        <ImageView
+            android:id="@+id/iv_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/sent"
-            android:textColor="@color/color_black"
-            android:textSize="@dimen/text_16"/>
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/icon_arrow_right_blue"/>
     </RelativeLayout>
 </LinearLayout>

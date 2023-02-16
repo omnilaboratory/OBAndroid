@@ -89,17 +89,22 @@ public class TransactionsLightingView extends LinearLayout {
         public void convert(ViewHolder holder, int position, PaymentEntity item) {
             holder.setText(R.id.tv_time, DateUtils.Hourmin(item.getDate() + ""));
             DecimalFormat df = new DecimalFormat("0.00######");
-            if (item.getAssetId() == 0) {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount() / 1000)) / 100000000));
-            } else {
-                holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-            }
             if (item.getType() == 1) {
-                holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
-                holder.setText(R.id.tv_state, "SENT");
+                if (item.getAssetId() == 0) {
+                    holder.setText(R.id.tv_amount, "- " + df.format(Double.parseDouble(String.valueOf(item.getAmount() / 1000)) / 100000000));
+                } else {
+                    holder.setText(R.id.tv_amount, "- " + df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                }
+                holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
+                holder.setText(R.id.tv_state, "Unnamed");
             } else if (item.getType() == 2) {
-                holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
-                holder.setText(R.id.tv_state, "RECEIVED");
+                if (item.getAssetId() == 0) {
+                    holder.setText(R.id.tv_amount, "+ " + df.format(Double.parseDouble(String.valueOf(item.getAmount() / 1000)) / 100000000));
+                } else {
+                    holder.setText(R.id.tv_amount, "+ " + df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
+                }
+                holder.setImageResource(R.id.iv_state, R.mipmap.icon_vector_blue);
+                holder.setText(R.id.tv_state, "Unnamed");
             }
             holder.setOnItemClickListener(new OnClickListener() {
                 @Override
