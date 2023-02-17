@@ -924,6 +924,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 mToBePaidData = gson.fromJson(btcInvoiceListJson, new TypeToken<List<InvoiceEntity>>() {
                 }.getType()); //将json字符串转换成List集合
                 removeDuplicateInvoice(mToBePaidData);
+                Collections.reverse(mToBePaidData);
                 LogUtils.e(TAG, "========btcInvoice=====" + btcInvoiceListJson);
                 mToBePaidNumTv.setText(mToBePaidData.size() + "");
                 mToBePaidAdapter = new ToBePaidAdapter(mContext, mToBePaidData, R.layout.layout_item_to_be_paid_list);
@@ -938,6 +939,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 mToBePaidData = gson.fromJson(invoiceListJson, new TypeToken<List<InvoiceEntity>>() {
                 }.getType()); //将json字符串转换成List集合
                 removeDuplicateInvoice(mToBePaidData);
+                Collections.reverse(mToBePaidData);
                 LogUtils.e(TAG, "========invoice=====" + invoiceListJson);
                 mToBePaidNumTv.setText(mToBePaidData.size() + "");
                 mToBePaidAdapter = new ToBePaidAdapter(mContext, mToBePaidData, R.layout.layout_item_to_be_paid_list);
@@ -1794,6 +1796,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPayInvoiceSuccessEvent(PayInvoiceSuccessEvent event) {
+        filterTime = String.valueOf(DateUtils.getMonthFirstdayDateZero()).substring(0, 10);
+        mFilterTimeTv.setText(DateUtils.YearMonth(filterTime));
         fetchTransactionsFromLND(filterTime);
         fetchPaymentsFromLND();
     }
