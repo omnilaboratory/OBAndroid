@@ -180,7 +180,13 @@ public class WalletServiceUtil {
                                     list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
                                     Map<String,Object> map = list.get(0);
                                     if (map!=null){
-                                        AssetsActions.updateAssetsPriceS(context, propertyId, (Double) map.get("price"));
+                                        double price = (Double) map.get("price");
+                                        if (price == 0 ){
+                                            AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                                        }else {
+                                            AssetsActions.updateAssetsPriceS(context, propertyId, price);
+                                        }
+
                                     }else{
                                         AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
                                     }
@@ -191,7 +197,12 @@ public class WalletServiceUtil {
                                     list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
                                     Map<String,Object> mapT = list.get(0);
                                     if (mapT!=null){
-                                        AssetsActions.updateAssetsPriceS(context, propertyId, (Double) mapT.get("price"));
+                                        double price = (Double) mapT.get("price");
+                                        if (price == 0 ){
+                                            AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
+                                        }else {
+                                            AssetsActions.updateAssetsPriceS(context, propertyId, price);
+                                        }
                                     }else{
                                         AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
                                     }
