@@ -1,5 +1,6 @@
 package com.omni.wallet.data;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -104,6 +105,15 @@ public class AssetsValueDataDao {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+        }else{
+            try {
+                double lastValue = 0.0;
+                long update_date = TimeFormatUtil.getCurrentDayMills();
+                insertAssetValueData(lastValue,update_date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
         }
 
     }
@@ -128,6 +138,7 @@ public class AssetsValueDataDao {
         return changeMap;
     }
 
+    @SuppressLint("LongLogTag")
     public List<Map<String ,Object>> queryAssetValueDataOneYear(){
         List<Map<String,Object>> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
@@ -139,6 +150,7 @@ public class AssetsValueDataDao {
             queryRow.put("value",cursor.getDouble(cursor.getColumnIndex("value")));
             queryList.add(queryRow);
         }
+        Log.e(TAG+"queryAssetValueDataOneYear: ", queryList.toString());
         cursor.close();
 //        db.close();
         return queryList;

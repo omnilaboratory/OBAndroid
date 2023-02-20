@@ -44,6 +44,7 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.framelibrary.view.refreshlayout.LayoutRefreshView;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.GetResourceUtil;
 import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UriUtil;
@@ -102,6 +103,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     AssetTrendChartView mAssetTrendChartView;
     @BindView(R.id.recycler_assets_list_block)
     public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock(The Recycler View Block for Assets List)
+    @BindView(R.id.iv_percent_change)
+    ImageView mPercentChangeView;
     private List<ListAssetItemEntity> blockData = new ArrayList<>();
     private List<ListAssetItemEntity> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
@@ -218,6 +221,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     // TODO: 2023/1/12 待完善
     private void setAssetTrendChartViewShow() {
+
         Map<String, Object> data = AssetsActions.getDataForChart(mContext);
         List<Map<String, Object>> allList;
         try {
@@ -242,12 +246,19 @@ public class AccountLightningActivity extends AppBaseActivity {
             mAssetTrendChartView.setViewShow(list);
             Map<String,Object> changeData = (Map<String, Object>) data.get("changeData");
             assert changeData != null;
+            Log.e(TAG + "changeData",changeData.toString());
             double percent = (double) changeData.get("percent");
             @SuppressLint("DefaultLocale") String percentString = String.format("%.2f", percent) + "%";
             Log.e(TAG, "setAssetTrendChartViewShow: " + percentString);
             @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f", (double) changeData.get("value"));
             mPriceChangeTv.setText(percentString);
-            if (percent>0){}else{}
+            if (percent>0){
+                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_06d78f));
+                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_up_green);
+            }else{
+                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_F13A3A));
+                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_down_red);
+            }
             mBalanceValueTv.setText(valueString);
             EventBus.getDefault().post(new UpdateAssetsDataEvent());
         } catch (ParseException e) {

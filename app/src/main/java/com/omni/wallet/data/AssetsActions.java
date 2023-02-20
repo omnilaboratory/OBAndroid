@@ -125,10 +125,13 @@ public class AssetsActions {
 
     public static Map<String, Object> getDataForChart(Context context) {
         AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
+        List<Map<String, Object>> valueList2 = assetsValueDataDao.queryAssetValueDataAll();
+        Log.e(TAG+ "getDataForChart ", valueList2.toString());
         List<Map<String, Object>> valueList = assetsValueDataDao.queryAssetValueDataOneYear();
         Map<String, Double> changeMap = new HashMap<>();
         List<Map<String, Object>> chartDataList = new ArrayList<>();
         Collections.reverse(valueList);
+        Log.e(TAG+ "getDataForChart ", valueList.toString());
         if (valueList.size() > 0) {
             double value = 0;
             double changePercent = 0;
@@ -185,6 +188,8 @@ public class AssetsActions {
 
 
     public static void initDbForInstallApp(Context context, ActionCallBack callBack) {
+        AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
+        assetsValueDataDao.completeAssetData();
         WalletServiceUtil.GetUsingAssetsPriceCallback getUsingAssetsPriceCallback = (Context context1, JSONArray priceList, Map<String, Object> propertyMap) -> {
             Log.e(TAG, "initDbForInstallApp: getPriceSuccess" );
             try {
@@ -282,11 +287,11 @@ public class AssetsActions {
         AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
         assetsValueDataDao.completeAssetData();
         WalletServiceUtil.GetUsingAssetsPriceCallback getUsingAssetsPriceCallback = (Context context1, JSONArray priceList, Map<String, Object> propertyMap) -> {
-            Log.e(TAG, "initDbForInstallApp: getPriceSuccess" );
+            Log.e(TAG, "initOrUpdateDataStartApp: getPriceSuccess" );
             try {
                 for (int i = 0; i < priceList.length(); i++) {
                     String priceString = priceList.getJSONObject(i).getString("current_price");
-                    Log.e(TAG, "initDbForInstallApp: price: " + priceString);
+                    Log.e(TAG, "initOrUpdateDataStartApp: price: " + priceString);
                     double price = Double.parseDouble(priceString);
                     String id = priceList.getJSONObject(i).getString("id");
                     String propertyId = "";
@@ -323,13 +328,13 @@ public class AssetsActions {
 
             updateAssetChannelsAmountS(context, propertyId, channelAmount);
             if (index == assetCount-1){
-                Log.e(TAG, "initDbForInstallApp: getAssetsChannelBalanceSuccess318" );
+                Log.e(TAG, "initOrUpdateDataStartApp: getAssetsChannelBalanceSuccess318" );
                 WalletServiceUtil.getUsingAssetsPrice(context, getUsingAssetsPriceCallback);
             }
         };
 
         WalletServiceUtil.GetAssetsBalanceCallback getAssetsBalanceCallback = (List<LightningOuterClass.AssetBalanceByAddressResponse> assetsList) -> {
-            Log.e(TAG, "initDbForInstallApp: getAssetsBalanceSuccess443" );
+            Log.e(TAG, "initOrUpdateDataStartApp: getAssetsBalanceSuccess443" );
             for (int i = 0; i < assetsList.size(); i++) {
                 AssetsDao assetsDao = new AssetsDao(context);
                 LightningOuterClass.AssetBalanceByAddressResponse asset = assetsList.get(i);
@@ -343,7 +348,7 @@ public class AssetsActions {
         };
 
         WalletServiceUtil.GetBtcBalanceCallback getBtcBalanceCallback = (double btcBalance) -> {
-            Log.e(TAG, "initDbForInstallApp: btcBalance" + btcBalance);
+            Log.e(TAG, "initOrUpdateDataStartApp: btcBalance" + btcBalance);
             insertOrUpdateAssetDataAndUpdateValueData(context,"0",btcBalance);
             WalletServiceUtil.getAssetsBalance(context, getAssetsBalanceCallback);
         };
