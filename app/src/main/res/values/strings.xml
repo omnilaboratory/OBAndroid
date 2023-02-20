@@ -92,7 +92,7 @@
     <string name="copy_address_big">COPY ADDRESS</string>
     <string name="share_to">SHARE TO</string>
     <string name="open_a_channel">OPEN A CHANNEL</string>
-    <string name="open_a_channel_txt">Open channels to other nodes on the network to start using the Lightning Network.</string>
+    <string name="open_a_channel_txt">Establish a channel with a liquidity node and start using the Lightning Network</string>
     <string name="scan_qrcode">Scan QRCode</string>
     <string name="fill_in_mannually">Fill in mannually</string>
     <string name="valid_pubkey">Valid Pubkey</string>
@@ -271,6 +271,8 @@
     <string name="create_channel_tip">You have not created a channel for this asset, please create at least one channel with the liquidity node first and with enough funds, and then continue to pay (or create an invoice). </string>
     <string name="received_first_upper">Received</string>
     <string name="time_first_upper">Time</string>
+    <string name="what_is_channel_upper">WHAT IS CHANNEL</string>
+    <string name="what_is_channel_txt">A Lightning Network channel is a transaction mechanism between two parties. Using channels, the parties can make or receive payments from each other.\n\nIn order to obtain stable network services and allow others to connect with you, you need to establish at least one channel with a liquidity node. These remote liquidity nodes help the network discover your node, and provide fast routing services, safe inbound and outbound fund services.\n\nThe liquidity nodes listed by OBWallet have all been audited by the security team, and you can safely establish channels with these nodes.</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

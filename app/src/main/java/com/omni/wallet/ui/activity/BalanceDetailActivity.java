@@ -74,6 +74,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -400,11 +401,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
             if (assetId == 0) {
                 mTransactionsChainAdapter = new TransactionsChainAdapter(mContext, mTransactionsChainData, R.layout.layout_item_transactions_list_chain);
                 mTransactionsRecyclerView.setAdapter(mTransactionsChainAdapter);
-                getTransactions();
+                getTransactions(time);
             } else {
                 mTransactionsAssetAdapter = new TransactionsAssetAdapter(mContext, mTransactionsAssetData, R.layout.layout_item_transactions_list_asset);
                 mTransactionsRecyclerView.setAdapter(mTransactionsAssetAdapter);
-                listTransactions();
+                listTransactions(time);
             }
         } else if (network.equals("lightning")) {
             mTransactionsAdapter = new TransactionsAdapter(mContext, mTransactionsData, R.layout.layout_item_transactions_list_lighting);
@@ -417,7 +418,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * @description: getTransactions
      * @描述： 获取链上btc交易记录
      */
-    private void getTransactions() {
+    private void getTransactions(String time) {
         mTransactionsChainData.clear();
         Obdmobile.getTransactions(LightningOuterClass.GetTransactionsRequest.newBuilder().build().toByteArray(), new Callback() {
             @Override
@@ -456,9 +457,15 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     for (Map.Entry<String, TransactionChainEntity> entry : hashMap.entrySet()) {
                         list.add(entry.getValue());
                     }
-                    LogUtils.e("========list========", String.valueOf(list));
+                    List<TransactionChainEntity> filterList = new ArrayList<>();
+                    for (TransactionChainEntity entity : list) {
+                        if (entity.getTimeStamp() > Long.parseLong(time)) {
+                            filterList.add(entity);
+                        }
+                    }
+                    LogUtils.e("========filterList========", String.valueOf(filterList));
                     mTransactionsChainData.clear();
-                    mTransactionsChainData.addAll(list);
+                    mTransactionsChainData.addAll(filterList);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -476,7 +483,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      * @description: ListTransactions
      * @描述： 获取链上asset交易记录
      */
-    private void listTransactions() {
+    private void listTransactions(String time) {
         mTransactionsAssetData.clear();
         SharedPreferences txidSp = mContext.getSharedPreferences("SP_TXID_LIST", Activity.MODE_PRIVATE);
         String txidListJson = txidSp.getString("txidListKey", "");
@@ -484,10 +491,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
             Gson gson = new Gson();
             txidList = gson.fromJson(txidListJson, new TypeToken<List<String>>() {
             }.getType()); //将json字符串转换成List集合
+            txidList.removeAll(Arrays.asList(""));
             removeDuplicate(txidList);
-            LogUtils.e(TAG, "========txid=====" + txidListJson);
+            LogUtils.e(TAG, "========txid=====" + txidList);
             for (int i = 0; i < txidList.size(); i++) {
-                getOmniTransactions(txidList.get(i));
+                getOmniTransactions(txidList.get(i), time);
             }
 //            oBListTransactions();
         }
@@ -496,7 +504,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
 //        }
     }
 
-    private void getOmniTransactions(String txid) {
+    private void getOmniTransactions(String txid, String time) {
         LightningOuterClass.GetOmniTransactionRequest getOmniTransactionRequest = LightningOuterClass.GetOmniTransactionRequest.newBuilder()
                 .setTxid(txid)
                 .build();
@@ -539,9 +547,15 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     for (Map.Entry<String, TransactionAssetEntity> entry : hashMap.entrySet()) {
                         list.add(entry.getValue());
                     }
-                    LogUtils.e("========assetTxList========", String.valueOf(list));
+                    List<TransactionAssetEntity> filterList = new ArrayList<>();
+                    for (TransactionAssetEntity entity : list) {
+                        if (entity.getBlockTime() > Long.parseLong(time)) {
+                            filterList.add(entity);
+                        }
+                    }
+                    LogUtils.e("========assetTxList========", String.valueOf(filterList));
                     mTransactionsAssetData.clear();
-                    mTransactionsAssetData.addAll(list);
+                    mTransactionsAssetData.addAll(filterList);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -871,8 +885,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
             Gson gson = new Gson();
             txidList = gson.fromJson(txidListJson, new TypeToken<List<String>>() {
             }.getType()); //将json字符串转换成List集合
+            txidList.removeAll(Arrays.asList(""));
             removeDuplicate(txidList);
-            LogUtils.e(TAG, "========txid=====" + txidListJson);
+            LogUtils.e(TAG, "========txid=====" + txidList);
             for (int i = 0; i < txidList.size(); i++) {
                 LightningOuterClass.GetOmniTransactionRequest getOmniTransactionRequest = LightningOuterClass.GetOmniTransactionRequest.newBuilder()
                         .setTxid(txidList.get(i))
@@ -880,7 +895,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 Obdmobile.oB_GetOmniTransaction(getOmniTransactionRequest.toByteArray(), new Callback() {
                     @Override
                     public void onError(Exception e) {
-                        LogUtils.e(TAG, "------------------oB_GetOmniTransactionOnError------------------" + e.getMessage());
+                        LogUtils.e(TAG, "------------------oB_GetOmniTransactionPendingOnError------------------" + e.getMessage());
                     }
 
                     @Override
@@ -890,7 +905,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                         }
                         try {
                             LightningOuterClass.AssetTx resp = LightningOuterClass.AssetTx.parseFrom(bytes);
-                            LogUtils.e(TAG, "------------------oB_GetOmniTransactionOnResponse-----------------" + resp);
+                            LogUtils.e(TAG, "------------------oB_GetOmniTransactionOnPendingResponse-----------------" + resp);
                             if (StringUtils.isEmpty(String.valueOf(resp.getConfirmations())) || resp.getConfirmations() < 3) {
                                 mPendingTxsAssetData.add(resp);
                             }
@@ -1826,11 +1841,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSendSuccessEvent(SendSuccessEvent event) {
+        filterTime = String.valueOf(DateUtils.getMonthFirstdayDateZero()).substring(0, 10);
+        mFilterTimeTv.setText(DateUtils.YearMonth(filterTime));
         if (assetId == 0) {
-            getTransactions();
+            getTransactions(filterTime);
             getPendingTxsChain();
         } else {
-            listTransactions();
+            listTransactions(filterTime);
             getPendingTxsAsset();
         }
     }

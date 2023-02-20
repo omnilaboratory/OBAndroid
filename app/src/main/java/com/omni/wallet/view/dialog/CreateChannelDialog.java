@@ -180,6 +180,17 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 showStepTwo();
             }
         });
+        /**
+         * 点击顶部问号
+         * @desc: click the question mark at the top
+         */
+        mAlertDialog.findViewById(R.id.iv_help_open_channel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WhatIsChannelDialog mWhatIsChannelDialog = new WhatIsChannelDialog(mContext);
+                mWhatIsChannelDialog.show();
+            }
+        });
     }
 
     private void showStepTwo() {
@@ -386,6 +397,17 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 mLoadingDialog.show();
                 // 先链接后再开通通道
                 connectPeer(nodePubkey, mBalanceAmount, mWalletAddress);
+            }
+        });
+        /**
+         * 点击顶部问号
+         * @desc: click the question mark at the top
+         */
+        mAlertDialog.findViewById(R.id.iv_help_open_channel_two).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WhatIsChannelDialog mWhatIsChannelDialog = new WhatIsChannelDialog(mContext);
+                mWhatIsChannelDialog.show();
             }
         });
     }
