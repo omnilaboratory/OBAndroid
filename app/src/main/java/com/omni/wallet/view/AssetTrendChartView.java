@@ -70,14 +70,14 @@ public class AssetTrendChartView extends LinearLayout {
         //
         //配置基本信息
         lineChart.getDescription().setEnabled(false);   //设置描述
-        lineChart.setTouchEnabled(true);    //设置是否可以触摸
+        lineChart.setTouchEnabled(false);    //设置是否可以触摸
         lineChart.setDragDecelerationFrictionCoef(0.9f);    //设置滚动时的速度快慢
-        lineChart.setDragEnabled(true);     // 是否可以拖拽
-        lineChart.setScaleXEnabled(true);   //设置X轴是否能够放大
-        lineChart.setScaleYEnabled(true);  //设置Y轴是否能够放大
-        lineChart.setScaleEnabled(true);    // 是否可以缩放 x和y轴, 默认是true
+        lineChart.setDragEnabled(false);     // 是否可以拖拽
+        lineChart.setScaleXEnabled(false);   //设置X轴是否能够放大
+        lineChart.setScaleYEnabled(false);  //设置Y轴是否能够放大
+        lineChart.setScaleEnabled(false);    // 是否可以缩放 x和y轴, 默认是true
         lineChart.setDrawGridBackground(false);//设置图表内格子背景是否显示，默认是false
-        lineChart.setHighlightPerDragEnabled(true);//能否拖拽高亮线(数据点与坐标的提示线)，默认是true
+        lineChart.setHighlightPerDragEnabled(false);//能否拖拽高亮线(数据点与坐标的提示线)，默认是true
         lineChart.setBackgroundColor(Color.WHITE);  //设置背景颜色
         lineChart.animateX(2000);
         //配置X轴属性

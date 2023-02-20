@@ -11,6 +11,7 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.data.AssetsActions;
 import com.omni.wallet.data.AssetsDB;
 import com.omni.wallet.data.AssetsDao;
+import com.omni.wallet.data.AssetsDataDao;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.InitChartEvent;
 import com.omni.wallet.framelibrary.entity.User;
@@ -20,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,17 +169,32 @@ public class WalletServiceUtil {
                     @Override
                     public void onError(Context context, String errorCode, String errorMsg) {
                         Log.e(TAG,"getPriceError:"+ errorMsg);
+                        AssetsDataDao assetsDataDao = new AssetsDataDao(context);
                         for (int i = 0; i < usingAssetsList.size(); i++) {
                             String id = (String) usingAssetsList.get(i).get("token_name");
                             String propertyId = "";
+                            List<Map<String,Object>> list=new ArrayList<>();
                             switch (id) {
                                 case "btc":
                                     propertyId = (String) propertyMap.get("btc");
-                                    AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                                    list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
+                                    Map<String,Object> map = list.get(0);
+                                    if (map!=null){
+                                        AssetsActions.updateAssetsPriceS(context, propertyId, (Double) map.get("price"));
+                                    }else{
+                                        AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                                    }
+
                                     break;
                                 case "ftoken":
                                     propertyId = (String) propertyMap.get("ftoken");
-                                    AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
+                                    list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
+                                    Map<String,Object> mapT = list.get(0);
+                                    if (mapT!=null){
+                                        AssetsActions.updateAssetsPriceS(context, propertyId, (Double) mapT.get("price"));
+                                    }else{
+                                        AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
+                                    }
                                     break;
                                 default:
                                     propertyId = (String) propertyMap.get(id);
@@ -187,15 +204,6 @@ public class WalletServiceUtil {
 
                         }
                         EventBus.getDefault().post(new InitChartEvent());
-
-                        /*try {
-                            DollarData dollarData = new DollarData(mContext);
-                            if(dollarData.checkDataIsEmpty()){
-                                dollarData.insert(0,dollarData.getLastPrice());
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }*/
                     }
 
                     @Override

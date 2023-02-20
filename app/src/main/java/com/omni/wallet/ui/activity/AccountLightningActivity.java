@@ -950,7 +950,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                 AssetsActions.initOrUpdateDataStartApp(mContext, actionCallBack);
             }
         };
-        handler.postDelayed(runnable,300000);
+        handler.postDelayed(runnable,60000);
 
     }
 

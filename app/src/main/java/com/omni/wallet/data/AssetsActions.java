@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UtilFunctions;
@@ -38,8 +39,8 @@ public class AssetsActions {
                 double price = (double) item.get("price");
                 double amount = (double) item.get("amount");
                 double channel_amount = 0;
-                if (item.get("channel_amount") != null) {
-                    channel_amount = (double) item.get("channel_amount");
+                if (item.get("channelAmount") != null) {
+                    channel_amount = (double) item.get("channelAmount");
                 }
                 dataValue = (channel_amount + amount) * price;
                 value = dataValue + value;
@@ -144,15 +145,7 @@ public class AssetsActions {
 
 
             if (valueList.size() >= 14) {
-                for (int i = 0; i < valueList.size() - 7; i += 7) {
-                    Map<String, Object> chartData = new HashMap<>();
-                    long dateMills = (long) valueList.get(i).get("date");
-                    double mapValue = ((double) valueList.get(i).get("value") + (double) valueList.get(i + 1).get("value") + (double) valueList.get(i + 2).get("value") + (double) valueList.get(i + 3).get("value") + (double) valueList.get(i + 4).get("value") + (double) valueList.get(i + 5).get("value") + (double) valueList.get(i + 6).get("value")) / 7;
-                    chartData.put("date", dateMills);
-                    chartData.put("value", mapValue);
-                    chartDataList.add(chartData);
-                }
-                for (int i = valueList.size() - 7; i < valueList.size(); i++) {
+                for (int i = valueList.size(); i > valueList.size() - 7; i--) {
                     Map<String, Object> chartData = new HashMap<>();
                     long dateMills = (long) valueList.get(i).get("date");
                     double mapValue = (double) valueList.get(i).get("value");
@@ -160,6 +153,17 @@ public class AssetsActions {
                     chartData.put("value", mapValue);
                     chartDataList.add(chartData);
                 }
+
+                for (int j = valueList.size() - 7; j > 0; j -= 7) {
+                    Map<String, Object> chartData = new HashMap<>();
+                    long dateMills = (long) valueList.get(j).get("date");
+                    double mapValue = ((double) valueList.get(j).get("value") + (double) valueList.get(j + 1).get("value") + (double) valueList.get(j + 2).get("value") + (double) valueList.get(j + 3).get("value") + (double) valueList.get(j + 4).get("value") + (double) valueList.get(j + 5).get("value") + (double) valueList.get(j + 6).get("value")) / 7;
+                    chartData.put("date", dateMills);
+                    chartData.put("value", mapValue);
+                    chartDataList.add(chartData);
+                }
+                Collections.reverse(chartDataList);
+
             } else {
                 for (int i = 0; i < valueList.size(); i++) {
                     Map<String, Object> chartData = new HashMap<>();

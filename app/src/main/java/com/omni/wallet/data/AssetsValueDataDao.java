@@ -98,7 +98,7 @@ public class AssetsValueDataDao {
                 long nowDate = TimeFormatUtil.getCurrentDayMills();
                 int willCompleteNum = (int) (((nowDate - lastUpdateTime)/ ConstantInOB.DAY_MILLIS));
                 for (int i = 0; i < willCompleteNum; i++) {
-                    long update_date = lastUpdateTime + ConstantInOB.DAY_MILLIS;
+                    long update_date = lastUpdateTime + ConstantInOB.DAY_MILLIS * (i+1);
                     insertAssetValueData(lastValue,update_date);
                 }
             } catch (ParseException e) {
@@ -107,6 +107,8 @@ public class AssetsValueDataDao {
         }
 
     }
+
+
 
     public Map<String,Double> queryChangeOfValue(){
         List<Double> queryList = new ArrayList<>();
@@ -142,4 +144,19 @@ public class AssetsValueDataDao {
         return queryList;
     }
 
+
+
+    public void deleteLastDataByNum(int count){
+        SQLiteDatabase db = mInstance.getWritableDatabase();
+        String queryLastString = "select * from assets_value_data order by _id desc limit ?";
+        Cursor cursor = db.rawQuery(queryLastString, new String[]{String.valueOf(count)});
+        List<Integer> queryList = new ArrayList<>();
+        while (cursor.moveToNext()){
+            queryList.add(cursor.getInt(cursor.getColumnIndex("_id")));
+        }
+        for (int i = 0; i<queryList.size();i++){
+            String deleteSql = "delete from assets_value_data where _id =" + queryList.get(i);
+            db.execSQL(deleteSql);
+        }
+    }
 }
