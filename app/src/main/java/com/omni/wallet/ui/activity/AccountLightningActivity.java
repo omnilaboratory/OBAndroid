@@ -220,9 +220,10 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     // TODO: 2023/1/12 待完善
+    @SuppressLint("LongLogTag")
     private void setAssetTrendChartViewShow() {
-
         Map<String, Object> data = AssetsActions.getDataForChart(mContext);
+        Log.e(TAG+"setAssetTrendChartViewShow",data.toString() );
         List<Map<String, Object>> allList;
         try {
             allList = (List<Map<String, Object>>) data.get("chartData");

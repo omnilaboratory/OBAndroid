@@ -23,7 +23,10 @@ import com.omni.wallet.R;
 import com.omni.wallet.entity.AssetTrendEntity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,6 +64,25 @@ public class AssetTrendChartView extends LinearLayout {
         setVisibility(GONE);
     }
 
+    public Map<String,Double> findMaxAndMin(List<AssetTrendEntity> result){
+        Map<String,Double> maxAndMinMap = new HashMap<>();
+        if (result.size() == 0 || result == null){
+            maxAndMinMap.put("max",0.0);
+            maxAndMinMap.put("min",0.0);
+        }else{
+            List<Double> values = new ArrayList<>();
+            for (int i = 0; i < result.size(); i++) {
+                double value =  Double.parseDouble(result.get(i).getAsset());
+                values.add(value);
+            }
+            double min = Collections.min(values);
+            double max = Collections.max(values);
+            maxAndMinMap.put("max",max);
+            maxAndMinMap.put("min",min);
+        }
+        return maxAndMinMap;
+    }
+
 
     public void setViewShow(List<AssetTrendEntity> result) {
 
@@ -68,6 +90,26 @@ public class AssetTrendChartView extends LinearLayout {
             setVisibility(GONE);
             return;
         }
+        Map<String,Double> maxAndMin = findMaxAndMin(result);
+        float max = Float.parseFloat(String.valueOf(maxAndMin.get("max")));
+        float min = Float.parseFloat(String.valueOf(maxAndMin.get("min")));
+        float minY = 0.0f;
+        if (max - min > min){
+            minY = (max-min)/2;
+        }else if(max - min < min){
+            minY = min/2;
+        }else {
+            minY = max/2;
+        }
+        float maxY = 0.0f;
+        if (max - min > min){
+            maxY = max + (max-min)/2;
+        }else if(max - min < min){
+            maxY = max + min/2;
+        }else {
+            maxY = max + max/2;
+        }
+
         setVisibility(VISIBLE);
         //Configure basic information
         //配置基本信息
@@ -124,7 +166,8 @@ public class AssetTrendChartView extends LinearLayout {
         leftAxis.setDrawGridLines(true);    //Set the gridline display on the left（设置左边的网格线显示）
         leftAxis.setGranularityEnabled(false);//Enable when magnified limit y interval granularity characteristics.Default value: false(启用在放大时限制y轴间隔的粒度特性。默认值：false。)
         leftAxis.setTextColor(Color.parseColor("#999999")); //Set the Y axis text color（置Y轴文字颜色)
-        leftAxis.setAxisMinimum(0f);
+        leftAxis.setAxisMinimum(minY);
+        leftAxis.setAxisMaximum(maxY);
         YAxis rightAxis = lineChart.getAxisRight(); //To obtain the right of the Y axis(获取右边的Y轴)
         rightAxis.setEnabled(false);   //Set the right Y axis is not displayed(设置右边的Y轴不显示)
         //设置图例（也就是曲线的标签）
