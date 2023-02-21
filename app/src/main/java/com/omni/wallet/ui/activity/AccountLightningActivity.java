@@ -182,6 +182,9 @@ public class AccountLightningActivity extends AppBaseActivity {
         EventBus.getDefault().register(this);
         getInfo();
         setDefaultAddress();
+        runOnUiThread(()-> {
+            firstInitAssetTrendChartViewShow();
+        });
         runOnUiThread(()->{
             AssetsActions.initOrUpdateAction(mContext,actionCallBack);
         });
@@ -266,6 +269,54 @@ public class AccountLightningActivity extends AppBaseActivity {
             e.printStackTrace();
         }
 
+    }
+
+    @SuppressLint("LongLogTag")
+    private void firstInitAssetTrendChartViewShow(){
+        Map<String, Object> data = AssetsActions.getDataForChart(mContext);
+        Log.e(TAG+"setAssetTrendChartViewShow",data.toString() );
+        List<Map<String, Object>> allList;
+        try {
+            allList = (List<Map<String, Object>>) data.get("chartData");
+            List<AssetTrendEntity> list = new ArrayList<>();
+            Log.e(TAG, "allList:" + allList.toString());
+            if (allList.size() == 1) {
+                AssetTrendEntity entity = new AssetTrendEntity();
+                String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills() - ConstantInOB.DAY_MILLIS, mContext);
+                entity.setTime(date);
+                entity.setAsset(Double.toString(0));
+                list.add(entity);
+            }
+            for (int i = 0; i < allList.size(); i++) {
+                AssetTrendEntity entity = new AssetTrendEntity();
+                Map<String, Object> item = allList.get(i);
+                String date = TimeFormatUtil.formatDateLong((Long) item.get("date"), mContext);
+                entity.setTime(date);
+                entity.setAsset(Double.toString((Double) item.get("value")));
+                list.add(entity);
+            }
+            mAssetTrendChartView.setViewShow(list);
+            Map<String,Object> changeData = (Map<String, Object>) data.get("changeData");
+            assert changeData != null;
+            Log.e(TAG + "changeData",changeData.toString());
+            double percent = (double) changeData.get("percent");
+            @SuppressLint("DefaultLocale") String percentString = String.format("%.2f", percent) + "%";
+            Log.e(TAG, "setAssetTrendChartViewShow: " + percentString);
+            @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f", (double) changeData.get("value"));
+            mPriceChangeTv.setText(percentString);
+            if (percent>0){
+                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_06d78f));
+                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_up_green);
+            }else{
+                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_F13A3A));
+                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_down_red);
+            }
+            mBalanceValueTv.setText(valueString);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        setAssetTrendChartViewShow();
     }
 
 

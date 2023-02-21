@@ -109,8 +109,12 @@ public class AssetTrendChartView extends LinearLayout {
         }else {
             maxY = max + max/2;
         }
-
+        if (max==0){
+            setVisibility(GONE);
+            return;
+        }
         setVisibility(VISIBLE);
+
         //Configure basic information
         //配置基本信息
         lineChart.getDescription().setEnabled(false);   // setting description (设置描述)
