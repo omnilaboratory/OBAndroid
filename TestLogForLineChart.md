@@ -4,6 +4,7 @@ This file will describe the progress of the test for the line chart in the page 
 ## 2.1  When complete create
 ### 2.1.1 The data for the line chart
 ### 2.1.2 The screenshot of the line chart
+![image](https://user-images.githubusercontent.com/52437247/220261634-9fd7d6ab-09ae-4c94-8d4b-7419e519151b.png)
 ## 2.2 When got BTC or other assets
 ### 2.2.1 The data for the line chart
 ### 2.2.2 The screenshot of the line chart
