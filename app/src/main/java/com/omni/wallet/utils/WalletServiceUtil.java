@@ -33,7 +33,7 @@ import obdmobile.Obdmobile;
 public class WalletServiceUtil {
 
     public interface GetAssetListCallback {
-        void callback(List<LightningOuterClass.Asset> assetsList);
+        void callback(Context context ,List<LightningOuterClass.Asset> assetsList);
     }
 
     public interface GetBtcBalanceCallback {
@@ -52,14 +52,35 @@ public class WalletServiceUtil {
         void callback(Context context,String propertyId,long channelAmountLong,int index,int usingCount);
     }
 
+    public interface GetAssetListErrorCallback{
+        void callback(Context context,Exception e);
+    }
+
+    public interface GetBtcBalanceErrorCallback{
+        void callback(Exception e,Context mContext);
+    }
+
+    public interface GetAssetsBalanceErrorCallback{
+        void callback(Context mContext,Exception e);
+    }
+
+    public interface GetUsingAssetsPriceErrorCallback{
+        void callback(Context context, String errorCode, String errorMsg,List<Map<String,Object>> usingAssetsList,Map<String,Object> propertyMap);
+    }
+
+    public interface GetAssetChannelBalanceErrorCallback{
+        void callback(Context context ,Exception e);
+    }
+
+
+
     private static String TAG = WalletServiceUtil.class.getSimpleName();
 
-    public static void getAssetsList(GetAssetListCallback callback){
+    public static void getAssetsList(Context context, GetAssetListCallback callback,GetAssetListErrorCallback error){
         Obdmobile.oB_ListAsset(null, new Callback() {
             @Override
             public void onError(Exception e) {
-                Log.e(TAG,e.getMessage());
-                e.printStackTrace();
+                error.callback(context,e);
             }
 
             @Override
@@ -70,7 +91,7 @@ public class WalletServiceUtil {
                 try {
                     LightningOuterClass.ListAssetResponse listAssetResponse = LightningOuterClass.ListAssetResponse.parseFrom(bytes);
                     List<LightningOuterClass.Asset> list = listAssetResponse.getListList();
-                    callback.callback(list);
+                    callback.callback(context,list);
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -78,16 +99,14 @@ public class WalletServiceUtil {
         });
     }
 
-    public static void getBtcBalance(Context context,GetBtcBalanceCallback callback){
+    public static void getBtcBalance(Context context,GetBtcBalanceCallback callback,GetBtcBalanceErrorCallback error){
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
                 .setAddress(User.getInstance().getWalletAddress(context))
                 .build();
         Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(),new Callback(){
-
             @Override
             public void onError(Exception e) {
-                Log.e(TAG,e.getMessage());
-                e.printStackTrace();
+                error.callback(e,context);
             }
 
             @Override
@@ -109,15 +128,14 @@ public class WalletServiceUtil {
         });
     }
 
-    public static void getAssetsBalance(Context context,GetAssetsBalanceCallback callback){
+    public static void getAssetsBalance(Context context,GetAssetsBalanceCallback callback,GetAssetsBalanceErrorCallback error){
         LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
                 .setAddress(User.getInstance().getWalletAddress(context))
                 .build();
         Obdmobile.oB_AssetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                Log.e(TAG,e.getMessage());
-                e.printStackTrace();
+                error.callback(context,e);
             }
 
             @Override
@@ -136,7 +154,7 @@ public class WalletServiceUtil {
         });
     }
 
-    public static void getUsingAssetsPrice(Context context,GetUsingAssetsPriceCallback callback){
+    public static void getUsingAssetsPrice(Context context,GetUsingAssetsPriceCallback callback,GetUsingAssetsPriceErrorCallback error){
         AssetsDao assetsDao = new AssetsDao(context);
         List<Map<String,Object>> usingAssetsList = assetsDao.getUsingAssetsList();
         String assetsIds = "";
@@ -168,53 +186,7 @@ public class WalletServiceUtil {
 
                     @Override
                     public void onError(Context context, String errorCode, String errorMsg) {
-                        Log.e(TAG,"getPriceError:"+ errorMsg);
-                        AssetsDataDao assetsDataDao = new AssetsDataDao(context);
-                        for (int i = 0; i < usingAssetsList.size(); i++) {
-                            String id = (String) usingAssetsList.get(i).get("token_name");
-                            String propertyId = "";
-                            List<Map<String,Object>> list=new ArrayList<>();
-                            switch (id) {
-                                case "btc":
-                                    propertyId = (String) propertyMap.get("btc");
-                                    list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
-                                    Map<String,Object> map = list.get(0);
-                                    if (map!=null){
-                                        double price = (Double) map.get("price");
-                                        if (price == 0 ){
-                                            AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
-                                        }else {
-                                            AssetsActions.updateAssetsPriceS(context, propertyId, price);
-                                        }
-
-                                    }else{
-                                        AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
-                                    }
-
-                                    break;
-                                case "ftoken":
-                                    propertyId = (String) propertyMap.get("ftoken");
-                                    list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
-                                    Map<String,Object> mapT = list.get(0);
-                                    if (mapT!=null){
-                                        double price = (Double) mapT.get("price");
-                                        if (price == 0 ){
-                                            AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
-                                        }else {
-                                            AssetsActions.updateAssetsPriceS(context, propertyId, price);
-                                        }
-                                    }else{
-                                        AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
-                                    }
-                                    break;
-                                default:
-                                    propertyId = (String) propertyMap.get(id);
-                                    AssetsActions.updateAssetsPriceS(context, propertyId, 0);
-                                    break;
-                            }
-
-                        }
-                        EventBus.getDefault().post(new InitChartEvent());
+                        error.callback(context, errorCode, errorMsg, usingAssetsList, propertyMap);
                     }
 
                     @Override
@@ -246,7 +218,7 @@ public class WalletServiceUtil {
 
     }
 
-    public static void getUsingAssetsChannelBalance(Context context,GetAssetChannelBalanceCallback callback){
+    public static void getUsingAssetsChannelBalance(Context context,GetAssetChannelBalanceCallback callback,GetAssetChannelBalanceErrorCallback error){
         AssetsDao assetsDao = new AssetsDao(context);
         List<Map<String,Object>> assetsList =  assetsDao.getUsingAssetsList();
         for (int i = 0; i < assetsList.size(); i++) {
@@ -258,6 +230,7 @@ public class WalletServiceUtil {
             Obdmobile.channelBalance(channelBalanceRequest.toByteArray(), new Callback() {
                 @Override
                 public void onError(Exception e) {
+                    error.callback(context,e);
                     e.printStackTrace();
                 }
 

@@ -5,11 +5,13 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.entity.event.InitChartEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UtilFunctions;
 import com.omni.wallet.utils.WalletServiceUtil;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import java.text.ParseException;
@@ -188,8 +190,7 @@ public class AssetsActions {
 
 
     public static void initDbForInstallApp(Context context, ActionCallBack callBack) {
-        AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
-        assetsValueDataDao.completeAssetData();
+
         WalletServiceUtil.GetUsingAssetsPriceCallback getUsingAssetsPriceCallback = (Context context1, JSONArray priceList, Map<String, Object> propertyMap) -> {
             Log.e(TAG, "initDbForInstallApp: getPriceSuccess" );
             try {
@@ -221,6 +222,56 @@ public class AssetsActions {
             }
         };
 
+        WalletServiceUtil.GetUsingAssetsPriceErrorCallback getUsingAssetsPriceErrorCallback = (Context mContext,String errorCode,String errorMsg,List<Map<String,Object>> usingAssetsList,Map<String,Object> propertyMap)->{
+            Log.e(TAG,"getPriceError:"+ errorMsg);
+            AssetsDataDao assetsDataDao = new AssetsDataDao(context);
+            for (int i = 0; i < usingAssetsList.size(); i++) {
+                String id = (String) usingAssetsList.get(i).get("token_name");
+                String propertyId = "";
+                List<Map<String,Object>> list=new ArrayList<>();
+                switch (id) {
+                    case "btc":
+                        propertyId = (String) propertyMap.get("btc");
+                        list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
+                        Map<String,Object> map = list.get(0);
+                        if (map!=null){
+                            double price = (Double) map.get("price");
+                            if (price == 0 ){
+                                AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                            }else {
+                                AssetsActions.updateAssetsPriceS(context, propertyId, price);
+                            }
+
+                        }else{
+                            AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                        }
+
+                        break;
+                    case "ftoken":
+                        propertyId = (String) propertyMap.get("ftoken");
+                        list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
+                        Map<String,Object> mapT = list.get(0);
+                        if (mapT!=null){
+                            double price = (Double) mapT.get("price");
+                            if (price == 0 ){
+                                AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
+                            }else {
+                                AssetsActions.updateAssetsPriceS(context, propertyId, price);
+                            }
+                        }else{
+                            AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
+                        }
+                        break;
+                    default:
+                        propertyId = (String) propertyMap.get(id);
+                        AssetsActions.updateAssetsPriceS(context, propertyId, 0);
+                        break;
+                }
+
+            }
+            EventBus.getDefault().post(new InitChartEvent());
+        };
+
         WalletServiceUtil.GetAssetChannelBalanceCallback getAssetChannelBalanceCallback = (Context mContext, String propertyId, long channelAmountLong,int index,int assetCount) -> {
             double channelAmount = 0.0;
             if (propertyId.equals("0")) {
@@ -231,9 +282,15 @@ public class AssetsActions {
             updateAssetChannelsAmountS(context, propertyId, channelAmount);
             if (index == assetCount-1){
                 Log.e(TAG, "initDbForInstallApp: getAssetsChannelBalanceSuccess221" );
-                WalletServiceUtil.getUsingAssetsPrice(context, getUsingAssetsPriceCallback);
+                WalletServiceUtil.getUsingAssetsPrice(context, getUsingAssetsPriceCallback,getUsingAssetsPriceErrorCallback);
             }
 
+        };
+
+        WalletServiceUtil.GetAssetChannelBalanceErrorCallback getAssetChannelBalanceErrorCallback = (Context mContext, Exception e)->{
+            Log.e(TAG,e.getMessage());
+            WalletServiceUtil.getUsingAssetsPrice(context, getUsingAssetsPriceCallback,getUsingAssetsPriceErrorCallback);
+            e.printStackTrace();
         };
 
         WalletServiceUtil.GetAssetsBalanceCallback getAssetsBalanceCallback = (List<LightningOuterClass.AssetBalanceByAddressResponse> assetsList) -> {
@@ -253,14 +310,16 @@ public class AssetsActions {
                     price = (double) assetData.get("price");
                     channelAmount = (double) assetData.get("channelAmount");
                 }
-                if (i == 0) {
-                    insertAssetDataAndValueData(context, propertyId, price, amount, channelAmount);
-                } else {
-                    insertAssetDataAndUpdateValueData(context, propertyId, price, amount, channelAmount);
-                }
+                insertAssetDataAndUpdateValueData(context, propertyId, price, amount, channelAmount);
                 assetsDao.changeAssetIsUse(propertyId, 1);
             }
-            WalletServiceUtil.getUsingAssetsChannelBalance(context, getAssetChannelBalanceCallback);
+            WalletServiceUtil.getUsingAssetsChannelBalance(context, getAssetChannelBalanceCallback,getAssetChannelBalanceErrorCallback);
+        };
+
+        WalletServiceUtil.GetAssetsBalanceErrorCallback getAssetsBalanceErrorCallback = (Context mContext,Exception e)->{
+            Log.e(TAG,e.getMessage());
+            WalletServiceUtil.getUsingAssetsChannelBalance(context, getAssetChannelBalanceCallback,getAssetChannelBalanceErrorCallback);
+            e.printStackTrace();
         };
 
         WalletServiceUtil.GetBtcBalanceCallback getBtcBalanceCallback = (double btcBalance) -> {
@@ -276,11 +335,25 @@ public class AssetsActions {
                 channelAmount = (double) assetData.get("channelAmount");
             }
             insertAssetDataAndUpdateValueData(context, "0", price, balance, channelAmount);
-            updateAssetsAmountS(context, "0", btcBalance);
-            WalletServiceUtil.getAssetsBalance(context, getAssetsBalanceCallback);
+            WalletServiceUtil.getAssetsBalance(context, getAssetsBalanceCallback,getAssetsBalanceErrorCallback);
+        };
+
+        WalletServiceUtil.GetBtcBalanceErrorCallback getBtcBalanceErrorCallback=(Exception e,Context mContext)->{
+            Log.e(TAG,e.getMessage());
+            WalletServiceUtil.getAssetsBalance(mContext, getAssetsBalanceCallback,getAssetsBalanceErrorCallback);
+            e.printStackTrace();
+
         };
         Log.e(TAG, "initDbForInstallApp: start" );
-        WalletServiceUtil.getBtcBalance(context, getBtcBalanceCallback);
+        AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
+        try {
+            long date = TimeFormatUtil.getCurrentDayMills();
+            assetsValueDataDao.insertAssetValueData(0,date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        WalletServiceUtil.getBtcBalance(context, getBtcBalanceCallback,getBtcBalanceErrorCallback);
     }
 
     public static void initOrUpdateDataStartApp(Context context, ActionCallBack callBack) {
@@ -317,6 +390,56 @@ public class AssetsActions {
             }
         };
 
+        WalletServiceUtil.GetUsingAssetsPriceErrorCallback getUsingAssetsPriceErrorCallback = (Context mContext,String errorCode,String errorMsg,List<Map<String,Object>> usingAssetsList,Map<String,Object> propertyMap)->{
+            Log.e(TAG,"getPriceError:"+ errorMsg);
+            AssetsDataDao assetsDataDao = new AssetsDataDao(context);
+            for (int i = 0; i < usingAssetsList.size(); i++) {
+                String id = (String) usingAssetsList.get(i).get("token_name");
+                String propertyId = "";
+                List<Map<String,Object>> list=new ArrayList<>();
+                switch (id) {
+                    case "btc":
+                        propertyId = (String) propertyMap.get("btc");
+                        list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
+                        Map<String,Object> map = list.get(0);
+                        if (map!=null){
+                            double price = (Double) map.get("price");
+                            if (price == 0 ){
+                                AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                            }else {
+                                AssetsActions.updateAssetsPriceS(context, propertyId, price);
+                            }
+
+                        }else{
+                            AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                        }
+
+                        break;
+                    case "ftoken":
+                        propertyId = (String) propertyMap.get("ftoken");
+                        list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
+                        Map<String,Object> mapT = list.get(0);
+                        if (mapT!=null){
+                            double price = (Double) mapT.get("price");
+                            if (price == 0 ){
+                                AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
+                            }else {
+                                AssetsActions.updateAssetsPriceS(context, propertyId, price);
+                            }
+                        }else{
+                            AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
+                        }
+                        break;
+                    default:
+                        propertyId = (String) propertyMap.get(id);
+                        AssetsActions.updateAssetsPriceS(context, propertyId, 0);
+                        break;
+                }
+
+            }
+            EventBus.getDefault().post(new InitChartEvent());
+        };
+
         WalletServiceUtil.GetAssetChannelBalanceCallback getAssetChannelBalanceCallback = (Context mContext, String propertyId, long channelAmountLong,int index,int assetCount) -> {
 
             double channelAmount = 0.0;
@@ -329,8 +452,14 @@ public class AssetsActions {
             updateAssetChannelsAmountS(context, propertyId, channelAmount);
             if (index == assetCount-1){
                 Log.e(TAG, "initOrUpdateDataStartApp: getAssetsChannelBalanceSuccess318" );
-                WalletServiceUtil.getUsingAssetsPrice(context, getUsingAssetsPriceCallback);
+                WalletServiceUtil.getUsingAssetsPrice(context, getUsingAssetsPriceCallback, getUsingAssetsPriceErrorCallback);
             }
+        };
+
+        WalletServiceUtil.GetAssetChannelBalanceErrorCallback getAssetChannelBalanceErrorCallback = (Context mContext, Exception e)->{
+            Log.e(TAG,e.getMessage());
+            WalletServiceUtil.getUsingAssetsPrice(context, getUsingAssetsPriceCallback, getUsingAssetsPriceErrorCallback);
+            e.printStackTrace();
         };
 
         WalletServiceUtil.GetAssetsBalanceCallback getAssetsBalanceCallback = (List<LightningOuterClass.AssetBalanceByAddressResponse> assetsList) -> {
@@ -344,16 +473,29 @@ public class AssetsActions {
                 insertOrUpdateAssetDataAndUpdateValueData(context,propertyId,amount);
                 assetsDao.changeAssetIsUse(propertyId, 1);
             }
-            WalletServiceUtil.getUsingAssetsChannelBalance(context, getAssetChannelBalanceCallback);
+            WalletServiceUtil.getUsingAssetsChannelBalance(context, getAssetChannelBalanceCallback,getAssetChannelBalanceErrorCallback);
+        };
+
+        WalletServiceUtil.GetAssetsBalanceErrorCallback getAssetsBalanceErrorCallback = (Context mContext,Exception e)->{
+            Log.e(TAG,e.getMessage());
+            WalletServiceUtil.getUsingAssetsChannelBalance(context, getAssetChannelBalanceCallback,getAssetChannelBalanceErrorCallback);
+            e.printStackTrace();
         };
 
         WalletServiceUtil.GetBtcBalanceCallback getBtcBalanceCallback = (double btcBalance) -> {
             Log.e(TAG, "initOrUpdateDataStartApp: btcBalance" + btcBalance);
             insertOrUpdateAssetDataAndUpdateValueData(context,"0",btcBalance);
-            WalletServiceUtil.getAssetsBalance(context, getAssetsBalanceCallback);
+            WalletServiceUtil.getAssetsBalance(context, getAssetsBalanceCallback,getAssetsBalanceErrorCallback);
         };
+
+        WalletServiceUtil.GetBtcBalanceErrorCallback getBtcBalanceErrorCallback=(Exception e,Context mContext)->{
+            Log.e(TAG,e.getMessage());
+            e.printStackTrace();
+            WalletServiceUtil.getAssetsBalance(mContext, getAssetsBalanceCallback,getAssetsBalanceErrorCallback);
+        };
+
         Log.e(TAG, "initOrUpdateDataStartApp: start" );
-        WalletServiceUtil.getBtcBalance(context, getBtcBalanceCallback);
+        WalletServiceUtil.getBtcBalance(context, getBtcBalanceCallback, getBtcBalanceErrorCallback);
 
     }
 
@@ -364,9 +506,9 @@ public class AssetsActions {
 
     public static void initOrUpdateAction(Context context, ActionCallBack actionCallBack) {
         int assetsCount = User.getInstance().getAssetsCount(context);
-        WalletServiceUtil.GetAssetListCallback getAssetListCallback = assetsList -> {
+        WalletServiceUtil.GetAssetListCallback getAssetListCallback = (Context mContext, List<LightningOuterClass.Asset> assetsList) -> {
             Log.e(TAG, "get assets list success");
-            AssetsDao assetsDao = new AssetsDao(context);
+            AssetsDao assetsDao = new AssetsDao(mContext);
             int getAssetsCount = assetsList.size();
             if (getAssetsCount > assetsCount) {
                 assetsDao.checkAndInsertAsset("0", "btc");
@@ -377,15 +519,25 @@ public class AssetsActions {
                     String tokenName = assets.getName();
                     assetsDao.checkAndInsertAsset(propertyId, tokenName);
                 }
-                User.getInstance().setAssetsCount(context, getAssetsCount);
+                User.getInstance().setAssetsCount(mContext, getAssetsCount);
             }
             if (assetsCount > 0) {
-                initOrUpdateDataStartApp(context, actionCallBack);
+                initOrUpdateDataStartApp(mContext, actionCallBack);
             } else {
-                initDbForInstallApp(context, actionCallBack);
+                initDbForInstallApp(mContext, actionCallBack);
             }
         };
 
-        WalletServiceUtil.getAssetsList(getAssetListCallback);
+        WalletServiceUtil.GetAssetListErrorCallback getAssetListErrorCallback = (Context mContext, Exception e)->{
+            Log.e(TAG,e.getMessage());
+            if(assetsCount == 0){
+                initOrUpdateAction(mContext, actionCallBack);
+            }else{
+                initOrUpdateDataStartApp(mContext, actionCallBack);
+            }
+            e.printStackTrace();
+        };
+
+        WalletServiceUtil.getAssetsList(context, getAssetListCallback,getAssetListErrorCallback);
     }
 }
