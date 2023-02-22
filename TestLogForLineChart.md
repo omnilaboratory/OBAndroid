@@ -1,6 +1,6 @@
 # 1     Description
 This file will describe the progress of the test for the line chart in the page that named account lightning.
-# 2     Test results
+# 2     Test show chart results
 ## 2.1  When complete create
 ### 2.1.1 The data for the line chart
 ### 2.1.2 The screenshot of the line chart
@@ -44,6 +44,7 @@ This file will describe the progress of the test for the line chart in the page 
 ## 2.14 Thirty weeks after installing the app
 ### 2.14.1 The data for the line chart
 ### 2.14.2 The screenshot of the line chart
-## 2.15 Fivty four weeks after installing the app
+## 2.15 Fifty four weeks after installing the app
 ### 2.15.1 The data for the line chart
 ### 2.15.2 The screenshot of the line chart
+# Test api logic results

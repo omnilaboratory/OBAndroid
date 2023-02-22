@@ -226,7 +226,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @SuppressLint("LongLogTag")
     private void setAssetTrendChartViewShow() {
         Map<String, Object> data = AssetsActions.getDataForChart(mContext);
-        Log.e(TAG+"setAssetTrendChartViewShow",data.toString() );
+        Log.e(TAG+"setAssetTrendChartViewShow",data.toString());
         List<Map<String, Object>> allList;
         try {
             allList = (List<Map<String, Object>>) data.get("chartData");
@@ -251,10 +251,17 @@ public class AccountLightningActivity extends AppBaseActivity {
             Map<String,Object> changeData = (Map<String, Object>) data.get("changeData");
             assert changeData != null;
             Log.e(TAG + "changeData",changeData.toString());
-            double percent = (double) changeData.get("percent");
+            double percent = 0.0;
+            if (changeData.get("percent") != null){
+                percent = (double) changeData.get("percent");
+            }
             @SuppressLint("DefaultLocale") String percentString = String.format("%.2f", percent) + "%";
             Log.e(TAG, "setAssetTrendChartViewShow: " + percentString);
-            @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f", (double) changeData.get("value"));
+            double value = 0.0;
+            if (changeData.get("value")!=null){
+                value = (double) changeData.get("value");
+            }
+            @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f", value);
             mPriceChangeTv.setText(percentString);
             if (percent>0){
                 mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_06d78f));
@@ -299,10 +306,17 @@ public class AccountLightningActivity extends AppBaseActivity {
             Map<String,Object> changeData = (Map<String, Object>) data.get("changeData");
             assert changeData != null;
             Log.e(TAG + "changeData",changeData.toString());
-            double percent = (double) changeData.get("percent");
+            double percent = 0.0;
+            if (changeData.get("percent") != null){
+                percent = (double) changeData.get("percent");
+            }
             @SuppressLint("DefaultLocale") String percentString = String.format("%.2f", percent) + "%";
             Log.e(TAG, "setAssetTrendChartViewShow: " + percentString);
-            @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f", (double) changeData.get("value"));
+            double value = 0.0;
+            if (changeData.get("value")!=null){
+                value = (double) changeData.get("value");
+            }
+            @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f",  value);
             mPriceChangeTv.setText(percentString);
             if (percent>0){
                 mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_06d78f));
