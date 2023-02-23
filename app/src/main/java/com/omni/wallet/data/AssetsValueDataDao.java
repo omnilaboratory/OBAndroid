@@ -171,4 +171,10 @@ public class AssetsValueDataDao {
             db.execSQL(deleteSql);
         }
     }
+
+    public void clearData(){
+        SQLiteDatabase db = mInstance.getWritableDatabase();
+        String deleteSql = "delete from assets_value_data";
+        db.execSQL(deleteSql);
+    }
 }

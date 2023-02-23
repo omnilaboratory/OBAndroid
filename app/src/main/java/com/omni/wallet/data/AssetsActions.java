@@ -128,7 +128,6 @@ public class AssetsActions {
     public static Map<String, Object> getDataForChart(Context context) {
         AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
         List<Map<String, Object>> valueList2 = assetsValueDataDao.queryAssetValueDataAll();
-        Log.e(TAG+ "getDataForChart ", valueList2.toString());
         List<Map<String, Object>> valueList = assetsValueDataDao.queryAssetValueDataOneYear();
         Map<String, Double> changeMap = new HashMap<>();
         List<Map<String, Object>> chartDataList = new ArrayList<>();
@@ -149,8 +148,8 @@ public class AssetsActions {
             changeMap.put("percent", changePercent);
 
 
-            if (valueList.size() >= 14) {
-                for (int i = valueList.size(); i > valueList.size() - 7; i--) {
+            if (valueList.size() > 14) {
+                for (int i = valueList.size()-1; i > valueList.size() - 8; i--) {
                     Map<String, Object> chartData = new HashMap<>();
                     long dateMills = (long) valueList.get(i).get("date");
                     double mapValue = (double) valueList.get(i).get("value");
@@ -159,10 +158,11 @@ public class AssetsActions {
                     chartDataList.add(chartData);
                 }
 
-                for (int j = valueList.size() - 7; j > 0; j -= 7) {
+                for (int j = valueList.size() - 8; j > 6; j = j - 7) {
+
                     Map<String, Object> chartData = new HashMap<>();
-                    long dateMills = (long) valueList.get(j).get("date");
-                    double mapValue = ((double) valueList.get(j).get("value") + (double) valueList.get(j + 1).get("value") + (double) valueList.get(j + 2).get("value") + (double) valueList.get(j + 3).get("value") + (double) valueList.get(j + 4).get("value") + (double) valueList.get(j + 5).get("value") + (double) valueList.get(j + 6).get("value")) / 7;
+                    long dateMills = (long) valueList.get(j-3).get("date");
+                    double mapValue = ((double) valueList.get(j).get("value") + (double) valueList.get(j - 1).get("value") + (double) valueList.get(j - 2).get("value") + (double) valueList.get(j - 3).get("value") + (double) valueList.get(j - 4).get("value") + (double) valueList.get(j - 5).get("value") + (double) valueList.get(j - 6).get("value")) / 7;
                     chartData.put("date", dateMills);
                     chartData.put("value", mapValue);
                     chartDataList.add(chartData);
@@ -237,13 +237,13 @@ public class AssetsActions {
                         if (map!=null){
                             double price = (Double) map.get("price");
                             if (price == 0 ){
-                                AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                                AssetsActions.updateAssetsPriceS(context, propertyId, 16000.0);
                             }else {
                                 AssetsActions.updateAssetsPriceS(context, propertyId, price);
                             }
 
                         }else{
-                            AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                            AssetsActions.updateAssetsPriceS(context, propertyId, 16000.0);
                         }
 
                         break;
@@ -405,13 +405,13 @@ public class AssetsActions {
                         if (map!=null){
                             double price = (Double) map.get("price");
                             if (price == 0 ){
-                                AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                                AssetsActions.updateAssetsPriceS(context, propertyId, 16000.0);
                             }else {
                                 AssetsActions.updateAssetsPriceS(context, propertyId, price);
                             }
 
                         }else{
-                            AssetsActions.updateAssetsPriceS(context, propertyId, 17000.0);
+                            AssetsActions.updateAssetsPriceS(context, propertyId, 16000.0);
                         }
 
                         break;

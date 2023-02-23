@@ -207,5 +207,11 @@ public class AssetsDataDao {
 //        db.close();
     }
 
+    public void clearData(){
+        SQLiteDatabase db = mInstance.getWritableDatabase();
+        String deleteSql = "delete from assets_data";
+        db.execSQL(deleteSql);
+    }
+
 
 }

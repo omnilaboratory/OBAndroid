@@ -201,6 +201,120 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
+                <!-- Test Btn Group-->
+                <!--<LinearLayout
+                    android:visibility="visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:id="@+id/get_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="get init data "/>
+                    <TextView
+                        android:id="@+id/one_day_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to one day"/>
+                    <TextView
+                        android:id="@+id/four_day_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to four day"/>
+                    <TextView
+                        android:id="@+id/ten_day_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to ten day"/>
+                    <TextView
+                        android:id="@+id/thirteen_day_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to thirteen day"/>
+                    <TextView
+                        android:id="@+id/fourteen_day_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to fourteen day"/>
+                    <TextView
+                        android:id="@+id/fifteen_day_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to fifteen day"/>
+                    <TextView
+                        android:id="@+id/twenty_day_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to twenty day"/>
+                    <TextView
+                        android:id="@+id/twenty_one_day_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to twenty one day"/>
+                    <TextView
+                        android:id="@+id/twenty_two_day_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to twenty two day"/>
+                    <TextView
+                        android:id="@+id/four_week_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to four week"/>
+                    <TextView
+                        android:id="@+id/ten_week_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to ten weeks"/>
+                    <TextView
+                        android:id="@+id/thirty_weeks_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to thirty week"/>
+                    <TextView
+                        android:id="@+id/fifty_week_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Update data to fifty week"/>
+                    <TextView
+                        android:id="@+id/clean_data_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginBottom="@dimen/main_10"
+                        android:text="Clear Data"/>
+                </LinearLayout>-->
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/main_32"

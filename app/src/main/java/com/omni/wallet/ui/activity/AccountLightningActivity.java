@@ -26,6 +26,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.refreshView.RefreshLayout;
 import com.omni.wallet.data.AssetsActions;
+import com.omni.wallet.data.AssetsTestData;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
@@ -160,8 +161,6 @@ public class AccountLightningActivity extends AppBaseActivity {
         //
         EventBus.getDefault().post(new CloseUselessActivityEvent());
         mLoadingDialog = new LoadingDialog(mContext);
-        DecimalFormat df = new DecimalFormat("0.00");
-        mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext))) + "%");
         mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
         initRecyclerView();
     }
@@ -182,11 +181,10 @@ public class AccountLightningActivity extends AppBaseActivity {
         EventBus.getDefault().register(this);
         getInfo();
         setDefaultAddress();
-        runOnUiThread(()-> {
-            firstInitAssetTrendChartViewShow();
-        });
         runOnUiThread(()->{
-            AssetsActions.initOrUpdateAction(mContext,actionCallBack);
+//            AssetsActions.initOrUpdateAction(mContext,actionCallBack);
+            setAssetTrendChartViewShow();
+
         });
     }
 
@@ -276,61 +274,6 @@ public class AccountLightningActivity extends AppBaseActivity {
             e.printStackTrace();
         }
 
-    }
-
-    @SuppressLint("LongLogTag")
-    private void firstInitAssetTrendChartViewShow(){
-        Map<String, Object> data = AssetsActions.getDataForChart(mContext);
-        Log.e(TAG+"setAssetTrendChartViewShow",data.toString() );
-        List<Map<String, Object>> allList;
-        try {
-            allList = (List<Map<String, Object>>) data.get("chartData");
-            List<AssetTrendEntity> list = new ArrayList<>();
-            Log.e(TAG, "allList:" + allList.toString());
-            if (allList.size() == 1) {
-                AssetTrendEntity entity = new AssetTrendEntity();
-                String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills() - ConstantInOB.DAY_MILLIS, mContext);
-                entity.setTime(date);
-                entity.setAsset(Double.toString(0));
-                list.add(entity);
-            }
-            for (int i = 0; i < allList.size(); i++) {
-                AssetTrendEntity entity = new AssetTrendEntity();
-                Map<String, Object> item = allList.get(i);
-                String date = TimeFormatUtil.formatDateLong((Long) item.get("date"), mContext);
-                entity.setTime(date);
-                entity.setAsset(Double.toString((Double) item.get("value")));
-                list.add(entity);
-            }
-            mAssetTrendChartView.setViewShow(list);
-            Map<String,Object> changeData = (Map<String, Object>) data.get("changeData");
-            assert changeData != null;
-            Log.e(TAG + "changeData",changeData.toString());
-            double percent = 0.0;
-            if (changeData.get("percent") != null){
-                percent = (double) changeData.get("percent");
-            }
-            @SuppressLint("DefaultLocale") String percentString = String.format("%.2f", percent) + "%";
-            Log.e(TAG, "setAssetTrendChartViewShow: " + percentString);
-            double value = 0.0;
-            if (changeData.get("value")!=null){
-                value = (double) changeData.get("value");
-            }
-            @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f",  value);
-            mPriceChangeTv.setText(percentString);
-            if (percent>0){
-                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_06d78f));
-                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_up_green);
-            }else{
-                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_F13A3A));
-                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_down_red);
-            }
-            mBalanceValueTv.setText(valueString);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        setAssetTrendChartViewShow();
     }
 
 
@@ -1024,7 +967,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                AssetsActions.initOrUpdateDataStartApp(mContext, actionCallBack);
+                AssetsActions.initOrUpdateAction(mContext, actionCallBack);
             }
         };
         handler.postDelayed(runnable,60000);
@@ -1035,4 +978,154 @@ public class AccountLightningActivity extends AppBaseActivity {
     public void onInitChartOver(InitChartEvent event) {
         setAssetTrendChartViewShow();
     }
+
+
+    /**
+     * Test btn click event,will delete when test end;
+     */
+
+/*    @OnClick(R.id.one_day_data_btn)
+    public void clickData1() {
+        AssetsTestData.oneDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.four_day_data_btn)
+    public void clickData2() {
+        AssetsTestData.fourDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.ten_day_data_btn)
+    public void clickData10() {
+        AssetsTestData.tenDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.thirteen_day_data_btn)
+    public void clickData13() {
+        AssetsTestData.thirteenDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.fourteen_day_data_btn)
+    public void clickData14() {
+        AssetsTestData.fourteenDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.fifteen_day_data_btn)
+    public void clickData15() {
+        AssetsTestData.fifteenDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.twenty_day_data_btn)
+    public void clickData20() {
+        AssetsTestData.twentyDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.twenty_one_day_data_btn)
+    public void clickData21() {
+        AssetsTestData.twentyOneDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.twenty_two_day_data_btn)
+    public void clickData22() {
+        AssetsTestData.twentyTwoDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.four_week_data_btn)
+    public void clickData28() {
+        AssetsTestData.fourWeekData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.ten_week_data_btn)
+    public void clickData70() {
+        AssetsTestData.tenWeekData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.thirty_weeks_data_btn)
+    public void clickData210() {
+        AssetsTestData.thirtyWeekData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.fifty_week_data_btn)
+    public void clickData365() {
+        AssetsTestData.fiftyTwoWeekData(mContext);
+        changeLineChartView();
+    }
+    @OnClick(R.id.get_data_btn)
+    public void clickDataInit() {
+        AssetsTestData.hasBalanceData(mContext);
+        changeLineChartView();
+    }
+    @OnClick(R.id.clean_data_btn)
+    public void clearData() {
+        AssetsTestData.clearData(mContext);
+        changeLineChartView();
+    }
+
+    private void changeLineChartView() {
+        Map<String, Object> data = AssetsActions.getDataForChart(mContext);
+        Log.e(TAG+"changeLineChartView",data.toString());
+        List<Map<String, Object>> allList;
+        try {
+            allList = (List<Map<String, Object>>) data.get("chartData");
+            List<AssetTrendEntity> list = new ArrayList<>();
+            Log.e(TAG, "allList:" + allList.toString());
+            if (allList.size() == 1) {
+                AssetTrendEntity entity = new AssetTrendEntity();
+                String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills() - ConstantInOB.DAY_MILLIS, mContext);
+                entity.setTime(date);
+                entity.setAsset(Double.toString(0));
+                list.add(entity);
+            }
+            for (int i = 0; i < allList.size(); i++) {
+                AssetTrendEntity entity = new AssetTrendEntity();
+                Map<String, Object> item = allList.get(i);
+                String date = TimeFormatUtil.formatDateLong((Long) item.get("date"), mContext);
+                entity.setTime(date);
+                entity.setAsset(Double.toString((Double) item.get("value")));
+                list.add(entity);
+            }
+            mAssetTrendChartView.setViewShow(list);
+            Map<String,Object> changeData = (Map<String, Object>) data.get("changeData");
+            assert changeData != null;
+            Log.e(TAG + "changeData",changeData.toString());
+            double percent = 0.0;
+            if (changeData.get("percent") != null){
+                percent = (double) changeData.get("percent");
+            }
+            @SuppressLint("DefaultLocale") String percentString = String.format("%.2f", percent) + "%";
+            Log.e(TAG, "setAssetTrendChartViewShow: " + percentString);
+            double value = 0.0;
+            if (changeData.get("value")!=null){
+                value = (double) changeData.get("value");
+            }
+            @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f", value);
+            mPriceChangeTv.setText(percentString);
+            if (percent>0){
+                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_06d78f));
+                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_up_green);
+            }else{
+                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_F13A3A));
+                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_down_red);
+            }
+            mBalanceValueTv.setText(valueString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+    }*/
+
+
+
+
 }

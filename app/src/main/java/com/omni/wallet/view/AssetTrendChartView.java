@@ -94,13 +94,16 @@ public class AssetTrendChartView extends LinearLayout {
         float max = Float.parseFloat(String.valueOf(maxAndMin.get("max")));
         float min = Float.parseFloat(String.valueOf(maxAndMin.get("min")));
         float minY = 0.0f;
-        if (max - min > min){
-            minY = (max-min)/2;
-        }else if(max - min < min){
-            minY = min/2;
-        }else {
-            minY = max/2;
+        if (min != 0){
+            if (max - min > min){
+                minY = min - (max-min)/2;
+            }else if(max - min < min){
+                minY = min - min/2;
+            }else {
+                minY = max/2;
+            }
         }
+
         float maxY = 0.0f;
         if (max - min > min){
             maxY = max + (max-min)/2;
