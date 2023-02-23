@@ -7,7 +7,7 @@ This file describes the progress of the test for the line chart on the "account 
 ![image](https://user-images.githubusercontent.com/52437247/220821152-1fa6593d-18c5-477e-866e-5ab84bc5ae3a.png)
 
 ## 2.2 When get BTC or other assets
-### 2.2.1 The data for the line chart
+### 2.2.1 Dataset for the line chart
 ```
 chartData=[{date=1645574400000, value=63190.11127922499}], changeData={value=63190.11127922499, percent=0.0}
 ```
@@ -15,7 +15,7 @@ chartData=[{date=1645574400000, value=63190.11127922499}], changeData={value=631
 ![image](https://user-images.githubusercontent.com/52437247/220821287-13213f25-3d4a-45a8-b91f-76d2e018975e.png)  
 
 ## 2.3 One day after installing the app
-### 2.3.1 The data for the line chart
+### 2.3.1 Dataset for the line chart
 ```
 {chartData=[{date=1645574400000, value=63190.11127922499}, {date=1645660800000, value=63190.11127922499}], 
 changeData={value=63190.11127922499, percent=0.0}}
@@ -24,7 +24,7 @@ changeData={value=63190.11127922499, percent=0.0}}
 ![image](https://user-images.githubusercontent.com/52437247/220821517-b37c0455-ef0a-4d36-b781-1821d37ec8e2.png)  
 
 ## 2.4 Four days after installing the app
-### 2.4.1 The data for the line chart
+### 2.4.1 Dataset for the line chart
 ```
 {chartData=[{date=1645574400000, value=63190.11127922499}, {date=1645660800000, value=63190.11127922499}, 
             {date=1645747200000, value=63190.11127922499}, {date=1645833600000, value=63190.11127922499}, 
@@ -36,7 +36,7 @@ changeData={value=63190.11127922499, percent=0.0}}
 ![image](https://user-images.githubusercontent.com/52437247/220821602-f16b5b8e-faaa-444f-bc1d-4b866ab40abb.png)  
 
 ## 2.5 Ten days after installing the app
-### 2.5.1 The data for the line chart
+### 2.5.1 Dataset for the line chart
 ```
 {chartData=[{date=1645574400000, value=63190.11127922499}, 
 {date=1645660800000, value=63190.11127922499}, {date=1645747200000, value=63190.11127922499},  
@@ -50,7 +50,7 @@ changeData={value=29465.724084984002, percent=-44.1}}
 ### 2.5.2 The screenshot of the line chart
 ![image](https://user-images.githubusercontent.com/52437247/220821799-6cb2d6c8-c1fb-48ec-a699-887e23655ca9.png)
 ## 2.6 Thirteen days after installing the app
-### 2.6.1 The data for the line chart
+### 2.6.1 Dataset for the line chart
 ```
 {chartData=[{date=1645574400000, value=63190.11127922499}, {date=1645660800000, value=63190.11127922499},  
 {date=1645747200000, value=63190.11127922499}, {date=1645833600000, value=63190.11127922499},  
@@ -65,7 +65,7 @@ changeData={value=29455.667360984, percent=-0.04}}
 ### 2.6.2 The screenshot of the line chart
 ![image](https://user-images.githubusercontent.com/52437247/220822164-03034802-68f4-4d9f-ac5d-f19e11d5d860.png)
 ## 2.7 Fourteen days after installing the app
-### 2.7.1 The data for the line chart
+### 2.7.1 Dataset for the line chart
 ```
 {chartData=[{date=1645920000000, value=57200.7889935107}, {date=1646265600000, value=52708.79727922499}, 
 {date=1646352000000, value=52708.79727922499}, {date=1646438400000, value=29465.724084984002}, 
@@ -77,7 +77,7 @@ changeData={value=33974.656410984, percent=15.34}}
 ### 2.7.2 The screenshot of the line chart
 ![image](https://user-images.githubusercontent.com/52437247/220822228-6797d7f4-e90f-4413-a7a2-c051aefb84bf.png)
 ## 2.8 Fifteen days after installing the app
-### 2.8.1 The data for the line chart
+### 2.8.1 Dataset for the line chart
 ```
 {chartData=[{date=1646006400000, value=55703.45842208213}, {date=1646352000000, value=52708.79727922499}, 
 {date=1646438400000, value=29465.724084984002}, {date=1646524800000, value=29465.724084984002}, 
@@ -88,7 +88,7 @@ changeData={value=33974.656410984, percent=0.0}}
 ### 2.8.2 The screenshot of the line chart
 ![image](https://user-images.githubusercontent.com/52437247/220822470-5821bf77-dda1-4bab-b1a5-1150e4cf8a8e.png)
 ## 2.9 Twenty days after installing the app
-### 2.9.1 The data for the line chart
+### 2.9.1 Dataset for the line chart
 ```
 {chartData=[{date=1646438400000, value=39425.604493373}, {date=1646784000000, value=33974.656410984}, 
 {date=1646870400000, value=33974.656410984}, {date=1646956800000, value=29465.724084984002}, 
@@ -99,7 +99,7 @@ changeData={value=29455.667360984, percent=-0.04}}
 ### 2.9.2 The screenshot of the line chart
 ![image](https://user-images.githubusercontent.com/52437247/220822619-9b3c5bbd-53ab-4a33-b871-34000dd32ca6.png)
 ## 2.10 Twenty one days after installing the app
-### 2.10.1 The data for the line chart
+### 2.10.1 Dataset for the line chart
 ```
 {chartData=[{date=1645920000000, value=57200.7889935107}, {date=1646524800000, value=36749.29865505286}, 
 {date=1646870400000, value=33974.656410984}, {date=1646956800000, value=29465.724084984002},  
@@ -111,7 +111,7 @@ changeData={value=33974.656410984, percent=15.34}}
 ### 2.10.2 The screenshot of the line chart
 ![image](https://user-images.githubusercontent.com/52437247/220822709-56aaefcc-bba9-4f69-b088-6ca3f3ac1bd3.png)
 ## 2.11 Twenty two days after installing the app
-### 2.11.1 The data for the line chart
+### 2.11.1 Dataset for the line chart
 ```
 {chartData=[{date=1646006400000, value=55703.45842208213}, {date=1646611200000, value=34072.99281673271},  
 {date=1646956800000, value=29465.724084984002}, {date=1647043200000, value=29465.724084984002},   
@@ -123,7 +123,7 @@ changeData={value=33974.656410984, percent=0.0}}
 ### 2.11.2 The screenshot of the line chart
 ![image](https://user-images.githubusercontent.com/52437247/220822831-377b2a38-211f-4c31-bdd7-033eef530c91.png)
 ## 2.12 Four weeks after installing the app.
-### 2.12.1 The data for the line chart
+### 2.12.1 Dataset for the line chart
 ```
 {chartData=[{date=1645920000000, value=57200.7889935107}, {date=1646524800000, value=36749.29865505286},  
 {date=1647129600000, value=30752.553788984}, {date=1647475200000, value=33974.656410984},  
@@ -136,7 +136,7 @@ changeData={value=69602.68043011434, percent=104.86}}
 ### 2.12.2 The screenshot of the line chart
 ![image](https://user-images.githubusercontent.com/52437247/220822908-269d1f3b-234b-48e8-b82f-f87e60f4670c.png)
 ## 2.13 Ten weeks after installing the app
-### 2.13.1 The data for the line chart
+### 2.13.1 Dataset for the line chart
 ```
 {chartData=[{date=1645920000000, value=57200.7889935107}, {date=1646524800000, value=36749.29865505286},  
 {date=1647129600000, value=30752.553788984}, {date=1647734400000, value=39064.374128002615},  
@@ -151,7 +151,7 @@ changeData={value=66808.99949011435, percent=-4.02}}
 ### 2.13.2 The screenshot of the line chart
 ![image](https://user-images.githubusercontent.com/52437247/220822984-81eee534-b3c0-4f3f-aaa0-48ff22a25357.png)
 ## 2.14 Thirty weeks after installing the app
-### 2.14.1 The data for the line chart
+### 2.14.1 Dataset for the line chart
 ```
 {chartData=[{date=1645920000000, value=57200.7889935107}, {date=1646524800000, value=36749.29865505286},  
 {date=1647129600000, value=30752.553788984}, {date=1647734400000, value=39064.374128002615},  
@@ -176,7 +176,7 @@ changeData={value=94297.2180452898, percent=41.14}}
 ### 2.14.2 The screenshot of the line chart
 ![image](https://user-images.githubusercontent.com/52437247/220823056-5e15bd94-49fa-49b9-8c77-0ffa4dcae4a1.png)
 ## 2.15 Fifty two weeks after installing the app
-### 2.15.1 The data for the line chart
+### 2.15.1 Dataset for the line chart
 ```
 {chartData=[{date=1646006400000, value=55703.45842208213}, {date=1646611200000, value=34072.99281673271},  
 {date=1647216000000, value=30752.553788983994}, {date=1647820800000, value=44154.091845021234},  
