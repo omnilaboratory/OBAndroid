@@ -273,9 +273,12 @@ public class PayInvoiceDialog {
                                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                     @Override
                                                     public void run() {
+                                                        mAlertDialog.dismiss();
                                                         mLoadingDialog.dismiss();
-                                                        ToastUtils.showToast(mContext, payment.getFailureReason().toString());
+//                                                        ToastUtils.showToast(mContext, payment.getFailureReason().toString());
                                                         deletePaymentProbe(payment.getPaymentHash());
+                                                        CreateChannelTipDialog mCreateChannelTipDialog = new CreateChannelTipDialog(mContext);
+                                                        mCreateChannelTipDialog.show();
                                                     }
                                                 });
                                         }

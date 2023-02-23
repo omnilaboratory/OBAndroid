@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_D1123A50">
+
+    <LinearLayout
+        android:id="@+id/layout_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/layout_son"
+            android:layout_width="@dimen/main_320"
+            android:layout_height="@dimen/main_590"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bg_white_rectangle_round_25"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_tip"
+                android:layout_width="@dimen/main_36"
+                android:layout_height="@dimen/main_36"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/main_25"
+                android:src="@mipmap/icon_failed_green" />
+
+            <android.support.v4.widget.NestedScrollView
+                android:layout_below="@+id/iv_tip"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/main_25"
+                android:layout_marginRight="@dimen/main_25"
+                android:layout_marginTop="@dimen/main_10"
+                android:layout_marginBottom="@dimen/main_150"
+                android:scrollbars="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tv_tip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="You have not created a USDT channel. It is strongly recommended that you create at least one USDT channel so that you can get a fully functional lightning wallet with:\n\n1. Fast transaction speed,\n2. Low fee, \n3. Free of counterparty-risk
+\n\nClick the plus sign in the lower right corner to start"
+                        android:textColor="@color/color_99_transparent"
+                        android:textSize="@dimen/text_23" />
+                </RelativeLayout>
+            </android.support.v4.widget.NestedScrollView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_50"
+                android:layout_marginRight="@dimen/main_50"
+                android:layout_marginBottom="@dimen/main_20"
+                android:layout_alignParentBottom="true">
+
+                <LinearLayout
+                    android:id="@+id/layout_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_36"
+                        android:layout_height="@dimen/main_36"
+                        android:src="@mipmap/icon_arrow_left_green" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_7"
+                        android:letterSpacing="0.25"
+                        android:text="@string/back_big"
+                        android:textColor="@color/color_black"
+                        android:textSize="@dimen/text_16" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_create"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_36"
+                        android:layout_height="@dimen/main_36"
+                        android:layout_marginBottom="@dimen/main_5"
+                        android:src="@mipmap/icon_pointer_down" />
+
+                    <ImageView
+                        android:layout_width="@dimen/main_36"
+                        android:layout_height="@dimen/main_36"
+                        android:src="@mipmap/icon_add_green" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_7"
+                        android:letterSpacing="0.25"
+                        android:text="@string/create"
+                        android:textColor="@color/color_black"
+                        android:textSize="@dimen/text_16" />
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_son"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/main_15"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/main_56"
+                android:layout_height="@dimen/main_56"
+                android:src="@mipmap/icon_close_x_white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_7"
+                android:letterSpacing="0.25"
+                android:text="@string/cancel"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/text_16" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

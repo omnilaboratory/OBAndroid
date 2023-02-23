@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,6 +56,7 @@ import com.omni.wallet.view.TransactionsAssetView;
 import com.omni.wallet.view.TransactionsChainView;
 import com.omni.wallet.view.TransactionsLightingView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
+import com.omni.wallet.view.dialog.CreateChannelTipDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
@@ -239,6 +242,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
     PayInvoiceDialog mPayInvoiceDialog;
     CreateChannelDialog mCreateChannelDialog;
+    CreateChannelTipDialog mCreateChannelTipDialog;
     TimePickerView mTimePickerView;
 
     @Override
@@ -412,6 +416,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mTransactionsRecyclerView.setAdapter(mTransactionsAdapter);
             fetchTransactionsFromLND(time);
         }
+        // Solve unsmooth sliding(解决滑动不流畅)
+        mTransactionsRecyclerView.scrollToPosition(0);
+        mTransactionsRecyclerView.setHasFixedSize(true);
+        mTransactionsRecyclerView.setNestedScrollingEnabled(false);
     }
 
     /**
@@ -431,50 +439,50 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 if (bytes == null) {
                     return;
                 }
-                try {
-                    LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------getTransactionsOnResponse-----------------" + resp);
-                    for (int i = 0; i < resp.getTransactionsList().size(); i++) {
-                        TransactionChainEntity entity = new TransactionChainEntity();
-                        entity.setTimeStamp(resp.getTransactionsList().get(i).getTimeStamp());
-                        entity.setList(Collections.singletonList(resp.getTransactionsList().get(i)));
-                        mTransactionsChainData.add(entity);
-                    }
-                    List<TransactionChainEntity> list = new ArrayList<>();
-                    Map<String, TransactionChainEntity> hashMap = new HashMap<>();
-                    for (TransactionChainEntity entity : mTransactionsChainData) {
-                        String key = DateUtils.MonthDay(entity.getTimeStamp() + "");
-                        if (hashMap.containsKey(key)) {
-                            List<LightningOuterClass.Transaction> transactionList = new ArrayList<>();
-                            transactionList.addAll(hashMap.get(key).getList());
-                            transactionList.addAll(entity.getList());
-                            entity.setList(transactionList);
-                            hashMap.put(key, entity);
-                        } else {
-                            hashMap.put(key, entity);
-                        }
-                    }
-                    for (Map.Entry<String, TransactionChainEntity> entry : hashMap.entrySet()) {
-                        list.add(entry.getValue());
-                    }
-                    List<TransactionChainEntity> filterList = new ArrayList<>();
-                    for (TransactionChainEntity entity : list) {
-                        if (entity.getTimeStamp() > Long.parseLong(time)) {
-                            filterList.add(entity);
-                        }
-                    }
-                    LogUtils.e("========filterList========", String.valueOf(filterList));
-                    mTransactionsChainData.clear();
-                    mTransactionsChainData.addAll(filterList);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------getTransactionsOnResponse-----------------" + resp);
+                            for (int i = 0; i < resp.getTransactionsList().size(); i++) {
+                                TransactionChainEntity entity = new TransactionChainEntity();
+                                entity.setTimeStamp(resp.getTransactionsList().get(i).getTimeStamp());
+                                entity.setList(Collections.singletonList(resp.getTransactionsList().get(i)));
+                                mTransactionsChainData.add(entity);
+                            }
+                            List<TransactionChainEntity> list = new ArrayList<>();
+                            Map<String, TransactionChainEntity> hashMap = new HashMap<>();
+                            for (TransactionChainEntity entity : mTransactionsChainData) {
+                                String key = DateUtils.MonthDay(entity.getTimeStamp() + "");
+                                if (hashMap.containsKey(key)) {
+                                    List<LightningOuterClass.Transaction> transactionList = new ArrayList<>();
+                                    transactionList.addAll(hashMap.get(key).getList());
+                                    transactionList.addAll(entity.getList());
+                                    entity.setList(transactionList);
+                                    hashMap.put(key, entity);
+                                } else {
+                                    hashMap.put(key, entity);
+                                }
+                            }
+                            for (Map.Entry<String, TransactionChainEntity> entry : hashMap.entrySet()) {
+                                list.add(entry.getValue());
+                            }
+                            List<TransactionChainEntity> filterList = new ArrayList<>();
+                            for (TransactionChainEntity entity : list) {
+                                if (entity.getTimeStamp() > Long.parseLong(time)) {
+                                    filterList.add(entity);
+                                }
+                            }
+                            LogUtils.e("========filterList========", String.valueOf(filterList));
+                            mTransactionsChainData.clear();
+                            mTransactionsChainData.addAll(filterList);
                             mTransactionsChainAdapter.notifyDataSetChanged();
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
                         }
-                    });
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
+                    }
+                });
             }
         });
     }
@@ -519,52 +527,52 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 if (bytes == null) {
                     return;
                 }
-                try {
-                    LightningOuterClass.AssetTx resp = LightningOuterClass.AssetTx.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------oB_GetOmniTransactionOnResponse-----------------" + resp);
-                    List<LightningOuterClass.AssetTx> mData = new ArrayList<>();
-                    mData.add(resp);
-                    for (int i = 0; i < mData.size(); i++) {
-                        TransactionAssetEntity entity = new TransactionAssetEntity();
-                        entity.setBlockTime(mData.get(i).getBlocktime());
-                        entity.setList(Collections.singletonList(mData.get(i)));
-                        mTransactionsAssetData.add(entity);
-                    }
-                    List<TransactionAssetEntity> list = new ArrayList<>();
-                    Map<String, TransactionAssetEntity> hashMap = new HashMap<>();
-                    for (TransactionAssetEntity entity : mTransactionsAssetData) {
-                        String key = DateUtils.MonthDay(entity.getBlockTime() + "");
-                        if (hashMap.containsKey(key)) {
-                            List<LightningOuterClass.AssetTx> assetTxList = new ArrayList<>();
-                            assetTxList.addAll(hashMap.get(key).getList());
-                            assetTxList.addAll(entity.getList());
-                            entity.setList(assetTxList);
-                            hashMap.put(key, entity);
-                        } else {
-                            hashMap.put(key, entity);
-                        }
-                    }
-                    for (Map.Entry<String, TransactionAssetEntity> entry : hashMap.entrySet()) {
-                        list.add(entry.getValue());
-                    }
-                    List<TransactionAssetEntity> filterList = new ArrayList<>();
-                    for (TransactionAssetEntity entity : list) {
-                        if (entity.getBlockTime() > Long.parseLong(time)) {
-                            filterList.add(entity);
-                        }
-                    }
-                    LogUtils.e("========assetTxList========", String.valueOf(filterList));
-                    mTransactionsAssetData.clear();
-                    mTransactionsAssetData.addAll(filterList);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.AssetTx resp = LightningOuterClass.AssetTx.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------oB_GetOmniTransactionOnResponse-----------------" + resp);
+                            List<LightningOuterClass.AssetTx> mData = new ArrayList<>();
+                            mData.add(resp);
+                            for (int i = 0; i < mData.size(); i++) {
+                                TransactionAssetEntity entity = new TransactionAssetEntity();
+                                entity.setBlockTime(mData.get(i).getBlocktime());
+                                entity.setList(Collections.singletonList(mData.get(i)));
+                                mTransactionsAssetData.add(entity);
+                            }
+                            List<TransactionAssetEntity> list = new ArrayList<>();
+                            Map<String, TransactionAssetEntity> hashMap = new HashMap<>();
+                            for (TransactionAssetEntity entity : mTransactionsAssetData) {
+                                String key = DateUtils.MonthDay(entity.getBlockTime() + "");
+                                if (hashMap.containsKey(key)) {
+                                    List<LightningOuterClass.AssetTx> assetTxList = new ArrayList<>();
+                                    assetTxList.addAll(hashMap.get(key).getList());
+                                    assetTxList.addAll(entity.getList());
+                                    entity.setList(assetTxList);
+                                    hashMap.put(key, entity);
+                                } else {
+                                    hashMap.put(key, entity);
+                                }
+                            }
+                            for (Map.Entry<String, TransactionAssetEntity> entry : hashMap.entrySet()) {
+                                list.add(entry.getValue());
+                            }
+                            List<TransactionAssetEntity> filterList = new ArrayList<>();
+                            for (TransactionAssetEntity entity : list) {
+                                if (entity.getBlockTime() > Long.parseLong(time)) {
+                                    filterList.add(entity);
+                                }
+                            }
+                            LogUtils.e("========assetTxList========", String.valueOf(filterList));
+                            mTransactionsAssetData.clear();
+                            mTransactionsAssetData.addAll(filterList);
                             mTransactionsAssetAdapter.notifyDataSetChanged();
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
                         }
-                    });
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
+                    }
+                });
             }
         });
     }
@@ -635,54 +643,54 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     fetchReceiveInvoicesFromLND(time, 100);
                     return;
                 }
-                try {
-                    LightningOuterClass.ListPaymentsResponse resp = LightningOuterClass.ListPaymentsResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------paymentsOnResponse-----------------" + resp);
-                    mPayData.clear();
-                    for (int i = 0; i < resp.getPaymentsList().size(); i++) {
-                        PaymentEntity paymentEntity = new PaymentEntity();
-                        paymentEntity.setDate(resp.getPaymentsList().get(i).getCreationDate());
-                        paymentEntity.setAssetId(resp.getPaymentsList().get(i).getAssetId());
-                        paymentEntity.setAmount(resp.getPaymentsList().get(i).getValueMsat());
-                        paymentEntity.setType(1);
-                        mPayData.add(paymentEntity);
-                    }
-                    Collections.reverse(mPayData);
-                    for (int i = 0; i < mPayData.size(); i++) {
-                        TransactionLightingEntity entity = new TransactionLightingEntity();
-                        entity.setCreationDate(mPayData.get(i).getDate());
-                        entity.setList(Collections.singletonList(mPayData.get(i)));
-                        mTransactionsData.add(entity);
-                    }
-                    List<TransactionLightingEntity> list = new ArrayList<>();
-                    Map<String, TransactionLightingEntity> hashMap = new HashMap<>();
-                    for (TransactionLightingEntity entity : mTransactionsData) {
-                        String key = DateUtils.MonthDay(entity.getCreationDate() + "");
-                        if (hashMap.containsKey(key)) {
-                            List<PaymentEntity> paymentList = new ArrayList<>();
-                            paymentList.addAll(hashMap.get(key).getList());
-                            paymentList.addAll(entity.getList());
-                            entity.setList(paymentList);
-                            hashMap.put(key, entity);
-                        } else {
-                            hashMap.put(key, entity);
-                        }
-                    }
-                    for (Map.Entry<String, TransactionLightingEntity> entry : hashMap.entrySet()) {
-                        list.add(entry.getValue());
-                    }
-                    mTransactionsData.clear();
-                    mTransactionsData.addAll(list);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.ListPaymentsResponse resp = LightningOuterClass.ListPaymentsResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------paymentsOnResponse-----------------" + resp);
+                            mPayData.clear();
+                            for (int i = 0; i < resp.getPaymentsList().size(); i++) {
+                                PaymentEntity paymentEntity = new PaymentEntity();
+                                paymentEntity.setDate(resp.getPaymentsList().get(i).getCreationDate());
+                                paymentEntity.setAssetId(resp.getPaymentsList().get(i).getAssetId());
+                                paymentEntity.setAmount(resp.getPaymentsList().get(i).getValueMsat());
+                                paymentEntity.setType(1);
+                                mPayData.add(paymentEntity);
+                            }
+                            Collections.reverse(mPayData);
+                            for (int i = 0; i < mPayData.size(); i++) {
+                                TransactionLightingEntity entity = new TransactionLightingEntity();
+                                entity.setCreationDate(mPayData.get(i).getDate());
+                                entity.setList(Collections.singletonList(mPayData.get(i)));
+                                mTransactionsData.add(entity);
+                            }
+                            List<TransactionLightingEntity> list = new ArrayList<>();
+                            Map<String, TransactionLightingEntity> hashMap = new HashMap<>();
+                            for (TransactionLightingEntity entity : mTransactionsData) {
+                                String key = DateUtils.MonthDay(entity.getCreationDate() + "");
+                                if (hashMap.containsKey(key)) {
+                                    List<PaymentEntity> paymentList = new ArrayList<>();
+                                    paymentList.addAll(hashMap.get(key).getList());
+                                    paymentList.addAll(entity.getList());
+                                    entity.setList(paymentList);
+                                    hashMap.put(key, entity);
+                                } else {
+                                    hashMap.put(key, entity);
+                                }
+                            }
+                            for (Map.Entry<String, TransactionLightingEntity> entry : hashMap.entrySet()) {
+                                list.add(entry.getValue());
+                            }
+                            mTransactionsData.clear();
+                            mTransactionsData.addAll(list);
                             mTransactionsAdapter.notifyDataSetChanged();
+                            fetchReceiveInvoicesFromLND(time, 100);
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
                         }
-                    });
-                    fetchReceiveInvoicesFromLND(time, 100);
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
+                    }
+                });
             }
         });
     }
@@ -719,59 +727,59 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 if (bytes == null) {
                     return;
                 }
-                try {
-                    LightningOuterClass.ListInvoiceResponse resp = LightningOuterClass.ListInvoiceResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------ReceiveInvoiceOnResponse-----------------" + resp);
-                    if (resp.getLastIndexOffset() < lastIndex) {
-                        mReceiveData.clear();
-                        for (int i = 0; i < resp.getInvoicesList().size(); i++) {
-                            if (resp.getInvoicesList().get(i).getAmtPaidMsat() != 0) {
-                                PaymentEntity paymentEntity = new PaymentEntity();
-                                paymentEntity.setDate(resp.getInvoicesList().get(i).getCreationDate());
-                                paymentEntity.setAssetId(resp.getInvoicesList().get(i).getAssetId());
-                                paymentEntity.setAmount(resp.getInvoicesList().get(i).getValueMsat());
-                                paymentEntity.setType(2);
-                                mReceiveData.add(paymentEntity);
-                            }
-                        }
-                        Collections.reverse(mReceiveData);
-                        for (int i = 0; i < mReceiveData.size(); i++) {
-                            TransactionLightingEntity entity = new TransactionLightingEntity();
-                            entity.setCreationDate(mReceiveData.get(i).getDate());
-                            entity.setList(Collections.singletonList(mReceiveData.get(i)));
-                            mTransactionsData.add(entity);
-                        }
-                        List<TransactionLightingEntity> list = new ArrayList<>();
-                        Map<String, TransactionLightingEntity> hashMap = new HashMap<>();
-                        for (TransactionLightingEntity entity : mTransactionsData) {
-                            String key = DateUtils.MonthDay(entity.getCreationDate() + "");
-                            if (hashMap.containsKey(key)) {
-                                List<PaymentEntity> paymentList = new ArrayList<>();
-                                paymentList.addAll(hashMap.get(key).getList());
-                                paymentList.addAll(entity.getList());
-                                entity.setList(paymentList);
-                                hashMap.put(key, entity);
-                            } else {
-                                hashMap.put(key, entity);
-                            }
-                        }
-                        for (Map.Entry<String, TransactionLightingEntity> entry : hashMap.entrySet()) {
-                            list.add(entry.getValue());
-                        }
-                        mTransactionsData.clear();
-                        mTransactionsData.addAll(list);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.ListInvoiceResponse resp = LightningOuterClass.ListInvoiceResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------ReceiveInvoiceOnResponse-----------------" + resp);
+                            if (resp.getLastIndexOffset() < lastIndex) {
+                                mReceiveData.clear();
+                                for (int i = 0; i < resp.getInvoicesList().size(); i++) {
+                                    if (resp.getInvoicesList().get(i).getAmtPaidMsat() != 0) {
+                                        PaymentEntity paymentEntity = new PaymentEntity();
+                                        paymentEntity.setDate(resp.getInvoicesList().get(i).getCreationDate());
+                                        paymentEntity.setAssetId(resp.getInvoicesList().get(i).getAssetId());
+                                        paymentEntity.setAmount(resp.getInvoicesList().get(i).getValueMsat());
+                                        paymentEntity.setType(2);
+                                        mReceiveData.add(paymentEntity);
+                                    }
+                                }
+                                Collections.reverse(mReceiveData);
+                                for (int i = 0; i < mReceiveData.size(); i++) {
+                                    TransactionLightingEntity entity = new TransactionLightingEntity();
+                                    entity.setCreationDate(mReceiveData.get(i).getDate());
+                                    entity.setList(Collections.singletonList(mReceiveData.get(i)));
+                                    mTransactionsData.add(entity);
+                                }
+                                List<TransactionLightingEntity> list = new ArrayList<>();
+                                Map<String, TransactionLightingEntity> hashMap = new HashMap<>();
+                                for (TransactionLightingEntity entity : mTransactionsData) {
+                                    String key = DateUtils.MonthDay(entity.getCreationDate() + "");
+                                    if (hashMap.containsKey(key)) {
+                                        List<PaymentEntity> paymentList = new ArrayList<>();
+                                        paymentList.addAll(hashMap.get(key).getList());
+                                        paymentList.addAll(entity.getList());
+                                        entity.setList(paymentList);
+                                        hashMap.put(key, entity);
+                                    } else {
+                                        hashMap.put(key, entity);
+                                    }
+                                }
+                                for (Map.Entry<String, TransactionLightingEntity> entry : hashMap.entrySet()) {
+                                    list.add(entry.getValue());
+                                }
+                                mTransactionsData.clear();
+                                mTransactionsData.addAll(list);
                                 mTransactionsAdapter.notifyDataSetChanged();
+                            } else {
+                                fetchReceiveInvoicesFromLND(time, lastIndex + 100);
                             }
-                        });
-                    } else {
-                        fetchReceiveInvoicesFromLND(time, lastIndex + 100);
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
+                });
             }
         });
     }
@@ -1599,8 +1607,37 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @OnClick(R.id.layout_create_invoice)
     public void clickCreateInvoice() {
-        mCreateInvoiceStepOnePopupWindow = new CreateInvoiceStepOnePopupWindow(mContext);
-        mCreateInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
+        LightningOuterClass.ChannelBalanceRequest channelBalanceRequest = LightningOuterClass.ChannelBalanceRequest.newBuilder()
+                .setAssetId((int) assetId)
+                .build();
+        Obdmobile.channelBalance(channelBalanceRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.ChannelBalanceResponse resp = LightningOuterClass.ChannelBalanceResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
+                            if (resp.getRemoteBalance().getMsat() == 0) {
+                                mCreateChannelTipDialog = new CreateChannelTipDialog(mContext);
+                                mCreateChannelTipDialog.show();
+                            } else {
+                                mCreateInvoiceStepOnePopupWindow = new CreateInvoiceStepOnePopupWindow(mContext);
+                                mCreateInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
+                            }
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -1609,11 +1646,38 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @OnClick(R.id.layout_lucky_packet)
     public void clickLuckyPacket() {
-//        ToastUtils.showToast(mContext, "Not yet open, please wait");
-        mCreateLuckyPacketPopupWindow = new CreateLuckyPacketPopupWindow(mContext);
-        mCreateLuckyPacketPopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
-    }
+        LightningOuterClass.ChannelBalanceRequest channelBalanceRequest = LightningOuterClass.ChannelBalanceRequest.newBuilder()
+                .setAssetId((int) assetId)
+                .build();
+        Obdmobile.channelBalance(channelBalanceRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
 
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.ChannelBalanceResponse resp = LightningOuterClass.ChannelBalanceResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
+                            if (resp.getLocalBalance().getMsat() == 0) {
+                                mCreateChannelTipDialog = new CreateChannelTipDialog(mContext);
+                                mCreateChannelTipDialog.show();
+                            } else {
+                                mCreateLuckyPacketPopupWindow = new CreateLuckyPacketPopupWindow(mContext);
+                                mCreateLuckyPacketPopupWindow.show(mParentLayout, pubkey, assetId, balanceAccount);
+                            }
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+    }
 
     /**
      * click send button
@@ -1942,6 +2006,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
         }
         if (mCreateChannelDialog != null) {
             mCreateChannelDialog.release();
+        }
+        if (mCreateChannelTipDialog != null) {
+            mCreateChannelTipDialog.release();
         }
     }
 }

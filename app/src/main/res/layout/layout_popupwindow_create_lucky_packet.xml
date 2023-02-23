@@ -40,7 +40,7 @@
                 <ImageView
                     android:layout_width="@dimen/main_24"
                     android:layout_height="@dimen/main_24"
-                    android:src="@mipmap/icon_red_packet_open"
+                    android:src="@mipmap/icon_red_packet_gift"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="@dimen/main_20"/>
             </RelativeLayout>
@@ -561,7 +561,7 @@
                     <ImageView
                         android:layout_width="@dimen/main_24"
                         android:layout_height="@dimen/main_24"
-                        android:src="@mipmap/icon_red_packet_create"
+                        android:src="@mipmap/icon_red_packet_gift"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="@dimen/main_20"/>
                 </RelativeLayout>

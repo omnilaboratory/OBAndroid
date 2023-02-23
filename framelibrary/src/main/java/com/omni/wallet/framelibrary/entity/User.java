@@ -4,9 +4,6 @@ import android.content.Context;
 
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.framelibrary.utils.PreferencesUtils;
-import com.omni.wallet.thirdsupport.zxing.Preferences;
-
-import okio.ByteString;
 
 
 public class User {
@@ -52,39 +49,39 @@ public class User {
     // 是否正在显示版本更新的Dialog
     private boolean isShowUpdateDialog = false;
     /***************************Omni Wallet**********************************/
-    // 网络类型
+    // Network type(网络类型)
     private String network;
-    // 钱包地址
+    // Wallet address(钱包地址)
     private String walletAddress;
-    // 节点版本
+    // Node version(节点版本)
     private String nodeVersion;
-    // Btc价格
+    // Btc price(Btc价格)
     private String btcPrice;
-    // Btc价格变化
+    // Btc price change(Btc价格变化)
     private String btcPriceChange;
-    // usdt价格
+    // Usdt price(usdt价格)
     private String usdtPrice;
-    // 自身节点的pubKey
+    // PubKey of its own node(自身节点的pubKey)
     private String fromPubKey;
-    
+
     private String initWalletType;
-    
+
     private String macaroonString;
-    
+
     private String channelBackupPathArray;
-    
+
     private String seedString;
-    
+
     private String passwordMd5;
-    
+
     private String recoverySeedString;
-    
+
     private Boolean created;
-    
+
     private Boolean synced;
-    
+
     private Boolean seedChecked;
-    
+
     private Boolean startCreate;
 
     private int walletState;
@@ -93,8 +90,12 @@ public class User {
 
     private long totalBlock;
 
-//    Useful token amount
+    // Useful token amount
     private int assetsCount;
+
+    // Balance amount(账户余额)
+    private long balanceAmount;
+
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
         return token;
@@ -216,7 +217,7 @@ public class User {
 
     public String getWalletAddress(Context context) {
         walletAddress = PreferencesUtils.getWalletAddressFromLocal(context);
-        if (walletAddress==null){
+        if (walletAddress == null) {
             walletAddress = "";
         }
         return walletAddress;
@@ -276,66 +277,67 @@ public class User {
         PreferencesUtils.saveFromPubKeyToLocal(context, fromPubKey);
         this.fromPubKey = fromPubKey;
     }
-    
+
     public String getInitWalletType(Context context) {
         initWalletType = PreferencesUtils.getInitWalletType(context);
-        if(initWalletType == null){
+        if (initWalletType == null) {
             initWalletType = "";
         }
         return initWalletType;
     }
 
-    public void setInitWalletType(Context context,String initWalletType) {
+    public void setInitWalletType(Context context, String initWalletType) {
         PreferencesUtils.saveInitWalletType(context, initWalletType);
         this.initWalletType = initWalletType;
     }
+
     public String getMacaroonString(Context context) {
         macaroonString = PreferencesUtils.getMacaroonString(context);
-        if(macaroonString == null){
+        if (macaroonString == null) {
             macaroonString = "";
         }
         return macaroonString;
     }
 
-    public void setMacaroonString(Context context,String macaroonString) {
+    public void setMacaroonString(Context context, String macaroonString) {
         PreferencesUtils.saveMacaroonString(context, macaroonString);
         this.macaroonString = macaroonString;
     }
 
     public String getChannelBackupPathArray(Context context) {
         channelBackupPathArray = PreferencesUtils.getChannelBackupPath(context);
-        if(channelBackupPathArray == null){
+        if (channelBackupPathArray == null) {
             channelBackupPathArray = "";
         }
         return channelBackupPathArray;
     }
 
-    public void setChannelBackupPathArray(Context context,String channelBackupPath) {
+    public void setChannelBackupPathArray(Context context, String channelBackupPath) {
         PreferencesUtils.saveChannelBackupPath(context, channelBackupPath);
         this.channelBackupPathArray = channelBackupPath;
     }
 
-    public void setPasswordMd5(Context context,String passwordMd5) {
+    public void setPasswordMd5(Context context, String passwordMd5) {
         PreferencesUtils.savePasswordMd5(context, passwordMd5);
         this.passwordMd5 = passwordMd5;
     }
 
     public String getPasswordMd5(Context context) {
         passwordMd5 = PreferencesUtils.getPasswordMd5(context);
-        if(passwordMd5 == null){
+        if (passwordMd5 == null) {
             passwordMd5 = "";
         }
         return passwordMd5;
     }
 
-    public void setSeedString(Context context,String seedString) {
+    public void setSeedString(Context context, String seedString) {
         PreferencesUtils.saveSeedString(context, seedString);
         this.seedString = seedString;
     }
 
     public String getSeedString(Context context) {
         seedString = PreferencesUtils.getSeedString(context);
-        if(seedString == null){
+        if (seedString == null) {
             seedString = "";
         }
         return seedString;
@@ -343,77 +345,77 @@ public class User {
 
     public Boolean getCreated(Context context) {
         created = PreferencesUtils.getCreated(context);
-        if(created == null){
+        if (created == null) {
             created = false;
         }
         return created;
     }
 
-    public void setCreated(Context context,Boolean created) {
+    public void setCreated(Context context, Boolean created) {
         PreferencesUtils.saveCreated(context, created);
         this.created = created;
     }
 
     public Boolean getSynced(Context context) {
         synced = PreferencesUtils.getSynced(context);
-        if(synced == null){
+        if (synced == null) {
             synced = false;
         }
         return synced;
     }
 
-    public void setSynced(Context context,Boolean synced) {
+    public void setSynced(Context context, Boolean synced) {
         PreferencesUtils.saveSynced(context, synced);
         this.synced = synced;
     }
 
     public Boolean getSeedChecked(Context context) {
         seedChecked = PreferencesUtils.getSeedChecked(context);
-        if(seedChecked == null){
+        if (seedChecked == null) {
             seedChecked = false;
         }
         return seedChecked;
     }
 
-    public void setSeedChecked(Context context,Boolean seedChecked) {
+    public void setSeedChecked(Context context, Boolean seedChecked) {
         PreferencesUtils.saveSeedChecked(context, seedChecked);
         this.seedChecked = seedChecked;
     }
 
     public String getRecoverySeedString(Context context) {
         recoverySeedString = PreferencesUtils.getRecoverySeedString(context);
-        if(recoverySeedString == null){
+        if (recoverySeedString == null) {
             recoverySeedString = "";
         }
         return recoverySeedString;
     }
 
-    public void setRecoverySeedString(Context context,String recoverySeedString) {
+    public void setRecoverySeedString(Context context, String recoverySeedString) {
         PreferencesUtils.saveRecoverySeedString(context, recoverySeedString);
         this.recoverySeedString = recoverySeedString;
     }
 
     public Boolean getStartCreate(Context context) {
         startCreate = PreferencesUtils.getStartCreate(context);
-        if (startCreate == null){
+        if (startCreate == null) {
             startCreate = false;
         }
         return startCreate;
     }
 
-    public void setStartCreate(Context context,Boolean startCreate) {
+    public void setStartCreate(Context context, Boolean startCreate) {
         PreferencesUtils.saveStartCreate(context, startCreate);
         this.startCreate = startCreate;
     }
 
-    public void setWalletState(Context context,int walletState){
-        PreferencesUtils.saveWalletState(context,walletState);
+    public void setWalletState(Context context, int walletState) {
+        PreferencesUtils.saveWalletState(context, walletState);
         this.walletState = walletState;
     }
 
-    public int getWalletState(Context context){
+    public int getWalletState(Context context) {
         walletState = PreferencesUtils.getWalletState(context);
-        if (walletState == -1){
+        if (walletState == -1) {
             walletState = -1;
         }
         return walletState;
@@ -427,35 +429,45 @@ public class User {
         return restoredChannel;
     }
 
-    public void setRestoredChannel(Context context,boolean restoredChannel) {
-        PreferencesUtils.saveRestoredChannel(context,restoredChannel);
+    public void setRestoredChannel(Context context, boolean restoredChannel) {
+        PreferencesUtils.saveRestoredChannel(context, restoredChannel);
         this.restoredChannel = restoredChannel;
     }
 
-    public long getTotalBlock(Context context){
+    public long getTotalBlock(Context context) {
         totalBlock = PreferencesUtils.getTotalBlock(context);
-        if (totalBlock == -1){
+        if (totalBlock == -1) {
             totalBlock = 0;
         }
         return totalBlock;
     }
 
-    public void setTotalBlock (Context context,long totalBlock){
-        PreferencesUtils.saveTotalBlock(context,totalBlock);
+    public void setTotalBlock(Context context, long totalBlock) {
+        PreferencesUtils.saveTotalBlock(context, totalBlock);
         this.totalBlock = totalBlock;
     }
 
-    public int getAssetsCount(Context context){
+    public int getAssetsCount(Context context) {
         assetsCount = PreferencesUtils.getAssetsCount(context);
-        if(assetsCount == -1){
+        if (assetsCount == -1) {
             assetsCount = 0;
         }
         return assetsCount;
     }
 
-    public void setAssetsCount(Context context,int count){
-        PreferencesUtils.saveAssetsCount(context,count);
+    public void setAssetsCount(Context context, int count) {
+        PreferencesUtils.saveAssetsCount(context, count);
         this.assetsCount = count;
+    }
+
+    public long getBalanceAmount(Context context) {
+        balanceAmount = PreferencesUtils.getBalanceAmount(context);
+        return balanceAmount;
+    }
+
+    public void setBalanceAmount(Context context, long balanceAmount) {
+        PreferencesUtils.saveBalanceAmount(context, balanceAmount);
+        this.balanceAmount = balanceAmount;
     }
 
     /**
@@ -488,5 +500,5 @@ public class User {
         mInstance = null;
     }
 
-    
+
 }
