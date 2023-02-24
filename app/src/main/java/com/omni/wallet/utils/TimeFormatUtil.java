@@ -1,6 +1,7 @@
 package com.omni.wallet.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.omni.wallet.R;
 
@@ -11,6 +12,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class TimeFormatUtil {
+
+    private static final String TAG = TimeFormatUtil.class.getSimpleName();
 
     /**
      * Returns a nicely formatted time.
@@ -93,7 +96,7 @@ public class TimeFormatUtil {
 
     public static long getYearFirstMills() {
         Calendar c = Calendar.getInstance();
-        int year = c.getTime().getYear();
+        int year = c.get(Calendar.YEAR);
         String yearDay = year + "-01-01";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date d = null;
@@ -106,11 +109,11 @@ public class TimeFormatUtil {
         return mills;
     }
 
-    public static String formatDateLong(long time, Context context) {
+    public static String formatDateLong(long time) {
         SimpleDateFormat sdf = null;
         long yearDayMills = getYearFirstMills();
         if(time-yearDayMills<0){
-            sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf = new SimpleDateFormat("yy-MM-dd");
         }else{
             sdf = new SimpleDateFormat("MM-dd");
         }

@@ -232,7 +232,7 @@ public class AccountLightningActivity extends AppBaseActivity {
             Log.e(TAG, "allList:" + allList.toString());
             if (allList.size() == 1) {
                 AssetTrendEntity entity = new AssetTrendEntity();
-                String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills() - ConstantInOB.DAY_MILLIS, mContext);
+                String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills() - ConstantInOB.DAY_MILLIS);
                 entity.setTime(date);
                 entity.setAsset(Double.toString(0));
                 list.add(entity);
@@ -240,7 +240,7 @@ public class AccountLightningActivity extends AppBaseActivity {
             for (int i = 0; i < allList.size(); i++) {
                 AssetTrendEntity entity = new AssetTrendEntity();
                 Map<String, Object> item = allList.get(i);
-                String date = TimeFormatUtil.formatDateLong((Long) item.get("date"), mContext);
+                String date = TimeFormatUtil.formatDateLong((Long) item.get("date"));
                 entity.setTime(date);
                 entity.setAsset(Double.toString((Double) item.get("value")));
                 list.add(entity);
@@ -967,7 +967,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                AssetsActions.initOrUpdateAction(mContext, actionCallBack);
+                AssetsActions.initOrUpdateAction(mContext);
             }
         };
         handler.postDelayed(runnable,60000);
@@ -984,7 +984,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      * Test btn click event,will delete when test end;
      */
 
-/*    @OnClick(R.id.one_day_data_btn)
+    /*@OnClick(R.id.one_day_data_btn)
     public void clickData1() {
         AssetsTestData.oneDayData(mContext);
         changeLineChartView();
@@ -1082,7 +1082,7 @@ public class AccountLightningActivity extends AppBaseActivity {
             Log.e(TAG, "allList:" + allList.toString());
             if (allList.size() == 1) {
                 AssetTrendEntity entity = new AssetTrendEntity();
-                String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills() - ConstantInOB.DAY_MILLIS, mContext);
+                String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills() - ConstantInOB.DAY_MILLIS);
                 entity.setTime(date);
                 entity.setAsset(Double.toString(0));
                 list.add(entity);
@@ -1090,7 +1090,7 @@ public class AccountLightningActivity extends AppBaseActivity {
             for (int i = 0; i < allList.size(); i++) {
                 AssetTrendEntity entity = new AssetTrendEntity();
                 Map<String, Object> item = allList.get(i);
-                String date = TimeFormatUtil.formatDateLong((Long) item.get("date"), mContext);
+                String date = TimeFormatUtil.formatDateLong((Long) item.get("date"));
                 entity.setTime(date);
                 entity.setAsset(Double.toString((Double) item.get("value")));
                 list.add(entity);
@@ -1124,8 +1124,4 @@ public class AccountLightningActivity extends AppBaseActivity {
         }
 
     }*/
-
-
-
-
 }

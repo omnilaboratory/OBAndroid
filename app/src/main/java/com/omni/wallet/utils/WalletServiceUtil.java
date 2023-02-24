@@ -1,27 +1,18 @@
 package com.omni.wallet.utils;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.baselibrary.http.HttpUtils;
 import com.omni.wallet.baselibrary.http.callback.EngineCallback;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.LogUtils;
-import com.omni.wallet.data.AssetsActions;
-import com.omni.wallet.data.AssetsDB;
 import com.omni.wallet.data.AssetsDao;
-import com.omni.wallet.data.AssetsDataDao;
-import com.omni.wallet.entity.event.BtcAndUsdtEvent;
-import com.omni.wallet.entity.event.InitChartEvent;
 import com.omni.wallet.framelibrary.entity.User;
 
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,49 +23,47 @@ import obdmobile.Obdmobile;
 
 public class WalletServiceUtil {
 
+    private static String TAG = WalletServiceUtil.class.getSimpleName();
+
     public interface GetAssetListCallback {
         void callback(Context context ,List<LightningOuterClass.Asset> assetsList);
-    }
-
-    public interface GetBtcBalanceCallback {
-        void callback(double btcBalance);
-    }
-
-    public interface GetAssetsBalanceCallback {
-        void callback(List<LightningOuterClass.AssetBalanceByAddressResponse> assetsList);
-    }
-
-    public interface GetUsingAssetsPriceCallback{
-        void callback(Context context, JSONArray priceList,Map<String,Object> propertyMap);
-    }
-
-    public interface GetAssetChannelBalanceCallback{
-        void callback(Context context,String propertyId,long channelAmountLong,int index,int usingCount);
     }
 
     public interface GetAssetListErrorCallback{
         void callback(Context context,Exception e);
     }
 
+    public interface GetBtcBalanceCallback {
+        void callback(double btcBalance);
+    }
+
     public interface GetBtcBalanceErrorCallback{
         void callback(Exception e,Context mContext);
+    }
+
+    public interface GetAssetsBalanceCallback {
+        void callback(List<LightningOuterClass.AssetBalanceByAddressResponse> assetsList);
     }
 
     public interface GetAssetsBalanceErrorCallback{
         void callback(Context mContext,Exception e);
     }
 
+    public interface GetUsingAssetsPriceCallback{
+        void callback(Context context, JSONArray priceList,Map<String,Object> propertyMap);
+    }
+
     public interface GetUsingAssetsPriceErrorCallback{
         void callback(Context context, String errorCode, String errorMsg,List<Map<String,Object>> usingAssetsList,Map<String,Object> propertyMap);
+    }
+
+    public interface GetAssetChannelBalanceCallback{
+        void callback(Context context,String propertyId,long channelAmountLong,int index,int usingCount);
     }
 
     public interface GetAssetChannelBalanceErrorCallback{
         void callback(Context context ,Exception e);
     }
-
-
-
-    private static String TAG = WalletServiceUtil.class.getSimpleName();
 
     public static void getAssetsList(Context context, GetAssetListCallback callback,GetAssetListErrorCallback error){
         Obdmobile.oB_ListAsset(null, new Callback() {

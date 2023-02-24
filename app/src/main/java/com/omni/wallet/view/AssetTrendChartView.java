@@ -175,6 +175,7 @@ public class AssetTrendChartView extends LinearLayout {
         leftAxis.setTextColor(Color.parseColor("#999999")); //Set the Y axis text color（置Y轴文字颜色)
         leftAxis.setAxisMinimum(minY);
         leftAxis.setAxisMaximum(maxY);
+
         YAxis rightAxis = lineChart.getAxisRight(); //To obtain the right of the Y axis(获取右边的Y轴)
         rightAxis.setEnabled(false);   //Set the right Y axis is not displayed(设置右边的Y轴不显示)
         //设置图例（也就是曲线的标签）
