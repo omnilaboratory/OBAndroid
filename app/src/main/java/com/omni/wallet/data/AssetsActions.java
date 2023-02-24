@@ -26,19 +26,24 @@ public class AssetsActions {
 
     private static final String TAG = AssetsActions.class.getSimpleName();
 
-    public interface ActionCallBack {
-        void callback();
-    }
-
-    public static void updateAssetsValueDataValueLast(Context context) {
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description update last data in assets value table
+     * @描述 更新assets value table 最后一条数据
+     */
+    private static void updateAssetsValueDataValueLast(Context context) {
         AssetsDataDao assetsDataDao = new AssetsDataDao(context);
         try {
             long date = TimeFormatUtil.getCurrentDayMills();
+            // Get a list of all assets today
             List<Map<String, Object>> dataList = assetsDataDao.queryAllAssetsDataByDate(date);
             Log.e(TAG, "updateAssetsValueDataValueLast: dataList" + dataList.toString());
+            // Calculate the sum of today's asset values
             double value = 0.0;
             for (int i = 0; i < dataList.size(); i++) {
-                double dataValue = 0.0;
+                double dataValue;
                 Map<String, Object> item = dataList.get(i);
                 double price = (double) item.get("price");
                 double amount = (double) item.get("amount");
@@ -49,6 +54,7 @@ public class AssetsActions {
                 dataValue = (channel_amount + amount) * price;
                 value = dataValue + value;
             }
+            // update data
             AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
             assetsValueDataDao.updateAssetValueData(value, date);
         } catch (ParseException e) {
@@ -56,64 +62,73 @@ public class AssetsActions {
         }
 
     }
-
-    public static void updateAssetsPrice(Context context, String propertyId, double price) {
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description update assets`s price in assets data table by propertyId
+     * @描述 根据propertyId更新相应资产的价格
+     * @param propertyId asset property id
+     * @param price asset price
+     */
+    private static void updateAssetsPrice(Context context, String propertyId, double price) {
         AssetsDataDao assetsDataDao = new AssetsDataDao(context);
         assetsDataDao.updateAssetDataPrice(propertyId, price);
     }
-
-    public static void updateAssetsAmount(Context context, String propertyId, double amount) {
-        AssetsDataDao assetsDataDao = new AssetsDataDao(context);
-        assetsDataDao.updateAssetDataAmount(propertyId, amount);
-    }
-
-    public static void updateAssetChannelsAmount(Context context, String propertyId, double amount) {
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description update assets`s channel balance in assets data table by propertyId
+     * @描述 根据propertyId更新相应资产通道中的余额
+     * @param propertyId asset property id
+     * @param amount asset channel balance
+     */
+    private static void updateAssetChannelsAmount(Context context, String propertyId, double amount) {
         AssetsDataDao assetsDataDao = new AssetsDataDao(context);
         assetsDataDao.updateAssetDataChannelAmount(propertyId, amount);
     }
 
-    public static void updateAssetsPriceS(Context context, String propertyId, double price) {
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description update assets`s price in assets data table by propertyId then update the value in assets value data table about today
+     * @描述 根据propertyId更新相应资产的价格，然后更行assets value data 中今日的value
+     * @param propertyId asset property id
+     * @param price asset channel balance
+     */
+
+    private static void updateAssetsPriceS(Context context, String propertyId, double price) {
         updateAssetsPrice(context, propertyId, price);
         updateAssetsValueDataValueLast(context);
     }
 
-    public static void updateAssetsAmountS(Context context, String propertyId, double amount) {
-        updateAssetsAmount(context, propertyId, amount);
-        updateAssetsValueDataValueLast(context);
-        AssetsDao assetsDao = new AssetsDao(context);
-        assetsDao.changeAssetIsUse(propertyId, 1);
-    }
-
-    public static void updateAssetChannelsAmountS(Context context, String propertyId, double amount) {
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description update assets`s balance in assets data table by propertyId then update the value in assets value data table about today
+     * @描述 根据propertyId更新相应资产的余额，然后更行assets value data 中今日的amount
+     * @param propertyId asset property id
+     * @param amount asset channel balance
+     */
+    private static void updateAssetChannelsAmountS(Context context, String propertyId, double amount) {
         updateAssetChannelsAmount(context, propertyId, amount);
         updateAssetsValueDataValueLast(context);
         AssetsDao assetsDao = new AssetsDao(context);
         assetsDao.changeAssetIsUse(propertyId, 1);
     }
-
-    public static void insertAssetData(Context context, String propertyId, double price, double amount, double channelAmount) {
-        AssetsDataDao assetsDataDao = new AssetsDataDao(context);
-        assetsDataDao.insertAssetsData(propertyId, price, amount, channelAmount);
-    }
-
-    public static void insertAssetDataAndValueData(Context context, String propertyId, double price, double amount, double channelAmount) {
-        insertAssetData(context, propertyId, price, amount, channelAmount);
-        AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
-        try {
-            long date = TimeFormatUtil.getCurrentDayMills();
-            double value = (amount + channelAmount) * price;
-            assetsValueDataDao.insertAssetValueData(value, date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void insertAssetDataAndUpdateValueData(Context context, String propertyId, double price, double amount, double channelAmount) {
-        insertAssetData(context, propertyId, price, amount, channelAmount);
-        updateAssetsValueDataValueLast(context);
-    }
-
-    public static void insertOrUpdateAssetDataAndUpdateValueData(Context context, String propertyId, double amount) {
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description update assets`s channel balance in assets data table by propertyId then update the value in assets value data table about today
+     * @描述 根据propertyId更新相应资产通道中的余额，然后更行assets value data 中今日的channel balance
+     * @param propertyId asset property id
+     * @param amount asset channel balance
+     */
+    private static void insertOrUpdateAssetDataAndUpdateValueData(Context context, String propertyId, double amount) {
         Log.e(TAG, "insertOrUpdateAssetDataAndUpdateValueData: amount" + amount);
         AssetsDataDao assetsDataDao = new AssetsDataDao(context);
         try {
@@ -125,10 +140,14 @@ public class AssetsActions {
         }
     }
 
-
-
-
-    public static void initDbForInstallApp(Context context) {
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description init database after install app
+     * @描述 安装app后初始化数据库
+     */
+    private static void initDbForInstallApp(Context context) {
         AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
         try {
             long date = TimeFormatUtil.getCurrentDayMills();
@@ -136,18 +155,29 @@ public class AssetsActions {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
         getBtcBalanceAction(context);
     }
-
-    public static void initOrUpdateDataStartApp(Context context) {
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description init database or update database after start app
+     * @描述 启动app后初始化或者更新数据
+     */
+    private static void initOrUpdateDataStartApp(Context context) {
         AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
         assetsValueDataDao.completeAssetData();
         getBtcBalanceAction(context);
-
     }
-
-    public static void getUsingAssetsPriceAction(Context context){
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description the action for get price about using assets
+     * @描述 获取正在使用中的assets的价格的操作
+     */
+    private static void getUsingAssetsPriceAction(Context context){
+        // Execute when the price is obtained successfully
         WalletServiceUtil.GetUsingAssetsPriceCallback getUsingAssetsPriceCallback
                 = (Context context1, JSONArray priceList, Map<String, Object> propertyMap) -> {
             Log.e(TAG, "initOrUpdateDataStartApp: getPriceSuccess");
@@ -157,7 +187,8 @@ public class AssetsActions {
                     Log.e(TAG, "initOrUpdateDataStartApp: price: " + priceString);
                     double price = Double.parseDouble(priceString);
                     String id = priceList.getJSONObject(i).getString("id");
-                    String propertyId = "";
+                    String propertyId="";
+                    // Update the price and today's asset value according to propertyId
                     switch (id) {
                         case "bitcoin":
                             propertyId = (String) propertyMap.get("btc");
@@ -174,12 +205,13 @@ public class AssetsActions {
                     }
 
                 }
+                // Notify the page to update the chart
                 EventBus.getDefault().post(new InitChartEvent());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         };
-
+        // Execute when getting the price fails
         WalletServiceUtil.GetUsingAssetsPriceErrorCallback getUsingAssetsPriceErrorCallback
                 = (Context mContext, String errorCode, String errorMsg, List<Map<String, Object>> usingAssetsList, Map<String, Object> propertyMap) -> {
             Log.e(TAG, "getPriceError:" + errorMsg);
@@ -188,6 +220,7 @@ public class AssetsActions {
                 String id = (String) usingAssetsList.get(i).get("token_name");
                 String propertyId = "";
                 List<Map<String, Object>> list = new ArrayList<>();
+                // Update the price and today's asset value according to propertyId
                 switch (id) {
                     case "btc":
                         propertyId = (String) propertyMap.get("btc");
@@ -228,12 +261,21 @@ public class AssetsActions {
                 }
 
             }
+            // Notify the page to update the chart
             EventBus.getDefault().post(new InitChartEvent());
         };
         WalletServiceUtil.getUsingAssetsPrice(context, getUsingAssetsPriceCallback, getUsingAssetsPriceErrorCallback);
     }
-
-    public static void getAssetsChannelBalanceAction(Context context){
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description the action for get channel balance about assets
+     * @描述 获取assets的通道余额的操作
+     */
+    private static void getAssetsChannelBalanceAction(Context context){
+        // 获取通道余额成功后执行
+        // Execute after successfully obtaining the channel balance
         WalletServiceUtil.GetAssetChannelBalanceCallback getAssetChannelBalanceCallback
                 = (Context mContext, String propertyId, long channelAmountLong, int index, int assetCount) -> {
 
@@ -250,7 +292,8 @@ public class AssetsActions {
                 getUsingAssetsPriceAction(context);
             }
         };
-
+        // 获取通道余额失败后执行
+        // Execute after failing to obtain the channel balance
         WalletServiceUtil.GetAssetChannelBalanceErrorCallback getAssetChannelBalanceErrorCallback
                 = (Context mContext, Exception e) -> {
             Log.e(TAG, e.getMessage());
@@ -259,8 +302,16 @@ public class AssetsActions {
         };
         WalletServiceUtil.getUsingAssetsChannelBalance(context, getAssetChannelBalanceCallback, getAssetChannelBalanceErrorCallback);
     }
-
-    public static void getAssetsBalanceAction(Context context){
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description the action for get balance about assets
+     * @描述 获取assets的余额的操作
+     */
+    private static void getAssetsBalanceAction(Context context){
+        // 获取链上余额成功后执行
+        // Execute after successfully obtaining the balance on the chain
         WalletServiceUtil.GetAssetsBalanceCallback getAssetsBalanceCallback
                 = (List<LightningOuterClass.AssetBalanceByAddressResponse> assetsList) -> {
             Log.e(TAG, "initOrUpdateDataStartApp: getAssetsBalanceSuccess443");
@@ -273,26 +324,38 @@ public class AssetsActions {
                 insertOrUpdateAssetDataAndUpdateValueData(context, propertyId, amount);
                 assetsDao.changeAssetIsUse(propertyId, 1);
             }
+            updateAssetsValueDataValueLast(context);
             getAssetsChannelBalanceAction(context);
         };
-
+        // 获取链上余额失败后执行
+        // Execute after failing to obtain the balance on the chain
         WalletServiceUtil.GetAssetsBalanceErrorCallback getAssetsBalanceErrorCallback
                 = (Context mContext, Exception e) -> {
             Log.e(TAG, e.getMessage());
+            updateAssetsValueDataValueLast(context);
             getAssetsChannelBalanceAction(context);
             e.printStackTrace();
         };
         WalletServiceUtil.getAssetsBalance(context, getAssetsBalanceCallback, getAssetsBalanceErrorCallback);
     }
-
-    public static void getBtcBalanceAction(Context context){
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description the action for get balance about btc
+     * @描述 获取btc的余额的操作
+     */
+    private static void getBtcBalanceAction(Context context){
+        // 获取链上余额成功后执行
+        // Execute after successfully obtaining the btc balance on the chain
         WalletServiceUtil.GetBtcBalanceCallback getBtcBalanceCallback
                 = (double btcBalance) -> {
             Log.e(TAG, "initOrUpdateDataStartApp: btcBalance" + btcBalance);
             insertOrUpdateAssetDataAndUpdateValueData(context, "0", btcBalance);
             getAssetsBalanceAction(context);
         };
-
+        // 获取链上btc余额失败后执行
+        // Executed after failing to obtain the btc balance on the chain
         WalletServiceUtil.GetBtcBalanceErrorCallback getBtcBalanceErrorCallback = (Exception e, Context mContext) -> {
             Log.e(TAG, e.getMessage());
             getAssetsBalanceAction(context);
@@ -301,8 +364,14 @@ public class AssetsActions {
         Log.e(TAG, "initOrUpdateDataStartApp: start");
         WalletServiceUtil.getBtcBalance(context, getBtcBalanceCallback, getBtcBalanceErrorCallback);
     }
-
-    public static void getAssetsListAction(Context context, int assetsCount){
+    /**
+     * @author Tong Changhui
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description the action for get assets
+     * @描述 获取资产列表
+     */
+    private static void getAssetsListAction(Context context, int assetsCount){
         WalletServiceUtil.GetAssetListCallback getAssetListCallback
                 = (Context mContext, List<LightningOuterClass.Asset> assetsList) -> {
             AssetsDao assetsDao = new AssetsDao(mContext);
@@ -337,19 +406,25 @@ public class AssetsActions {
 
         WalletServiceUtil.getAssetsList(context, getAssetListCallback, getAssetListErrorCallback);
     }
-
     /**
      * @author Tong
      * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
      * @description init or update data when initial account lightning page
-     * @param context
+     * @描述 初始化或者更新执行方法
      */
     public static void initOrUpdateAction(Context context) {
         int assetsCount = User.getInstance().getAssetsCount(context);
         getAssetsListAction(context,assetsCount);
 
     }
-
+    /**
+     * @author Tong
+     * @E-mail tch081092@gmail.com
+     * @CreateTime 2023/1/4 14:11
+     * @description get the data for line chart
+     * @描述 获取折线图所需数据
+     */
     public static Map<String, Object> getDataForChart(Context context) {
         AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
         List<Map<String, Object>> valueList2 = assetsValueDataDao.queryAssetValueDataAll();

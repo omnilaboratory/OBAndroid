@@ -130,10 +130,6 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     Handler handler = new Handler();
 
-    AssetsActions.ActionCallBack actionCallBack = () -> {
-        EventBus.getDefault().post(new InitChartEvent());
-    };
-
     @Override
     protected View getStatusBarTopView() {
         return mTopView;
@@ -221,6 +217,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     // TODO: 2023/1/12 待完善
     @SuppressLint("LongLogTag")
     private void setAssetTrendChartViewShow() {
+        // get data for line chart
         Map<String, Object> data = AssetsActions.getDataForChart(mContext);
         Log.e(TAG+"setAssetTrendChartViewShow",data.toString());
         List<Map<String, Object>> allList;
@@ -244,6 +241,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                 list.add(entity);
             }
             mAssetTrendChartView.setViewShow(list);
+            // set text for change percent and now assets value
             Map<String,Object> changeData = (Map<String, Object>) data.get("changeData");
             assert changeData != null;
             Log.e(TAG + "changeData",changeData.toString());
@@ -267,6 +265,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                 mPercentChangeView.setImageResource(R.mipmap.icon_arrow_down_red);
             }
             mBalanceValueTv.setText(valueString);
+            // Notify the page to update data
             EventBus.getDefault().post(new UpdateAssetsDataEvent());
         } catch (ParseException e) {
             e.printStackTrace();
