@@ -26,7 +26,6 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.refreshView.RefreshLayout;
 import com.omni.wallet.data.AssetsActions;
-import com.omni.wallet.data.AssetsTestData;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
@@ -46,7 +45,6 @@ import com.omni.wallet.framelibrary.view.refreshlayout.LayoutRefreshView;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.GetResourceUtil;
-import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.AssetTrendChartView;
@@ -343,6 +341,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                                 mBalanceAmountTv.setText("My account 0.00 balance");
                             } else {
                                 DecimalFormat df = new DecimalFormat("0.00######");
+                                User.getInstance().setBalanceAmount(mContext, resp.getConfirmedBalance());
                                 balanceAmount = resp.getConfirmedBalance();
                                 mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
                                 /*BTCData btcData = new BTCData(mContext);

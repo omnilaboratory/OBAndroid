@@ -139,7 +139,7 @@
     <string name="pay_invoice_small">Pay Invoice</string>
     <string name="create_invoice_small">Create Invoice</string>
     <string name="channel_activities">Channel Activities</string>
-    <string name="to_be_paid">To be paid</string>
+    <string name="to_be_paid">To be send</string>
     <string name="send_small">Send</string>
     <string name="create_invoice">CREATE INVOICE</string>
     <string name="my_node_id">My node ID</string>
@@ -270,10 +270,12 @@
     <string name="save_upper">保存</string>
     <string name="reboot_first_upper">Reboot</string>
     <string name="create_channel_tip">You have not created a channel for this asset, please create at least one channel with the liquidity node first and with enough funds, and then continue to pay (or create an invoice). </string>
+    <string name="create_new_channel_tip">Sorry, your available balance is insufficient, please create new channel with the liquidity node first and with enough funds, and then continue to pay (or create an invoice). </string>
     <string name="received_first_upper">Received</string>
     <string name="time_first_upper">Time</string>
     <string name="what_is_channel_upper">WHAT IS CHANNEL</string>
     <string name="what_is_channel_txt">A Lightning Network channel is a transaction mechanism between two parties. Using channels, the parties can make or receive payments from each other.\n\nIn order to obtain stable network services and allow others to connect with you, you need to establish at least one channel with a liquidity node. These remote liquidity nodes help the network discover your node, and provide fast routing services, safe inbound and outbound fund services.\n\nThe liquidity nodes listed by OBWallet have all been audited by the security team, and you can safely establish channels with these nodes.</string>
+    <string name="gift_first_upper">Gift</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

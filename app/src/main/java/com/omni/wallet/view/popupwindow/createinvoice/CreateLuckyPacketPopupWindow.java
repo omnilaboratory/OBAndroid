@@ -27,6 +27,7 @@ import com.omni.wallet.thirdsupport.zxing.util.RedCodeUtils;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.UriUtil;
+import com.omni.wallet.view.dialog.CreateNewChannelTipDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
 import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
@@ -221,7 +222,15 @@ public class CreateLuckyPacketPopupWindow {
                 }
                 // TODO: 2022/11/23 最大值最小值的判断需要完善一下
                 if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canReceive) * 100000000) > 0) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
+//                    ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
+                    CreateNewChannelTipDialog mCreateNewChannelTipDialog = new CreateNewChannelTipDialog(mContext);
+                    mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
+                        @Override
+                        public void onClick() {
+                            mBasePopWindow.dismiss();
+                        }
+                    });
+                    mCreateNewChannelTipDialog.show();
                     return;
                 }
                 if (StringUtils.isEmpty(numberInput)) {

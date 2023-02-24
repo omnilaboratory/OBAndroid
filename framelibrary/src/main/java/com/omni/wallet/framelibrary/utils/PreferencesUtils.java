@@ -24,14 +24,15 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_FIRST_LOGIN = "firstLoginKey";// 新用户第一次登陆标识Ke
     private static final String KEY_VERSION_CODE = "versionCodeKey";// 保存版本信息的Key
     /****************************Omni Wallet*********************************/
-    private static final String KEY_NETWORK = "networkKey";// 保存网络类型的Key
-    private static final String KEY_WALLET_ADDRESS = "walletAddressKey";// 保存钱包地址的Key
-    private static final String KEY_NODE_VERSION = "nodeVersionKey";// 保存节点版本的Key
-    private static final String KEY_BTC_PRICE = "btcPriceKey";// 保存btc价格的Key
-    private static final String KEY_BTC_PRICE_CHANGE = "btcPriceChangeKey";// 保存btc价格变化的Key
-    private static final String KEY_USDT_PRICE = "usdtPriceChangeKey";// 保存usdt价格变化的Key
-    private static final String KEY_FROM_PUBKEY = "fromPubKeyKey";// 自身节点pubkey的Key
-    
+    private static final String KEY_NETWORK = "networkKey";// Save the key of the network type(保存网络类型的Key)
+    private static final String KEY_WALLET_ADDRESS = "walletAddressKey";// Save the key of the wallet address(保存钱包地址的Key)
+    private static final String KEY_NODE_VERSION = "nodeVersionKey";// Save the key of the node version(保存节点版本的Key)
+    private static final String KEY_BTC_PRICE = "btcPriceKey";// Save the key of the BTC price(保存btc价格的Key)
+    private static final String KEY_BTC_PRICE_CHANGE = "btcPriceChangeKey";// Save the key of the BTC price change(保存btc价格变化的Key)
+    private static final String KEY_USDT_PRICE = "usdtPriceChangeKey";// Save the key of the Usdt price(保存usdt价格变化的Key)
+    private static final String KEY_FROM_PUBKEY = "fromPubKeyKey";// Save the key of the pubKey of its own node(自身节点pubkey的Key)
+    private static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";// Save the key of the balance amount(账户余额的Key)
+
 
     private static final String INIT_WALLET_TYPE = "initWalletType";
 
@@ -39,15 +40,15 @@ public class PreferencesUtils extends BasePreferencesUtils {
 
     private static final String CHANNEL_BACKUP_PATH_ARRAY = "channelBackupPathArray";
 
-    private static final String SEED_STRING =  "seedString";
+    private static final String SEED_STRING = "seedString";
 
     private static final String PASSWORD_MD5 = "passwordMd5";
 
     private static final String CREATED = "created";
 
-    private static final String SYNCED= "synced";
+    private static final String SYNCED = "synced";
     private static final String SEED_CHECKED = "seedChecked";
-    private static final String RECOVERY_SEED_STRING ="recoverySeedString";
+    private static final String RECOVERY_SEED_STRING = "recoverySeedString";
     private static final String START_CREATE = "startCreate";
     private static final String WALLET_STATE = "walletState";
     private static final String RESTORED_CHANNEL = "restoredChannel";
@@ -212,6 +213,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
 
     /***************************Omni Wallet**********************************/
     /**
+     * getNetworkFromLocal
+     *
      * 获取本地保存的网络类型
      */
     public static String getNetworkFromLocal(Context context) {
@@ -219,6 +222,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * saveNetworkToLocal
+     *
      * 网络类型本地化
      */
     public static void saveNetworkToLocal(Context context, String value) {
@@ -226,6 +231,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * getWalletAddressFromLocal
+     *
      * 获取本地保存的钱包地址
      */
     public static String getWalletAddressFromLocal(Context context) {
@@ -233,6 +240,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * saveWalletAddressToLocal
+     *
      * 钱包地址本地化
      */
     public static void saveWalletAddressToLocal(Context context, String value) {
@@ -240,6 +249,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * getNodeVersionFromLocal
+     *
      * 获取本地保存的节点版本
      */
     public static String getNodeVersionFromLocal(Context context) {
@@ -247,6 +258,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * saveNodeVersionToLocal
+     *
      * 节点版本本地化
      */
     public static void saveNodeVersionToLocal(Context context, String value) {
@@ -254,6 +267,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * getBtcPriceFromLocal
+     *
      * 获取本地保存的btc价格
      */
     public static String getBtcPriceFromLocal(Context context) {
@@ -261,6 +276,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * saveBtcPriceToLocal
+     *
      * btc价格本地化
      */
     public static void saveBtcPriceToLocal(Context context, String value) {
@@ -268,6 +285,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * getBtcPriceChangeFromLocal
+     *
      * 获取本地保存的btc价格变化
      */
     public static String getBtcPriceChangeFromLocal(Context context) {
@@ -275,6 +294,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * saveBtcPriceChangeToLocal
+     *
      * btc价格变化本地化
      */
     public static void saveBtcPriceChangeToLocal(Context context, String value) {
@@ -282,6 +303,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * getUsdtPriceFromLocal
+     *
      * 获取本地保存的usdt价格
      */
     public static String getUsdtPriceFromLocal(Context context) {
@@ -289,6 +312,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * saveUsdtPriceToLocal
+     *
      * usdt价格本地化
      */
     public static void saveUsdtPriceToLocal(Context context, String value) {
@@ -296,6 +321,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * getFromPubKeyFromLocal
+     *
      * 获取本地保存的自身节点pubkey
      */
     public static String getFromPubKeyFromLocal(Context context) {
@@ -303,12 +330,14 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /**
+     * saveFromPubKeyToLocal
+     *
      * 自身节点pubkey本地化
      */
     public static void saveFromPubKeyToLocal(Context context, String value) {
         putString(SETTINGS, context, KEY_FROM_PUBKEY, value);
     }
-    
+
     public static String getInitWalletType(Context context) {
         return getString(SETTINGS, context, INIT_WALLET_TYPE);
     }
@@ -389,35 +418,54 @@ public class PreferencesUtils extends BasePreferencesUtils {
         return getBoolean(SETTINGS, context, START_CREATE);
     }
 
-    public static int getWalletState(Context context){
-        return  getInt(SETTINGS,context,WALLET_STATE);
+    public static int getWalletState(Context context) {
+        return getInt(SETTINGS, context, WALLET_STATE);
     }
 
-    public static void saveWalletState(Context context,int value){
-        putInt(SETTINGS,context,WALLET_STATE,value);
+    public static void saveWalletState(Context context, int value) {
+        putInt(SETTINGS, context, WALLET_STATE, value);
     }
 
-    public static boolean getRestoredChannel(Context context){
-        return getBoolean(SETTINGS,context,RESTORED_CHANNEL);
+    public static boolean getRestoredChannel(Context context) {
+        return getBoolean(SETTINGS, context, RESTORED_CHANNEL);
     }
 
-    public static void saveTotalBlock(Context context,long value){
-        putLong(SETTINGS,context,TOTAL_BLOCK,value);
+    public static void saveTotalBlock(Context context, long value) {
+        putLong(SETTINGS, context, TOTAL_BLOCK, value);
     }
 
-    public static long getTotalBlock(Context context){
-        return getLong(SETTINGS,context,TOTAL_BLOCK);
+    public static long getTotalBlock(Context context) {
+        return getLong(SETTINGS, context, TOTAL_BLOCK);
     }
 
-    public static void saveRestoredChannel(Context context,boolean value){
-         putBoolean(SETTINGS,context,RESTORED_CHANNEL,value);
+    public static void saveRestoredChannel(Context context, boolean value) {
+        putBoolean(SETTINGS, context, RESTORED_CHANNEL, value);
     }
 
     public static int getAssetsCount(Context context) {
-        return getInt(SETTINGS,context,ASSETS_COUNT);
+        return getInt(SETTINGS, context, ASSETS_COUNT);
     }
 
     public static void saveAssetsCount(Context context, int value) {
-        putInt(SETTINGS,context,ASSETS_COUNT,value);
+        putInt(SETTINGS, context, ASSETS_COUNT, value);
+    }
+
+
+    /**
+     * getBalanceAmount
+     *
+     * 获取本地保存的账户余额
+     */
+    public static long getBalanceAmount(Context context) {
+        return getLong(SETTINGS, context, KEY_BALANCE_AMOUNT);
+    }
+
+    /**
+     * saveBalanceAmount
+     *
+     * 账户余额本地化
+     */
+    public static void saveBalanceAmount(Context context, long value) {
+        putLong(SETTINGS, context, KEY_BALANCE_AMOUNT, value);
     }
 }
