@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_transparent"
+    android:gravity="bottom|center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/iv_dialog_loading"
+            android:layout_width="@dimen/main_96"
+            android:layout_height="@dimen/main_96"
+            android:src="@mipmap/icon_loading_green" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_marginBottom="@dimen/main_20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_doing_explain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/sync_block"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/sync_percent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sync_block_percent"
+                    android:textColor="#7F06D78F"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/refresh_btn"
+                    android:layout_width="@dimen/main_20"
+                    android:layout_height="@dimen/main_20"
+                    android:layout_marginStart="@dimen/main_10"
+                    android:src="@mipmap/refresh"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/progress_bar_outer"
+            android:layout_width="@dimen/main_300"
+            android:layout_height="@dimen/main_8"
+            android:background="@drawable/bg_process_out"
+            android:layout_marginStart="@dimen/main_20"
+            android:layout_marginEnd="@dimen/main_20">
+
+            <LinearLayout
+                android:id="@+id/process_inner"
+                android:layout_width="0dp"
+                android:layout_height="6dp"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/bg_process_in"
+                tools:ignore="Suspicious0dp"
+                android:orientation="horizontal" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_type_sync"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/block"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/block_num_synced"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/block_synced_num"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/block_of"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/block_num_sync"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/block_sync_num"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

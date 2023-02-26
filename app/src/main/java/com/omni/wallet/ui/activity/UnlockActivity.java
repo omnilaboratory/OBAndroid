@@ -30,7 +30,7 @@ import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.utils.UtilFunctions;
 import com.omni.wallet.utils.WalletState;
-import com.omni.wallet.view.dialog.LoadingDialog;
+import com.omni.wallet.view.dialog.LoginLoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,7 +47,7 @@ public class UnlockActivity extends AppBaseActivity {
     Context ctx = UnlockActivity.this;
     String localPass = "";
     String localSeed = "";
-    LoadingDialog mLoadingDialog;
+    LoginLoadingDialog mLoadingDialog;
     boolean isCreated = false;
     boolean isSynced = false;
     boolean seedChecked = false;
@@ -76,7 +76,7 @@ public class UnlockActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-        mLoadingDialog = new LoadingDialog(mContext);
+        mLoadingDialog = new LoginLoadingDialog(mContext);
         PasswordFilter passwordFilter = new PasswordFilter();
         mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
         TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
