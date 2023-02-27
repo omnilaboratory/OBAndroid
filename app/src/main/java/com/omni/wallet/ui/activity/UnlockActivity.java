@@ -25,6 +25,7 @@ import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
+import com.omni.wallet.utils.GetRequestHeader;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
@@ -102,6 +103,9 @@ public class UnlockActivity extends AppBaseActivity {
         walletAddress = User.getInstance().getWalletAddress(mContext);
         initWalletType = User.getInstance().getInitWalletType(mContext);
         isStartCreate = User.getInstance().getStartCreate(mContext);
+        GetRequestHeader getRequestHeader = new GetRequestHeader(mContext);
+        String tslString =  getRequestHeader.getTLSString();
+        Log.e(TAG +" tslString", tslString);
 
         runOnUiThread(() -> {
             WalletState.getInstance().setWalletStateCallback(null);
