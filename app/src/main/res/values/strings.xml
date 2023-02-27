@@ -275,6 +275,15 @@
     <string name="what_is_channel_upper">WHAT IS CHANNEL</string>
     <string name="what_is_channel_txt">A Lightning Network channel is a transaction mechanism between two parties. Using channels, the parties can make or receive payments from each other.\n\nIn order to obtain stable network services and allow others to connect with you, you need to establish at least one channel with a liquidity node. These remote liquidity nodes help the network discover your node, and provide fast routing services, safe inbound and outbound fund services.\n\nThe liquidity nodes listed by OBWallet have all been audited by the security team, and you can safely establish channels with these nodes.</string>
     <string name="gift_first_upper">Gift</string>
+    <string name="swap_upper">SWAP</string>
+    <string name="fill_amount">Fill Amount</string>
+    <string name="check_swap">Check &#038; Swap</string>
+    <string name="swap_from">Swap From</string>
+    <string name="swap_from_first_upper">Swap from</string>
+    <string name="max_first_upper">Max</string>
+    <string name="available_to_swap">available to swap</string>
+    <string name="swap_to">Swap To</string>
+    <string name="slippage_tolerance">Slippage\ntolerance</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>
