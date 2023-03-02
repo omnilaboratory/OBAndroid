@@ -811,35 +811,9 @@ public class AccountLightningActivity extends AppBaseActivity {
                     }
                 });
             } else if (event.getType().equals("receiveLuckyPacket")) {
-                LightningOuterClass.PayReqString decodePaymentRequest = LightningOuterClass.PayReqString.newBuilder()
-                        .setPayReq(UriUtil.removeURI(event.getData().toLowerCase()))
-                        .build();
-                Obdmobile.decodePayReq(decodePaymentRequest.toByteArray(), new Callback() {
-                    @Override
-                    public void onError(Exception e) {
-                        LogUtils.e(TAG, "------------------decodePaymentOnError------------------" + e.getMessage());
-                    }
-
-                    @Override
-                    public void onResponse(byte[] bytes) {
-                        if (bytes == null) {
-                            return;
-                        }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
-                                    LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
-                                    ReceiveLuckyPacketDialog mReceiveLuckyPacketDialog = new ReceiveLuckyPacketDialog(mContext);
-                                    mReceiveLuckyPacketDialog.show(pubkey, resp.getAssetId(), event.getData());
-                                } catch (InvalidProtocolBufferException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                    }
-                });
+                LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + event.getData());
+                ReceiveLuckyPacketDialog mReceiveLuckyPacketDialog = new ReceiveLuckyPacketDialog(mContext);
+                mReceiveLuckyPacketDialog.show(event.getData());
             } else if (event.getType().equals("openChannel")) {
                 mCreateChannelDialog = new CreateChannelDialog(mContext);
                 mCreateChannelDialog.show(balanceAmount, User.getInstance().getWalletAddress(mContext), event.getData());

@@ -180,7 +180,7 @@ public class ScanActivity extends AppBaseActivity {
                     event.setData(result);
                     EventBus.getDefault().post(event);
                     finish();
-                } else if (result.startsWith("luckypacket:")) {
+                } else if (result.contains("amt")) {
                     ScanResultEvent event = new ScanResultEvent();
                     event.setCode(scanCode);
                     event.setType("receiveLuckyPacket");

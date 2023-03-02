@@ -129,7 +129,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_40"
                     android:layout_marginRight="@dimen/main_40"
-                    android:layout_marginTop="@dimen/main_125">
+                    android:layout_marginTop="@dimen/main_110">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -189,8 +189,9 @@
 
                         <TextView
                             android:id="@+id/tv_amount_success"
-                            android:layout_width="wrap_content"
+                            android:layout_width="@dimen/main_70"
                             android:layout_height="wrap_content"
+                            android:gravity="right"
                             android:text="100.00"
                             android:textColor="@color/color_99_transparent"
                             android:textSize="@dimen/text_16"/>
@@ -389,6 +390,7 @@
                     android:src="@mipmap/icon_failed_green"/>
 
                 <TextView
+                    android:id="@+id/tv_desc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/main_5"

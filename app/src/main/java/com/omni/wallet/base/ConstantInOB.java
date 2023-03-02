@@ -24,7 +24,7 @@ public class ConstantInOB {
     public static String TEST_NET_BTC_HOST_ADDRESS="192.144.199.67";
     public static String TEST_NET_OMNI_HOST_ADDRESS_PORT="192.144.199.67:18332";
     public static String testLiquidityNodePubkey="025767c2a772bb48f04117625c2da759d55d3e287c101602452c5228c975111594@192.144.199.67:9735";
-    public static String regLiquidityNodePubkey="0386790984cda19a179486bf45f7a1d7dc58964605b928e3d36cd7806ce3d31cdb@43.138.107.248:9735";
+    public static String regLiquidityNodePubkey="0357702800d8926b9077a621bc04320b187b73bcecf381ae07d0a2b36defd1a715@43.138.107.248:9735";
 
 
     public static final String neutrinoRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +

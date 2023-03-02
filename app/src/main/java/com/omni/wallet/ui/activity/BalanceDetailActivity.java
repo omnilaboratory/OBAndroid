@@ -58,6 +58,7 @@ import com.omni.wallet.view.TransactionsLightingView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.CreateChannelTipDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
+import com.omni.wallet.view.dialog.ReceiveLuckyPacketDialog;
 import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
@@ -477,6 +478,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             LogUtils.e("========filterList========", String.valueOf(filterList));
                             mTransactionsChainData.clear();
                             mTransactionsChainData.addAll(filterList);
+                            Collections.reverse(mTransactionsChainData);
                             mTransactionsChainAdapter.notifyDataSetChanged();
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
@@ -567,6 +569,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             LogUtils.e("========assetTxList========", String.valueOf(filterList));
                             mTransactionsAssetData.clear();
                             mTransactionsAssetData.addAll(filterList);
+                            Collections.reverse(mTransactionsAssetData);
                             mTransactionsAssetAdapter.notifyDataSetChanged();
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
@@ -684,6 +687,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             }
                             mTransactionsData.clear();
                             mTransactionsData.addAll(list);
+                            Collections.reverse(mTransactionsData);
                             mTransactionsAdapter.notifyDataSetChanged();
                             fetchReceiveInvoicesFromLND(time, 100);
                         } catch (InvalidProtocolBufferException e) {
@@ -771,6 +775,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                                 }
                                 mTransactionsData.clear();
                                 mTransactionsData.addAll(list);
+                                Collections.reverse(mTransactionsData);
                                 mTransactionsAdapter.notifyDataSetChanged();
                             } else {
                                 fetchReceiveInvoicesFromLND(time, lastIndex + 100);
@@ -1857,6 +1862,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 mPayInvoiceDialog.show(pubkey, assetId, event.getData());
 //                mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
 //                mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, event.getData());
+            } else if (event.getType().equals("receiveLuckyPacket")) {
+                LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + event.getData());
+                ReceiveLuckyPacketDialog mReceiveLuckyPacketDialog = new ReceiveLuckyPacketDialog(mContext);
+                mReceiveLuckyPacketDialog.show(event.getData());
             } else if (event.getType().equals("openChannel")) {
                 mCreateChannelDialog = new CreateChannelDialog(mContext);
                 mCreateChannelDialog.show(balanceAmount, walletAddress, event.getData());
@@ -1896,6 +1905,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCreateInvoiceEvent(CreateInvoiceEvent event) {
+        filterTime = String.valueOf(DateUtils.getMonthFirstdayDateZero()).substring(0, 10);
+        mFilterTimeTv.setText(DateUtils.YearMonth(filterTime));
+        fetchTransactionsFromLND(filterTime);
         fetchInvoicesFromLND(100);
     }
 

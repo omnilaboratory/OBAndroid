@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,10 +22,12 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.client.LuckPkClient;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.GetRequestHeader;
 import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.CreateNewChannelTipDialog;
@@ -36,9 +39,13 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
 
+import javax.net.ssl.SSLException;
+
+import io.grpc.StatusRuntimeException;
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
+import toolrpc.LuckPkOuterClass;
 
 /**
  * 汉: 创建发票的步骤一弹窗
@@ -281,14 +288,38 @@ public class CreateInvoiceStepOnePopupWindow {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    EventBus.getDefault().post(new CreateInvoiceEvent());
-                                    qrCodeUrl = UriUtil.generateLightningUri(resp.getPaymentRequest());
-                                    mLoadingDialog.dismiss();
-                                    rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.lv_create_invoice_success).setVisibility(View.VISIBLE);
-                                    rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                    showStepSuccess(rootView);
+                                    GetRequestHeader getRequestHeader = new GetRequestHeader(mContext);
+                                    String tslString = getRequestHeader.getTLSString();
+                                    String keyString = getRequestHeader.getTLSKeyString();
+                                    Log.e(TAG + " tslString", tslString);
+                                    Log.e(TAG + " keyString", keyString);
+                                    // Method of collecting invoices on behalf
+                                    try {
+                                        LuckPkClient client = new LuckPkClient("43.138.107.248", 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
+                                        try {
+                                            LuckPkOuterClass.spay payRequest = LuckPkOuterClass.spay.newBuilder().setUserInvoice(resp.getPaymentRequest()).build();
+                                            try {
+                                                LuckPkOuterClass.spay payResponse = client.blockingStub.createSpay(payRequest);
+                                                LogUtils.e(TAG + "payResponse.getServInvoice()", payResponse.getServInvoice());
+                                                EventBus.getDefault().post(new CreateInvoiceEvent());
+                                                qrCodeUrl = UriUtil.generateLightningUri(payResponse.getServInvoice());
+                                                mLoadingDialog.dismiss();
+                                                rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.GONE);
+                                                rootView.findViewById(R.id.lv_create_invoice_success).setVisibility(View.VISIBLE);
+                                                rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                                rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                                showStepSuccess(rootView);
+                                            } catch (StatusRuntimeException e) {
+                                                e.printStackTrace();
+                                                LogUtils.e(TAG, e.getMessage());
+                                                return;
+                                            }
+                                        } finally {
+                                            client.shutdown();
+                                        }
+                                    } catch (SSLException | InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             });
                         } catch (InvalidProtocolBufferException e) {

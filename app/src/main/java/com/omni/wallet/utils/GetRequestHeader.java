@@ -15,6 +15,7 @@ public class GetRequestHeader {
     public static final String TAG = GetRequestHeader.class.getSimpleName();
     private String BASE_PATH = "";
     private String TLS_PATH = "";
+    private String TLS_KEY_PATH = "";
     private String MACAROON_PATH = "";
 
     public GetRequestHeader(Context context) {
@@ -23,6 +24,7 @@ public class GetRequestHeader {
         String basePath = context.getExternalCacheDir() + "";
         this.BASE_PATH = basePath;
         this.TLS_PATH = basePath + "/tls.cert";
+        this.TLS_KEY_PATH = basePath + "/tls.key.pcks8";
         this.MACAROON_PATH = basePath + "/data/chain/bitcoin/" + network + "/admin.macaroon";
     }
 
@@ -40,6 +42,14 @@ public class GetRequestHeader {
 
     public void setTLS_PATH(String TSL_PATH) {
         this.TLS_PATH = TLS_PATH;
+    }
+
+    public String getTLS_KEY_PATH() {
+        return TLS_KEY_PATH;
+    }
+
+    public void setTLS_KEY_PATH(String TLS_KEY_PATH) {
+        this.TLS_KEY_PATH = TLS_KEY_PATH;
     }
 
     public String getMACAROON_PATH() {
@@ -69,14 +79,41 @@ public class GetRequestHeader {
                 }
                 bfr.close();
                 cert = sb.toString();
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            cert = "";
+        }
+        return cert;
+    }
 
-
+    public String getTLSKeyString() {
+        String cert = "";
+        String tlsPath = getTLS_KEY_PATH();
+        Log.e(TAG + "getTSLKeyString: ", tlsPath);
+        File file = new File(tlsPath);
+        if (file.exists()) {
+            BufferedReader bfr;
+            try {
+                bfr = new BufferedReader(new FileReader(tlsPath));
+                String line;
+                line = bfr.readLine();
+                StringBuilder sb = new StringBuilder();
+                while (line != null) {
+                    sb.append(line);
+                    sb.append("\n");
+                    line = bfr.readLine();
+                }
+                bfr.close();
+                cert = sb.toString();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             cert = "";
         }

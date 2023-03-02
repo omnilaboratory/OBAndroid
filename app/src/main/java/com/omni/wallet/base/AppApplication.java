@@ -23,11 +23,13 @@ import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.BackupUtils;
 
+import org.conscrypt.Conscrypt;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Security;
 import java.util.Map;
 
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
@@ -59,6 +61,11 @@ public class AppApplication extends BaseApplication {
 
     @Override
     protected void init() {
+        /**
+         * @描述： grpc相关：在使用前必须“安装”Conscrypt
+         * @desc: Bundling Conscrypt,you must still "install" Conscrypt before use.
+         */
+        Security.insertProviderAt(Conscrypt.newProvider(), 1);
         /**
          * @描述： 去掉安卓P启动时候的警告弹窗
          * @desc: Remove the warning pop-up window when Android P starts

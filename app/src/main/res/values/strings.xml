@@ -284,6 +284,7 @@
     <string name="available_to_swap">available to swap</string>
     <string name="swap_to">Swap To</string>
     <string name="slippage_tolerance">Slippage\ntolerance</string>
+    <string name="num_exceeds">The number of red packets exceeds</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>
