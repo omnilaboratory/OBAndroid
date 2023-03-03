@@ -1,32 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_parent"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/main_64"
-    android:layout_marginLeft="@dimen/main_40"
-    android:layout_marginRight="@dimen/main_40"
-    android:background="@mipmap/img_rectangle_white_small_bg">
+    android:layout_height="match_parent"
+    android:background="@color/color_D1123A50">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/main_64"
+        android:layout_marginLeft="@dimen/main_40"
+        android:layout_marginRight="@dimen/main_40"
         android:layout_centerInParent="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:background="@drawable/bg_white_rectangle_round_10">
 
-        <ImageView
-            android:layout_width="@dimen/main_36"
-            android:layout_height="@dimen/main_36"
-            android:src="@mipmap/icon_round_success_green"/>
-
-        <TextView
-            android:id="@+id/tv_success_message"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/main_15"
-            android:letterSpacing="0.05"
-            android:text="Tx Confirmed"
-            android:textColor="@color/color_99_transparent"
-            android:textSize="@dimen/text_24"/>
-    </LinearLayout>
+            android:layout_margin="@dimen/main_15"
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/main_36"
+                android:layout_height="@dimen/main_36"
+                android:src="@mipmap/icon_round_success_green"/>
+
+            <TextView
+                android:id="@+id/tv_success_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_15"
+                android:letterSpacing="0.05"
+                android:text="Tx Confirmed"
+                android:textColor="@color/color_99_transparent"
+                android:textSize="@dimen/text_24"/>
+        </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

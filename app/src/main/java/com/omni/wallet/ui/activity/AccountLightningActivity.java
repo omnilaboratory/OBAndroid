@@ -30,10 +30,12 @@ import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
+import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.entity.event.InitChartEvent;
 import com.omni.wallet.entity.event.LockEvent;
 import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.entity.event.OpenChannelEvent;
+import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
 import com.omni.wallet.entity.event.RebootEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.entity.event.SelectAccountEvent;
@@ -874,6 +876,24 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateBalanceEvent(UpdateBalanceEvent event) {
+        getAssetAndBtcData();
+    }
+
+    /**
+     * 支付发票成功的消息通知监听
+     * Message notification monitoring after pay invoice success
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPayInvoiceSuccessEvent(PayInvoiceSuccessEvent event) {
+        getAssetAndBtcData();
+    }
+
+    /**
+     * 收取红包后的消息通知监听
+     * Message notification monitoring after receive lucky packet
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCreateInvoiceEvent(CreateInvoiceEvent event) {
         getAssetAndBtcData();
     }
 

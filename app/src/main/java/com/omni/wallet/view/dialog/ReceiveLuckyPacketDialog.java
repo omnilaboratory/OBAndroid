@@ -99,7 +99,13 @@ public class ReceiveLuckyPacketDialog {
 
     private void showStepDecodePay() {
         Random rand = new Random();
-        randAmount = rand.nextDouble() * (Double.parseDouble(amount) / Double.parseDouble(number));
+        double max = Double.parseDouble(amount) / Double.parseDouble(number);
+        double min = (Double.parseDouble(amount) / Double.parseDouble(number)) / 2;
+        if (Integer.parseInt(number) == 1) {
+            randAmount = Double.parseDouble(amount);
+        } else {
+            randAmount = rand.nextDouble() * (max - min) + min;
+        }
         LogUtils.e("============================", randAmount + "");
         LightningOuterClass.Invoice asyncInvoiceRequest;
         if (mAssetId == 0) {
