@@ -5,13 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_gravity="bottom"
-    android:gravity="bottom"
     tools:context=".ui.activity.createwallet.CreateWalletStepTwoActivity">
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="32dp"
@@ -25,7 +22,7 @@
             android:gravity="center_vertical"
             android:text="@string/important_alert"
             android:textColor="#FF4A92FF"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/description_text_clear"
@@ -35,19 +32,19 @@
             android:gravity="center_vertical"
             android:text="@string/create_step_two_description"
             android:textColor="#FF4A92FF"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
     </LinearLayout>
-    
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="15dp"
         android:elevation="10dp"
         android:gravity="center">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/main_160"
+            android:layout_height="wrap_content"
             android:background="@drawable/bg_create_content_green"
             android:orientation="vertical"
             android:padding="20dp"
@@ -73,14 +70,10 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/main_180"/>
     </LinearLayout>
-
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="20dp">
 
