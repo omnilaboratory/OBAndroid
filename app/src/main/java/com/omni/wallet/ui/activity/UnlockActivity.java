@@ -103,9 +103,6 @@ public class UnlockActivity extends AppBaseActivity {
         walletAddress = User.getInstance().getWalletAddress(mContext);
         initWalletType = User.getInstance().getInitWalletType(mContext);
         isStartCreate = User.getInstance().getStartCreate(mContext);
-        GetRequestHeader getRequestHeader = new GetRequestHeader(mContext);
-        String tslString =  getRequestHeader.getTLSString();
-        Log.e(TAG +" tslString", tslString);
 
         runOnUiThread(() -> {
             WalletState.getInstance().setWalletStateCallback(null);
