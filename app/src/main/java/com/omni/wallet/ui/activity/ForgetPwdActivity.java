@@ -178,7 +178,7 @@ public class ForgetPwdActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_back)
     public void clickBack() {
-        finish();
+        switchActivityFinish(UnlockActivity.class);
     }
 
     /**

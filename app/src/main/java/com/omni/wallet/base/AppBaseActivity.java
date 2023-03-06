@@ -3,6 +3,8 @@ package com.omni.wallet.base;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.util.Log;
+
 import com.omni.wallet.framelibrary.base.FrameBaseActivity;
 import com.omni.wallet.view.dialog.UnlockDialog;
 
@@ -55,22 +57,19 @@ public abstract class AppBaseActivity extends FrameBaseActivity {
         long stopMills = startTime - stopTime;
         if (isStopApp()){
             setStopApp(false);
-            if (stopMills >= ConstantInOB.MINUTE_MILLIS * 5){
+            if (stopMills >= ConstantInOB.MINUTE_MILLIS){
                 String runningActivityName = getRunningActivityName();
                 String [] runningActivityNameArr = runningActivityName.split("\\.");
                 String name =  runningActivityNameArr[5];
+                Log.e(TAG+ "onResume: ", name);
                 switch (name){
                     case "UnlockActivity":
-                    case "BackupBlockProcessActivity":
-                    case "RestoreChannelActivity":
-                    case "CreateWalletStepOneActivity":
-                    case "CreateWalletStepTwoActivity":
-                    case "CreateWalletStepThreeActivity":
-                    case "RecoverWalletStepOneActivity":
-                    case "RecoverWalletStepTwoActivity":
+                    case "backup":
+                    case "recoverwallet":
                     case "SplashActivity":
                     case "ForgetPwdActivity":
                     case "ForgetPwdNextActivity":
+                    case "createwallet":
                         break;
                     default:
                         mUnlockDialog = new UnlockDialog(mContext);
@@ -84,6 +83,7 @@ public abstract class AppBaseActivity extends FrameBaseActivity {
 
     @Override
     protected void onDestroy() {
+        setStopApp(false);
         if (mUnlockDialog != null){
             mUnlockDialog.release();
         }

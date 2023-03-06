@@ -124,7 +124,7 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <!--<LinearLayout
+            <LinearLayout
                 android:id="@+id/btv_forget_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -134,7 +134,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/forgot_pass"
                     android:textColor="@color/color_0066ff"/>
-            </LinearLayout>-->
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 

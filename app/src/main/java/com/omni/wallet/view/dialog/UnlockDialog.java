@@ -62,13 +62,13 @@ public class UnlockDialog {
                 }
             }
         });
-        /*mAlertDialog.findViewById(R.id.btv_forget_button).setOnClickListener(new View.OnClickListener() {
+        mAlertDialog.findViewById(R.id.btv_forget_button).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 forgetPassword();
             }
-        });*/
+        });
         mAlertDialog.show();
     }
 
@@ -86,8 +86,8 @@ public class UnlockDialog {
     }
 
     private void forgetPassword(){
-        switchActivity(mContext,ForgetPwdActivity.class);
-        release();
+        ForgetPwdDialog forgetPwdDialog = new ForgetPwdDialog(mContext,mAlertDialog);
+        forgetPwdDialog.show();
     }
 
     public void release(){

@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.template.DisablePasteEditText;
 import com.omni.wallet.utils.CheckRules;
 import com.omni.wallet.utils.NumberFormatter;
@@ -25,16 +26,19 @@ import com.omni.wallet.utils.SeedFilter;
 
 import java.util.ArrayList;
 
+import static com.omni.wallet.baselibrary.utils.ActivityUtils.switchActivity;
+
 public class ForgetPwdDialog {
     public static final String TAG = ForgetPwdDialog.class.getSimpleName();
 
     private Context mContext;
     private ArrayList<EditText> list = new ArrayList<EditText>();
     private AlertDialog mAlertDialog;
-    String[] seedList;
+    AlertDialog mUnlockDialog;
 
-    public ForgetPwdDialog(Context context){
+    public ForgetPwdDialog(Context context,AlertDialog unlockDialog){
         this.mContext = context;
+        this.mUnlockDialog = unlockDialog;
     }
 
     public void show(){
@@ -51,7 +55,7 @@ public class ForgetPwdDialog {
         for (int row = 1; row <= 8; row++) {
             RelativeLayout rowContent = new RelativeLayout(mContext);
             RelativeLayout.LayoutParams rowContentParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            rowContentParams.setMargins(0, 0, 0, 5);
+            rowContentParams.setMargins(0, 0, 0, 2);
             rowContent.setLayoutParams(rowContentParams);
             rowContent.setLongClickable(false);
 
@@ -104,7 +108,8 @@ public class ForgetPwdDialog {
             rowContent.addView(rowInner);
             editListContent.addView(rowContent);
         }
-        mAlertDialog.findViewById(R.id.btn_unlock).setOnClickListener(new View.OnClickListener() {
+
+        mAlertDialog.findViewById(R.id.btn_paste).setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
@@ -117,6 +122,14 @@ public class ForgetPwdDialog {
                 clickBack();
             }
         });
+
+        mAlertDialog.findViewById(R.id.btn_forward).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickForward();
+            }
+        });
+        mAlertDialog.show();
     }
 
     public void clickBack() {
@@ -152,6 +165,7 @@ public class ForgetPwdDialog {
     }
 
     public void clickForward() {
+        String[] seedList = User.getInstance().getSeedString(mContext).split(" ");
         Boolean checkResult = true;
         for (int i = 0; i < list.size(); i++) {
             String inputItemText = list.get(i).getText().toString().trim();
@@ -172,7 +186,8 @@ public class ForgetPwdDialog {
             }
         }
         if(checkResult){
-
+            ForgetPwdNextDialog forgetPwdNextDialog = new ForgetPwdNextDialog(mContext,mAlertDialog,mUnlockDialog);
+            forgetPwdNextDialog.show();
         }
     }
 

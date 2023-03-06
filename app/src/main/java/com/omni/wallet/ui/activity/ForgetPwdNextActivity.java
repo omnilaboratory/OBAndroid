@@ -253,7 +253,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_back)
     public void clickBack() {
-        finish();
+        switchActivityFinish(ForgetPwdActivity.class);
     }
 
     /**
