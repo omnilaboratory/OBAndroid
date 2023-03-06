@@ -106,6 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:layout_marginBottom="20dp"
                     android:gravity="center">
                     <ImageView
                         android:layout_width="56dp"
@@ -127,7 +128,6 @@
                 android:id="@+id/btv_forget_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:layout_marginBottom="30dp">
                 <TextView
                     android:layout_width="wrap_content"

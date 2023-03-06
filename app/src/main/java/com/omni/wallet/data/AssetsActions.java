@@ -438,11 +438,15 @@ public class AssetsActions {
             double changePercent = 0;
             if (valueList.size() > 1) {
                 value = (double) valueList.get(valueList.size() - 1).get("value");
-                changePercent = Math.floor(
-                        ((double) valueList.get(valueList.size() - 1).get("value")
-                                - (double) valueList.get(valueList.size() - 2).get("value"))
-                                / (double) valueList.get(valueList.size() - 2).get("value") * 10000
-                ) / 100.0;
+                if ((double)valueList.get(valueList.size() - 2).get("value") == 0 ){
+                    changePercent = 0;
+                }else{
+                    changePercent = Math.floor(
+                            ((double) valueList.get(valueList.size() - 1).get("value")
+                                    - (double) valueList.get(valueList.size() - 2).get("value"))
+                                    / (double) valueList.get(valueList.size() - 2).get("value") * 10000
+                    ) / 100.0;
+                }
             } else {
                 value = (double) valueList.get(valueList.size() - 1).get("value");
                 changePercent = 0;

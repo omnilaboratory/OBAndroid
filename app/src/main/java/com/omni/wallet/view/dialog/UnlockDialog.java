@@ -62,13 +62,13 @@ public class UnlockDialog {
                 }
             }
         });
-        mAlertDialog.findViewById(R.id.btv_forget_button).setOnClickListener(new View.OnClickListener() {
+        /*mAlertDialog.findViewById(R.id.btv_forget_button).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 forgetPassword();
             }
-        });
+        });*/
         mAlertDialog.show();
     }
 
