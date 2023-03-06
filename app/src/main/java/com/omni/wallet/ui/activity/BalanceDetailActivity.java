@@ -62,6 +62,7 @@ import com.omni.wallet.view.dialog.ReceiveLuckyPacketDialog;
 import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
+import com.omni.wallet.view.popupwindow.InvoiceDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.Menu1PopupWindow;
 import com.omni.wallet.view.popupwindow.TokenInfoPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsAssetPopupWindow;
@@ -1463,6 +1464,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             });
                         }
                     });
+                }
+            });
+            holder.getView(R.id.layout_invoice_item).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    InvoiceDetailsPopupWindow mInvoiceDetailsPopupWindow = new InvoiceDetailsPopupWindow(mContext);
+                    mInvoiceDetailsPopupWindow.show(mParentLayout, item);
                 }
             });
         }
