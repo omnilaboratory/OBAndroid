@@ -57,7 +57,7 @@ public abstract class AppBaseActivity extends FrameBaseActivity {
         long stopMills = startTime - stopTime;
         if (isStopApp()){
             setStopApp(false);
-            if (stopMills >= ConstantInOB.MINUTE_MILLIS){
+            if (stopMills >= ConstantInOB.MINUTE_MILLIS * 5){
                 String runningActivityName = getRunningActivityName();
                 String [] runningActivityNameArr = runningActivityName.split("\\.");
                 String name =  runningActivityNameArr[5];
