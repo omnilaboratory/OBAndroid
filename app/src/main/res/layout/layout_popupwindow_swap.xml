@@ -321,6 +321,7 @@
                     android:layout_marginRight="@dimen/main_20">
 
                     <RelativeLayout
+                        android:id="@+id/layout_asset_type"
                         android:layout_width="@dimen/main_131"
                         android:layout_height="@dimen/main_40"
                         android:background="@drawable/bg_black_rectangle_round_0_thin">

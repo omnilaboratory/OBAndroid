@@ -81,38 +81,33 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <RelativeLayout
+                            <ImageView
                                 android:layout_width="@dimen/main_24"
                                 android:layout_height="@dimen/main_24"
-                                android:background="@drawable/bg_btn_round_06d78f_25">
-
-                                <ImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerInParent="true"
-                                    android:src="@mipmap/icon_tick_white"/>
-                            </RelativeLayout>
+                                android:src="@mipmap/icon_edit_black"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/main_7"
-                                android:text="@string/my_node_id"
+                                android:layout_marginLeft="@dimen/main_12"
+                                android:text="Best Wishes"
                                 android:textColor="@color/color_4A92FF"
                                 android:textSize="@dimen/text_16"/>
                         </LinearLayout>
 
-                        <TextView
+                        <EditText
                             android:id="@+id/tv_address"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/main_15"
-                            android:layout_marginLeft="@dimen/main_40"
-                            android:layout_marginRight="@dimen/main_40"
+                            android:layout_marginLeft="@dimen/main_45"
+                            android:layout_marginRight="@dimen/main_20"
                             android:layout_marginTop="@dimen/main_5"
-                            android:text="02e56dkcasdasdasdasdasdasddwqqffqwdqwdqxcs"
+                            android:text="Wish you good health"
                             android:textColor="@color/color_black"
-                            android:textSize="@dimen/text_16"/>
+                            android:textSize="@dimen/text_16"
+                            android:background="@null"
+                            android:digits="@string/text_digits_num_code"/>
                     </LinearLayout>
 
                     <View
@@ -401,7 +396,7 @@
                             android:layout_centerVertical="true"
                             android:gravity="center_vertical|right"
                             android:inputType="number"
-                            android:hint="0"
+                            android:text="10"
                             android:textColorHint="@color/color_80p_transparent"
                             android:background="@drawable/bg_black_rectangle_round_0_thin"
                             android:textColor="@color/color_80p_transparent"

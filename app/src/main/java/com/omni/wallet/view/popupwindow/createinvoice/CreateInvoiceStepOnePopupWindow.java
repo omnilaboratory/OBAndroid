@@ -155,10 +155,12 @@ public class CreateInvoiceStepOnePopupWindow {
                             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
                             assetTypeTv.setText("BTC");
                             amountUnitTv.setText("BTC");
+                            amountEdit.setText("0");
                         } else {
                             assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
                             assetTypeTv.setText("dollar");
                             amountUnitTv.setText("dollar");
+                            amountEdit.setText("0");
                         }
                         mAssetId = item.getPropertyid();
                         getChannelBalance(mAssetId);
@@ -170,7 +172,7 @@ public class CreateInvoiceStepOnePopupWindow {
         amountMaxTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                amountEdit.setText(assetBalanceMax);
+                amountEdit.setText(canReceive);
             }
         });
         timeButton.setOnClickListener(new View.OnClickListener() {

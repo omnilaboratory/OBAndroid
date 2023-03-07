@@ -23,7 +23,7 @@ public class ConstantInOB {
     public static String downloadBaseUrlTestNet = "https://cache.oblnd.top/neutrino-testnet/";
     public static String TEST_NET_BTC_HOST_ADDRESS="192.144.199.67";
     public static String TEST_NET_OMNI_HOST_ADDRESS_PORT="192.144.199.67:18332";
-    public static String testLiquidityNodePubkey="025767c2a772bb48f04117625c2da759d55d3e287c101602452c5228c975111594@192.144.199.67:9735";
+    public static String testLiquidityNodePubkey="025af4448f55bf1e6de1ae0486d4d103427c4e559a62ed7f8035bb1ed1af734f61@192.144.199.67:9735";
     public static String regLiquidityNodePubkey="0357702800d8926b9077a621bc04320b187b73bcecf381ae07d0a2b36defd1a715@43.138.107.248:9735";
 
 

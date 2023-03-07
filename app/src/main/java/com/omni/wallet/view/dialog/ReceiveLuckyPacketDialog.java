@@ -48,6 +48,7 @@ public class ReceiveLuckyPacketDialog {
     double randAmount;
     String amount;
     String number;
+    String besyWishes;
     LoadingDialog mLoadingDialog;
 
     public ReceiveLuckyPacketDialog(Context context) {
@@ -89,6 +90,7 @@ public class ReceiveLuckyPacketDialog {
                     time = jsonObject.get("time").toString();
                     amount = jsonObject.get("amt").toString();
                     number = jsonObject.get("totalNum").toString();
+                    besyWishes = jsonObject.get("bestWishes").toString();
                     showStepDecodePay();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -195,6 +197,7 @@ public class ReceiveLuckyPacketDialog {
         TextView amountPayTv = mAlertDialog.findViewById(R.id.tv_amount_success);
         TextView payTimeTv = mAlertDialog.findViewById(R.id.tv_time_success);
         TextView payDateTv = mAlertDialog.findViewById(R.id.tv_date_success);
+        TextView bestWishesTv = mAlertDialog.findViewById(R.id.tv_best_wishes);
         DecimalFormat df = new DecimalFormat("0.00######");
         if (mAssetId == 0) {
             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
@@ -207,6 +210,7 @@ public class ReceiveLuckyPacketDialog {
         }
         payTimeTv.setText(DateUtils.Hourmin(timestamp));
         payDateTv.setText(DateUtils.MonthDay(timestamp));
+        bestWishesTv.setText(besyWishes);
     }
 
     private void showStepFailed(String message) {

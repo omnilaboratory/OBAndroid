@@ -4,10 +4,13 @@ import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.view.popupwindow.SelectAssetTypePopupWindow;
+import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
 
 /**
  * 汉: 原子交换的弹窗
@@ -21,6 +24,8 @@ public class SwapPopupWindow {
     private Context mContext;
     private BasePopWindow mBasePopWindow;
     private TextView mPercent2Tv, mPercent3Tv;
+    SelectChannelBalancePopupWindow mSelectChannelBalancePopupWindow;
+    SelectAssetTypePopupWindow mSelectAssetTypePopupWindow;
 
     public SwapPopupWindow(Context context) {
         this.mContext = context;
@@ -39,6 +44,22 @@ public class SwapPopupWindow {
             mPercent3Tv = rootView.findViewById(R.id.tv_percent_3);
             mPercent2Tv.setSelected(true);
 
+            RelativeLayout selectAssetLayout = rootView.findViewById(R.id.layout_select_asset);
+            selectAssetLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSelectChannelBalancePopupWindow = new SelectChannelBalancePopupWindow(mContext);
+                    mSelectChannelBalancePopupWindow.show(v);
+                }
+            });
+            RelativeLayout assetLayout = rootView.findViewById(R.id.layout_asset_type);
+            assetLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSelectAssetTypePopupWindow = new SelectAssetTypePopupWindow(mContext);
+                    mSelectAssetTypePopupWindow.show(v);
+                }
+            });
             mPercent2Tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
