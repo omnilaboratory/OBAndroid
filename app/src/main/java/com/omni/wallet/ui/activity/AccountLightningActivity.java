@@ -602,12 +602,13 @@ public class AccountLightningActivity extends AppBaseActivity {
                 holder.setText(R.id.tv_asset_value, "0.00");
             } else {
                 DecimalFormat df = new DecimalFormat("0.00######");
+                DecimalFormat df1 = new DecimalFormat("0.00");
                 if (item.getPropertyid() == 0) {
                     holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-                    holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                    holder.setText(R.id.tv_asset_value, df1.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                 } else {
                     holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-                    holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                    holder.setText(R.id.tv_asset_value, df1.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                 }
             }
             if (item.getType() == 1) {

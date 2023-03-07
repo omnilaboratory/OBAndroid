@@ -58,10 +58,11 @@ public class TransactionsDetailsChainPopupWindow {
             TextView totalAmountTv = rootView.findViewById(R.id.tv_total_amount);
 
             DecimalFormat df = new DecimalFormat("0.00######");
+            DecimalFormat df1 = new DecimalFormat("0.00");
             if (item.getAmount() < 0) {
                 amountTv.setText(df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getAmount()).replace("-", ""))) + item.getTotalFees() + "";
-                totalAmountTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                 if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
                     typeTv.setText("PENDING");
                     typeIv.setImageResource(R.mipmap.icon_failed_red);
@@ -80,7 +81,7 @@ public class TransactionsDetailsChainPopupWindow {
             } else if (item.getAmount() > 0) {
                 amountTv.setText(df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getAmount()))) + item.getTotalFees() + "";
-                totalAmountTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                 if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
                     typeTv.setText("PENDING");
                     typeIv.setImageResource(R.mipmap.icon_failed_red);

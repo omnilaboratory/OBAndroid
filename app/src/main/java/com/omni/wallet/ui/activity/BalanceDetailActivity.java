@@ -369,20 +369,21 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mBalanceAccountExchange3Tv.setText("0.00");
         } else {
             DecimalFormat df = new DecimalFormat("0.00######");
+            DecimalFormat df1 = new DecimalFormat("0.00");
             mBalanceAccountTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
             mBalanceAccount1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
             mBalanceAccount2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
             mBalanceAccount3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000));
             if (assetId == 0) {
-                mBalanceAccountExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
-                mBalanceAccountExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
-                mBalanceAccountExchange2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
-                mBalanceAccountExchange3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                mBalanceAccountExchangeTv.setText(df1.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                mBalanceAccountExchange1Tv.setText(df1.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                mBalanceAccountExchange2Tv.setText(df1.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                mBalanceAccountExchange3Tv.setText(df1.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
             } else {
-                mBalanceAccountExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
-                mBalanceAccountExchange1Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
-                mBalanceAccountExchange2Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
-                mBalanceAccountExchange3Tv.setText(df.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                mBalanceAccountExchangeTv.setText(df1.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                mBalanceAccountExchange1Tv.setText(df1.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                mBalanceAccountExchange2Tv.setText(df1.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                mBalanceAccountExchange3Tv.setText(df1.format(Double.parseDouble(String.valueOf(balanceAccount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
             }
         }
     }

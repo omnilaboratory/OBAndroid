@@ -483,7 +483,7 @@ public class SendDialog implements Wallet.ScanSendListener {
         TextView feeAmountValueView = mAlertDialog.findViewById(R.id.tv_send_gas_fee_amount_value);
         TextView sendUsedValueView = mAlertDialog.findViewById(R.id.tv_send_used_value);
         if (assetId == 0) {
-            DecimalFormat df = new DecimalFormat("0.00######");
+            DecimalFormat df = new DecimalFormat("0.00");
             tokenImage.setImageResource(R.mipmap.icon_btc_logo_small);
             tokenTypeView.setText("BTC");
             tokenTypeView2.setText("BTC");
@@ -493,7 +493,7 @@ public class SendDialog implements Wallet.ScanSendListener {
             String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
             sendUsedValueView.setText(df.format(Double.parseDouble(sendUsedValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
-            DecimalFormat df = new DecimalFormat("0.00######");
+            DecimalFormat df = new DecimalFormat("0.00");
             tokenImage.setImageResource(R.mipmap.icon_usdt_logo_small);
             tokenTypeView.setText("dollar");
             tokenTypeView2.setText("dollar");
@@ -752,7 +752,7 @@ public class SendDialog implements Wallet.ScanSendListener {
         successAmountTv.setText(assetBalance);
         gasFeeAmountTv.setText(feeStr + "");
         if (assetId == 0) {
-            DecimalFormat df = new DecimalFormat("0.00######");
+            DecimalFormat df = new DecimalFormat("0.00");
             successTokenImageIv.setImageResource(R.mipmap.icon_btc_logo_small);
             successTokenTypeTv.setText("BTC");
             successAmountUnitTv.setText("BTC");
@@ -761,7 +761,7 @@ public class SendDialog implements Wallet.ScanSendListener {
             String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
             successTotalValueTv.setText(df.format(Double.parseDouble(sendUsedValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
-            DecimalFormat df = new DecimalFormat("0.00######");
+            DecimalFormat df = new DecimalFormat("0.00");
             successTokenImageIv.setImageResource(R.mipmap.icon_usdt_logo_small);
             successTokenTypeTv.setText("dollar");
             successAmountUnitTv.setText("dollar");
@@ -855,7 +855,7 @@ public class SendDialog implements Wallet.ScanSendListener {
             assetUnitTv.setText("BTC");
             failedAmountUnitTv.setText("BTC");
             failedGasFeeUnitTv.setText("satoshis");
-            DecimalFormat df = new DecimalFormat("0.00######");
+            DecimalFormat df = new DecimalFormat("0.00");
             String totalValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
             failedTotalValueTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
@@ -863,7 +863,7 @@ public class SendDialog implements Wallet.ScanSendListener {
             assetUnitTv.setText("dollar");
             failedAmountUnitTv.setText("dollar");
             failedGasFeeUnitTv.setText("satoshis");
-            DecimalFormat df = new DecimalFormat("0.00######");
+            DecimalFormat df = new DecimalFormat("0.00");
             String totalValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
             failedTotalValueTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
@@ -991,7 +991,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                         public void run() {
                             feeStr = resp.getFeeSat();
                             sendFeeTv.setText(feeStr + "");
-                            DecimalFormat df = new DecimalFormat("0.00######");
+                            DecimalFormat df = new DecimalFormat("0.00");
                             if (assetId == 0) {
                                 sendFeeExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                             } else {
