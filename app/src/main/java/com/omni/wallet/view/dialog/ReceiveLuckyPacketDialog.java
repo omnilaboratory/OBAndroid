@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
@@ -151,7 +152,7 @@ public class ReceiveLuckyPacketDialog {
                         @Override
                         public void run() {
                             try {
-                                LuckPkClient client = new LuckPkClient("43.138.107.248", 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
+                                LuckPkClient client = new LuckPkClient(ConstantInOB.usingBTCHostAddress, 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
                                 try {
                                     LuckPkOuterClass.GiveLuckPkReq payRequest = LuckPkOuterClass.GiveLuckPkReq.newBuilder()
                                             .setId(id)

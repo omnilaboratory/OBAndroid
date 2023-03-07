@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
@@ -285,7 +286,7 @@ public class CreateLuckyPacketPopupWindow {
                 }
                 mLoadingDialog.show();
                 try {
-                    LuckPkClient client = new LuckPkClient("43.138.107.248", 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
+                    LuckPkClient client = new LuckPkClient(ConstantInOB.usingBTCHostAddress, 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
                     try {
                         LuckPkOuterClass.LuckPk payRequest;
                         if (mAssetId == 0) {

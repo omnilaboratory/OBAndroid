@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
@@ -297,7 +298,7 @@ public class CreateInvoiceStepOnePopupWindow {
                                     Log.e(TAG + " keyString", keyString);
                                     // Method of collecting invoices on behalf
                                     try {
-                                        LuckPkClient client = new LuckPkClient("43.138.107.248", 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
+                                        LuckPkClient client = new LuckPkClient(ConstantInOB.usingBTCHostAddress, 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
                                         try {
                                             LuckPkOuterClass.spay payRequest = LuckPkOuterClass.spay.newBuilder().setUserInvoice(resp.getPaymentRequest()).build();
                                             try {
