@@ -51,6 +51,11 @@
             android:name=".ui.activity.UnlockActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activity.InitWalletMenuActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <!-- Set Pass页面 -->
         <!-- ForgetPwd页面 -->
         <activity

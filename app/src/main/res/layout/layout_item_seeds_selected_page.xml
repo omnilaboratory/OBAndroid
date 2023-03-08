@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/pageRootView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+    <GridView
+        android:id="@+id/seed_select_grid_view_page"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_180"
+        android:clickable="false"
+        android:numColumns="3"
+        android:verticalSpacing="@dimen/main_10"
+        android:paddingBottom="@dimen/main_10"/>
+</LinearLayout>
+

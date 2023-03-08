@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,17 +17,21 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.client.LuckPkClient;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.GetRequestHeader;
 import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.UriUtil;
+import com.omni.wallet.view.dialog.CreateNewChannelTipDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
 import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
@@ -35,9 +40,13 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
 
+import javax.net.ssl.SSLException;
+
+import io.grpc.StatusRuntimeException;
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
+import toolrpc.LuckPkOuterClass;
 
 /**
  * 汉: 创建发票的步骤一弹窗
@@ -147,10 +156,12 @@ public class CreateInvoiceStepOnePopupWindow {
                             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
                             assetTypeTv.setText("BTC");
                             amountUnitTv.setText("BTC");
+                            amountEdit.setText("0");
                         } else {
                             assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
                             assetTypeTv.setText("dollar");
                             amountUnitTv.setText("dollar");
+                            amountEdit.setText("0");
                         }
                         mAssetId = item.getPropertyid();
                         getChannelBalance(mAssetId);
@@ -162,7 +173,7 @@ public class CreateInvoiceStepOnePopupWindow {
         amountMaxTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                amountEdit.setText(assetBalanceMax);
+                amountEdit.setText(canReceive);
             }
         });
         timeButton.setOnClickListener(new View.OnClickListener() {
@@ -218,7 +229,15 @@ public class CreateInvoiceStepOnePopupWindow {
                 }
                 // TODO: 2022/11/23 最大值最小值的判断需要完善一下
                 if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canReceive) * 100000000) > 0) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
+//                    ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
+                    CreateNewChannelTipDialog mCreateNewChannelTipDialog = new CreateNewChannelTipDialog(mContext);
+                    mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
+                        @Override
+                        public void onClick() {
+                            mBasePopWindow.dismiss();
+                        }
+                    });
+                    mCreateNewChannelTipDialog.show();
                     return;
                 }
                 if (StringUtils.isEmpty(timeInput)) {
@@ -272,14 +291,38 @@ public class CreateInvoiceStepOnePopupWindow {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    EventBus.getDefault().post(new CreateInvoiceEvent());
-                                    qrCodeUrl = UriUtil.generateLightningUri(resp.getPaymentRequest());
-                                    mLoadingDialog.dismiss();
-                                    rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.lv_create_invoice_success).setVisibility(View.VISIBLE);
-                                    rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-                                    rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                    showStepSuccess(rootView);
+                                    GetRequestHeader getRequestHeader = new GetRequestHeader(mContext);
+                                    String tslString = getRequestHeader.getTLSString();
+                                    String keyString = getRequestHeader.getTLSKeyString();
+                                    Log.e(TAG + " tslString", tslString);
+                                    Log.e(TAG + " keyString", keyString);
+                                    // Method of collecting invoices on behalf
+                                    try {
+                                        LuckPkClient client = new LuckPkClient(ConstantInOB.usingBTCHostAddress, 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
+                                        try {
+                                            LuckPkOuterClass.spay payRequest = LuckPkOuterClass.spay.newBuilder().setUserInvoice(resp.getPaymentRequest()).build();
+                                            try {
+                                                LuckPkOuterClass.spay payResponse = client.blockingStub.createSpay(payRequest);
+                                                LogUtils.e(TAG + "payResponse.getServInvoice()", payResponse.getServInvoice());
+                                                EventBus.getDefault().post(new CreateInvoiceEvent());
+                                                qrCodeUrl = UriUtil.generateLightningUri(payResponse.getServInvoice());
+                                                mLoadingDialog.dismiss();
+                                                rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.GONE);
+                                                rootView.findViewById(R.id.lv_create_invoice_success).setVisibility(View.VISIBLE);
+                                                rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                                rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                                showStepSuccess(rootView);
+                                            } catch (StatusRuntimeException e) {
+                                                e.printStackTrace();
+                                                LogUtils.e(TAG, e.getMessage());
+                                                return;
+                                            }
+                                        } finally {
+                                            client.shutdown();
+                                        }
+                                    } catch (SSLException | InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             });
                         } catch (InvalidProtocolBufferException e) {
@@ -316,6 +359,7 @@ public class CreateInvoiceStepOnePopupWindow {
         timeUnitSuccessTv.setText(timeType);
         paymentSuccessTv.setText(qrCodeUrl);
         Bitmap mQRBitmap = CodeUtils.createQRCode(qrCodeUrl, DisplayUtil.dp2px(mContext, 100));
+//        Bitmap mQRBitmap = CodeUtils.createQRCodeBitmap(qrCodeUrl, DisplayUtil.dp2px(mContext, 50), DisplayUtil.dp2px(mContext, 50),"UTF-8","L", "1", Color.BLACK, Color.WHITE);;
         qrCodeIv.setImageBitmap(mQRBitmap);
 
         copyIv.setOnClickListener(new View.OnClickListener() {

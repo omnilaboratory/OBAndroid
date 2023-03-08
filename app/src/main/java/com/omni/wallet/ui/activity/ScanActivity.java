@@ -24,6 +24,7 @@ import com.omni.wallet.thirdsupport.zxing.OnCaptureCallback;
 import com.omni.wallet.thirdsupport.zxing.ViewfinderView;
 import com.omni.wallet.thirdsupport.zxing.camera.CameraConfig;
 import com.omni.wallet.utils.Bech32;
+import com.omni.wallet.utils.ValidateBitcoinAddress;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -179,6 +180,13 @@ public class ScanActivity extends AppBaseActivity {
                     event.setData(result);
                     EventBus.getDefault().post(event);
                     finish();
+                } else if (result.contains("amt")) {
+                    ScanResultEvent event = new ScanResultEvent();
+                    event.setCode(scanCode);
+                    event.setType("receiveLuckyPacket");
+                    event.setData(result);
+                    EventBus.getDefault().post(event);
+                    finish();
                 } else if (nodeUri != null) { //开通通道
                     ScanResultEvent event = new ScanResultEvent();
                     event.setCode(scanCode);
@@ -194,13 +202,21 @@ public class ScanActivity extends AppBaseActivity {
                             mCaptureHelper.restartPreviewAndDecode();
                         }
                     }, 2500);
-                } else { //链上支付
+                } else if (ValidateBitcoinAddress.validateBitcoinAddress(result)) { //链上支付
                     ScanResultEvent event = new ScanResultEvent();
                     event.setCode(scanCode);
                     event.setType("send");
                     event.setData(result);
                     EventBus.getDefault().post(event);
                     finish();
+                } else {
+                    ToastUtils.showToast(mContext, "Please scan the correct QR code");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mCaptureHelper.restartPreviewAndDecode();
+                        }
+                    }, 2500);
                 }
             } else {
                 ToastUtils.showToast(mContext, "Please scan the correct QR code");

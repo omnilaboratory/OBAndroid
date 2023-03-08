@@ -3,7 +3,6 @@ package com.omni.wallet.view.popupwindow;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,13 +17,11 @@ import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.event.LockEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CopyUtil;
-import com.omni.wallet.utils.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 
 import lnrpc.LightningOuterClass;
-import lnrpc.Stateservice;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
@@ -179,60 +176,18 @@ public class NodeInfoPopupWindow {
     }
 
     public void startNode() {
-        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.neutrinoRegTestConfig, new Callback() {
+        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startOnError------------------" + e.getMessage());
-                if (e.getMessage().contains("lnd already started")) {
-                    Stateservice.GetStateRequest getStateRequest = Stateservice.GetStateRequest.newBuilder().build();
-                    Obdmobile.getState(getStateRequest.toByteArray(), new Callback() {
-                        @Override
-                        public void onError(Exception e) {
-                            LogUtils.e(TAG, "------------------getStateOnError------------------" + e.getMessage());
-                            startNode();
-                        }
-
-                        @Override
-                        public void onResponse(byte[] bytes) {
-                            if (bytes == null) {
-                                EventBus.getDefault().post(new LockEvent());
-                                mBasePopWindow.dismiss();
-                                mLoadingDialog.dismiss();
-                                return;
-                            }
-                            try {
-                                Stateservice.GetStateResponse getStateResponse = Stateservice.GetStateResponse.parseFrom(bytes);
-                                LogUtils.e(TAG, "------------------getStateOnResponse------------------" + getStateResponse);
-                                Stateservice.WalletState state = getStateResponse.getState();
-                                Log.e(TAG, state.toString());
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        switch (state) {
-                                            case LOCKED:
-                                                EventBus.getDefault().post(new LockEvent());
-                                                mBasePopWindow.dismiss();
-                                                mLoadingDialog.dismiss();
-                                                break;
-                                            case UNLOCKED:
-                                            case RPC_ACTIVE:
-                                            case SERVER_ACTIVE:
-                                                mBasePopWindow.dismiss();
-                                                mLoadingDialog.dismiss();
-                                                break;
-                                        }
-                                    }
-                                });
-                            } catch (InvalidProtocolBufferException ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-                    });
-                } else if (e.getMessage().equals("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
-                    EventBus.getDefault().post(new LockEvent());
-                    mBasePopWindow.dismiss();
-                    mLoadingDialog.dismiss();
-                }
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        EventBus.getDefault().post(new LockEvent());
+                        mBasePopWindow.dismiss();
+                        mLoadingDialog.dismiss();
+                    }
+                });
             }
 
             @Override
@@ -241,37 +196,13 @@ public class NodeInfoPopupWindow {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        subscribeWalletState();
+                        EventBus.getDefault().post(new LockEvent());
+                        mBasePopWindow.dismiss();
+                        mLoadingDialog.dismiss();
                     }
                 });
             }
         });
-    }
-
-    public void subscribeWalletState() {
-        WalletState.WalletStateCallback walletStateCallback = walletState -> {
-            Log.e(TAG, String.valueOf(walletState));
-            switch (walletState) {
-                case 0:
-                case 255:
-                case 1:
-                case 2:
-                case 3:
-                    EventBus.getDefault().post(new LockEvent());
-                    mBasePopWindow.dismiss();
-                    mLoadingDialog.dismiss();
-                    break;
-                case 4:
-                    mBasePopWindow.dismiss();
-                    mLoadingDialog.dismiss();
-                default:
-                    EventBus.getDefault().post(new LockEvent());
-                    mBasePopWindow.dismiss();
-                    mLoadingDialog.dismiss();
-            }
-        };
-        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
-        WalletState.getInstance().subscribeWalletState(mContext);
     }
 
     public void release() {

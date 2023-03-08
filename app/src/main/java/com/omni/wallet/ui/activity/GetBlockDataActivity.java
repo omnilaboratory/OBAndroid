@@ -23,7 +23,7 @@ public class GetBlockDataActivity extends AppBaseActivity {
                 .setRightClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        switchActivity(AccountLightningActivity.class);
+                        switchActivityFinish(AccountLightningActivity.class);
                     }
                 })
                 .build();

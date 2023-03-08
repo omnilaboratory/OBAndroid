@@ -124,7 +124,7 @@ public class UnlockActivityBack extends AppBaseActivity {
 
                 @Override
                 public void onResponse(byte[] bytes) {
-                    switchActivity(AccountLightningActivity.class);
+                    switchActivityFinish(AccountLightningActivity.class);
 
                 }
             });

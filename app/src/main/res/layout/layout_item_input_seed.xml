@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:text="1."
-        android:textSize="@dimen/main_20"
+        android:textSize="@dimen/main_14"
         android:lineHeight="@dimen/main_30"
         android:textColor="@color/color_white"
         android:textAlignment="textEnd"
@@ -30,6 +30,7 @@
         android:text="----"
         android:textColor="@color/color_white"
         android:maxLines="1"
-        android:textSize="@dimen/main_20"
+        android:singleLine="true"
+        android:textSize="@dimen/main_14"
         android:textStyle="bold" />
 </LinearLayout>

@@ -3,10 +3,12 @@ package com.omni.wallet.base;
 import android.content.Context;
 
 public class ConstantInOB {
+    public static int beforeHomePageRequestCode = 9;
     public static String basePath = "";
     public static String regTestLogPath = "/logs/bitcoin/regtest/lnd.log";
     public static String testLogPath = "/logs/bitcoin/testnet/lnd.log";
-    public static String downloadDirectory = "/data/chain/bitcoin/regtest/";
+    public static String downloadDirectoryRegTest = "/data/chain/bitcoin/regtest/";
+    public static String downloadDirectoryTestNet = "/data/chain/bitcoin/testnet/";
     public static String OMNIHostAddressRegTest = "43.138.107.248";
     public static String OMNIHostAddressPortRegTest = "43.138.107.248:18332";
     public static String BTCHostAddressRegTest = "43.138.107.248";
@@ -19,20 +21,27 @@ public class ConstantInOB {
     public static String regFilterHeader = "reg_filter_headers";
     public static String downloadBaseUrl = "https://cache.oblnd.top/neutrino-regtest/";
     public static String downloadBaseUrlTestNet = "https://cache.oblnd.top/neutrino-testnet/";
-    public static String TEST_NET_BTC_HOST_ADDRESS="192.144.199.67 ";
+    public static String TEST_NET_BTC_HOST_ADDRESS="192.144.199.67";
     public static String TEST_NET_OMNI_HOST_ADDRESS_PORT="192.144.199.67:18332";
-
+    public static String testLiquidityNodePubkey="025af4448f55bf1e6de1ae0486d4d103427c4e559a62ed7f8035bb1ed1af734f61@192.144.199.67:9735";
+    public static String regLiquidityNodePubkey="0357702800d8926b9077a621bc04320b187b73bcecf381ae07d0a2b36defd1a715@43.138.107.248:9735";
 
 
     public static final String neutrinoRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=neutrino " +
+            "--enable-upfront-shutdown " +
+            "--tlsdisableautofill " +
+            "--norest "+
             "--neutrino.connect=" + BTCHostAddressRegTest +
-            "--omnicoreproxy.rpchost=" + OMNIHostAddressPortRegTest;
+            " --omnicoreproxy.rpchost=" + OMNIHostAddressPortRegTest ;
 
     public static final String normalRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
+            "--enable-upfront-shutdown " +
+            "--tlsdisableautofill " +
+            "--norest "+
             "--omnicoreproxy.rpchost=" + BTCHostAddressRegTest + ":18332 " +
             "--omnicoreproxy.zmqpubrawblock=tcp://" + BTCHostAddressRegTest + ":28332 " +
             "--omnicoreproxy.zmqpubrawtx=tcp://" + BTCHostAddressRegTest + ":28333";
@@ -40,19 +49,28 @@ public class ConstantInOB {
     public static final String neutrinoTestNetConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.testnet --bitcoin.node=neutrino " +
+            "--enable-upfront-shutdown " +
+            "--tlsdisableautofill " +
+            "--norest "+
             "--neutrino.connect=" + TEST_NET_BTC_HOST_ADDRESS +
-            "--omnicoreproxy.rpchost=" + TEST_NET_OMNI_HOST_ADDRESS_PORT;
+            " --omnicoreproxy.rpchost=" + TEST_NET_OMNI_HOST_ADDRESS_PORT;
 
 //    testnet config
 
     /*public static final String usingNeutrinoConfig = neutrinoTestNetConfig;
     public static final String usingDownloadBaseUrl = downloadBaseUrlTestNet;
-    public static final String usingBTCHostAddress = TEST_NET_BTC_HOST_ADDRESS;*/
+    public static final String usingBTCHostAddress = TEST_NET_BTC_HOST_ADDRESS;
+    public static final String usingLogPath = testLogPath;
+    public static final String usingDownloadDirectory = downloadDirectoryTestNet;
+    public static final String usingLiquidityNodePubkey = testLiquidityNodePubkey;*/
 
 //    regTest neutrino config
     public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
     public static final String usingDownloadBaseUrl = downloadBaseUrl;
     public static final String usingBTCHostAddress = BTCHostAddressRegTest;
+    public static final String usingLogPath = regTestLogPath;
+    public static final String usingDownloadDirectory = downloadDirectoryRegTest;
+    public static final String usingLiquidityNodePubkey = regLiquidityNodePubkey;
 
     public static final long SECOND_MILLIS = 1000;
     public static final long MINUTE_MILLIS = 60 * SECOND_MILLIS;
@@ -70,7 +88,7 @@ public class ConstantInOB {
     }
 
     public String getRegTestLogPath() {
-        return basePath + regTestLogPath;
+        return basePath + usingLogPath;
     }
 
     public String getTestLogPath() {
@@ -78,18 +96,20 @@ public class ConstantInOB {
     }
 
     public String getBlockHeaderBinPath() {
-        return basePath + downloadDirectory + "/" + blockHeaderBin;
+        return basePath + usingDownloadDirectory + "/" + blockHeaderBin;
     }
 
     public String getNeutrinoDBPath() {
-        return basePath + downloadDirectory + "/" + neutrinoDB;
+        return basePath + usingDownloadDirectory + "/" + neutrinoDB;
     }
 
     public String getRegFilterHeaderBinPath() {
-        return basePath + downloadDirectory + "/" + regFilterHeaderBin;
+        return basePath + usingDownloadDirectory + "/" + regFilterHeaderBin;
     }
 
     public String getDownloadDirectoryPath() {
-        return basePath + downloadDirectory;
+        return basePath + usingDownloadDirectory;
     }
+
+
 }

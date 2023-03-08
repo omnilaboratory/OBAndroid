@@ -10,7 +10,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="60dp"
         android:layout_marginEnd="32dp"
@@ -18,7 +18,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:orientation="vertical"
@@ -33,7 +33,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/create_step_one_notify_one"
                 android:textColor="#FF4A92FF"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -43,7 +43,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/create_step_one_desc_one"
                 android:textColor="#FF4A92FF"
-                android:textSize="18sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/textView"
@@ -53,644 +53,732 @@
                 android:gravity="center_vertical"
                 android:text="@string/create_step_one_desc_two"
                 android:textColor="#FF4A92FF"
-                android:textSize="18sp" />
+                android:textSize="14sp" />
         </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginTop="15dp"
+        android:layout_weight="1"
         android:elevation="10dp"
         android:gravity="center"
         >
-        <LinearLayout
-            android:id="@+id/seed_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp"
+        <ScrollView
             android:background="@drawable/bg_create_content_green"
-            android:elevation="10dp"
-            android:translationZ="@dimen/main_10">
+            android:padding="@dimen/main_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
             <LinearLayout
+                android:id="@+id/seed_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/main_10"
-                android:paddingBottom="@dimen/main_10"
-                android:baselineAligned="false">
+                android:elevation="10dp"
+                android:orientation="vertical"
+
+                android:padding="10dp"
+                android:translationZ="@dimen/main_10">
+
                 <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:baselineAligned="false"
                     android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="01."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_1"
-                        android:layout_weight="1"
+                    android:paddingTop="@dimen/main_10"
+                    android:paddingBottom="@dimen/main_10">
+
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="01."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="02."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="03."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:baselineAligned="false"
                     android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="02."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_2"
-                        android:layout_weight="1"
+                    android:paddingTop="@dimen/main_10"
+                    android:paddingBottom="@dimen/main_10">
+
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="04."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_4"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="05."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="06."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_6"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:baselineAligned="false"
                     android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="03."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_3"
-                        android:layout_weight="1"
+                    android:paddingTop="@dimen/main_10"
+                    android:paddingBottom="@dimen/main_10">
+
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="07."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_7"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="08."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_8"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="09."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_9"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:paddingTop="@dimen/main_10"
+                    android:paddingBottom="@dimen/main_10">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="10."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_10"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="11."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_11"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="12."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_12"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:paddingTop="@dimen/main_10"
+                    android:paddingBottom="@dimen/main_10">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="13."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_13"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="14."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_14"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="15."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_15"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:paddingTop="@dimen/main_10"
+                    android:paddingBottom="@dimen/main_10">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="16."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_16"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="17."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_17"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="18."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_18"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:paddingTop="@dimen/main_10"
+                    android:paddingBottom="@dimen/main_10">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="19."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_19"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="20."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_20"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="21."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_21"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:paddingTop="@dimen/main_10"
+                    android:paddingBottom="@dimen/main_10">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="22."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_22"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="23."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_23"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:text="24."
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+
+                        <TextView
+                            android:id="@+id/seed_text_24"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/main_5"
+                            android:layout_weight="1"
+                            android:text="about"
+                            android:textColor="@color/color_white"
+                            android:textSize="@dimen/main_16" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/main_10"
-                android:paddingBottom="@dimen/main_10"
-                android:baselineAligned="false">
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="04."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_4"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="05."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_5"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="06."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_6"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/main_10"
-                android:paddingBottom="@dimen/main_10"
-                android:baselineAligned="false">
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="07."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_7"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="08."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_8"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="09."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_9"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/main_10"
-                android:paddingBottom="@dimen/main_10"
-                android:baselineAligned="false">
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="10."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_10"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="11."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_11"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="12."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_12"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/main_10"
-                android:paddingBottom="@dimen/main_10"
-                android:baselineAligned="false">
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="13."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_13"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="14."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_14"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="15."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_15"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/main_10"
-                android:paddingBottom="@dimen/main_10"
-                android:baselineAligned="false">
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="16."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_16"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="17."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_17"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="18."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_18"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/main_10"
-                android:paddingBottom="@dimen/main_10"
-                android:baselineAligned="false">
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="19."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_19"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="20."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_20"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="21."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_21"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/main_10"
-                android:paddingBottom="@dimen/main_10"
-                android:baselineAligned="false">
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="22."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_22"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="23."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_23"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="24."
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                    <TextView
-                        android:id="@+id/seed_text_24"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_white"
-                        android:text="about"
-                        android:textSize="@dimen/main_16"
-                        android:layout_marginEnd="@dimen/main_5"/>
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
+        </ScrollView>
+
     </LinearLayout>
 
     <RelativeLayout

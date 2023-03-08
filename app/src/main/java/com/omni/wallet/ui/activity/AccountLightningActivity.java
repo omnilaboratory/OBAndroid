@@ -1,11 +1,14 @@
 package com.omni.wallet.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,29 +18,42 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.baselibrary.view.refreshView.RefreshLayout;
+import com.omni.wallet.data.AssetsActions;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
+import com.omni.wallet.entity.event.CreateInvoiceEvent;
+import com.omni.wallet.entity.event.InitChartEvent;
 import com.omni.wallet.entity.event.LockEvent;
 import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.entity.event.OpenChannelEvent;
+import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
+import com.omni.wallet.entity.event.RebootEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.entity.event.SelectAccountEvent;
 import com.omni.wallet.entity.event.SendSuccessEvent;
+import com.omni.wallet.entity.event.UpdateAssetsDataEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.framelibrary.view.refreshlayout.LayoutRefreshView;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.GetResourceUtil;
+import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.AssetTrendChartView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
+import com.omni.wallet.view.dialog.ReceiveLuckyPacketDialog;
 import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.AccountManagePopupWindow;
 import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
@@ -50,8 +66,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -72,6 +90,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     TextView mNetworkTypeTv;
     @BindView(R.id.iv_menu)
     ImageView mMenuIv;
+    @BindView(R.id.refresh_layout_account_lightning)
+    public RefreshLayout mRefreshLayout;
     @BindView(R.id.tv_balance_value)
     TextView mBalanceValueTv;
     @BindView(R.id.tv_price_change)
@@ -84,6 +104,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     AssetTrendChartView mAssetTrendChartView;
     @BindView(R.id.recycler_assets_list_block)
     public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock(The Recycler View Block for Assets List)
+    @BindView(R.id.iv_percent_change)
+    ImageView mPercentChangeView;
     private List<ListAssetItemEntity> blockData = new ArrayList<>();
     private List<ListAssetItemEntity> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
@@ -108,6 +130,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     long balanceAmount;
     private String pubkey;
 
+    Handler handler = new Handler();
+
     @Override
     protected View getStatusBarTopView() {
         return mTopView;
@@ -125,74 +149,27 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        // Initialize pull-down refresh
+        // 初始化下拉刷新
+        mRefreshLayout.setRefreshListener(new MyRefreshListener());
+        mRefreshLayout.addRefreshHeader(new LayoutRefreshView());
+//        mRefreshLayout.autoRefresh();
+        //
+        EventBus.getDefault().post(new CloseUselessActivityEvent());
         mLoadingDialog = new LoadingDialog(mContext);
-        DecimalFormat df = new DecimalFormat("0.00");
-        mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext))) + "%");
         mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
         initRecyclerView();
-        setAssetTrendChartViewShow();
     }
 
-    private void initRecyclerView() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerViewBlock.setLayoutManager(new LinearLayoutManager(mContext));
-        mAdapter = new MyAdapter(mContext, allData, R.layout.layout_item_assets_list);
-        mRecyclerViewBlock.setAdapter(mAdapter);
-    }
-
-    // TODO: 2023/1/12 待完善
-    private void setAssetTrendChartViewShow() {
-        List<AssetTrendEntity> list = new ArrayList<>();
-        AssetTrendEntity entity1 = new AssetTrendEntity();
-        entity1.setTime("Jan");
-        entity1.setAsset("5");
-        AssetTrendEntity entity2 = new AssetTrendEntity();
-        entity2.setTime("Feb");
-        entity2.setAsset("2");
-        AssetTrendEntity entity3 = new AssetTrendEntity();
-        entity3.setTime("Mar");
-        entity3.setAsset("7");
-        AssetTrendEntity entity4 = new AssetTrendEntity();
-        entity4.setTime("Apr");
-        entity4.setAsset("2");
-        AssetTrendEntity entity5 = new AssetTrendEntity();
-        entity5.setTime("May");
-        entity5.setAsset("4");
-        AssetTrendEntity entity6 = new AssetTrendEntity();
-        entity6.setTime("Jun");
-        entity6.setAsset("5");
-        AssetTrendEntity entity7 = new AssetTrendEntity();
-        entity7.setTime("Jul");
-        entity7.setAsset("8");
-        AssetTrendEntity entity8 = new AssetTrendEntity();
-        entity8.setTime("Aug");
-        entity8.setAsset("4");
-        AssetTrendEntity entity9 = new AssetTrendEntity();
-        entity9.setTime("Sep");
-        entity9.setAsset("6");
-        AssetTrendEntity entity10 = new AssetTrendEntity();
-        entity10.setTime("Oct");
-        entity10.setAsset("7");
-        AssetTrendEntity entity11 = new AssetTrendEntity();
-        entity11.setTime("Nov");
-        entity11.setAsset("10");
-        AssetTrendEntity entity12 = new AssetTrendEntity();
-        entity12.setTime("Dec");
-        entity12.setAsset("7");
-        list.add(entity1);
-        list.add(entity2);
-        list.add(entity3);
-        list.add(entity4);
-        list.add(entity5);
-        list.add(entity6);
-        list.add(entity7);
-        list.add(entity8);
-        list.add(entity9);
-        list.add(entity10);
-        list.add(entity11);
-        list.add(entity12);
-        mAssetTrendChartView.setViewShow(list);
+    /**
+     * Load the refresh listener
+     * 加载刷新的监听
+     */
+    private class MyRefreshListener implements RefreshLayout.OnRefreshListener {
+        @Override
+        public void onRefresh() {
+            getAssetAndBtcData();
+        }
     }
 
     @Override
@@ -200,6 +177,11 @@ public class AccountLightningActivity extends AppBaseActivity {
         EventBus.getDefault().register(this);
         getInfo();
         setDefaultAddress();
+        runOnUiThread(()->{
+//            AssetsActions.initOrUpdateAction(mContext,actionCallBack);
+            setAssetTrendChartViewShow();
+
+        });
     }
 
     @Override
@@ -225,6 +207,74 @@ public class AccountLightningActivity extends AppBaseActivity {
             }
         });
     }
+
+    private void initRecyclerView() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerViewBlock.setLayoutManager(new LinearLayoutManager(mContext));
+        mAdapter = new MyAdapter(mContext, allData, R.layout.layout_item_assets_list);
+        mRecyclerViewBlock.setAdapter(mAdapter);
+    }
+
+    // TODO: 2023/1/12 待完善
+    @SuppressLint("LongLogTag")
+    private void setAssetTrendChartViewShow() {
+        // get data for line chart
+        Map<String, Object> data = AssetsActions.getDataForChart(mContext);
+        Log.e(TAG+"setAssetTrendChartViewShow",data.toString());
+        List<Map<String, Object>> allList;
+        try {
+            allList = (List<Map<String, Object>>) data.get("chartData");
+            List<AssetTrendEntity> list = new ArrayList<>();
+            Log.e(TAG, "allList:" + allList.toString());
+            if (allList.size() == 1) {
+                AssetTrendEntity entity = new AssetTrendEntity();
+                String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills() - ConstantInOB.DAY_MILLIS);
+                entity.setTime(date);
+                entity.setAsset(Double.toString(0));
+                list.add(entity);
+            }
+            for (int i = 0; i < allList.size(); i++) {
+                AssetTrendEntity entity = new AssetTrendEntity();
+                Map<String, Object> item = allList.get(i);
+                String date = TimeFormatUtil.formatDateLong((Long) item.get("date"));
+                entity.setTime(date);
+                entity.setAsset(Double.toString((Double) item.get("value")));
+                list.add(entity);
+            }
+            mAssetTrendChartView.setViewShow(list);
+            // set text for change percent and now assets value
+            Map<String,Object> changeData = (Map<String, Object>) data.get("changeData");
+            assert changeData != null;
+            Log.e(TAG + "changeData",changeData.toString());
+            double percent = 0.0;
+            if (changeData.get("percent") != null){
+                percent = (double) changeData.get("percent");
+            }
+            @SuppressLint("DefaultLocale") String percentString = String.format("%.2f", percent) + "%";
+            Log.e(TAG, "setAssetTrendChartViewShow: " + percentString);
+            double value = 0.0;
+            if (changeData.get("value")!=null){
+                value = (double) changeData.get("value");
+            }
+            @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f", value);
+            mPriceChangeTv.setText(percentString);
+            if (percent>0){
+                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_06d78f));
+                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_up_green);
+            }else{
+                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_F13A3A));
+                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_down_red);
+            }
+            mBalanceValueTv.setText(valueString);
+            // Notify the page to update data
+            EventBus.getDefault().post(new UpdateAssetsDataEvent());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     /**
      * Get wallet related information
@@ -289,13 +339,18 @@ public class AccountLightningActivity extends AppBaseActivity {
                         @Override
                         public void run() {
                             if (resp.getConfirmedBalance() == 0) {
-                                mBalanceValueTv.setText("$ 0.00");
                                 mBalanceAmountTv.setText("My account 0.00 balance");
                             } else {
                                 DecimalFormat df = new DecimalFormat("0.00######");
-                                mBalanceValueTv.setText("$ " + df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                                User.getInstance().setBalanceAmount(mContext, resp.getConfirmedBalance());
                                 balanceAmount = resp.getConfirmedBalance();
                                 mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
+                                /*BTCData btcData = new BTCData(mContext);
+                                try {
+                                    btcData.updateAmount(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }*/
                             }
                             blockData.clear();
                             ListAssetItemEntity entity = new ListAssetItemEntity();
@@ -310,6 +365,9 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     mAdapter.notifyDataSetChanged();
                                 }
                             });
+                            if (mRefreshLayout != null) {
+                                mRefreshLayout.stopRefresh();
+                            }
                         }
                     });
                     /**
@@ -335,11 +393,24 @@ public class AccountLightningActivity extends AppBaseActivity {
                                 LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
                                 blockData.clear();
                                 for (int i = 0; i < resp.getListList().size(); i++) {
+
                                     ListAssetItemEntity entity = new ListAssetItemEntity();
                                     entity.setAmount(resp.getListList().get(i).getBalance());
                                     entity.setPropertyid(resp.getListList().get(i).getPropertyid());
                                     entity.setType(1);
                                     blockData.add(entity);
+                                    /*switch (Long.toString(resp.getListList().get(i).getPropertyid())){
+                                        case "2147483651":
+                                            DollarData dollarData = new DollarData(mContext);
+                                            try {
+                                                dollarData.updateAmount(resp.getListList().get(i).getBalance() / 100000000);
+                                            } catch (ParseException e) {
+                                                e.printStackTrace();
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }*/
                                     getChannelBalance(resp.getListList().get(i).getPropertyid());
                                 }
                                 allData.addAll(blockData);
@@ -402,6 +473,9 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     mAdapter.notifyDataSetChanged();
                                 }
                             });
+                            if (mRefreshLayout != null) {
+                                mRefreshLayout.stopRefresh();
+                            }
                         }
                     });
                 } catch (InvalidProtocolBufferException e) {
@@ -528,12 +602,13 @@ public class AccountLightningActivity extends AppBaseActivity {
                 holder.setText(R.id.tv_asset_value, "0.00");
             } else {
                 DecimalFormat df = new DecimalFormat("0.00######");
+                DecimalFormat df1 = new DecimalFormat("0.00");
                 if (item.getPropertyid() == 0) {
                     holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-                    holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                    holder.setText(R.id.tv_asset_value, df1.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                 } else {
                     holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-                    holder.setText(R.id.tv_asset_value, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                    holder.setText(R.id.tv_asset_value, df1.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                 }
             }
             if (item.getType() == 1) {
@@ -738,6 +813,10 @@ public class AccountLightningActivity extends AppBaseActivity {
                         });
                     }
                 });
+            } else if (event.getType().equals("receiveLuckyPacket")) {
+                LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + event.getData());
+                ReceiveLuckyPacketDialog mReceiveLuckyPacketDialog = new ReceiveLuckyPacketDialog(mContext);
+                mReceiveLuckyPacketDialog.show(event.getData());
             } else if (event.getType().equals("openChannel")) {
                 mCreateChannelDialog = new CreateChannelDialog(mContext);
                 mCreateChannelDialog.show(balanceAmount, User.getInstance().getWalletAddress(mContext), event.getData());
@@ -789,8 +868,6 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBtcAndUsdtEvent(BtcAndUsdtEvent event) {
-        DecimalFormat df = new DecimalFormat("0.00");
-        mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext))) + "%");
         getAssetAndBtcData();
     }
 
@@ -800,8 +877,24 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateBalanceEvent(UpdateBalanceEvent event) {
-        DecimalFormat df = new DecimalFormat("0.00");
-        mPriceChangeTv.setText(df.format(Double.parseDouble(User.getInstance().getBtcPriceChange(mContext))) + "%");
+        getAssetAndBtcData();
+    }
+
+    /**
+     * 支付发票成功的消息通知监听
+     * Message notification monitoring after pay invoice success
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPayInvoiceSuccessEvent(PayInvoiceSuccessEvent event) {
+        getAssetAndBtcData();
+    }
+
+    /**
+     * 收取红包后的消息通知监听
+     * Message notification monitoring after receive lucky packet
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCreateInvoiceEvent(CreateInvoiceEvent event) {
         getAssetAndBtcData();
     }
 
@@ -811,7 +904,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginOutEvent(LoginOutEvent event) {
-        switchActivityFinish(SplashActivity.class);
+        finish();
     }
 
     /**
@@ -821,6 +914,15 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLockEvent(LockEvent event) {
         switchActivityFinish(UnlockActivity.class);
+    }
+
+    /**
+     * 重启节点后的消息通知监听
+     * Message notification monitoring after reboot
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRebootEvent(RebootEvent event) {
+        finish();
     }
 
     @Override
@@ -852,4 +954,167 @@ public class AccountLightningActivity extends AppBaseActivity {
             mCreateChannelDialog.release();
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateAssetsDataOver(UpdateAssetsDataEvent event) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                AssetsActions.initOrUpdateAction(mContext);
+            }
+        };
+        handler.postDelayed(runnable,60000);
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onInitChartOver(InitChartEvent event) {
+        setAssetTrendChartViewShow();
+    }
+
+
+    /**
+     * Test btn click event,will delete when test end;
+     */
+
+    /*@OnClick(R.id.one_day_data_btn)
+    public void clickData1() {
+        AssetsTestData.oneDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.four_day_data_btn)
+    public void clickData2() {
+        AssetsTestData.fourDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.ten_day_data_btn)
+    public void clickData10() {
+        AssetsTestData.tenDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.thirteen_day_data_btn)
+    public void clickData13() {
+        AssetsTestData.thirteenDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.fourteen_day_data_btn)
+    public void clickData14() {
+        AssetsTestData.fourteenDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.fifteen_day_data_btn)
+    public void clickData15() {
+        AssetsTestData.fifteenDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.twenty_day_data_btn)
+    public void clickData20() {
+        AssetsTestData.twentyDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.twenty_one_day_data_btn)
+    public void clickData21() {
+        AssetsTestData.twentyOneDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.twenty_two_day_data_btn)
+    public void clickData22() {
+        AssetsTestData.twentyTwoDayData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.four_week_data_btn)
+    public void clickData28() {
+        AssetsTestData.fourWeekData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.ten_week_data_btn)
+    public void clickData70() {
+        AssetsTestData.tenWeekData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.thirty_weeks_data_btn)
+    public void clickData210() {
+        AssetsTestData.thirtyWeekData(mContext);
+        changeLineChartView();
+    }
+
+    @OnClick(R.id.fifty_week_data_btn)
+    public void clickData365() {
+        AssetsTestData.fiftyTwoWeekData(mContext);
+        changeLineChartView();
+    }
+    @OnClick(R.id.get_data_btn)
+    public void clickDataInit() {
+        AssetsTestData.hasBalanceData(mContext);
+        changeLineChartView();
+    }
+    @OnClick(R.id.clean_data_btn)
+    public void clearData() {
+        AssetsTestData.clearData(mContext);
+        changeLineChartView();
+    }
+
+    private void changeLineChartView() {
+        Map<String, Object> data = AssetsActions.getDataForChart(mContext);
+        Log.e(TAG+"changeLineChartView",data.toString());
+        List<Map<String, Object>> allList;
+        try {
+            allList = (List<Map<String, Object>>) data.get("chartData");
+            List<AssetTrendEntity> list = new ArrayList<>();
+            Log.e(TAG, "allList:" + allList.toString());
+            if (allList.size() == 1) {
+                AssetTrendEntity entity = new AssetTrendEntity();
+                String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills() - ConstantInOB.DAY_MILLIS);
+                entity.setTime(date);
+                entity.setAsset(Double.toString(0));
+                list.add(entity);
+            }
+            for (int i = 0; i < allList.size(); i++) {
+                AssetTrendEntity entity = new AssetTrendEntity();
+                Map<String, Object> item = allList.get(i);
+                String date = TimeFormatUtil.formatDateLong((Long) item.get("date"));
+                entity.setTime(date);
+                entity.setAsset(Double.toString((Double) item.get("value")));
+                list.add(entity);
+            }
+            mAssetTrendChartView.setViewShow(list);
+            Map<String,Object> changeData = (Map<String, Object>) data.get("changeData");
+            assert changeData != null;
+            Log.e(TAG + "changeData",changeData.toString());
+            double percent = 0.0;
+            if (changeData.get("percent") != null){
+                percent = (double) changeData.get("percent");
+            }
+            @SuppressLint("DefaultLocale") String percentString = String.format("%.2f", percent) + "%";
+            Log.e(TAG, "setAssetTrendChartViewShow: " + percentString);
+            double value = 0.0;
+            if (changeData.get("value")!=null){
+                value = (double) changeData.get("value");
+            }
+            @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f", value);
+            mPriceChangeTv.setText(percentString);
+            if (percent>0){
+                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_06d78f));
+                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_up_green);
+            }else{
+                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_F13A3A));
+                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_down_red);
+            }
+            mBalanceValueTv.setText(valueString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+    }*/
 }

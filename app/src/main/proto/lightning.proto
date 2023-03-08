@@ -3741,6 +3741,8 @@ message ListInvoiceRequest {
      */
     bool is_query_asset = 8;
     uint32 asset_id = 7;
+    uint64 start_time = 9;
+    uint64 end_time = 10;
 }
 message ListInvoiceResponse {
     /*
@@ -3943,6 +3945,9 @@ message ListPaymentsRequest {
  */
     bool is_query_asset = 5;
     uint32 asset_id = 6;
+
+    uint64 start_time = 7;
+    uint64 end_time = 8;
 }
 
 message ListPaymentsResponse {

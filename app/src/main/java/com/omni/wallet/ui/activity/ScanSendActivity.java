@@ -21,6 +21,7 @@ import com.omni.wallet.thirdsupport.zxing.OnCaptureCallback;
 import com.omni.wallet.thirdsupport.zxing.ViewfinderView;
 import com.omni.wallet.thirdsupport.zxing.camera.CameraConfig;
 import com.omni.wallet.utils.Bech32;
+import com.omni.wallet.utils.ValidateBitcoinAddress;
 import com.omni.wallet.utils.Wallet;
 
 import butterknife.BindView;
@@ -175,9 +176,17 @@ public class ScanSendActivity extends AppBaseActivity {
                             mCaptureHelper.restartPreviewAndDecode();
                         }
                     }, 2500);
-                } else { //链上支付
+                } else if (ValidateBitcoinAddress.validateBitcoinAddress(result)) { //链上支付
                     Wallet.getInstance().broadcastScanSendUpdated(result);
                     finish();
+                } else {
+                    ToastUtils.showToast(mContext, "Please scan the correct QR code");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mCaptureHelper.restartPreviewAndDecode();
+                        }
+                    }, 2500);
                 }
             } else {
                 ToastUtils.showToast(mContext, "Please scan the correct QR code");

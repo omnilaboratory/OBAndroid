@@ -6,6 +6,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/layout_invoice_item"
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_48"
         android:layout_marginTop="@dimen/main_15"

@@ -227,7 +227,7 @@
                 <RelativeLayout
                     android:id="@+id/process_inner"
                     android:layout_marginTop="1dp"
-                    android:layout_width="210dp"
+                    android:layout_width="0dp"
                     android:layout_height="6dp"
                     android:background="@drawable/bg_process_in"
                     />

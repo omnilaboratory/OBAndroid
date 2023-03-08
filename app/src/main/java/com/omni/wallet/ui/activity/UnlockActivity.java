@@ -1,68 +1,54 @@
 package com.omni.wallet.ui.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.text.InputFilter;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.baselibrary.http.HttpUtils;
-import com.omni.wallet.baselibrary.http.callback.EngineCallback;
-import com.omni.wallet.baselibrary.http.progress.entity.Progress;
-import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.listItems.BackupFile;
-import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
-import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
-import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
-import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
-import com.omni.wallet.ui.activity.createwallet.CreateWalletStepTwoActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
-import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepTwoActivity;
-import com.omni.wallet.utils.FilesUtils;
+import com.omni.wallet.utils.GetRequestHeader;
 import com.omni.wallet.utils.Md5Util;
-import com.omni.wallet.utils.ObdLogFileObserverCheckStarted;
+import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
-import com.omni.wallet.utils.Wallet;
+import com.omni.wallet.utils.UtilFunctions;
 import com.omni.wallet.utils.WalletState;
-import com.omni.wallet.view.dialog.LoadingDialog;
+import com.omni.wallet.view.dialog.LoginLoadingDialog;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import lnrpc.Stateservice;
 import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
-import obdmobile.RecvStream;
 
 public class UnlockActivity extends AppBaseActivity {
     String TAG = UnlockActivity.class.getSimpleName();
     Context ctx = UnlockActivity.this;
     String localPass = "";
     String localSeed = "";
-    LoadingDialog mLoadingDialog;
+    LoginLoadingDialog mLoadingDialog;
     boolean isCreated = false;
     boolean isSynced = false;
     boolean seedChecked = false;
@@ -91,11 +77,24 @@ public class UnlockActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-        mLoadingDialog = new LoadingDialog(mContext);
+        mLoadingDialog = new LoginLoadingDialog(mContext);
+        PasswordFilter passwordFilter = new PasswordFilter();
+        mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
+        TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE){
+                    clickUnlock();
+                }
+                return true;
+            }
+        };
+        mPwdEdit.setOnEditorActionListener(listener);
     }
 
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
         localPass = User.getInstance().getPasswordMd5(mContext);
         localSeed = User.getInstance().getSeedString(mContext);
         isCreated = User.getInstance().getCreated(mContext);
@@ -104,12 +103,9 @@ public class UnlockActivity extends AppBaseActivity {
         walletAddress = User.getInstance().getWalletAddress(mContext);
         initWalletType = User.getInstance().getInitWalletType(mContext);
         isStartCreate = User.getInstance().getStartCreate(mContext);
-        if (initWalletType.isEmpty()) {
-            bottomBtnGroup.setVisibility(View.VISIBLE);
-        } else {
-            bottomBtnGroup.setVisibility(View.INVISIBLE);
-        }
+
         runOnUiThread(() -> {
+            WalletState.getInstance().setWalletStateCallback(null);
             subscribeState();
         });
 
@@ -118,6 +114,7 @@ public class UnlockActivity extends AppBaseActivity {
 
     @Override
     protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -143,11 +140,10 @@ public class UnlockActivity extends AppBaseActivity {
 
     @OnClick(R.id.tv_pass_text)
     public void clickToForgetPassword() {
-        switchActivity(ForgetPwdActivity.class);
+        Intent intent = new Intent();
+        intent.setClass(mContext,ForgetPwdActivity.class);
+        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
-
-
-
     public void unlockWallet(String passMd5) {
         Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
         Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
@@ -158,7 +154,7 @@ public class UnlockActivity extends AppBaseActivity {
                         () -> {
                             PublicUtils.closeLoading(mLoadingDialog);
                             if(e.getMessage().equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
-                                switchActivity(AccountLightningActivity.class);
+                                switchActivityFinish(AccountLightningActivity.class);
                             }
                         }
                 );
@@ -169,6 +165,7 @@ public class UnlockActivity extends AppBaseActivity {
 
             @Override
             public void onResponse(byte[] bytes) {
+
             }
         });
     }
@@ -202,103 +199,25 @@ public class UnlockActivity extends AppBaseActivity {
         String passMd5 = Md5Util.getMD5Str(passwordString);
         boolean passIsMatched = checkedPassMatched(passMd5);
         PublicUtils.showLoading(mLoadingDialog);
-
-        if (initWalletType.equals("create")) {
-            if (localSeed.isEmpty()){
-                PublicUtils.closeLoading(mLoadingDialog);
-                switchActivity(CreateWalletStepOneActivity.class);
-            }else{
-                if (!seedChecked){
-                    PublicUtils.closeLoading(mLoadingDialog);
-                    switchActivity(CreateWalletStepTwoActivity.class);
-                }else{
-                    if (!isStartCreate){
-                        PublicUtils.closeLoading(mLoadingDialog);
-                        switchActivity(CreateWalletStepThreeActivity.class);
-                    }else{
-                        if(passIsMatched){
-                            PublicUtils.closeLoading(mLoadingDialog);
-                            switchActivity(BackupBlockProcessActivity.class);
-                        }else{
-                            passWrongShow();
-                        }
-                    }
-                }
-            }
-
-        } else if (initWalletType.equals("recovery")) {
-            String recoverySeedString = User.getInstance().getRecoverySeedString(mContext);
-            if (recoverySeedString.isEmpty()){
-                PublicUtils.closeLoading(mLoadingDialog);
-                switchActivity(RecoverWalletStepOneActivity.class);
-            }else{
-                if (!isStartCreate){
-                    PublicUtils.closeLoading(mLoadingDialog);
-                    switchActivity(RecoverWalletStepTwoActivity.class);
-                }else{
-                    if(passIsMatched){
-                        PublicUtils.closeLoading(mLoadingDialog);
-                        switchActivity(BackupBlockProcessActivity.class);
-                    }else{
-                        passWrongShow();
-                    }
-                }
-            }
-        } else if (initWalletType.equals("created")) {
-            if(passIsMatched){
-                unlockWallet(passMd5);
-            }else{
-                PublicUtils.closeLoading(mLoadingDialog);
-                String toastString = getResources().getString(R.string.toast_unlock_error);
-                Toast checkPassToast = Toast.makeText(UnlockActivity.this, toastString, Toast.LENGTH_LONG);
-                checkPassToast.setGravity(Gravity.TOP, 0, 20);
-                checkPassToast.show();
-            }
-        }else if(initWalletType.equals("recovered")){
-            if(passIsMatched){
-                unlockWallet(passMd5);
-            }else{
-                PublicUtils.closeLoading(mLoadingDialog);
-                String toastString = getResources().getString(R.string.toast_unlock_error);
-                Toast checkPassToast = Toast.makeText(UnlockActivity.this, toastString, Toast.LENGTH_LONG);
-                checkPassToast.setGravity(Gravity.TOP, 0, 20);
-                checkPassToast.show();
-            }
+        if (passIsMatched){
+            unlockWallet(passMd5);
         }else{
-            Log.e(TAG,"InitWalletType:" + initWalletType);
             PublicUtils.closeLoading(mLoadingDialog);
-            ToastUtils.showToast(mContext,"Your wallet is not initial please create or recovery your wallet!");
+            String toastString = getResources().getString(R.string.toast_unlock_error);
+            Toast checkPassToast = Toast.makeText(UnlockActivity.this, toastString, Toast.LENGTH_LONG);
+            checkPassToast.setGravity(Gravity.TOP, 0, 20);
+            checkPassToast.show();
         }
 }
 
     public void subscribeState() {
         WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
             switch (walletState){
-                case 0:
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
                 case 4:
                     runOnUiThread(()->{
-                        if (initWalletType.equals("created")){
-                            PublicUtils.closeLoading(mLoadingDialog);
-                            switchActivity(AccountLightningActivity.class);
-                        }else if(initWalletType.equals("recovered")){
-                            if(User.getInstance().isRestoredChannel(mContext)){
-                                PublicUtils.closeLoading(mLoadingDialog);
-                                switchActivity(AccountLightningActivity.class);
-                            }else{
-                                PublicUtils.closeLoading(mLoadingDialog);
-                                switchActivity(RestoreChannelActivity.class);
-                            }
-                        }
+                        PublicUtils.closeLoading(mLoadingDialog);
+                        switchActivityFinish(AccountLightningActivity.class);
                     });
-                    break;
-                case 255:
                     break;
                 default:
                     break;
@@ -314,7 +233,9 @@ public class UnlockActivity extends AppBaseActivity {
     @OnClick(R.id.btn_create)
     public void clickCreate() {
         User.getInstance().setInitWalletType(mContext, "create");
-        switchActivity(CreateWalletStepOneActivity.class);
+        Intent intent = new Intent();
+        intent.setClass(mContext,CreateWalletStepOneActivity.class);
+        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
 
     /**
@@ -324,7 +245,9 @@ public class UnlockActivity extends AppBaseActivity {
     @OnClick(R.id.btn_recover)
     public void clickRecover() {
         User.getInstance().setInitWalletType(mContext, "recovery");
-        switchActivity(RecoverWalletStepOneActivity.class);
+        Intent intent = new Intent();
+        intent.setClass(mContext,RecoverWalletStepOneActivity.class);
+        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
 
     /**
@@ -333,7 +256,12 @@ public class UnlockActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btv_forget_button)
     public void clickForgetPass() {
-        switchActivity(ForgetPwdActivity.class);
+        Intent intent = new Intent();
+        intent.setClass(mContext,ForgetPwdActivity.class);
+        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+        finish();
+    }
 }

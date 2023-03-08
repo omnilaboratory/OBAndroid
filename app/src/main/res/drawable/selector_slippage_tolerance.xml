@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--选中效果-->
+    <item android:state_selected="true">
+        <shape>
+            <solid android:color="@color/color_5A72EE" />
+            <corners android:radius="@dimen/main_10" />
+            <stroke
+                android:width="@dimen/main_0.5"
+                android:color="@color/color_5A72EE"/>
+        </shape>
+    </item>
+    <!--默认效果-->
+    <item>
+        <shape>
+            <solid android:color="@color/color_white" />
+            <corners android:radius="@dimen/main_10" />
+            <stroke
+                android:width="@dimen/main_0.5"
+                android:color="@color/color_5A72EE"/>
+        </shape>
+    </item>
+</selector>

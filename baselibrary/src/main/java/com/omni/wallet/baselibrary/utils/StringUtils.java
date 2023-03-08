@@ -366,7 +366,7 @@ public class StringUtils {
     /**
      * 格式化浮点数保留小数点后两位
      */
-    public static String formatDouble2(float value) {
+    public static String formatDouble2(double value) {
         return String.format("%.2f", value).toString();
     }
 

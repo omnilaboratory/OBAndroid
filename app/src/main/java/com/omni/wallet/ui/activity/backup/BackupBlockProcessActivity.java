@@ -27,6 +27,7 @@ import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.ui.activity.AccountLightningActivity;
@@ -36,6 +37,12 @@ import com.omni.wallet.utils.ObdLogFileObserver;
 import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.utils.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -103,6 +110,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
 
     WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
+        Log.e(TAG,User.getInstance().getWalletAddress(mContext));
         switch (walletState){
             case 1:
                 unlockWallet();
@@ -111,7 +119,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                 if(User.getInstance().getWalletAddress(mContext).isEmpty()){
                     newAddressToWallet();
                 }
-
                 break;
             default:
                 break;
@@ -149,6 +156,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
         networkChangeReceiver = new NetworkChangeReceiver();
         runOnUiThread(() -> {
             IntentFilter intentFilter = new IntentFilter();
@@ -160,6 +168,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @Override
     protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
         PublicUtils.closeLoading(mLoadingDialog);
         unregisterReceiver(networkChangeReceiver);
         blockData.unregisterOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
@@ -226,6 +235,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @OnClick(R.id.btn_start)
     public void clickStart(){
+        Log.e(TAG,"click start");
         if(newCreatedAddress.isEmpty()){
             String toastMsg = "Block is syncing now,please wait a moment!";
             Toast copySuccessToast = Toast.makeText(ctx,toastMsg,Toast.LENGTH_LONG);
@@ -233,9 +243,10 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             copySuccessToast.show();
         }else{
 //            switchActivityFinish(AccountLightningActivity.class);
-            if(initWalletType.equals("create")){
-                switchActivity(AccountLightningActivity.class);
-            }else if(initWalletType.equals("recovery")){
+            Log.e(TAG,"click start initWalletType:" + initWalletType);
+            if(initWalletType.equals("initialed")){
+                switchActivityFinish(AccountLightningActivity.class);
+            }else if(initWalletType.equals("toBeRestoreChannel")){
                 switchActivity(RestoreChannelActivity.class);
             }
         }
@@ -245,15 +256,27 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     public void newAddressToWallet (){
         Log.e(TAG,"new Address count");
+        String createType = User.getInstance().getInitWalletType(mContext);
+        if(createType.equals("recoveryStepTwo")){
+            getOldAddress();
+
+        }else{
+            newAddress();
+
+        }
+
+    }
+
+    public void newAddress(){
+
         LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
         Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
-
             }
             @Override
-            public void onResponse(byte[] bytes) {                
+            public void onResponse(byte[] bytes) {
                 if(bytes == null){
                     return;
                 }
@@ -268,11 +291,15 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                         obdLogFileObserver.stopWatching();
                         User.getInstance().setWalletAddress(mContext,address);
                         updateSyncDataView(totalBlock);
-                        if(initWalletType.equals("create")){
-                            User.getInstance().setInitWalletType(mContext,"created");
-                        }else if(initWalletType.equals("recovery")){
-                            User.getInstance().setInitWalletType(mContext,"recovered");
+                        if(initWalletType.equals("recoveryStepTwo")){
+                            User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
+                            initWalletType = "toBeRestoreChannel";
+                        }else{
+                            User.getInstance().setInitWalletType(mContext,"initialed");
+                            initWalletType = "initialed";
                         }
+
+
                     });
                     // save wallet address to local
                     // 保存地址到本地
@@ -280,6 +307,45 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
 
+                }
+            }
+        });
+    }
+
+    public void getOldAddress(){
+        Log.e(TAG, "getOldAddress: ");
+        LightningOuterClass.ListAddressesRequest listAddressesRequest = LightningOuterClass.ListAddressesRequest.newBuilder().build();
+        Obdmobile.oB_ListAddresses(listAddressesRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                Log.e("getAddress Error",e.toString());
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if(bytes == null){
+                    Log.e(TAG, "getOldAddress: no address");
+                    newAddress();
+                    return;
+                }
+                try {
+                    LightningOuterClass.ListAddressesResponse listAddressesResponse = LightningOuterClass.ListAddressesResponse.parseFrom(bytes);
+                    String address = listAddressesResponse.getItems(0);
+                    newCreatedAddress = address;
+                    Bitmap mQRBitmap = CodeUtils.createQRCode(address, DisplayUtil.dp2px(mContext, 100));
+                    runOnUiThread(() -> {
+                        qrAddressTv.setText(address);
+                        qrAddressIv.setImageBitmap(mQRBitmap);
+                        obdLogFileObserver.stopWatching();
+                        User.getInstance().setWalletAddress(mContext,address);
+                        updateSyncDataView(totalBlock);
+                        User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
+                        initWalletType = "toBeRestoreChannel";
+                    });
+
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -358,4 +424,33 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         }
     };
 
+    public void getExistAddress(){
+        LightningOuterClass.ListAddressesRequest listAddressesRequest = LightningOuterClass.ListAddressesRequest.newBuilder().build();
+        Obdmobile.oB_ListAddresses(listAddressesRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                Log.e("getAddress Error",e.toString());
+                e.printStackTrace();
+                mLoadingDialog.dismiss();
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if(bytes == null){
+                    return;
+                }
+                try {
+                    LightningOuterClass.ListAddressesResponse listAddressesResponse = LightningOuterClass.ListAddressesResponse.parseFrom(bytes);
+                    String address = listAddressesResponse.getItems(0);
+                    Log.e("TAG",address);
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+            finish();
+        }
 }

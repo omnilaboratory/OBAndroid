@@ -58,11 +58,12 @@ public class TransactionsDetailsAssetPopupWindow {
             TextView totalAmountTv = rootView.findViewById(R.id.tv_total_amount);
 
             DecimalFormat df = new DecimalFormat("0.00######");
+            DecimalFormat df1 = new DecimalFormat("0.00");
             if (item.getType().equals("Simple Send")) {
                 amountTv.setText(df.format(Double.parseDouble(item.getAmount())));
                 toAddressTv.setText(item.getReferenceaddress());
                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getAmount())) * 100000000) + (long) (Double.parseDouble(String.valueOf(item.getFee())) * 100000000) + "";
-                totalAmountTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                 if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
                     typeTv.setText("PENDING");
                     typeIv.setImageResource(R.mipmap.icon_failed_red);
@@ -81,7 +82,7 @@ public class TransactionsDetailsAssetPopupWindow {
                         }
                     }
                     String totalValue = (long) (Double.parseDouble(String.valueOf(item.getTotalamount())) * 100000000) + (long) (Double.parseDouble(String.valueOf(item.getFee())) * 100000000) + "";
-                    totalAmountTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                    totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                     if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
                         typeTv.setText("PENDING");
                         typeIv.setImageResource(R.mipmap.icon_failed_red);
@@ -98,7 +99,7 @@ public class TransactionsDetailsAssetPopupWindow {
                                 amountTv.setText(df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
                                 toAddressTv.setText(item.getReceivers(0).getAddress());
                                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getReceivers(0).getAmount())) * 100000000) + (long) (Double.parseDouble(String.valueOf(item.getFee())) * 100000000) + "";
-                                totalAmountTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                                totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                             }
                         } else if (item.getReceiversList().size() == 2) {
                             if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
@@ -106,13 +107,13 @@ public class TransactionsDetailsAssetPopupWindow {
                                 amountTv.setText(df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
                                 toAddressTv.setText(item.getReceivers(0).getAddress());
                                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getReceivers(0).getAmount())) * 100000000) + (long) (Double.parseDouble(String.valueOf(item.getFee())) * 100000000) + "";
-                                totalAmountTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                                totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                             } else if (!item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
                                     & item.getReceivers(1).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
                                 amountTv.setText(df.format(Double.parseDouble(item.getReceivers(1).getAmount())));
                                 toAddressTv.setText(item.getReceivers(1).getAddress());
                                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getReceivers(1).getAmount())) * 100000000) + (long) (Double.parseDouble(String.valueOf(item.getFee())) * 100000000) + "";
-                                totalAmountTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                                totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                             }
                         }
                     }

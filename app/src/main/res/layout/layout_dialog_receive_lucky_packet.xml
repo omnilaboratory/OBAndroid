@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_D1123A50">
+
+    <LinearLayout
+        android:id="@+id/layout_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/lv_lucky_packet_waiting"
+            android:layout_width="@dimen/main_320"
+            android:layout_height="@dimen/main_500"
+            android:background="@drawable/bg_white_rectangle_round_20"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_45"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.25"
+                    android:text="@string/lucky_packet_upper"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/text_18" />
+
+                <ImageView
+                    android:layout_width="@dimen/main_24"
+                    android:layout_height="@dimen/main_24"
+                    android:layout_marginTop="@dimen/main_20"
+                    android:src="@mipmap/icon_failed_red"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/main_20"
+                    android:layout_marginLeft="@dimen/main_50"
+                    android:layout_marginRight="@dimen/main_50"
+                    android:text="Waiting"
+                    android:singleLine="true"
+                    android:ellipsize="middle"
+                    android:textColor="@color/color_99_transparent"
+                    android:textSize="@dimen/text_24" />
+
+                <LinearLayout
+                    android:layout_width="@dimen/main_214"
+                    android:layout_height="@dimen/main_152"
+                    android:layout_marginTop="@dimen/main_45"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:background="@mipmap/img_red_packet_close">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_36"
+                        android:layout_height="@dimen/main_36"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:src="@mipmap/icon_heart_white"/>
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/lv_lucky_packet_success"
+            android:layout_width="@dimen/main_320"
+            android:layout_height="@dimen/main_500"
+            android:gravity="center_horizontal"
+            android:background="@drawable/bg_white_rectangle_round_20"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_45"
+                android:letterSpacing="0.25"
+                android:text="@string/lucky_packet_upper"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/text_18" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_20"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="@dimen/main_24"
+                    android:layout_height="@dimen/main_24"
+                    android:background="@drawable/bg_btn_round_06d78f_25">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:src="@mipmap/icon_tick_white"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_7"
+                    android:text="@string/received_first_upper"
+                    android:textColor="@color/color_4A92FF"
+                    android:textSize="@dimen/text_16"/>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="@dimen/main_214"
+                android:layout_height="@dimen/main_349"
+                android:background="@mipmap/img_red_packet_open">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_40"
+                        android:layout_marginRight="@dimen/main_40"
+                        android:layout_marginTop="@dimen/main_50">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/asset_one"
+                            android:textColor="@color/color_CC000000"
+                            android:textSize="@dimen/text_16"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/iv_asset_type_success"
+                                android:layout_width="@dimen/main_18"
+                                android:layout_height="@dimen/main_18"
+                                android:src="@mipmap/icon_usdt_logo_small"/>
+
+                            <TextView
+                                android:id="@+id/tv_asset_type_success"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/main_5"
+                                android:text="dollar"
+                                android:textColor="@color/color_99_transparent"
+                                android:textSize="@dimen/text_16"/>
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_40"
+                        android:layout_marginRight="@dimen/main_40"
+                        android:layout_marginTop="@dimen/main_17">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/amount"
+                            android:textColor="@color/color_CC000000"
+                            android:textSize="@dimen/text_16"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_amount_success"
+                                android:layout_width="@dimen/main_70"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text="100.00"
+                                android:textColor="@color/color_99_transparent"
+                                android:textSize="@dimen/text_16"/>
+
+                            <TextView
+                                android:id="@+id/tv_amount_unit_success"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/main_5"
+                                android:text="dollar"
+                                android:textColor="@color/color_99_transparent"
+                                android:textSize="@dimen/text_16"
+                                android:visibility="gone"/>
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_40"
+                        android:layout_marginRight="@dimen/main_40"
+                        android:layout_marginTop="@dimen/main_17">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/time_first_upper"
+                            android:textColor="@color/color_CC000000"
+                            android:textSize="@dimen/text_16"/>
+
+                        <TextView
+                            android:id="@+id/tv_time_success"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:text="0"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_16"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_40"
+                        android:layout_marginRight="@dimen/main_40"
+                        android:layout_marginTop="@dimen/main_17">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/date_one"
+                            android:textColor="@color/color_CC000000"
+                            android:textSize="@dimen/text_16"/>
+
+                        <TextView
+                            android:id="@+id/tv_date_success"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:text="0"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_16"/>
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="@dimen/main_175"
+                    android:layout_height="@dimen/main_50"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="@dimen/main_37">
+
+                    <TextView
+                        android:id="@+id/tv_best_wishes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:layout_marginLeft="@dimen/main_5"
+                        android:layout_marginRight="@dimen/main_5"
+                        android:text="Wish you good health"
+                        android:textSize="@dimen/text_16"
+                        android:textColor="@color/color_99_transparent"/>
+                </RelativeLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/lv_lucky_packet_failed"
+            android:layout_width="@dimen/main_320"
+            android:layout_height="@dimen/main_500"
+            android:background="@drawable/bg_white_rectangle_round_20"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_45"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.25"
+                    android:text="@string/lucky_packet_upper"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/text_18" />
+
+                <ImageView
+                    android:layout_width="@dimen/main_24"
+                    android:layout_height="@dimen/main_24"
+                    android:layout_marginTop="@dimen/main_20"
+                    android:src="@mipmap/icon_failed_red"/>
+
+                <TextView
+                    android:id="@+id/tv_failed_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/main_20"
+                    android:layout_marginLeft="@dimen/main_50"
+                    android:layout_marginRight="@dimen/main_50"
+                    android:text="Error Code: 0000212"
+                    android:singleLine="true"
+                    android:ellipsize="middle"
+                    android:textColor="@color/color_99_transparent"
+                    android:textSize="@dimen/text_24" />
+
+                <LinearLayout
+                    android:layout_width="@dimen/main_214"
+                    android:layout_height="@dimen/main_152"
+                    android:layout_marginTop="@dimen/main_45"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:background="@mipmap/img_red_packet_close">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_36"
+                        android:layout_height="@dimen/main_36"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:src="@mipmap/icon_heart_white"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_20"
+                        android:text="I’m"
+                        android:textColor="@color/color_60_white"
+                        android:textSize="@dimen/text_24" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_5"
+                        android:text="So Sorry"
+                        android:textColor="@color/color_60_white"
+                        android:textSize="@dimen/text_24" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_scan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/main_35"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/main_36"
+                    android:layout_height="@dimen/main_36"
+                    android:src="@mipmap/icon_scan_green_thin"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/main_20"
+                    android:letterSpacing="0.25"
+                    android:text="@string/try_again"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/text_16"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/lv_lucky_packet_collected"
+            android:layout_width="@dimen/main_320"
+            android:layout_height="@dimen/main_500"
+            android:background="@drawable/bg_white_rectangle_round_20"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_45"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.25"
+                    android:text="@string/lucky_packet_upper"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/text_18" />
+
+                <ImageView
+                    android:layout_width="@dimen/main_24"
+                    android:layout_height="@dimen/main_24"
+                    android:layout_marginTop="@dimen/main_20"
+                    android:src="@mipmap/icon_failed_green"/>
+
+                <TextView
+                    android:id="@+id/tv_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/main_5"
+                    android:layout_marginLeft="@dimen/main_50"
+                    android:layout_marginRight="@dimen/main_50"
+                    android:text="Info Code: All the lucky packets have been collected, wish you good luck next time"
+                    android:textColor="@color/color_99_transparent"
+                    android:textSize="@dimen/text_24" />
+
+                <LinearLayout
+                    android:layout_width="@dimen/main_208"
+                    android:layout_height="@dimen/main_197"
+                    android:layout_marginTop="@dimen/main_5"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:background="@mipmap/img_red_packet_open_collected">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_100"
+                        android:text="I’m"
+                        android:textColor="@color/color_60_white"
+                        android:textSize="@dimen/text_24" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_5"
+                        android:text="So Sorry"
+                        android:textColor="@color/color_60_white"
+                        android:textSize="@dimen/text_24" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_30"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/main_56"
+                android:layout_height="@dimen/main_56"
+                android:src="@mipmap/icon_close_x_white"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_5"
+                android:letterSpacing="0.25"
+                android:text="@string/close"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/text_16"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

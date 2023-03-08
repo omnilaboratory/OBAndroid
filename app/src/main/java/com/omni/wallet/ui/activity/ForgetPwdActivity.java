@@ -1,11 +1,15 @@
 package com.omni.wallet.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.EditText;
@@ -16,9 +20,18 @@ import android.widget.Toast;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
+import com.omni.wallet.entity.event.RebootEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.template.DisablePasteEditText;
 import com.omni.wallet.utils.CheckRules;
 import com.omni.wallet.utils.NumberFormatter;
+import com.omni.wallet.utils.SeedFilter;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -40,7 +53,7 @@ public class ForgetPwdActivity extends AppBaseActivity {
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_recover_wallet_step_one;
+        return R.layout.activity_forget_pwd;
     }
 
     @Override
@@ -48,22 +61,21 @@ public class ForgetPwdActivity extends AppBaseActivity {
 
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
         /**
          * 从xml文件中读取seeds
          * Get seeds form xml file
          */
-        SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
-        String seedsString = secretData.getString("seeds", "none");
+        String seedsString = User.getInstance().getSeedString(mContext);
         seedList = seedsString.split(" ");
         /**
          * 动态渲染24个输入框
          * Dynamically render 24 input boxes
          */
         LinearLayout editListContent = findViewById(R.id.edit_text_Content);
-
-
         for (int row = 1; row <= 8; row++) {
             RelativeLayout rowContent = new RelativeLayout(this);
             RelativeLayout.LayoutParams rowContentParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -92,7 +104,7 @@ public class ForgetPwdActivity extends AppBaseActivity {
                 TextView noText = new TextView(this);
                 RelativeLayout.LayoutParams noTextParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 noText.setTextColor(getResources().getColor(R.color.color_white));
-                noText.setTextSize(16.0f);
+                noText.setTextSize(14.0f);
                 noText.setText(noNum);
                 noText.setLayoutParams(noTextParams);
 
@@ -100,9 +112,14 @@ public class ForgetPwdActivity extends AppBaseActivity {
                 LinearLayout.LayoutParams cellEditTextParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
                 cellEditText.setBackground(null);
                 cellEditText.setHint(getResources().getString(R.string.create_seed_input_hit));
-                cellEditText.setTextSize(16.0f);
-                cellEditText.setTextColor(getResources().getColor(R.color.color_black));
+                cellEditText.setHintTextColor(getResources().getColor(R.color.color_white));
+                cellEditText.setTextSize(14.0f);
+                cellEditText.setTextColor(getResources().getColor(R.color.color_white));
                 cellEditText.setLayoutParams(cellEditTextParams);
+                cellEditText.setMaxLines(1);
+                cellEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+                SeedFilter seedFilter = new SeedFilter();
+                cellEditText.setFilters(new InputFilter[]{seedFilter});
 
                 cellInner.addView(noText);
                 cellInner.addView(cellEditText);
@@ -117,7 +134,11 @@ public class ForgetPwdActivity extends AppBaseActivity {
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
 
     /**
      * 点击Paste
@@ -128,16 +149,14 @@ public class ForgetPwdActivity extends AppBaseActivity {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         ClipData clipData =   clipboard.getPrimaryClip();
         ClipData.Item item = clipData.getItemAt(0);
-
         if(item!=null){
-
             String seedsString = item.getText().toString();
             boolean checkStringFlag = CheckRules.checkSeedString(seedsString);
             if(checkStringFlag){
-                String[] seedsArr = seedsString.split(" ");
+                String[] seedsArr = seedsString.trim().split(" ");
                 for (int i = 0;i<seedsArr.length;i++){
                     EditText et = list.get(i);
-                    et.setText(seedsArr[i]);
+                    et.setText(seedsArr[i].trim());
                 }
             }else{
                 Toast errorToast = Toast.makeText(ForgetPwdActivity.this,getResources().getString(R.string.toast_recover_paste_error),Toast.LENGTH_LONG);
@@ -159,7 +178,7 @@ public class ForgetPwdActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_back)
     public void clickBack() {
-        finish();
+        switchActivityFinish(UnlockActivity.class);
     }
 
     /**
@@ -170,7 +189,7 @@ public class ForgetPwdActivity extends AppBaseActivity {
     public void clickForward() {
         Boolean checkResult = true;
         for (int i = 0; i < list.size(); i++) {
-            String inputItemText = list.get(i).getText().toString();
+            String inputItemText = list.get(i).getText().toString().trim();
             String seed_no = "seed_" + Integer.toString(i);
             Log.d(seed_no, seedList[i]);
             if (inputItemText.equals(seedList[i])) {
@@ -188,7 +207,12 @@ public class ForgetPwdActivity extends AppBaseActivity {
             }
         }
         if(checkResult){
-            switchActivity(ForgetPwdNextActivity.class);    
+            switchActivity(ForgetPwdNextActivity.class);
         }
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+        finish();
+    }
+
 }

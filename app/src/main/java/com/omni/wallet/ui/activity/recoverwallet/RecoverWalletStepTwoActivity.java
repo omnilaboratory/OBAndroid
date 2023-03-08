@@ -1,47 +1,42 @@
 package com.omni.wallet.ui.activity.recoverwallet;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.text.InputFilter;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.Internal;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
-import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
-import com.omni.wallet.utils.BackupUtils;
 import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
+import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.Arrays;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
-import lnrpc.LightningOuterClass;
 import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -74,13 +69,31 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
     @Override
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
+        PasswordFilter passwordFilter = new PasswordFilter();
+        mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
+        mConfirmPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
+        TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE){
+                    clickForward();
+                }
+                return true;
+            }
+        };
+        mConfirmPwdEdit.setOnEditorActionListener(listener);
     }
 
     @Override
     protected void initData() {
-
+        EventBus.getDefault().register(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
 
     /**
      * passwordInput 值变更
@@ -258,7 +271,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
 //                Log.e("mnemonicString",mnemonicString);
 //            }
             initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
-            initWalletRequestBuilder.setRecoveryWindow(0);
+            initWalletRequestBuilder.setRecoveryWindow(2500);
             Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
             Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
                 @Override
@@ -277,7 +290,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                         Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
                         ByteString macaroon = initWalletResponse.getAdminMacaroon();
                         User.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8());
-                        User.getInstance().setInitWalletType(mContext,"recovery");
+                        User.getInstance().setInitWalletType(mContext,"recoveryStepTwo");
                         User.getInstance().setCreated(mContext,true);
                         User.getInstance().setSeedChecked(mContext,true);
                         User.getInstance().setSeedString(mContext,seedsString);
@@ -302,5 +315,9 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
             checkSetPassToast.show();
         }
 
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+        finish();
     }
 }

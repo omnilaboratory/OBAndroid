@@ -19,7 +19,6 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.ui.activity.channel.ChannelListItem;
-import com.omni.wallet.utils.BackupUtils;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UtilFunctions;
 import com.omni.wallet.utils.Wallet;
@@ -335,8 +334,12 @@ public class ChannelDetailsPopupWindow {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        mBasePopWindow.dismiss();
-                        mLoadingDialog.dismiss();
+                        if (mBasePopWindow != null) {
+                            mBasePopWindow.dismiss();
+                        }
+                        if (mLoadingDialog != null) {
+                            mLoadingDialog.dismiss();
+                        }
                         if (e.getMessage().toLowerCase().contains("offline")) {
                             mSendFailedDialog.show(mContext.getString(R.string.error_channel_close_offline));
                         } else if (e.getMessage().toLowerCase().contains("terminated")) {
@@ -350,12 +353,17 @@ public class ChannelDetailsPopupWindow {
 
             @Override
             public void onResponse(byte[] bytes) {
+                LogUtils.e(TAG, "------------------closeChannelOnResponse------------------");
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
                         EventBus.getDefault().post(new CloseChannelEvent());
-                        mBasePopWindow.dismiss();
-                        mLoadingDialog.dismiss();
+                        if (mBasePopWindow != null) {
+                            mBasePopWindow.dismiss();
+                        }
+                        if (mLoadingDialog != null) {
+                            mLoadingDialog.dismiss();
+                        }
                         mSendSuccessDialog.show(mContext.getString(R.string.channel_close_success));
                     }
                 });

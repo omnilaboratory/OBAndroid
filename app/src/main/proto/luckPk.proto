@@ -1,0 +1,151 @@
+syntax = "proto3";
+package toolrpc;
+option go_package = "om-rpc-tool/toolrpc";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+enum LuckPKStatus{
+  INIT=0;
+  //use have pay the LuckPk
+  WorkIng=1;
+  //all balance was consumered
+  End=2;
+  Expired=3;
+  ErrorCreate=4;
+}
+
+enum SpayStatus{
+  PayINIT=0;
+  //user have payed service Invoice
+  UserPayed=1;
+  //server have payed to user c
+  PayEnd=2;
+  Error=3;
+}
+
+// spay:  substitution　pay
+message spay{
+  int64  id = 1;
+  //user a create invoice,give to b,
+  string user_invoice = 2;
+  // server b gen invoice, user a rcv it and give to c, user c will pay it
+  string serv_invoice = 3;
+  //  server invoice hash
+  string si_payHash = 4;
+  //  user a id , fill in server side;
+  int64 user_id = 5;
+  int64 created_at = 6;
+  SpayStatus status = 7;
+  string err_msg = 8;
+  int64  errTimes=9;
+}
+//luckPackage
+message LuckPk{
+  int64  id = 1;
+  int64 user_id = 2;
+  string user_alias = 3;
+  uint64 asset_id = 4;
+  // precision　is 100000000
+  uint64 amt = 5;
+  // precision　is 100000000
+  uint64 balance = 6;
+  //fill on server side
+  string PaymentHash = 13;
+  //how many times the luckPk can be received. every receive-item save as LuckItem.
+  uint64 parts = 7;
+  uint64 gives = 12;
+  LuckPKStatus status = 8;
+  int64 expired_time_sec = 9;
+  //gen by server
+  string invoice = 10;
+  int64 created_at = 11;
+  string ErrorCreateMsg = 14;
+}
+//luckPackage will split to many LuckItem
+message LuckItem{
+  int64  id = 1;
+  int64 luckpk_id = 2;
+  int64 user_id =3;
+  string user_alias = 4;
+  int64 amt = 5;
+  int64 created_at = 6;
+}
+message CreateLuckPkRes{
+  //luckpk id
+  int64  id=1;
+  string invoice=2;
+}
+
+//message GetLuckItemReq{
+//  //luckpk id
+//  int64  id=1;
+//  string user_node_key=2;
+//  string user_alias=3;
+//}
+message GiveLuckPkReq{
+  //Luckpk id
+  int64  id=1;
+  string invoice=2;
+}
+
+message LuckpkIdObj{
+  //luckpk id
+  int64  id = 1;
+}
+message ListLuckItemRes{
+  int64 count  = 1;
+  repeated LuckItem  Items=2;
+}
+
+message ListLuckPkReq{
+  string user_node_key = 1;
+}
+message ListLuckPkRes{
+  int64 count  = 1;
+  repeated LuckPk  Items=2;
+}
+
+message RegistTlsKeyReq{
+  bytes user_node_key = 1;
+  bytes sig = 2;
+  string alias=3;
+}
+
+service luckPkApi{
+  rpc CreateSpay(spay)returns (spay){
+
+  }
+  rpc HeartBeat(stream google.protobuf.Empty)returns(google.protobuf.Empty) {
+
+  }
+  rpc RegistTlsKey(RegistTlsKeyReq)returns(google.protobuf.Empty) {
+  }
+  //server will set LuckPk.invoice,and return to user.
+  rpc CreateLuckPk(LuckPk)returns(LuckPk) {
+  }
+  //then user pay LuckPk invoice
+
+  //when server detect the LuckPk.invoice be payed, the LuckPk will enable at server end
+//  rpc StartupLuckPk(LuckPk)returns(LuckPk) {
+//
+//  }
+
+  rpc GetLuckPkInfo(LuckpkIdObj)returns(LuckPk) {
+
+  }
+
+//  //return  amt for user go gen invoice
+//  rpc GetLuckItem(GetLuckItemReq) returns(LuckItem){
+//
+//  }
+
+  //pay user invoice
+  rpc GiveLuckPk(GiveLuckPkReq) returns(google.protobuf.Empty){
+
+  }
+  rpc ListLuckItem(LuckpkIdObj)returns(ListLuckItemRes) {
+
+  }
+  rpc ListLuckPk(ListLuckPkReq)returns(ListLuckPkRes) {
+  }
+}

@@ -3,7 +3,10 @@ package com.omni.wallet.ui.activity.createwallet;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +22,13 @@ import android.widget.Toast;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.listItems.SelectSeedItem;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,18 +42,25 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
     final String TAG = CreateWalletStepTwoActivity.class.getSimpleName();
     private ArrayList<EditText> list = new ArrayList<>();
 
+    @BindView(R.id.seed_select_pager)
+    ViewPager pagerView;
+
     @BindView(R.id.seed_inputs_grid_view)
     GridView seedInputsGridView;
 
-    @BindView(R.id.seed_select_grid_view)
-    GridView seedSelectGridView;
+    GridView seedSelectGridViewPageOne;
+    GridView seedSelectGridViewPageTwo;
 
     Context ctx = CreateWalletStepTwoActivity.this;
-    List<SelectSeedItem> seedList = new ArrayList<>();
+    List<SelectSeedItem> seedListPageOne = new ArrayList<>();
+    List<SelectSeedItem> seedListPageTwo = new ArrayList<>();
     List<String> seedsInputList = new ArrayList<>();
     String[] gotSeedArray;
     SeedsInputAdapter seedsInputAdapter;
     SeedsSelectAdapter seedsSelectAdapter;
+    SeedsSelectAdapterForPageTwo seedsSelectAdapterForPageTwo;
+    private MyPagerAdapter myPagerAdapter;
+    public ArrayList<View> pageList = new ArrayList<>();
 
 
     @Override
@@ -61,20 +76,46 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         seedsInputAdapter = new SeedsInputAdapter(mContext);
         seedsSelectAdapter = new SeedsSelectAdapter(mContext);
+        seedsSelectAdapterForPageTwo = new SeedsSelectAdapterForPageTwo(mContext);
         for (int i = 0; i < 24; i++) {
             seedsInputList.add("");
         }
         initSeedArray();
         initSeedsInputGridView();
-        initSeedsSelectGridView();
+
+        initViewPager();
 
     }
 
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
 
     @Override
     protected void initData() { }
+
+    public void initViewPager(){
+//        View pageOne = seedSelectGridViewPageOne;
+//        View pageTwo = seedSelectGridViewPageTwo;
+        LayoutInflater liOne = getLayoutInflater();
+        LayoutInflater liTwo = getLayoutInflater();
+        View pageOne = liOne.inflate(R.layout.layout_item_seeds_selected_page,null);
+        View pageTwo = liTwo.inflate(R.layout.layout_item_seeds_selected_page,null);
+        seedSelectGridViewPageOne = pageOne.findViewById(R.id.seed_select_grid_view_page);
+        seedSelectGridViewPageTwo = pageTwo.findViewById(R.id.seed_select_grid_view_page);
+        initSeedsSelectGridViewPageOne();
+        initSeedsSelectGridViewPageTwo();
+        pageList.add(pageOne);
+        pageList.add(pageTwo);
+        myPagerAdapter = new MyPagerAdapter( pageList);
+        pagerView.setAdapter(myPagerAdapter);
+
+    }
 
     public void initSeedArray(){
         String seedsString = User.getInstance().getSeedString(mContext);
@@ -87,18 +128,23 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
         for (int i = 0; i < gotSeedList.size(); i++) {
             String seed = gotSeedList.get(i);
             SelectSeedItem seedItem = new SelectSeedItem(seed,false,-1);
-            seedList.add(seedItem);
+            if(i<12){
+                seedListPageOne.add(seedItem);
+            }else{
+                seedListPageTwo.add(seedItem);
+            }
+
         }
 
     }
 
-    public void initSeedsSelectGridView() {
-        seedSelectGridView.setAdapter(seedsSelectAdapter);
-        seedSelectGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    public void initSeedsSelectGridViewPageOne() {
+        seedSelectGridViewPageOne.setAdapter(seedsSelectAdapter);
+        seedSelectGridViewPageOne.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int willSetIndex = 0;
-                SelectSeedItem selectSeedItem = seedList.get(position);
+                SelectSeedItem selectSeedItem = seedListPageOne.get(position);
                 boolean isSelected = selectSeedItem.isSelected();
                 int selectInt = selectSeedItem.getSelectIndex();
                 String seedString = selectSeedItem.getSeed();
@@ -119,6 +165,40 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
                 }
                 runOnUiThread(()->{
                     seedsSelectAdapter.notifyDataSetChanged();
+                    seedsInputAdapter.notifyDataSetChanged();
+                });
+
+            }
+        });
+    }
+
+    public void initSeedsSelectGridViewPageTwo() {
+        seedSelectGridViewPageTwo.setAdapter(seedsSelectAdapterForPageTwo);
+        seedSelectGridViewPageTwo .setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int willSetIndex = 0;
+                SelectSeedItem selectSeedItem = seedListPageTwo.get(position);
+                boolean isSelected = selectSeedItem.isSelected();
+                int selectInt = selectSeedItem.getSelectIndex();
+                String seedString = selectSeedItem.getSeed();
+                for (int i = 0; i<seedsInputList.size();i++){
+                    if (seedsInputList.get(i).isEmpty()){
+                        willSetIndex = i;
+                        break;
+                    }
+                }
+                if(isSelected){
+                    selectSeedItem.setSelected(false);
+                    selectSeedItem.setSelectIndex(-1);
+                    seedsInputList.set(selectInt,"");
+                }else{
+                    selectSeedItem.setSelected(true);
+                    selectSeedItem.setSelectIndex(willSetIndex);
+                    seedsInputList.set(willSetIndex,seedString);
+                }
+                runOnUiThread(()->{
+                    seedsSelectAdapterForPageTwo.notifyDataSetChanged();
                     seedsInputAdapter.notifyDataSetChanged();
                 });
 
@@ -159,7 +239,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
             }
         }
         if(checkResult){
-            User.getInstance().setSeedChecked(mContext,true);
+            User.getInstance().setInitWalletType(mContext,"createStepTwo");
             switchActivity(CreateWalletStepThreeActivity.class);
         }
     }
@@ -234,12 +314,12 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
         @Override
         public int getCount() {
-            return seedList != null ? seedList.size() : 0;
+            return seedListPageOne != null ? seedListPageOne.size() : 0;
         }
 
         @Override
         public Object getItem(int position) {
-            return seedList.get(position);
+            return seedListPageOne.get(position);
         }
 
         @Override
@@ -259,8 +339,8 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-            boolean isSelected = seedList.get(position).isSelected();
-            viewHolder.setText(R.id.select_seed_text, seedList.get(position).getSeed());
+            boolean isSelected = seedListPageOne.get(position).isSelected();
+            viewHolder.setText(R.id.select_seed_text, seedListPageOne.get(position).getSeed());
             LinearLayout contentView = viewHolder.getView(R.id.select_seed_view_content);
             TextView textView = viewHolder.getView(R.id.select_seed_text);
             if(isSelected){
@@ -274,5 +354,95 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
             return convertView;
         }
     }
+
+    class SeedsSelectAdapterForPageTwo extends BaseAdapter {
+
+        private Context mContext;
+
+        public SeedsSelectAdapterForPageTwo(Context context) {
+            this.mContext = context;
+        }
+
+        @Override
+        public int getCount() {
+            return seedListPageTwo != null ? seedListPageTwo.size() : 0;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return seedListPageTwo.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder;
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.layout_item_select_seed, null);
+                viewHolder = new ViewHolder(convertView);
+                convertView.setTag(viewHolder);
+
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+            boolean isSelected = seedListPageTwo.get(position).isSelected();
+            viewHolder.setText(R.id.select_seed_text, seedListPageTwo.get(position).getSeed());
+            LinearLayout contentView = viewHolder.getView(R.id.select_seed_view_content);
+            TextView textView = viewHolder.getView(R.id.select_seed_text);
+            if(isSelected){
+                contentView.setBackground(getDrawable(R.drawable.bg_btn_round_blue_4));
+                textView.setTextColor(Color.WHITE);
+            }else{
+                contentView.setBackground(getDrawable(R.drawable.bg_btn_round_white_4));
+                textView.setTextColor(Color.BLACK);
+            }
+
+            return convertView;
+        }
+    }
+
+    class MyPagerAdapter extends PagerAdapter{
+
+        private ArrayList<View> viewLists;
+
+        public MyPagerAdapter(){}
+
+        public MyPagerAdapter(ArrayList<View> viewLists) {
+            super();
+            this.viewLists = viewLists;
+        }
+
+        @Override
+        public int getCount() {
+            return viewLists.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+            return view == object;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            container.addView(viewLists.get(position));
+            return viewLists.get(position);
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView(viewLists.get(position));
+        }
+
+    }
+    
+    @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+            finish();
+        }
 
 }

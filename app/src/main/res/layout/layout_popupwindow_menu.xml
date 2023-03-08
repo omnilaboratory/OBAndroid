@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/layout_son"
         android:layout_width="@dimen/main_260"
-        android:layout_height="@dimen/main_560"
+        android:layout_height="@dimen/main_590"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/main_10"
         android:layout_marginTop="@dimen/main_10"

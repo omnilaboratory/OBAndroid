@@ -20,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
@@ -100,7 +101,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
             mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
             showStepTwo();
         } else {
-            nodePubkey = "02224240424337d37c7aea165529adfeff90f1c1bf8b2d21fb44a1a690fff1ef23@43.138.107.248:9735";
+            nodePubkey = ConstantInOB.usingLiquidityNodePubkey;
             showStepOne();
         }
         /**
@@ -177,6 +178,17 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
                 showStepTwo();
+            }
+        });
+        /**
+         * 点击顶部问号
+         * @desc: click the question mark at the top
+         */
+        mAlertDialog.findViewById(R.id.iv_help_open_channel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WhatIsChannelDialog mWhatIsChannelDialog = new WhatIsChannelDialog(mContext);
+                mWhatIsChannelDialog.show();
             }
         });
     }
@@ -332,7 +344,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         mAlertDialog.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nodePubkey = "02224240424337d37c7aea165529adfeff90f1c1bf8b2d21fb44a1a690fff1ef23@43.138.107.248:9735";
+                nodePubkey = ConstantInOB.usingLiquidityNodePubkey;
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.VISIBLE);
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.GONE);
                 showStepOne();
@@ -387,6 +399,17 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 connectPeer(nodePubkey, mBalanceAmount, mWalletAddress);
             }
         });
+        /**
+         * 点击顶部问号
+         * @desc: click the question mark at the top
+         */
+        mAlertDialog.findViewById(R.id.iv_help_open_channel_two).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WhatIsChannelDialog mWhatIsChannelDialog = new WhatIsChannelDialog(mContext);
+                mWhatIsChannelDialog.show();
+            }
+        });
     }
 
     /**
@@ -435,7 +458,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     } else if (e.getMessage().toLowerCase().contains("funding amount is too large")) {
                         ToastUtils.showToast(mContext, e.getMessage());
                     } else {
-                        ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open));
+                        ToastUtils.showToast(mContext, e.getMessage());
+//                        ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open));
                     }
                 });
             }

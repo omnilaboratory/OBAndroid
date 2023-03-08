@@ -36,10 +36,30 @@ public class DateUtils {
 
 
     /**
+     * 十位时间戳字符串转年月
+     */
+    public static String YearMonth(String time) {
+        SimpleDateFormat sdr = new SimpleDateFormat("yyyy.MM");
+        int i = Integer.parseInt(time);
+        String times = sdr.format(new Date(i * 1000L));
+        return times;
+    }
+
+    /**
      * 十位时间戳字符串转月日
      */
     public static String MonthDay(String time) {
         SimpleDateFormat sdr = new SimpleDateFormat("MM/dd");
+        int i = Integer.parseInt(time);
+        String times = sdr.format(new Date(i * 1000L));
+        return times;
+    }
+
+    /**
+     * 十位时间戳字符串转时秒
+     */
+    public static String Hourmin(String time) {
+        SimpleDateFormat sdr = new SimpleDateFormat("HH:mm");
         int i = Integer.parseInt(time);
         String times = sdr.format(new Date(i * 1000L));
         return times;
@@ -463,6 +483,64 @@ public class DateUtils {
     }
 
     /**
+     * 获取当月第一天时间戳
+     */
+    public static long getMonthFirstdayDateZero() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MONTH, 0); //获取当前月第一天
+        c.set(Calendar.DAY_OF_MONTH, 1); //设置为1号,当前日期既为本月第一天
+        c.set(Calendar.HOUR_OF_DAY, 0); //将小时至0
+        c.set(Calendar.MINUTE, 0); //将分钟至0
+        c.set(Calendar.SECOND,0); //将秒至0
+        c.set(Calendar.MILLISECOND, 0); //将毫秒至0
+        return c.getTimeInMillis();
+    }
+
+    /**
+     * 获取指定日期所在月份开始的时间戳
+     * @param date 指定日期
+     * @return
+     */
+    public static Long getMonthBegin(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        //设置为1号,当前日期既为本月第一天
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        //将小时至0
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        //将分钟至0
+        c.set(Calendar.MINUTE, 0);
+        //将秒至0
+        c.set(Calendar.SECOND,0);
+        //将毫秒至0
+        c.set(Calendar.MILLISECOND, 0);
+        // 获取本月第一天的时间戳
+        return c.getTimeInMillis();
+    }
+
+    /**
+     * 获取指定日期所在月份结束的时间戳
+     * @param date 指定日期
+     * @return
+     */
+    public static Long getMonthEnd(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        //设置为当月最后一天
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+        //将小时至23
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        //将分钟至59
+        c.set(Calendar.MINUTE, 59);
+        //将秒至59
+        c.set(Calendar.SECOND,59);
+        //将毫秒至999
+        c.set(Calendar.MILLISECOND, 999);
+        // 获取本月最后一天的时间戳
+        return c.getTimeInMillis();
+    }
+
+    /**
      * 获得昨天0点时间
      */
     public static Date getYesterdayDateZero() {
@@ -879,5 +957,29 @@ public class DateUtils {
 
         return format;
 
+    }
+
+    /**
+     * 得到昨天的日期
+     *
+     * @return
+     */
+    public static String getYesterDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String yestoday = sdf.format(calendar.getTime());
+        return yestoday;
+    }
+
+    /**
+     * 得到今天的日期
+     *
+     * @return
+     */
+    public static String getTodayDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String date = sdf.format(new Date());
+        return date;
     }
 }

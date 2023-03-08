@@ -23,11 +23,13 @@ import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.BackupUtils;
 
+import org.conscrypt.Conscrypt;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Security;
 import java.util.Map;
 
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
@@ -59,6 +61,11 @@ public class AppApplication extends BaseApplication {
 
     @Override
     protected void init() {
+        /**
+         * @描述： grpc相关：在使用前必须“安装”Conscrypt
+         * @desc: Bundling Conscrypt,you must still "install" Conscrypt before use.
+         */
+        Security.insertProviderAt(Conscrypt.newProvider(), 1);
         /**
          * @描述： 去掉安卓P启动时候的警告弹窗
          * @desc: Remove the warning pop-up window when Android P starts
@@ -140,7 +147,7 @@ public class AppApplication extends BaseApplication {
                 balanceHandler.postDelayed(this, 360000);// 360s后执行
             }
         };
-        handler.postDelayed(balanceRunnable, 0);// 打开定时器立即执行
+        balanceHandler.postDelayed(balanceRunnable, 0);// 打开定时器立即执行
     }
 
     public void getTotalBlock(){
@@ -215,9 +222,17 @@ public class AppApplication extends BaseApplication {
                     }
 
                     @Override
-                    public void onError(Context context, String errorCode, String errorMsg) {
-                        
-
+                    public void onError(Context context, String errorCode, String errorMsg)  {
+                        Log.e(TAG,"getBTCPriceError:"+ errorMsg);
+                        /*try {
+                            BTCData btcData = new BTCData(mContext);
+                            if(btcData.checkDataIsEmpty()){
+                                btcData.insert(0,btcData.getLastPrice());
+                            }
+                            getUsdtPrice();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }*/
                     }
 
                     @Override
@@ -230,6 +245,13 @@ public class AppApplication extends BaseApplication {
                             String priceChange24h = jsonObject.getString("price_change_percentage_24h");
                             User.getInstance().setBtcPrice(mContext,btcPrice);
                             User.getInstance().setBtcPriceChange(mContext,priceChange24h);
+                            /*BTCData btcData = new BTCData(mContext);
+                            if(btcData.checkDataIsEmpty()){
+                                btcData.insert(0,Double.parseDouble(btcPrice));
+                            }else{
+                                btcData.updatePrice(Double.parseDouble(btcPrice));
+                            }*/
+
                             getUsdtPrice();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -274,7 +296,15 @@ public class AppApplication extends BaseApplication {
 
                     @Override
                     public void onError(Context context, String errorCode, String errorMsg) {
-                        
+                        Log.e(TAG,"getUsdtPriceError:"+ errorMsg);
+                        /*try {
+                            DollarData dollarData = new DollarData(mContext);
+                            if(dollarData.checkDataIsEmpty()){
+                                dollarData.insert(0,dollarData.getLastPrice());
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }*/
                     }
 
                     @Override
@@ -285,6 +315,12 @@ public class AppApplication extends BaseApplication {
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
                             String usdtPrice = jsonObject.getString("current_price");
                             User.getInstance().setUsdtPrice(mContext,usdtPrice);
+                            /*DollarData dollarData = new DollarData(mContext);
+                            if(dollarData.checkDataIsEmpty()){
+                                dollarData.insert(0,Double.parseDouble(usdtPrice));
+                            }else{
+                                dollarData.updatePrice(Double.parseDouble(usdtPrice));
+                            }*/
                             EventBus.getDefault().post(new BtcAndUsdtEvent());
                         } catch (JSONException e) {
                             e.printStackTrace();

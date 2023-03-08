@@ -39,7 +39,7 @@
             android:layout_width="295dp"
             android:layout_height="wrap_content"
             android:text="@string/unlock_description"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_18"
             android:textColor="@color/color_description_blue"
             android:letterSpacing="0.3"
             android:textAlignment="center" />
@@ -82,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/pwd_upper"
                         android:textAllCaps="false"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_18"
                         android:letterSpacing="0.1"
                         android:layout_marginEnd="10dp"
                         android:textColor="@color/color_key"/>
@@ -116,10 +116,12 @@
                         android:hint="@string/create_pass_input_hit"
                         android:background="@null"
                         android:layout_marginEnd="10dp"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_14"
                         android:letterSpacing="0.05"
                         android:textColor="@color/color_description_blue"
                         android:textColorHint="@color/color_description_blue"
+                        android:maxLines="1"
+                        android:inputType="textVisiblePassword"
                         android:textAlignment="center"/>
                     <ImageView
                         android:contentDescription="@string/pass_show_hind"
@@ -188,6 +190,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/empty"
                             android:textColor="@color/color_todo_grey"
+                            android:textSize="@dimen/text_12"
                             android:textStyle="bold"/>
                     </RelativeLayout>
                 </LinearLayout>
@@ -213,7 +216,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/pwd_upper_repeat"
                         android:textAllCaps="false"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_18"
                         android:letterSpacing="0.1"
                         android:layout_marginEnd="10dp"
                         android:textColor="@color/color_key"
@@ -243,10 +246,13 @@
                         android:hint="@string/create_pass_input_hit"
                         android:background="@null"
                         android:layout_marginEnd="10dp"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_14"
                         android:letterSpacing="0.05"
                         android:textColor="@color/color_description_blue"
                         android:textColorHint="@color/color_description_blue"
+                        android:maxLines="1"
+                        android:inputType="textVisiblePassword"
+                        android:imeOptions="actionDone"
                         android:textAlignment="center"/>
                     <ImageView
                         android:contentDescription="@string/pass_show_hind"
@@ -310,7 +316,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/back_upper"
                         android:textColor="@color/color_black"
-                        android:textSize="18sp" />
+                        android:textSize="@dimen/text_18" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -339,7 +345,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/next_upper"
                         android:textColor="@color/color_black"
-                        android:textSize="18sp" />
+                        android:textSize="@dimen/text_18" />
                 </LinearLayout>
 
             </LinearLayout>
