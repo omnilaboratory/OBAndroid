@@ -662,7 +662,10 @@ public class SplashActivity extends AppBaseActivity {
                     });
                 } else if (e.getMessage().equals("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
 
+                }else if(e.getMessage().equals("error creating wallet config: unable to initialize neutrino backend: unable to create neutrino database: cannot allocate memory")){
+                    ToastUtils.showToast(mContext,"Failed to start, please check your cache is sufficient. After confirming that the cache is sufficient, please restart the App.");
                 }
+
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
             }
 
