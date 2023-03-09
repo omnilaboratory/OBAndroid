@@ -458,7 +458,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     } else if (e.getMessage().toLowerCase().contains("funding amount is too large")) {
                         ToastUtils.showToast(mContext, e.getMessage());
                     } else {
-                        ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open));
+                        ToastUtils.showToast(mContext, e.getMessage());
+//                        ToastUtils.showToast(mContext, mContext.getString(R.string.error_channel_open));
                     }
                 });
             }

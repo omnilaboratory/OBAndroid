@@ -50,6 +50,7 @@ public class ReceiveLuckyPacketDialog {
     String amount;
     String number;
     String besyWishes;
+    String canReceive;
     LoadingDialog mLoadingDialog;
 
     public ReceiveLuckyPacketDialog(Context context) {
@@ -65,6 +66,7 @@ public class ReceiveLuckyPacketDialog {
                     .fullHeight()
                     .create();
         }
+        getChannelBalance(mAssetId);
         /**
          * @备注： 关闭按钮
          * @description: Click close button
@@ -110,6 +112,17 @@ public class ReceiveLuckyPacketDialog {
             randAmount = rand.nextDouble() * (max - min) + min;
         }
         LogUtils.e("============================", randAmount + "");
+        if (randAmount - (Double.parseDouble(canReceive) * 100000000) > 0) {
+            CreateNewChannelTipDialog mCreateNewChannelTipDialog = new CreateNewChannelTipDialog(mContext);
+            mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
+                @Override
+                public void onClick() {
+                    mAlertDialog.dismiss();
+                }
+            });
+            mCreateNewChannelTipDialog.show();
+            return;
+        }
         LightningOuterClass.Invoice asyncInvoiceRequest;
         if (mAssetId == 0) {
             asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
@@ -232,6 +245,56 @@ public class ReceiveLuckyPacketDialog {
     private void showStepDesc(String message) {
         TextView descTv = mAlertDialog.findViewById(R.id.tv_desc);
         descTv.setText(message);
+    }
+
+    /**
+     * get Channel Balance
+     * 查询通道余额
+     *
+     * @param propertyid
+     */
+    private void getChannelBalance(long propertyid) {
+        LightningOuterClass.ChannelBalanceRequest channelBalanceRequest = LightningOuterClass.ChannelBalanceRequest.newBuilder()
+                .setAssetId((int) propertyid)
+                .build();
+        Obdmobile.channelBalance(channelBalanceRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.ChannelBalanceResponse resp = LightningOuterClass.ChannelBalanceResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------channelBalanceOnResponse------------------" + resp.toString());
+                            if (propertyid == 0) {
+                                if (resp.getRemoteBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00######");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
+                                }
+                            } else {
+                                if (resp.getRemoteBalance().getMsat() == 0) {
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
+                                } else {
+                                    DecimalFormat df = new DecimalFormat("0.00######");
+                                    canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
+                                }
+                            }
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     public void release() {
