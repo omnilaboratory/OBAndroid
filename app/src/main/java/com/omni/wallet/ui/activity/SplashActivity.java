@@ -465,6 +465,7 @@ public class SplashActivity extends AppBaseActivity {
             Log.e(TAG, "Cancel download " + ConstantInOB.blockHeaderBin);
         });
         downloadRequest.setOnProgressListener(progress -> {
+            refreshBtnImageView.setVisibility(View.INVISIBLE);
             double currentM = (double) progress.currentBytes / 1024 / 1024;
             updateDataView(currentM, totalBytes[0]);
         });
@@ -533,6 +534,7 @@ public class SplashActivity extends AppBaseActivity {
             @SuppressLint({"SetTextI18n", "DefaultLocale"})
             @Override
             public void onProgress(com.downloader.Progress progress) {
+                refreshBtnImageView.setVisibility(View.INVISIBLE);
                 double currentM = (double) progress.currentBytes / 1024 / 1024;
                 updateDataView(currentM, totalBytes[0]);
             }
@@ -604,6 +606,7 @@ public class SplashActivity extends AppBaseActivity {
             @SuppressLint({"SetTextI18n", "DefaultLocale"})
             @Override
             public void onProgress(com.downloader.Progress progress) {
+                refreshBtnImageView.setVisibility(View.INVISIBLE);
                 double currentM = (double) progress.currentBytes / 1024 / 1024;
                 updateDataView(currentM, totalBytes[0]);
             }
