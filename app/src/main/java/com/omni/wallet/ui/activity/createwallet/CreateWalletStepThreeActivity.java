@@ -42,6 +42,7 @@ import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
 public class CreateWalletStepThreeActivity extends AppBaseActivity {
+    public static final String TAG = CreateWalletStepThreeActivity.class.getSimpleName();
     Context ctx = CreateWalletStepThreeActivity.this;
     @BindView(R.id.password_input)
     public EditText mPwdEdit;
@@ -257,8 +258,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
-
-        Log.e("initWallet response","start");
+        Log.d("initWallet response","start");
         String password = mPwdEdit.getText().toString();
         int strongerPwd = CheckInputRules.checkePwd(password);
         TextView passwordViewRepeat = findViewById(R.id.password_input_repeat);
@@ -272,11 +272,11 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             String[] seedList = seedsString.split(" ");
             Walletunlocker.InitWalletRequest.Builder initWalletRequestBuilder = Walletunlocker.InitWalletRequest.newBuilder();
             List newSeedList = initWalletRequestBuilder.getCipherSeedMnemonicList();
-            Log.e("newSeedList",newSeedList.toString());
+            Log.d("newSeedList",newSeedList.toString());
             for (int i =0;i<seedList.length;i++){
                 initWalletRequestBuilder.addCipherSeedMnemonic(seedList[i]);
                 String mnemonicString = initWalletRequestBuilder.getCipherSeedMnemonic(i);
-                Log.e("mnemonicString",mnemonicString);
+                Log.d("mnemonicString",mnemonicString);
             }
             initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
 

@@ -20,7 +20,7 @@ public class GetRequestHeader {
 
     public GetRequestHeader(Context context) {
         String network = User.getInstance().getNetwork(context);
-        Log.e(TAG + "network: ", network);
+        Log.d(TAG + "network: ", network);
         String basePath = context.getExternalCacheDir() + "";
         this.BASE_PATH = basePath;
         this.TLS_PATH = basePath + "/tls.cert";
@@ -63,7 +63,7 @@ public class GetRequestHeader {
     public String getTLSString() {
         String cert = "";
         String tlsPath = getTLS_PATH();
-        Log.e(TAG + "getTSLString: ", tlsPath);
+        Log.d(TAG + "getTSLString: ", tlsPath);
         File file = new File(tlsPath);
         if (file.exists()) {
             BufferedReader bfr;
@@ -93,7 +93,7 @@ public class GetRequestHeader {
     public String getTLSKeyString() {
         String cert = "";
         String tlsPath = getTLS_KEY_PATH();
-        Log.e(TAG + "getTSLKeyString: ", tlsPath);
+        Log.d(TAG + "getTSLKeyString: ", tlsPath);
         File file = new File(tlsPath);
         if (file.exists()) {
             BufferedReader bfr;

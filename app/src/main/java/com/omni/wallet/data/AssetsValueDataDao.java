@@ -89,10 +89,10 @@ public class AssetsValueDataDao {
 
     public void completeAssetData(){
         List<Map<String,Object>> lastDataList =  queryAssetValueDataLast();
-        Log.e(TAG, "completeAssetData: "+ lastDataList.toString());
+        Log.d(TAG, "completeAssetData: "+ lastDataList.toString());
         if (lastDataList.size()>0){
             Map<String,Object> data =  lastDataList.get(0);
-            Log.e(TAG, "completeAssetData: "+ data.toString());
+            Log.d(TAG, "completeAssetData: "+ data.toString());
             long lastUpdateTime = (long) data.get("date");
             double lastValue = (double) data.get("value");
             try {
@@ -150,7 +150,7 @@ public class AssetsValueDataDao {
             queryRow.put("value",cursor.getDouble(cursor.getColumnIndex("value")));
             queryList.add(queryRow);
         }
-        Log.e(TAG+"queryAssetValueDataOneYear: ", queryList.toString());
+        Log.d(TAG+"queryAssetValueDataOneYear: ", queryList.toString());
         cursor.close();
 //        db.close();
         return queryList;

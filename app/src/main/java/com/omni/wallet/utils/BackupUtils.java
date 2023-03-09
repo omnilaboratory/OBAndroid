@@ -70,7 +70,7 @@ public class BackupUtils {
                 try {
                     String directoryPath = "";
                     String userSettingDirectory =  getUserSettingDirectory(context);
-                    Log.e(TAG,userSettingDirectory);
+                    Log.d(TAG,userSettingDirectory);
                     if(userSettingDirectory.isEmpty()){
                         directoryPath = basePath + "/" + directoryName;
                     }else {

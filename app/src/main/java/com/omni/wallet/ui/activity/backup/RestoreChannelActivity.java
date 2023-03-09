@@ -375,21 +375,21 @@ public class RestoreChannelActivity extends AppBaseActivity {
                 LightningOuterClass.RestoreChanBackupRequest restoreChanBackupRequest = LightningOuterClass.RestoreChanBackupRequest.newBuilder()
                         .setMultiChanBackup(multiChanBackup.getMultiChanBackup())
                         .build();
-                Log.e(TAG, "multi Channel restoreChanBackupRequest Str" + String.valueOf(restoreChanBackupRequest));
+                Log.d(TAG, "multi Channel restoreChanBackupRequest Str" + String.valueOf(restoreChanBackupRequest));
                 Obdmobile.restoreChannelBackups(restoreChanBackupRequest.toByteArray(), new Callback() {
                     @Override
                     public void onError(Exception e) {
                         runOnUiThread(()->{
                             PublicUtils.closeLoading(mLoadingDialog);
                             ToastUtils.showToast(mContext,"Please use the right file!");
-                            Log.e("restore string","restore failed");
+                            Log.e("restore string",e.getMessage());
                         });
                         e.printStackTrace();
                     }
 
                     @Override
                     public void onResponse(byte[] bytes) {
-                        Log.e("restore string","restore success");
+                        Log.d("restore string","restore success");
                         runOnUiThread(()->{
                             PublicUtils.closeLoading(mLoadingDialog);
                             ToastUtils.showToast(mContext,"The channels are recover successfully!");

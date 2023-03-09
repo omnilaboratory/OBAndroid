@@ -57,20 +57,20 @@ public class ConstantInOB {
 
 //    testnet config
 
-    /*public static final String usingNeutrinoConfig = neutrinoTestNetConfig;
+    public static final String usingNeutrinoConfig = neutrinoTestNetConfig;
     public static final String usingDownloadBaseUrl = downloadBaseUrlTestNet;
     public static final String usingBTCHostAddress = TEST_NET_BTC_HOST_ADDRESS;
     public static final String usingLogPath = testLogPath;
     public static final String usingDownloadDirectory = downloadDirectoryTestNet;
-    public static final String usingLiquidityNodePubkey = testLiquidityNodePubkey;*/
+    public static final String usingLiquidityNodePubkey = testLiquidityNodePubkey;
 
 //    regTest neutrino config
-    public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
+    /*public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
     public static final String usingDownloadBaseUrl = downloadBaseUrl;
     public static final String usingBTCHostAddress = BTCHostAddressRegTest;
     public static final String usingLogPath = regTestLogPath;
     public static final String usingDownloadDirectory = downloadDirectoryRegTest;
-    public static final String usingLiquidityNodePubkey = regLiquidityNodePubkey;
+    public static final String usingLiquidityNodePubkey = regLiquidityNodePubkey;*/
 
     public static final long SECOND_MILLIS = 1000;
     public static final long MINUTE_MILLIS = 60 * SECOND_MILLIS;
