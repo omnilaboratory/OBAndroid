@@ -488,10 +488,12 @@ public class SplashActivity extends AppBaseActivity {
                 boolean connectionError = error.isConnectionError();
                 boolean serverError = error.isServerError();
                 if (connectionError) {
-                    Log.e(TAG, "HeaderBin download ConnectError");
-
+                    refreshBtnImageView.setVisibility(View.VISIBLE);
+                    ToastUtils.showToast(mContext,"HeaderBin download Connect Error");
+                    Log.e(TAG, "HeaderBin download Connect Error");
                 } else if (serverError) {
-                    Log.e(TAG, "HeaderBin download ConnectError");
+                    ToastUtils.showToast(mContext,"HeaderBin download server Error");
+                    Log.e(TAG, "HeaderBin download server Error");
                 } else {
                     Log.e(TAG, "HeaderBin" + error.toString());
                 }
@@ -555,10 +557,13 @@ public class SplashActivity extends AppBaseActivity {
                 boolean connectionError = error.isConnectionError();
                 boolean serverError = error.isServerError();
                 if (connectionError) {
-                    Log.e(TAG, "FilterHeaderBin download ConnectError");
+                    refreshBtnImageView.setVisibility(View.VISIBLE);
+                    ToastUtils.showToast(mContext,"FilterHeaderBin download Connect Error");
+                    Log.e(TAG, "FilterHeaderBin download Connect Error");
 
                 } else if (serverError) {
-                    Log.e(TAG, "FilterHeaderBin download ConnectError");
+                    ToastUtils.showToast(mContext,"FilterHeaderBin download server Error");
+                    Log.e(TAG, "FilterHeaderBin download server Error");
                 } else {
                     Log.e(TAG, "FilterHeaderBin" + error.toString());
                 }
@@ -622,10 +627,13 @@ public class SplashActivity extends AppBaseActivity {
                 boolean connectionError = error.isConnectionError();
                 boolean serverError = error.isServerError();
                 if (connectionError) {
-                    Log.e(TAG, "DBFile download ConnectError");
+                    refreshBtnImageView.setVisibility(View.VISIBLE);
+                    ToastUtils.showToast(mContext,"DBFile download Connect Error");
+                    Log.e(TAG, "DBFile download Connect Error");
 
                 } else if (serverError) {
-                    Log.e(TAG, "DBFile download ConnectError");
+                    ToastUtils.showToast(mContext,"DBFile download server Error");
+                    Log.e(TAG, "DBFile download server Error");
                 } else {
                     Log.e(TAG, "DBFile" + error.toString());
                 }
