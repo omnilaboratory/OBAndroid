@@ -452,6 +452,7 @@ public class SplashActivity extends AppBaseActivity {
         final double[] totalBytes = {(double) downloadRequest.getTotalBytes() / 1024 / 1024};
         downloadRequest.setOnStartOrResumeListener(() -> {
             Log.d(TAG, "downloadHeaderBinFile: download resume");
+            refreshBtnImageView.setVisibility(View.INVISIBLE);
             isDownloading = true;
             doExplainTv.setText(mContext.getString(R.string.download_header));
             totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
@@ -515,6 +516,7 @@ public class SplashActivity extends AppBaseActivity {
         Log.d(TAG, "downloadFilterHeaderBinFile: " + downloadingId);
         final double[] totalBytes = {0};
         downloadRequest.setOnStartOrResumeListener(() -> {
+            refreshBtnImageView.setVisibility(View.INVISIBLE);
             Log.d(TAG, "downloadFilterHeaderBinFile: download resume");
             isDownloading = true;
             totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
@@ -585,6 +587,7 @@ public class SplashActivity extends AppBaseActivity {
         Log.d(TAG, "downloadDBFile: " + downloadingId);
         final double[] totalBytes = {0};
         downloadRequest.setOnStartOrResumeListener(() -> {
+            refreshBtnImageView.setVisibility(View.INVISIBLE);
             Log.d(TAG, "downloadDBFile: download resume");
             isDownloading = true;
             totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
@@ -726,15 +729,6 @@ public class SplashActivity extends AppBaseActivity {
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     @Override
     protected void onExitApplication() {
