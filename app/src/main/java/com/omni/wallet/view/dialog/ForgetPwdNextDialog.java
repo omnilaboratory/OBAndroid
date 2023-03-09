@@ -55,7 +55,7 @@ public class ForgetPwdNextDialog {
 
     public void show(){
         if (mAlertDialog == null){
-            Log.e(TAG, "show" );
+            Log.d(TAG, "show" );
             mAlertDialog = new AlertDialog.Builder(mContext, R.style.dialog_translucent_theme)
                     .setContentView(R.layout.layout_dialog_forget_password_next)
                     .setAnimation(R.style.popup_anim_style)
@@ -269,7 +269,7 @@ public class ForgetPwdNextDialog {
         TextView passwordViewRepeat = mAlertDialog.findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
-            Log.e(TAG,"start change password");
+            Log.d(TAG,"start change password");
             /**
              * 使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
              * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
@@ -314,7 +314,7 @@ public class ForgetPwdNextDialog {
                     try {
                         Walletunlocker.ChangePasswordResponse changePasswordResponse = Walletunlocker.ChangePasswordResponse.parseFrom(bytes);
                         String macaroon = changePasswordResponse.getAdminMacaroon().toString();
-                        Log.e("macaroon",macaroon);
+                        Log.d("macaroon",macaroon);
                         User.getInstance().setPasswordMd5(mContext,newPassMd5String);
                         User.getInstance().setMacaroonString(mContext,macaroon);
                         mHandler.post(()->{

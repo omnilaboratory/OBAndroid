@@ -43,7 +43,7 @@ public class ForgetPwdDialog {
 
     public void show(){
         if (mAlertDialog == null){
-            Log.e(TAG, "show" );
+            Log.d(TAG, "show" );
             mAlertDialog = new AlertDialog.Builder(mContext, R.style.dialog_translucent_theme)
                     .setContentView(R.layout.layout_dialog_forget_password)
                     .setAnimation(R.style.popup_anim_style)

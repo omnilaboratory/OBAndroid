@@ -19,6 +19,9 @@ import com.downloader.Error;
 import com.downloader.OnDownloadListener;
 import com.downloader.OnProgressListener;
 import com.downloader.PRDownloader;
+import com.downloader.PRDownloaderConfig;
+import com.downloader.Status;
+import com.downloader.internal.DownloadRequestQueue;
 import com.downloader.request.DownloadRequest;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
@@ -103,6 +106,7 @@ public class SplashActivity extends AppBaseActivity {
     Map<String, String> manifestInfo = new HashMap<>();
 
     boolean isDownloading = false;
+    int downloadingId = -1;
 
     @Override
     protected boolean isFullScreenStyle() {
@@ -163,6 +167,7 @@ public class SplashActivity extends AppBaseActivity {
                     networkIsConnected = false;
                     Log.e(TAG, "Network is disconnected!");
                     ToastUtils.showToast(mContext, "Network is disconnected!");
+                    PRDownloader.pause(downloadingId);
                     break;
                 default:
                     break;
@@ -378,8 +383,9 @@ public class SplashActivity extends AppBaseActivity {
             }
 
         } else {
-            PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build()
-                    .start(new OnDownloadListener() {
+            DownloadRequest pro =  PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build();
+            downloadingId = pro.getDownloadId();
+            pro.start(new OnDownloadListener() {
                         @Override
                         public void onDownloadComplete() {
                             try {
@@ -412,15 +418,12 @@ public class SplashActivity extends AppBaseActivity {
                                 e.printStackTrace();
                             }
                         }
-
                         @Override
                         public void onError(Error error) {
                             boolean connectionError = error.isConnectionError();
                             boolean serverError = error.isServerError();
                             if (connectionError) {
-                                getManifestFile();
                                 Log.e(TAG, "Manifest download ConnectError");
-
                             } else if (serverError) {
                                 Log.e(TAG, "Manifest download ConnectError");
                             } else {
@@ -443,8 +446,13 @@ public class SplashActivity extends AppBaseActivity {
             return;
         }
         DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build();
+        downloadRequest.setDownloadId(1);
+        downloadingId = downloadRequest.getDownloadId();
+        Log.d(TAG,"downloadHeaderBinFile: " + downloadingId);
         final double[] totalBytes = {(double) downloadRequest.getTotalBytes() / 1024 / 1024};
         downloadRequest.setOnStartOrResumeListener(() -> {
+            Log.d(TAG, "downloadHeaderBinFile: download resume");
+            refreshBtnImageView.setVisibility(View.INVISIBLE);
             isDownloading = true;
             doExplainTv.setText(mContext.getString(R.string.download_header));
             totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
@@ -457,6 +465,7 @@ public class SplashActivity extends AppBaseActivity {
             Log.e(TAG, "Cancel download " + ConstantInOB.blockHeaderBin);
         });
         downloadRequest.setOnProgressListener(progress -> {
+            refreshBtnImageView.setVisibility(View.INVISIBLE);
             double currentM = (double) progress.currentBytes / 1024 / 1024;
             updateDataView(currentM, totalBytes[0]);
         });
@@ -481,11 +490,12 @@ public class SplashActivity extends AppBaseActivity {
                 boolean connectionError = error.isConnectionError();
                 boolean serverError = error.isServerError();
                 if (connectionError) {
-                    downloadHeaderBinFile();
-                    Log.e(TAG, "HeaderBin download ConnectError");
-
+                    refreshBtnImageView.setVisibility(View.VISIBLE);
+                    ToastUtils.showToast(mContext,"HeaderBin download Connect Error");
+                    Log.e(TAG, "HeaderBin download Connect Error");
                 } else if (serverError) {
-                    Log.e(TAG, "HeaderBin download ConnectError");
+                    ToastUtils.showToast(mContext,"HeaderBin download server Error");
+                    Log.e(TAG, "HeaderBin download server Error");
                 } else {
                     Log.e(TAG, "HeaderBin" + error.toString());
                 }
@@ -502,8 +512,13 @@ public class SplashActivity extends AppBaseActivity {
             return;
         }
         DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build();
+        downloadRequest.setDownloadId(2);
+        downloadingId = downloadRequest.getDownloadId();
+        Log.d(TAG, "downloadFilterHeaderBinFile: " + downloadingId);
         final double[] totalBytes = {0};
         downloadRequest.setOnStartOrResumeListener(() -> {
+            refreshBtnImageView.setVisibility(View.INVISIBLE);
+            Log.d(TAG, "downloadFilterHeaderBinFile: download resume");
             isDownloading = true;
             totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
             syncBlockNumView.setText(String.format("%.2f", totalBytes[0]) + "MB");
@@ -519,6 +534,7 @@ public class SplashActivity extends AppBaseActivity {
             @SuppressLint({"SetTextI18n", "DefaultLocale"})
             @Override
             public void onProgress(com.downloader.Progress progress) {
+                refreshBtnImageView.setVisibility(View.INVISIBLE);
                 double currentM = (double) progress.currentBytes / 1024 / 1024;
                 updateDataView(currentM, totalBytes[0]);
             }
@@ -545,17 +561,18 @@ public class SplashActivity extends AppBaseActivity {
                 boolean connectionError = error.isConnectionError();
                 boolean serverError = error.isServerError();
                 if (connectionError) {
-                    downloadFilterHeaderBinFile();
-                    Log.e(TAG, "FilterHeaderBin download ConnectError");
+                    refreshBtnImageView.setVisibility(View.VISIBLE);
+                    ToastUtils.showToast(mContext,"FilterHeaderBin download Connect Error");
+                    Log.e(TAG, "FilterHeaderBin download Connect Error");
 
                 } else if (serverError) {
-                    Log.e(TAG, "FilterHeaderBin download ConnectError");
+                    ToastUtils.showToast(mContext,"FilterHeaderBin download server Error");
+                    Log.e(TAG, "FilterHeaderBin download server Error");
                 } else {
                     Log.e(TAG, "FilterHeaderBin" + error.toString());
                 }
             }
         });
-
     }
 
     public void downloadDBFile() {
@@ -567,8 +584,13 @@ public class SplashActivity extends AppBaseActivity {
             return;
         }
         DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build();
+        downloadRequest.setDownloadId(3);
+        downloadingId = downloadRequest.getDownloadId();
+        Log.d(TAG, "downloadDBFile: " + downloadingId);
         final double[] totalBytes = {0};
         downloadRequest.setOnStartOrResumeListener(() -> {
+            refreshBtnImageView.setVisibility(View.INVISIBLE);
+            Log.d(TAG, "downloadDBFile: download resume");
             isDownloading = true;
             totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
             doExplainTv.setText(mContext.getString(R.string.download_db));
@@ -584,6 +606,7 @@ public class SplashActivity extends AppBaseActivity {
             @SuppressLint({"SetTextI18n", "DefaultLocale"})
             @Override
             public void onProgress(com.downloader.Progress progress) {
+                refreshBtnImageView.setVisibility(View.INVISIBLE);
                 double currentM = (double) progress.currentBytes / 1024 / 1024;
                 updateDataView(currentM, totalBytes[0]);
             }
@@ -610,11 +633,13 @@ public class SplashActivity extends AppBaseActivity {
                 boolean connectionError = error.isConnectionError();
                 boolean serverError = error.isServerError();
                 if (connectionError) {
-                    downloadDBFile();
-                    Log.e(TAG, "DBFile download ConnectError");
+                    refreshBtnImageView.setVisibility(View.VISIBLE);
+                    ToastUtils.showToast(mContext,"DBFile download Connect Error");
+                    Log.e(TAG, "DBFile download Connect Error");
 
                 } else if (serverError) {
-                    Log.e(TAG, "DBFile download ConnectError");
+                    ToastUtils.showToast(mContext,"DBFile download server Error");
+                    Log.e(TAG, "DBFile download server Error");
                 } else {
                     Log.e(TAG, "DBFile" + error.toString());
                 }
@@ -691,18 +716,22 @@ public class SplashActivity extends AppBaseActivity {
     @OnClick(R.id.refresh_btn)
     public void clickRefreshBtn() {
         refreshBtnImageView.setVisibility(View.INVISIBLE);
-        actionAfterPromise();
+        switch (downloadingId){
+            case 1 :
+                downloadHeaderBinFile();
+                break;
+            case 2 :
+                downloadFilterHeaderBinFile();
+                break;
+            case 3 :
+                downloadDBFile();
+                break;
+            default :
+                break;
+        }
+
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     @Override
     protected void onExitApplication() {

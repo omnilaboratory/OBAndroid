@@ -66,7 +66,7 @@ public class WalletState {
             public void onResponse(byte[] bytes) {
 
                 if (bytes == null){
-                    Log.e(TAG,"get null state");
+                    Log.d(TAG,"get null state");
                     walletStateCallback.callback(-1);
                     return;
                 }
@@ -74,7 +74,7 @@ public class WalletState {
                     Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
                     int walletState = subscribeStateResponse.getStateValue();
                     walletStateCallback.callback(walletState);
-                    Log.e(TAG,String.valueOf(walletState));
+                    Log.d(TAG,String.valueOf(walletState));
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }

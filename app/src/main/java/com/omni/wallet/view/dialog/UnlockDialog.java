@@ -30,7 +30,7 @@ public class UnlockDialog {
 
     public void show(){
         if (mAlertDialog == null){
-            Log.e(TAG, "show" );
+            Log.d(TAG, "show" );
             mAlertDialog = new AlertDialog.Builder(mContext, R.style.dialog_translucent_theme)
                     .setContentView(R.layout.layout_popupwindow_unlock)
                     .setAnimation(R.style.popup_anim_style)

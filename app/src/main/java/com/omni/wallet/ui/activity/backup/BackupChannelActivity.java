@@ -64,12 +64,12 @@ public class BackupChannelActivity extends AppBaseActivity {
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
         userSetBackupDirectory = User.getInstance().getChannelBackupPathArray(mContext);
-        Log.e(TAG,userSetBackupDirectory);
+        Log.d(TAG,userSetBackupDirectory);
         if(!userSetBackupDirectory.isEmpty()){
             String[] directoryArray =  userSetBackupDirectory.split(" ");
             for (int i = 0; i < directoryArray.length; i++) {
                 pathList.add(directoryArray[i]);
-                Log.e(TAG,directoryArray[i]);
+                Log.d(TAG,directoryArray[i]);
             }
         }else{
             String storagePath = Environment.getExternalStorageDirectory() + "";
@@ -86,7 +86,7 @@ public class BackupChannelActivity extends AppBaseActivity {
         List<BackupFile> filesMap = FilesUtils.getDirectory(pathFull, mContext);
         for (BackupFile backupFile : filesMap) {
             String fileName = (String) backupFile.getFilename();
-            Log.e("filename", fileName);
+            Log.d("filename", fileName);
         }
         directoryData = filesMap;
         pathShow.setText(pathFull);
@@ -108,7 +108,7 @@ public class BackupChannelActivity extends AppBaseActivity {
 
     public void updatePathView(String directory) {
         pathList.add(directory);
-        Log.e("directoryList", pathList.toString());
+        Log.d("directoryList", pathList.toString());
         String pathFull = "";
         for (int i = 0; i < pathList.size(); i++) {
             if (i == 0) {

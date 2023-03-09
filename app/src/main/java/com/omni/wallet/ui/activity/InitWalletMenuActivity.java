@@ -134,7 +134,7 @@ public class InitWalletMenuActivity extends AppBaseActivity {
         Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                Log.e("unlock failed", "unlock failed");
+                Log.e("unlock failed", e.getMessage());
                 runOnUiThread(
                         () -> {
                             PublicUtils.closeLoading(mLoadingDialog);
@@ -162,7 +162,7 @@ public class InitWalletMenuActivity extends AppBaseActivity {
         Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                Log.e("unlock failed", "unlock failed");
+                Log.e("unlock failed", e.getMessage());
                 runOnUiThread(
                         () -> {
                             PublicUtils.closeLoading(mLoadingDialog);

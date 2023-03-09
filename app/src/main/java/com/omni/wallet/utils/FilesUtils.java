@@ -75,14 +75,14 @@ public class FilesUtils {
         try {
             File file = new File(path);
             if (!file.exists()){
-                Log.e(path + "is exist","false");
+                Log.d(path + "is exist","false");
                 return false;
             }
         }catch (Exception e){
-            Log.e(path + "is exist","false");
+            Log.d(path + "is exist","false");
             return false;
         }
-        Log.e(path + "is exist","true");
+        Log.d(path + "is exist","true");
         return true;
     }
 
@@ -90,7 +90,7 @@ public class FilesUtils {
         try {
             File file = new File(path);
             if (!file.exists()){
-                Log.e(path + "is exist","false");
+                Log.d(path + "is exist","false");
                 return -1;
             }else{
                 long lastModified = file.lastModified();

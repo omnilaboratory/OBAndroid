@@ -39,7 +39,7 @@ public class AssetsActions {
             long date = TimeFormatUtil.getCurrentDayMills();
             // Get a list of all assets today
             List<Map<String, Object>> dataList = assetsDataDao.queryAllAssetsDataByDate(date);
-            Log.e(TAG, "updateAssetsValueDataValueLast: dataList" + dataList.toString());
+            Log.d(TAG, "updateAssetsValueDataValueLast: dataList" + dataList.toString());
             // Calculate the sum of today's asset values
             double value = 0.0;
             for (int i = 0; i < dataList.size(); i++) {
@@ -129,7 +129,7 @@ public class AssetsActions {
      * @param amount asset channel balance
      */
     private static void insertOrUpdateAssetDataAndUpdateValueData(Context context, String propertyId, double amount) {
-        Log.e(TAG, "insertOrUpdateAssetDataAndUpdateValueData: amount" + amount);
+        Log.d(TAG, "insertOrUpdateAssetDataAndUpdateValueData: amount" + amount);
         AssetsDataDao assetsDataDao = new AssetsDataDao(context);
         try {
             long date = TimeFormatUtil.getCurrentDayMills();
@@ -180,11 +180,11 @@ public class AssetsActions {
         // Execute when the price is obtained successfully
         WalletServiceUtil.GetUsingAssetsPriceCallback getUsingAssetsPriceCallback
                 = (Context context1, JSONArray priceList, Map<String, Object> propertyMap) -> {
-            Log.e(TAG, "initOrUpdateDataStartApp: getPriceSuccess");
+            Log.d(TAG, "initOrUpdateDataStartApp: getPriceSuccess");
             try {
                 for (int i = 0; i < priceList.length(); i++) {
                     String priceString = priceList.getJSONObject(i).getString("current_price");
-                    Log.e(TAG, "initOrUpdateDataStartApp: price: " + priceString);
+                    Log.d(TAG, "initOrUpdateDataStartApp: price: " + priceString);
                     double price = Double.parseDouble(priceString);
                     String id = priceList.getJSONObject(i).getString("id");
                     String propertyId="";
@@ -214,7 +214,7 @@ public class AssetsActions {
         // Execute when getting the price fails
         WalletServiceUtil.GetUsingAssetsPriceErrorCallback getUsingAssetsPriceErrorCallback
                 = (Context mContext, String errorCode, String errorMsg, List<Map<String, Object>> usingAssetsList, Map<String, Object> propertyMap) -> {
-            Log.e(TAG, "getPriceError:" + errorMsg);
+            Log.d(TAG, "getPriceError:" + errorMsg);
             AssetsDataDao assetsDataDao = new AssetsDataDao(context);
             for (int i = 0; i < usingAssetsList.size(); i++) {
                 String id = (String) usingAssetsList.get(i).get("token_name");
@@ -288,7 +288,7 @@ public class AssetsActions {
 
             updateAssetChannelsAmountS(context, propertyId, channelAmount);
             if (index == assetCount - 1) {
-                Log.e(TAG, "initOrUpdateDataStartApp: getAssetsChannelBalanceSuccess318");
+                Log.d(TAG, "initOrUpdateDataStartApp: getAssetsChannelBalanceSuccess318");
                 getUsingAssetsPriceAction(context);
             }
         };
@@ -296,7 +296,7 @@ public class AssetsActions {
         // Execute after failing to obtain the channel balance
         WalletServiceUtil.GetAssetChannelBalanceErrorCallback getAssetChannelBalanceErrorCallback
                 = (Context mContext, Exception e) -> {
-            Log.e(TAG, e.getMessage());
+            Log.d(TAG, e.getMessage());
             getUsingAssetsPriceAction(context);
             e.printStackTrace();
         };
@@ -314,7 +314,7 @@ public class AssetsActions {
         // Execute after successfully obtaining the balance on the chain
         WalletServiceUtil.GetAssetsBalanceCallback getAssetsBalanceCallback
                 = (List<LightningOuterClass.AssetBalanceByAddressResponse> assetsList) -> {
-            Log.e(TAG, "initOrUpdateDataStartApp: getAssetsBalanceSuccess443");
+            Log.d(TAG, "initOrUpdateDataStartApp: getAssetsBalanceSuccess443");
             for (int i = 0; i < assetsList.size(); i++) {
                 AssetsDao assetsDao = new AssetsDao(context);
                 LightningOuterClass.AssetBalanceByAddressResponse asset = assetsList.get(i);
@@ -331,7 +331,7 @@ public class AssetsActions {
         // Execute after failing to obtain the balance on the chain
         WalletServiceUtil.GetAssetsBalanceErrorCallback getAssetsBalanceErrorCallback
                 = (Context mContext, Exception e) -> {
-            Log.e(TAG, e.getMessage());
+            Log.d(TAG, e.getMessage());
             updateAssetsValueDataValueLast(context);
             getAssetsChannelBalanceAction(context);
             e.printStackTrace();
@@ -350,18 +350,18 @@ public class AssetsActions {
         // Execute after successfully obtaining the btc balance on the chain
         WalletServiceUtil.GetBtcBalanceCallback getBtcBalanceCallback
                 = (double btcBalance) -> {
-            Log.e(TAG, "initOrUpdateDataStartApp: btcBalance" + btcBalance);
+            Log.d(TAG, "initOrUpdateDataStartApp: btcBalance" + btcBalance);
             insertOrUpdateAssetDataAndUpdateValueData(context, "0", btcBalance);
             getAssetsBalanceAction(context);
         };
         // 获取链上btc余额失败后执行
         // Executed after failing to obtain the btc balance on the chain
         WalletServiceUtil.GetBtcBalanceErrorCallback getBtcBalanceErrorCallback = (Exception e, Context mContext) -> {
-            Log.e(TAG, e.getMessage());
+            Log.d(TAG, e.getMessage());
             getAssetsBalanceAction(context);
             e.printStackTrace();
         };
-        Log.e(TAG, "initOrUpdateDataStartApp: start");
+        Log.d(TAG, "initOrUpdateDataStartApp: start");
         WalletServiceUtil.getBtcBalance(context, getBtcBalanceCallback, getBtcBalanceErrorCallback);
     }
     /**
@@ -395,7 +395,7 @@ public class AssetsActions {
         };
 
         WalletServiceUtil.GetAssetListErrorCallback getAssetListErrorCallback = (Context mContext, Exception e) -> {
-            Log.e(TAG, e.getMessage());
+            Log.d(TAG, e.getMessage());
             if (assetsCount == 0) {
                 initOrUpdateAction(mContext);
             } else {
@@ -432,7 +432,7 @@ public class AssetsActions {
         Map<String, Double> changeMap = new HashMap<>();
         List<Map<String, Object>> chartDataList = new ArrayList<>();
         Collections.reverse(valueList);
-        Log.e(TAG + "getDataForChart ", valueList.toString());
+        Log.d(TAG + "getDataForChart ", valueList.toString());
         if (valueList.size() > 0) {
             double value = 0;
             double changePercent = 0;

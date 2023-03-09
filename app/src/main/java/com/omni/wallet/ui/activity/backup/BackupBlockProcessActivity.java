@@ -186,7 +186,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @SuppressLint("SetTextI18n")
     private void updateSyncDataView(long syncedHeight){
-        Log.e(TAG,"update_synced_Height");
+        Log.d(TAG,"update_synced_Height");
         double totalHeight =  totalBlock;
         double currentHeight =  syncedHeight;
         if(syncedHeight>totalBlock){
@@ -235,7 +235,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @OnClick(R.id.btn_start)
     public void clickStart(){
-        Log.e(TAG,"click start");
+        Log.d(TAG,"click start");
         if(newCreatedAddress.isEmpty()){
             String toastMsg = "Block is syncing now,please wait a moment!";
             Toast copySuccessToast = Toast.makeText(ctx,toastMsg,Toast.LENGTH_LONG);
@@ -243,7 +243,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             copySuccessToast.show();
         }else{
 //            switchActivityFinish(AccountLightningActivity.class);
-            Log.e(TAG,"click start initWalletType:" + initWalletType);
+            Log.d(TAG,"click start initWalletType:" + initWalletType);
             if(initWalletType.equals("initialed")){
                 switchActivityFinish(AccountLightningActivity.class);
             }else if(initWalletType.equals("toBeRestoreChannel")){
@@ -255,7 +255,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
 
     public void newAddressToWallet (){
-        Log.e(TAG,"new Address count");
+        Log.d(TAG,"new Address count");
         String createType = User.getInstance().getInitWalletType(mContext);
         if(createType.equals("recoveryStepTwo")){
             getOldAddress();
@@ -313,7 +313,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
 
     public void getOldAddress(){
-        Log.e(TAG, "getOldAddress: ");
+        Log.d(TAG, "getOldAddress: ");
         LightningOuterClass.ListAddressesRequest listAddressesRequest = LightningOuterClass.ListAddressesRequest.newBuilder().build();
         Obdmobile.oB_ListAddresses(listAddressesRequest.toByteArray(), new Callback() {
             @Override
@@ -325,7 +325,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
             @Override
             public void onResponse(byte[] bytes) {
                 if(bytes == null){
-                    Log.e(TAG, "getOldAddress: no address");
+                    Log.d(TAG, "getOldAddress: no address");
                     newAddress();
                     return;
                 }
@@ -354,7 +354,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     
     @OnClick(R.id.refresh_btn)
     public void refreshBtnClick (){
-        Log.e("Click refresh","Click refresh");
+        Log.d("Click refresh","Click refresh");
         startOBMobile();
     }
     
@@ -417,7 +417,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                 case ConnectivityManager.TYPE_WIMAX:
                 case -1:
                     networkIsConnected = false;
-                    Log.e(TAG,"Network is disconnected!");
+                    Log.d(TAG,"Network is disconnected!");
                     ToastUtils.showToast(mContext,"Network is disconnected!");
                     break;
             }
@@ -442,7 +442,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                 try {
                     LightningOuterClass.ListAddressesResponse listAddressesResponse = LightningOuterClass.ListAddressesResponse.parseFrom(bytes);
                     String address = listAddressesResponse.getItems(0);
-                    Log.e("TAG",address);
+                    Log.d("TAG",address);
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }

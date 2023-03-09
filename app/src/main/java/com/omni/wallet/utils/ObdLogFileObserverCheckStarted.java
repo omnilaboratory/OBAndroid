@@ -57,7 +57,7 @@ public class ObdLogFileObserverCheckStarted extends FileObserver {
                         if(line!=null){
                             readingLineNum++;
                             if(readingLineNum>lastReadLineNum){
-                                Log.e("-------------------------reading,lastReadLineNum----------------------",String.valueOf(readingLineNum)+","+String.valueOf(lastReadLineNum));
+                                Log.d("-------------------------reading,lastReadLineNum----------------------",String.valueOf(readingLineNum)+","+String.valueOf(lastReadLineNum));
                                 if(checkString(oldLine)){
                                     String stringHeight = oldLine.split("height=")[1].split("\\)")[0];
                                     if(Integer.parseInt(stringHeight)>=totalBlock){
