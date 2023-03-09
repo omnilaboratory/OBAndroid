@@ -1,15 +1,22 @@
 package com.omni.wallet.ui.activity.createwallet;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.view.dialog.LoadingDialog;
@@ -36,6 +43,10 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
 
     @BindView(R.id.seed_content)
     LinearLayout lvSeedContent;
+    @BindView(R.id.seed_grid_view)
+    GridView seedGridView;
+
+    SeedsAdapter seedsAdapter;
 
     @Override
     protected Drawable getWindowBackground() {
@@ -51,14 +62,62 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+
         EventBus.getDefault().register(this);
         mLoadingDialog = new LoadingDialog(mContext);
-        
+        seedsAdapter = new SeedsAdapter(mContext);
+        initSeedsGridView();
     }
 
     @Override
     protected void initData() {
         createSeeds();
+    }
+
+    public void initSeedsGridView() {
+        seedGridView.setAdapter(seedsAdapter);
+    }
+
+    class SeedsAdapter extends BaseAdapter {
+
+        private Context mContext;
+
+        public SeedsAdapter(Context context) {
+            this.mContext = context;
+        }
+
+        @Override
+        public int getCount() {
+            return seedArray != null ? seedArray.size() : 0;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return seedArray.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder;
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.layout_item_seed, null);
+                viewHolder = new ViewHolder(convertView);
+                convertView.setTag(viewHolder);
+
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+            viewHolder.setText(R.id.seed_idx, (position + 1) + ".");
+            TextView textView = viewHolder.getView(R.id.seed_text);
+            textView.setText(seedArray.get(position));
+            return convertView;
+        }
     }
 
     @Override
@@ -82,63 +141,21 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
                 try{
                     Walletunlocker.GenSeedResponse genSeedResponse = Walletunlocker.GenSeedResponse.parseFrom(bytes);
                     List genSeedResponseList =  genSeedResponse.getCipherSeedMnemonicList();
-                    for (int i = 0; i<genSeedResponseList.size();i++){
+                    Log.d(TAG, "onResponse: " + genSeedResponseList);
+                    for (int i = 0; i<genSeedResponseList.size();i++) {
                         seedArray.add(genSeedResponseList.get(i).toString());
                     }
-                    for (int idx = 0;idx<seedArray.size();idx++){
+                    Log.d(TAG, "onResponse seedArray: " + seedArray);
+                    for (int idx = 0;idx<seedArray.size();idx++) {
                         seedsString = seedsString + seedArray.get(idx)+ " ";
                     }
+                    Log.d(TAG, "onResponse seedsString: " + seedsString);
                     User.getInstance().setSeedString(mContext,seedsString);
-//                    initTvForSeeds();
-                    TextView textView01 = (TextView)findViewById(R.id.seed_text_1);
-                    textView01.setText(seedArray.get(0));
-                    TextView textView02 = (TextView)findViewById(R.id.seed_text_2);
-                    textView02.setText(seedArray.get(1));
-                    TextView textView03 = (TextView)findViewById(R.id.seed_text_3);
-                    textView03.setText(seedArray.get(2));
-                    TextView textView04 = (TextView)findViewById(R.id.seed_text_4);
-                    textView04.setText(seedArray.get(3));
-                    TextView textView05 = (TextView)findViewById(R.id.seed_text_5);
-                    textView05.setText(seedArray.get(4));
-                    TextView textView06 = (TextView)findViewById(R.id.seed_text_6);
-                    textView06.setText(seedArray.get(5));
-                    TextView textView07 = (TextView)findViewById(R.id.seed_text_7);
-                    textView07.setText(seedArray.get(6));
-                    TextView textView08 = (TextView)findViewById(R.id.seed_text_8);
-                    textView08.setText(seedArray.get(7));
-                    TextView textView09 = (TextView)findViewById(R.id.seed_text_9);
-                    textView09.setText(seedArray.get(8));
-                    TextView textView10 = (TextView)findViewById(R.id.seed_text_10);
-                    textView10.setText(seedArray.get(9));
-                    TextView textView11 = (TextView)findViewById(R.id.seed_text_11);
-                    textView11.setText(seedArray.get(10));
-                    TextView textView12 = (TextView)findViewById(R.id.seed_text_12);
-                    textView12.setText(seedArray.get(11));
-                    TextView textView13 = (TextView)findViewById(R.id.seed_text_13);
-                    textView13.setText(seedArray.get(12));
-                    TextView textView14 = (TextView)findViewById(R.id.seed_text_14);
-                    textView14.setText(seedArray.get(13));
-                    TextView textView15 = (TextView)findViewById(R.id.seed_text_15);
-                    textView15.setText(seedArray.get(14));
-                    TextView textView16 = (TextView)findViewById(R.id.seed_text_16);
-                    textView16.setText(seedArray.get(15));
-                    TextView textView17 = (TextView)findViewById(R.id.seed_text_17);
-                    textView17.setText(seedArray.get(16));
-                    TextView textView18 = (TextView)findViewById(R.id.seed_text_18);
-                    textView18.setText(seedArray.get(17));
-                    TextView textView19 = (TextView)findViewById(R.id.seed_text_19);
-                    textView19.setText(seedArray.get(18));
-                    TextView textView20 = (TextView)findViewById(R.id.seed_text_20);
-                    textView20.setText(seedArray.get(19));
-                    TextView textView21 = (TextView)findViewById(R.id.seed_text_21);
-                    textView21.setText(seedArray.get(20));
-                    TextView textView22 = (TextView)findViewById(R.id.seed_text_22);
-                    textView22.setText(seedArray.get(21));
-                    TextView textView23 = (TextView)findViewById(R.id.seed_text_23);
-                    textView23.setText(seedArray.get(22));
-                    TextView textView24 = (TextView)findViewById(R.id.seed_text_24);
-                    textView24.setText(seedArray.get(23));
-                    runOnUiThread(() -> mLoadingDialog.dismiss());
+                    runOnUiThread(() -> {
+                        seedsAdapter.notifyDataSetChanged();
+                        mLoadingDialog.dismiss();
+                    });
+
                 }catch (InvalidProtocolBufferException e){
                     e.printStackTrace();
                     mLoadingDialog.dismiss();
@@ -146,7 +163,6 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
             }
         });
     }
-
 
     /**
      * 点击Back
