@@ -81,8 +81,9 @@
                 android:layout_height="match_parent"
                 android:clickable="false"
                 android:numColumns="3"
-                android:verticalSpacing="@dimen/main_10"
-                android:paddingBottom="@dimen/main_10"/>
+                android:verticalSpacing="@dimen/main_30"
+                android:paddingTop="@dimen/main_15"
+                android:paddingBottom="@dimen/main_15"/>
         </LinearLayout>
 
     </LinearLayout>
