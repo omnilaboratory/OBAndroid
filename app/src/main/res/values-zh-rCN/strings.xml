@@ -327,6 +327,7 @@
     <string name="sync_block">同步链上数据:</string>
     <string name="download_db">正在下载neutrino.db:</string>
     <string name="download_header">正在下载 block_header.bin:</string>
+    <string name="download_manifest">正在下载 manifest.txt:</string>
     <string name="download_filter_header">正在下载 filter_block_header.bin:</string>
     <string name="sync_block_percent">0%</string>
     <string name="block">Block</string>

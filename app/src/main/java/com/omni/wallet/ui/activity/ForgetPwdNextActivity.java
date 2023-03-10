@@ -1,9 +1,7 @@
 package com.omni.wallet.ui.activity;
 
-import android.content.ComponentName;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
@@ -23,7 +21,6 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CheckInputRules;
@@ -46,7 +43,6 @@ import obdmobile.Obdmobile;
 
 public class ForgetPwdNextActivity extends AppBaseActivity {
     public final static String TAG = ForgetPwdNextActivity.class.getSimpleName();
-    Context ctx = ForgetPwdNextActivity.this;
     @BindView(R.id.password_input)
     public EditText mPwdEdit;
     @BindView(R.id.pass_switch)
@@ -67,7 +63,8 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_create_wallet_step_three;
+        return R.layout.activity_forget_pwd_next;
+//        return R.layout.activity_create_wallet_step_three;
     }
 
     @Override
@@ -77,19 +74,14 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
         PasswordFilter passwordFilter = new PasswordFilter();
         mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
         mConfirmPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
-        TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE){
-                    clickForward();
-                }
-                return true;
+        TextView.OnEditorActionListener listener = (v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                clickForward();
             }
+            return true;
         };
         mConfirmPwdEdit.setOnEditorActionListener(listener);
-        runOnUiThread(() -> {
-            subscribeState();
-        });
+        runOnUiThread(this::subscribeState);
     }
 
     @Override
@@ -108,6 +100,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
      * When the value of password input changed
      */
 
+    @SuppressLint("SetTextI18n")
     @OnTextChanged(R.id.password_input)
     public void passwordChangeCheck(){
         String password = mPwdEdit.getText().toString();
@@ -131,13 +124,6 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
                     pass_strong_text.setTextColor(getResources().getColor(R.color.color_red));
                     break;
                 case 2:
-                    easy.setBackgroundColor(getResources().getColor(R.color.color_red));
-                    normal.setBackgroundColor(getResources().getColor(R.color.color_orange));
-                    strong.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
-                    pass_strong_text.setVisibility(View.VISIBLE);
-                    pass_strong_text.setText("NORMAL");
-                    pass_strong_text.setTextColor(getResources().getColor(R.color.color_orange));
-                    break;
                 case 3:
                     easy.setBackgroundColor(getResources().getColor(R.color.color_red));
                     normal.setBackgroundColor(getResources().getColor(R.color.color_orange));
@@ -182,6 +168,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
             pass_strong_text.setText("EMPTY");
             pass_strong_text.setTextColor(getResources().getColor(R.color.color_todo_grey));
         }
+        passwordRepeatChangeCheck();
     }
 
     /**
@@ -195,7 +182,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
         TextView passwordViewRepeat = findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         ImageView passwordRepeatCheck = findViewById(R.id.pass_input_check_repeat);
-        if(passwordRepeatString==""){
+        if(passwordRepeatString.equals("")){
             passwordRepeatCheck.setVisibility(View.INVISIBLE);
         }else{
             if(passwordString.equals(passwordRepeatString)){
@@ -282,22 +269,19 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
             Obdmobile.changePassword(changePasswordRequest.toByteArray(), new Callback() {
                 @Override
                 public void onError(Exception e) {
-                    runOnUiThread(
-                            () -> {
-                                PublicUtils.closeLoading(mLoadingDialog);
-                            }
-                    );
+                    runOnUiThread(() -> {
+                        if(e.getMessage().equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
+                            switchActivity(AccountLightningActivity.class);
+                        }
+                        PublicUtils.closeLoading(mLoadingDialog);
+                    });
                     e.printStackTrace();
                 }
 
                 @Override
                 public void onResponse(byte[] bytes) {
                     if(bytes == null){
-                        runOnUiThread(
-                                () -> {
-                                    PublicUtils.closeLoading(mLoadingDialog);
-                                }
-                        );
+                        runOnUiThread(() -> PublicUtils.closeLoading(mLoadingDialog));
                         return;
                     }
                     try {
@@ -306,24 +290,9 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
                         Log.d("macaroon",macaroon);
                         User.getInstance().setPasswordMd5(mContext,newPassMd5String);
                         User.getInstance().setMacaroonString(mContext,macaroon);
-                       /* Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(newPassMd5String)).build();
-                        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
-                            @Override
-                            public void onError(Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            @Override
-                            public void onResponse(byte[] bytes) {
-                            }
-                        });*/
 
                     } catch (InvalidProtocolBufferException e) {
-                        runOnUiThread(
-                                () -> {
-                                    PublicUtils.closeLoading(mLoadingDialog);
-                                }
-                        );
+                        runOnUiThread(() -> PublicUtils.closeLoading(mLoadingDialog));
                         e.printStackTrace();
                     }
                     
@@ -335,7 +304,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
             if(strongerPwd<0){
                 checkSetPassWrongString = getResources().getString(R.string.toast_create_check_pass_wrong);
             }else if(!passwordRepeatString.equals(password)){
-                checkSetPassWrongString =  getResources().getString(R.string.toast_create_check_pass_diff);;
+                checkSetPassWrongString =  getResources().getString(R.string.toast_create_check_pass_diff);
             }
             Toast checkSetPassToast = Toast.makeText(ForgetPwdNextActivity.this,checkSetPassWrongString,Toast.LENGTH_LONG);
             checkSetPassToast.setGravity(Gravity.TOP,0,30);
@@ -347,14 +316,11 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
 
     public void subscribeState() {
         WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
-            switch (walletState){
-                case 4:
-                    runOnUiThread(()->{
-                        switchActivity(AccountLightningActivity.class);
-                    });
-                    break;
-                default:
-                    break;
+            if (walletState == 4) {
+                runOnUiThread(() -> {
+                    PublicUtils.closeLoading(mLoadingDialog);
+                    switchActivity(AccountLightningActivity.class);
+                });
             }
         };
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);

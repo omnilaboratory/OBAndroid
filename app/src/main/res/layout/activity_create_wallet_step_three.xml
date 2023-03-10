@@ -10,7 +10,6 @@
     tools:context=".ui.activity.createwallet.CreateWalletStepThreeActivity"
     android:background="@color/page_white">
 
-
     <RelativeLayout
         android:id="@+id/logo_content"
         android:layout_width="match_parent"

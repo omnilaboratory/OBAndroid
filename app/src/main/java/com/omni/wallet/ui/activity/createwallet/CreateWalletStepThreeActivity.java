@@ -1,5 +1,6 @@
 package com.omni.wallet.ui.activity.createwallet;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
@@ -43,7 +44,7 @@ import obdmobile.Obdmobile;
 
 public class CreateWalletStepThreeActivity extends AppBaseActivity {
     public static final String TAG = CreateWalletStepThreeActivity.class.getSimpleName();
-    Context ctx = CreateWalletStepThreeActivity.this;
+
     @BindView(R.id.password_input)
     public EditText mPwdEdit;
     @BindView(R.id.pass_switch)
@@ -74,14 +75,11 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
         PasswordFilter passwordFilter = new PasswordFilter();
         mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
         mConfirmPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
-        TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE){
-                    clickForward();
-                }
-                return true;
+        TextView.OnEditorActionListener listener = (v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                clickForward();
             }
+            return true;
         };
         mConfirmPwdEdit.setOnEditorActionListener(listener);
     }
@@ -102,6 +100,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
      * When password Input value changed
      */
 
+    @SuppressLint("SetTextI18n")
     @OnTextChanged(R.id.password_input)
     public void passwordChangeCheck(){
         String password = mPwdEdit.getText().toString();
@@ -125,13 +124,6 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                     pass_strong_text.setTextColor(getResources().getColor(R.color.color_red));
                     break;
                 case 2:
-                    easy.setBackgroundColor(getResources().getColor(R.color.color_red));
-                    normal.setBackgroundColor(getResources().getColor(R.color.color_orange));
-                    strong.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
-                    pass_strong_text.setVisibility(View.VISIBLE);
-                    pass_strong_text.setText("NORMAL");
-                    pass_strong_text.setTextColor(getResources().getColor(R.color.color_orange));
-                    break;
                 case 3:
                     easy.setBackgroundColor(getResources().getColor(R.color.color_red));
                     normal.setBackgroundColor(getResources().getColor(R.color.color_orange));
@@ -176,6 +168,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             pass_strong_text.setText("EMPTY");
             pass_strong_text.setTextColor(getResources().getColor(R.color.color_todo_grey));
         }
+        passwordRepeatChangeCheck();
     }
 
     /**
@@ -189,7 +182,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
         TextView passwordViewRepeat = findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         ImageView passwordRepeatCheck = findViewById(R.id.pass_input_check_repeat);
-        if(passwordRepeatString==""){
+        if(passwordRepeatString.equals("")){
             passwordRepeatCheck.setVisibility(View.INVISIBLE);
         }else{
             if(passwordString.equals(passwordRepeatString)){
@@ -315,11 +308,12 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             if(strongerPwd<0){
                 checkSetPassWrongString = getResources().getString(R.string.toast_create_check_pass_wrong);
             }else if(!passwordRepeatString.equals(password)){
-                checkSetPassWrongString =  getResources().getString(R.string.toast_create_check_pass_diff);;
+                checkSetPassWrongString =  getResources().getString(R.string.toast_create_check_pass_diff);
             }
             Toast checkSetPassToast = Toast.makeText(CreateWalletStepThreeActivity.this,checkSetPassWrongString,Toast.LENGTH_LONG);
             checkSetPassToast.setGravity(Gravity.TOP,0,30);
             checkSetPassToast.show();
+            mLoadingDialog.dismiss();
         }
 
     }
