@@ -189,8 +189,9 @@
                             android:layout_height="wrap_content"
                             android:text="@string/empty"
                             android:textColor="@color/color_todo_grey"
-                            android:textSize="@dimen/text_12"
-                            android:textStyle="bold"/>
+                            android:textSize="@dimen/main_12"
+                            android:textStyle="bold"
+                            tools:ignore="SpUsage" />
                     </RelativeLayout>
                 </LinearLayout>
             </RelativeLayout>

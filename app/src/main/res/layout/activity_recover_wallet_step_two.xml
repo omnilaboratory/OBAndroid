@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.activity.recoverwallet.RecoverWalletStepTwoActivity">
+    android:gravity="bottom"
+    tools:context=".ui.activity.recoverwallet.RecoverWalletStepTwoActivity"
+    android:background="@color/page_white">
 
     <RelativeLayout
         android:id="@+id/logo_content"
@@ -36,7 +38,7 @@
             android:layout_width="295dp"
             android:layout_height="wrap_content"
             android:text="@string/unlock_description"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_18"
             android:textColor="@color/color_description_blue"
             android:letterSpacing="0.3"
             android:textAlignment="center" />
@@ -47,11 +49,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:gravity="center_horizontal"
-        android:elevation="10dp"
-        android:background="@drawable/bg_white_conner">
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="@dimen/main_10"
+        android:background="@drawable/bg_white_conner_shadow"
+        android:elevation="10dp">
 
         <LinearLayout
             android:id="@+id/form_unlock_contain"
@@ -71,7 +72,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="67dp"
+                    android:layout_marginTop="60dp"
                     >
 
                     <TextView
@@ -80,7 +81,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/pwd_upper"
                         android:textAllCaps="false"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_18"
                         android:letterSpacing="0.1"
                         android:layout_marginEnd="10dp"
                         android:textColor="@color/color_key"/>
@@ -105,7 +106,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:paddingStart="@dimen/main_50">
                     <EditText
                         android:id="@+id/password_input"
                         android:layout_width="wrap_content"
@@ -181,13 +183,15 @@
                         android:layout_marginStart="10dp">
                         <TextView
                             android:width="60dp"
-                            android:visibility="invisible"
+                            android:visibility="visible"
                             android:id="@+id/pass_strong_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/easy"
-                            android:textColor="@color/color_red"
-                            android:textStyle="bold"/>
+                            android:text="@string/empty"
+                            android:textColor="@color/color_todo_grey"
+                            android:textSize="@dimen/main_12"
+                            android:textStyle="bold"
+                            tools:ignore="SpUsage" />
                     </RelativeLayout>
                 </LinearLayout>
             </RelativeLayout>
@@ -212,7 +216,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/pwd_upper_repeat"
                         android:textAllCaps="false"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_18"
                         android:letterSpacing="0.1"
                         android:layout_marginEnd="10dp"
                         android:textColor="@color/color_key"
@@ -228,12 +232,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:gravity="center_horizontal"
-                android:layout_marginBottom="60dp">
+                android:layout_marginBottom="80dp">
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:paddingStart="@dimen/main_50">
                     <EditText
                         android:id="@+id/password_input_repeat"
                         android:layout_width="wrap_content"
@@ -273,7 +278,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="40dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         >
@@ -286,10 +291,11 @@
             android:layout_alignParentTop="true"
             android:orientation="horizontal">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:gravity="center">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -310,13 +316,15 @@
                         android:layout_height="wrap_content"
                         android:text="@string/back_upper"
                         android:textColor="@color/color_black"
-                        android:textSize="18sp" />
+                        android:textSize="@dimen/text_18" />
                 </LinearLayout>
 
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -337,10 +345,10 @@
                         android:layout_height="wrap_content"
                         android:text="@string/next_upper"
                         android:textColor="@color/color_black"
-                        android:textSize="18sp" />
+                        android:textSize="@dimen/text_18" />
                 </LinearLayout>
 
-            </RelativeLayout>
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 
