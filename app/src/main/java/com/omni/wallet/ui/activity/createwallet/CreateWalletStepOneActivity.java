@@ -43,8 +43,6 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
 
     @BindView(R.id.seed_content)
     LinearLayout lvSeedContent;
-    @BindView(R.id.seed_grid_view)
-    GridView seedGridView;
 
     SeedsAdapter seedsAdapter;
 
@@ -62,11 +60,10 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-
+        GridView seedGridView = (GridView) findViewById(R.id.seed_grid_view);
         EventBus.getDefault().register(this);
         mLoadingDialog = new LoadingDialog(mContext);
-        seedsAdapter = new SeedsAdapter(mContext);
-        initSeedsGridView();
+        seedGridView.setAdapter(seedsAdapter = new SeedsAdapter(this,seedArray));
     }
 
     @Override
@@ -74,26 +71,25 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
         createSeeds();
     }
 
-    public void initSeedsGridView() {
-        seedGridView.setAdapter(seedsAdapter);
-    }
 
     class SeedsAdapter extends BaseAdapter {
-
-        private Context mContext;
-
-        public SeedsAdapter(Context context) {
+        Context mContext;
+        LayoutInflater mInflater;
+        List <String> mDatas;
+        public SeedsAdapter(Context context,List <String> seedArray) {
+            mInflater = LayoutInflater.from(context);
             this.mContext = context;
+            this.mDatas = seedArray;
         }
 
         @Override
         public int getCount() {
-            return seedArray != null ? seedArray.size() : 0;
+            return mDatas != null ? mDatas.size() : 0;
         }
 
         @Override
         public Object getItem(int position) {
-            return seedArray.get(position);
+            return mDatas.get(position);
         }
 
         @Override
@@ -105,25 +101,24 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
             if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.layout_item_seed, null);
+                convertView = mInflater.inflate(R.layout.layout_item_seed, null);
                 viewHolder = new ViewHolder(convertView);
                 convertView.setTag(viewHolder);
-
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-            viewHolder.setText(R.id.seed_idx, (position + 1) + ".");
+            String indexString = position + 1>=10?String.valueOf(position + 1):"0" + (position + 1);
+            viewHolder.setText(R.id.seed_idx, indexString + ".");
             TextView textView = viewHolder.getView(R.id.seed_text);
-            textView.setText(seedArray.get(position));
+            textView.setText(mDatas.get(position));
             return convertView;
         }
     }
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void createSeeds() {
@@ -133,7 +128,13 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
             @Override
             public void onError(Exception e) {
                 Log.e("create error:",e.toString());
-                mLoadingDialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLoadingDialog.dismiss();
+                    }
+                });
+
             }
 
             @Override

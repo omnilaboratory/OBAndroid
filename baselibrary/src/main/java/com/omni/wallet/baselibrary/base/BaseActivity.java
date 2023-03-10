@@ -363,6 +363,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         // 修复InputMethod导致的内存泄漏（部分机型好像没啥用）
         try {
             MemoryUtils.releaseInputMethodManagerFocus(this);
@@ -376,7 +377,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         // 异步请求的时候有可能页面已经Destroy了，所以可以在异步请求的回调中根据mBinder是否为null
         // 来判断是否已经解绑，如果已经解绑了就return，否则NullPointException
         mBinder = null;
-        super.onDestroy();
+
         // 是否退出应用，放在这里是为了解决退出应用的时候Toast不消失的问题
         if (mExitApp) {
             AppManager.getInstance().appExit(mContext);

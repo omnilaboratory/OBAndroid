@@ -83,10 +83,11 @@ public abstract class AppBaseActivity extends FrameBaseActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         setStopApp(false);
         if (mUnlockDialog != null){
             mUnlockDialog.release();
         }
-        super.onDestroy();
+
     }
 }
