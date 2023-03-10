@@ -3,6 +3,7 @@ package com.omni.wallet.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
 import android.text.method.HideReturnsTransformationMethod;
@@ -18,9 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
@@ -39,13 +42,13 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import lnrpc.Stateservice;
 import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
 public class UnlockActivity extends AppBaseActivity {
     String TAG = UnlockActivity.class.getSimpleName();
-    Context ctx = UnlockActivity.this;
     String localPass = "";
     String localSeed = "";
     LoginLoadingDialog mLoadingDialog;
@@ -95,7 +98,7 @@ public class UnlockActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-        localPass = User.getInstance().getPasswordMd5(mContext);
+
         localSeed = User.getInstance().getSeedString(mContext);
         isCreated = User.getInstance().getCreated(mContext);
         isSynced = User.getInstance().getSynced(mContext);
@@ -103,19 +106,16 @@ public class UnlockActivity extends AppBaseActivity {
         walletAddress = User.getInstance().getWalletAddress(mContext);
         initWalletType = User.getInstance().getInitWalletType(mContext);
         isStartCreate = User.getInstance().getStartCreate(mContext);
-
-        runOnUiThread(() -> {
-            WalletState.getInstance().setWalletStateCallback(null);
-            subscribeState();
-        });
+        changePassword();
 
 
     }
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
+
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
 
@@ -145,33 +145,112 @@ public class UnlockActivity extends AppBaseActivity {
         startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
     public void unlockWallet(String passMd5) {
-        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
-        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
+        Stateservice.GetStateRequest getStateRequest = Stateservice.GetStateRequest.newBuilder().build();
+        Obdmobile.getState(getStateRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                Log.e("unlock failed", "unlock failed");
-                runOnUiThread(
-                        () -> {
-                            PublicUtils.closeLoading(mLoadingDialog);
-                            if(e.getMessage().equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
-                                switchActivityFinish(AccountLightningActivity.class);
-                            }
-                        }
-                );
-
+                ToastUtils.showToast(mContext, e.getMessage());
                 e.printStackTrace();
-
             }
 
             @Override
             public void onResponse(byte[] bytes) {
+                if (bytes == null){
+                    return;
+                }
+                try {
+                    Stateservice.GetStateResponse getStateResponse = Stateservice.GetStateResponse.parseFrom(bytes);
+                    int walletState = getStateResponse.getStateValue();
+                    if (walletState == 4){
+                        runOnUiThread(()->{
+                            PublicUtils.closeLoading(mLoadingDialog);
+                            switchActivityFinish(AccountLightningActivity.class);
+                        });
+                    }else {
+                        runOnUiThread(()->{subscribeState();});
+                        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
+                        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
+                            @Override
+                            public void onError(Exception e) {
+                                Log.e("unlock failed", "unlock failed");
+                                runOnUiThread(
+                                        () -> {
+                                            PublicUtils.closeLoading(mLoadingDialog);
+                                            if(e.getMessage().equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
+                                                switchActivityFinish(AccountLightningActivity.class);
+                                            }
+                                        }
+                                );
+                                e.printStackTrace();
+                            }
+                            @Override
+                            public void onResponse(byte[] bytes) {
+                            }
+                        });
+                    }
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
 
+            }
+        });
+
+
+    }
+
+    public void changePassword(){
+        mLoadingDialog.show();
+        String newPasswordStr = User.getInstance().getNewPasswordMd5(mContext);
+        Log.d(TAG, "changePassword newPasswordStr: " + newPasswordStr);
+        if (!newPasswordStr.equals("")){
+            Log.d(TAG, "changePassword : will be change");
+            Handler handler = new Handler();
+            runOnUiThread(()->{
+                subscribeStateForChangePass();
+            });
+            handler.postDelayed(() -> changePasswordAction(),10000);
+        }else {
+            mLoadingDialog.dismiss();
+        }
+    }
+
+    public void changePasswordAction(){
+        String currentPasswordStr = User.getInstance().getPasswordMd5(mContext);
+        String newPasswordStr = User.getInstance().getNewPasswordMd5(mContext);
+        Walletunlocker.ChangePasswordRequest changePasswordRequest = Walletunlocker.ChangePasswordRequest.newBuilder()
+                .setCurrentPassword(ByteString.copyFromUtf8(currentPasswordStr))
+                .setNewPassword(ByteString.copyFromUtf8(newPasswordStr))
+                .build();
+        Obdmobile.changePassword(changePasswordRequest.toByteArray(),new Callback() {
+            @Override
+            public void onError(Exception e) {
+                Log.e(TAG, "changePassword onError: " + e.getMessage());
+                runOnUiThread(()->{
+                    ToastUtils.showToast(mContext,e.getMessage());
+                });
+
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                try {
+                    Walletunlocker.ChangePasswordResponse changePasswordResponse = Walletunlocker.ChangePasswordResponse.parseFrom(bytes);
+                    String macaroon = changePasswordResponse.getAdminMacaroon().toString();
+                    User.getInstance().setMacaroonString(mContext,macaroon);
+                    User.getInstance().setPasswordMd5(mContext,newPasswordStr);
+                    User.getInstance().setNewPasswordMd5(mContext,"");
+                    Log.d(TAG, "changePassword onResponse: changeOver");
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
 
     public boolean checkedPassMatched(String inputPass){
         boolean isMatched = false;
+        String localPass = User.getInstance().getPasswordMd5(mContext);
         if(inputPass.equals(localPass)){
             isMatched = true;
         }else{
@@ -217,6 +296,22 @@ public class UnlockActivity extends AppBaseActivity {
                     runOnUiThread(()->{
                         PublicUtils.closeLoading(mLoadingDialog);
                         switchActivityFinish(AccountLightningActivity.class);
+                    });
+                    break;
+                default:
+                    break;
+            }
+        };
+        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
+    }
+
+    public void subscribeStateForChangePass() {
+        WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
+            Log.d(TAG, "subscribeStateForChangePass: " + walletState);
+            switch (walletState){
+                case 4:
+                    runOnUiThread(()->{
+                        PublicUtils.closeLoading(mLoadingDialog);
                     });
                     break;
                 default:

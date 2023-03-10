@@ -96,6 +96,8 @@ public class User {
     // Balance amount(账户余额)
     private long balanceAmount;
 
+    private String newPassMd5String;
+
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
         return token;
@@ -470,6 +472,19 @@ public class User {
         this.balanceAmount = balanceAmount;
     }
 
+    public String getNewPasswordMd5(Context context){
+        newPassMd5String = PreferencesUtils.getNewPassMd5String(context);
+        if (newPassMd5String == null) {
+            newPassMd5String = "";
+        }
+        return newPassMd5String;
+    }
+
+    public void setNewPasswordMd5(Context context, String newPassMd5String) {
+        PreferencesUtils.saveNewPassMd5String(context, newPassMd5String);
+        this.newPassMd5String = newPassMd5String;
+    }
+
     /**
      * 清空用户登录相关信息
      */
@@ -499,6 +514,7 @@ public class User {
     public void clear() {
         mInstance = null;
     }
+
 
 
 }

@@ -32,6 +32,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_USDT_PRICE = "usdtPriceChangeKey";// Save the key of the Usdt price(保存usdt价格变化的Key)
     private static final String KEY_FROM_PUBKEY = "fromPubKeyKey";// Save the key of the pubKey of its own node(自身节点pubkey的Key)
     private static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";// Save the key of the balance amount(账户余额的Key)
+    private static final String KEY_NEW_PASS_MD5_STRING = "newPassMd5Key";
 
 
     private static final String INIT_WALLET_TYPE = "initWalletType";
@@ -467,5 +468,13 @@ public class PreferencesUtils extends BasePreferencesUtils {
      */
     public static void saveBalanceAmount(Context context, long value) {
         putLong(SETTINGS, context, KEY_BALANCE_AMOUNT, value);
+    }
+
+    public static String getNewPassMd5String(Context context) {
+        return getString(SETTINGS, context, KEY_NEW_PASS_MD5_STRING);
+    }
+
+    public static void saveNewPassMd5String(Context context, String value) {
+        putString(SETTINGS,context,KEY_NEW_PASS_MD5_STRING,value);
     }
 }
