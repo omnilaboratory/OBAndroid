@@ -221,9 +221,9 @@ public class SplashActivity extends AppBaseActivity {
                             mGuideDialog.dismiss();
                         }
                         if (!PermissionUtils.hasSelfPermissions(mContext, PermissionConfig.STORAGE)) {
-                            showDeniedDialog("需要您授予该APP读写手机外部存储的权限");
+                            showDeniedDialog(mContext.getString(R.string.tv_dialog_permission_desc_1));
                         } else {
-                            showDeniedDialog("需要您授予该APP读写手机状态的权限");
+                            showDeniedDialog(mContext.getString(R.string.tv_dialog_permission_desc_2));
                         }
                     }
 
@@ -234,9 +234,9 @@ public class SplashActivity extends AppBaseActivity {
                             mDeniedDialog.dismiss();
                         }
                         if (!PermissionUtils.hasSelfPermissions(mContext, PermissionConfig.STORAGE)) {
-                            showPermissionGuideDialog("该APP需要您授予读写手机存储的权限，请到“设置->应用”或者“设置->权限管理”授予存储权限");
+                            showPermissionGuideDialog(mContext.getString(R.string.tv_dialog_permission_desc_3));
                         } else {
-                            showPermissionGuideDialog("该APP需要您授予读写手机状态的权限，请到“设置->应用”或者“设置->权限管理”授予存储权限");
+                            showPermissionGuideDialog(mContext.getString(R.string.tv_dialog_permission_desc_4));
                         }
                     }
                 },
@@ -342,9 +342,9 @@ public class SplashActivity extends AppBaseActivity {
 
     }
 
-    public void downloadManifestFile(){
+    public void downloadManifestFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        DownloadRequest pro =  PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build();
+        DownloadRequest pro = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build();
         downloadingId = pro.getDownloadId();
         pro.start(new OnDownloadListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -362,7 +362,7 @@ public class SplashActivity extends AppBaseActivity {
                         Log.e(TAG, line);
                         String[] lineArray = oldLine.split(" {2}");
                         if (lineArray[1].endsWith(ConstantInOB.blockHeaderBin)) {
-                            downloadVersion = lineArray[1].substring(0,10);
+                            downloadVersion = lineArray[1].substring(0, 10);
                             manifestInfo.put(ConstantInOB.blockHeader, lineArray[0]);
                         } else if (lineArray[1].endsWith(ConstantInOB.neutrinoDB)) {
                             manifestInfo.put(ConstantInOB.neutrino, lineArray[0]);
@@ -379,6 +379,7 @@ public class SplashActivity extends AppBaseActivity {
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void onError(Error error) {
                 boolean connectionError = error.isConnectionError();
@@ -407,7 +408,7 @@ public class SplashActivity extends AppBaseActivity {
         DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build();
         downloadRequest.setDownloadId(1);
         downloadingId = downloadRequest.getDownloadId();
-        Log.d(TAG,"downloadHeaderBinFile: " + downloadingId);
+        Log.d(TAG, "downloadHeaderBinFile: " + downloadingId);
         final double[] totalBytes = {(double) downloadRequest.getTotalBytes() / 1024 / 1024};
         downloadRequest.setOnStartOrResumeListener(() -> {
             Log.d(TAG, "downloadHeaderBinFile: download resume");
@@ -432,7 +433,7 @@ public class SplashActivity extends AppBaseActivity {
                 Log.e(TAG, fileMd5);
                 boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
                 if (checkFileMd5Matched) {
-                    User.getInstance().setHeaderBinChecked(mContext,true);
+                    User.getInstance().setHeaderBinChecked(mContext, true);
                     downloadFilterHeaderBinFile();
                 } else {
                     File file1 = new File(filePath);
@@ -448,10 +449,10 @@ public class SplashActivity extends AppBaseActivity {
                 boolean serverError = error.isServerError();
                 if (connectionError) {
                     refreshBtnImageView.setVisibility(View.VISIBLE);
-                    ToastUtils.showToast(mContext,"HeaderBin download Connect Error");
+                    ToastUtils.showToast(mContext, "HeaderBin download Connect Error");
                     Log.e(TAG, "HeaderBin download Connect Error");
                 } else if (serverError) {
-                    ToastUtils.showToast(mContext,"HeaderBin download server Error");
+                    ToastUtils.showToast(mContext, "HeaderBin download server Error");
                     Log.e(TAG, "HeaderBin download server Error");
                 } else {
                     Log.e(TAG, "HeaderBin" + error.toString());
@@ -500,7 +501,7 @@ public class SplashActivity extends AppBaseActivity {
                 Log.e(TAG, fileMd5);
                 boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
                 if (checkFileMd5Matched) {
-                    User.getInstance().setFilterHeaderBinChecked(mContext,true);
+                    User.getInstance().setFilterHeaderBinChecked(mContext, true);
                     downloadDBFile();
                 } else {
                     File file1 = new File(filePath);
@@ -517,11 +518,11 @@ public class SplashActivity extends AppBaseActivity {
                 boolean serverError = error.isServerError();
                 if (connectionError) {
                     refreshBtnImageView.setVisibility(View.VISIBLE);
-                    ToastUtils.showToast(mContext,"FilterHeaderBin download Connect Error");
+                    ToastUtils.showToast(mContext, "FilterHeaderBin download Connect Error");
                     Log.e(TAG, "FilterHeaderBin download Connect Error");
 
                 } else if (serverError) {
-                    ToastUtils.showToast(mContext,"FilterHeaderBin download server Error");
+                    ToastUtils.showToast(mContext, "FilterHeaderBin download server Error");
                     Log.e(TAG, "FilterHeaderBin download server Error");
                 } else {
                     Log.e(TAG, "FilterHeaderBin" + error.toString());
@@ -567,7 +568,7 @@ public class SplashActivity extends AppBaseActivity {
                 Log.e(TAG, fileMd5);
                 boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
                 if (checkFileMd5Matched) {
-                    User.getInstance().setNeutrinoDbChecked(mContext,true);
+                    User.getInstance().setNeutrinoDbChecked(mContext, true);
                     startNode();
                 } else {
                     File file1 = new File(filePath);
@@ -584,11 +585,11 @@ public class SplashActivity extends AppBaseActivity {
                 boolean serverError = error.isServerError();
                 if (connectionError) {
                     refreshBtnImageView.setVisibility(View.VISIBLE);
-                    ToastUtils.showToast(mContext,"DBFile download Connect Error");
+                    ToastUtils.showToast(mContext, "DBFile download Connect Error");
                     Log.e(TAG, "DBFile download Connect Error");
 
                 } else if (serverError) {
-                    ToastUtils.showToast(mContext,"DBFile download server Error");
+                    ToastUtils.showToast(mContext, "DBFile download server Error");
                     Log.e(TAG, "DBFile download server Error");
                 } else {
                     Log.e(TAG, "DBFile" + error.toString());
@@ -605,15 +606,19 @@ public class SplashActivity extends AppBaseActivity {
                     runOnUiThread(() -> {
                         String walletInitType = User.getInstance().getInitWalletType(mContext);
                         if (walletInitType.equals("initialed")) {
-                            handler.postDelayed(()->{switchActivityFinish(UnlockActivity.class);},Constants.SPLASH_SLEEP_TIME);
+                            handler.postDelayed(() -> {
+                                switchActivityFinish(UnlockActivity.class);
+                            }, Constants.SPLASH_SLEEP_TIME);
                         } else {
-                            handler.postDelayed(()->{switchActivityFinish(InitWalletMenuActivity.class);},Constants.SPLASH_SLEEP_TIME);
+                            handler.postDelayed(() -> {
+                                switchActivityFinish(InitWalletMenuActivity.class);
+                            }, Constants.SPLASH_SLEEP_TIME);
                         }
                     });
                 } else if (e.getMessage().contains("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
-                    ToastUtils.showToast(mContext,"unable to unpack single backups that message authentication failed");
-                }else if(e.getMessage().contains("error creating wallet config: unable to initialize neutrino backend: unable to create neutrino database: cannot allocate memory")){
-                    ToastUtils.showToast(mContext,"Failed to start, please check your cache is sufficient. After confirming that the cache is sufficient, please restart the App.");
+                    ToastUtils.showToast(mContext, "unable to unpack single backups that message authentication failed");
+                } else if (e.getMessage().contains("error creating wallet config: unable to initialize neutrino backend: unable to create neutrino database: cannot allocate memory")) {
+                    ToastUtils.showToast(mContext, "Failed to start, please check your cache is sufficient. After confirming that the cache is sufficient, please restart the App.");
                 }
 
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
@@ -640,7 +645,7 @@ public class SplashActivity extends AppBaseActivity {
         syncedBlockNumView.setText(String.format("%.2f", currentMb) + "MB");
     }
 
-    public void readManifestFile(){
+    public void readManifestFile() {
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
         BufferedReader bfr;
         try {
@@ -654,7 +659,7 @@ public class SplashActivity extends AppBaseActivity {
                 Log.e(TAG, line);
                 String[] lineArray = oldLine.split(" {2}");
                 if (lineArray[1].endsWith(ConstantInOB.blockHeaderBin)) {
-                    downloadVersion = lineArray[1].substring(0,10);
+                    downloadVersion = lineArray[1].substring(0, 10);
                     manifestInfo.put(ConstantInOB.blockHeader, lineArray[0]);
                 } else if (lineArray[1].endsWith(ConstantInOB.neutrinoDB)) {
                     manifestInfo.put(ConstantInOB.neutrino, lineArray[0]);
@@ -678,8 +683,8 @@ public class SplashActivity extends AppBaseActivity {
         boolean isNeutrinoDbChecked = User.getInstance().isNeutrinoDbChecked(mContext);
 
         if (isHeaderBinChecked) {
-            if (isFilterHeaderBinChecked){
-                if (isNeutrinoDbChecked){
+            if (isFilterHeaderBinChecked) {
+                if (isNeutrinoDbChecked) {
                     long nowMillis = Calendar.getInstance().getTimeInMillis();
                     String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
                     long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
@@ -688,15 +693,15 @@ public class SplashActivity extends AppBaseActivity {
                     } else {
                         startNode();
                     }
-                }else{
+                } else {
                     readManifestFile();
                     downloadDBFile();
                 }
-            }else{
+            } else {
                 readManifestFile();
                 downloadFilterHeaderBinFile();
             }
-        }else {
+        } else {
             getManifestFile();
         }
 //        startNode();
@@ -706,17 +711,17 @@ public class SplashActivity extends AppBaseActivity {
     @OnClick(R.id.refresh_btn)
     public void clickRefreshBtn() {
         refreshBtnImageView.setVisibility(View.INVISIBLE);
-        switch (downloadingId){
-            case 1 :
+        switch (downloadingId) {
+            case 1:
                 downloadHeaderBinFile();
                 break;
-            case 2 :
+            case 2:
                 downloadFilterHeaderBinFile();
                 break;
-            case 3 :
+            case 3:
                 downloadDBFile();
                 break;
-            default :
+            default:
                 break;
         }
 
@@ -732,17 +737,23 @@ public class SplashActivity extends AppBaseActivity {
         Log.d(TAG, "do subscribe action");
         String walletInitType = User.getInstance().getInitWalletType(mContext);
         WalletState.WalletStateCallback walletStateCallback = walletState -> {
-            Log.d(TAG,"walletState:" + walletState);
+            Log.d(TAG, "walletState:" + walletState);
             switch (walletState) {
                 case 4:
-                    handler.postDelayed(()->{switchActivityFinish(AccountLightningActivity.class);},Constants.SPLASH_SLEEP_TIME);
+                    handler.postDelayed(() -> {
+                        switchActivityFinish(AccountLightningActivity.class);
+                    }, Constants.SPLASH_SLEEP_TIME);
                     break;
                 case 255:
                     if (walletInitType.equals("initialed")) {
-                        handler.postDelayed(()->{switchActivityFinish(UnlockActivity.class);},Constants.SPLASH_SLEEP_TIME);
+                        handler.postDelayed(() -> {
+                            switchActivityFinish(UnlockActivity.class);
+                        }, Constants.SPLASH_SLEEP_TIME);
                         break;
                     } else {
-                        handler.postDelayed(()->{switchActivityFinish(InitWalletMenuActivity.class);},Constants.SPLASH_SLEEP_TIME);
+                        handler.postDelayed(() -> {
+                            switchActivityFinish(InitWalletMenuActivity.class);
+                        }, Constants.SPLASH_SLEEP_TIME);
                         break;
                     }
 

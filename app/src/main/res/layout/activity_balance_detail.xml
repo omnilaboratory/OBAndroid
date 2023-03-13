@@ -52,7 +52,7 @@
                     android:layout_marginLeft="@dimen/main_4"
                     android:text="@string/mainnet"
                     android:textColor="@color/color_A6_transparent"
-                    android:textSize="@dimen/text_24"/>
+                    android:textSize="@dimen/text_20"/>
             </LinearLayout>
 
             <RelativeLayout

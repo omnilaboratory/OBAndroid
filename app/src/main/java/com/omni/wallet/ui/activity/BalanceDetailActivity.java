@@ -278,11 +278,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mNetworkIv.setImageResource(R.mipmap.icon_network_vector);
             mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
             if (assetId == 0) {
+                mNetworkTypeTv.setText("BTC lightning network");
                 mNetworkTv.setText("BTC lightning network");
                 mNetwork1Tv.setText("BTC lightning network");
                 mNetwork2Tv.setText("BTC lightning network");
                 mNetwork3Tv.setText("BTC lightning network");
             } else {
+                mNetworkTypeTv.setText("dollar lightning network");
                 mNetworkTv.setText("dollar lightning network");
                 mNetwork1Tv.setText("dollar lightning network");
                 mNetwork2Tv.setText("dollar lightning network");
@@ -302,11 +304,13 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mNetworkIv.setImageResource(R.mipmap.icon_network_link_black);
             mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
             if (assetId == 0) {
+                mNetworkTypeTv.setText("BTC Mainnet");
                 mNetworkTv.setText("BTC Mainnet");
                 mNetwork1Tv.setText("BTC Mainnet");
                 mNetwork2Tv.setText("BTC Mainnet");
                 mNetwork3Tv.setText("BTC Mainnet");
             } else {
+                mNetworkTypeTv.setText("Omnilayer Mainnet");
                 mNetworkTv.setText("Omnilayer Mainnet");
                 mNetwork1Tv.setText("Omnilayer Mainnet");
                 mNetwork2Tv.setText("Omnilayer Mainnet");
