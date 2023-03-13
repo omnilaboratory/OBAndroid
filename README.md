@@ -39,7 +39,7 @@ For onchain transactions, the receiving address of omni assets must be `p2pkh`, 
 2. Testnet: address starting with 'm' or 'n'  
 3. Regtest: address starting with 'm' or 'n'  
 
-BECH32 addresses(starting with `bc`) are not supported by the Omnilayer, and sending omni assets to BECH32 addresses will result in permanent fund loss. OBAndroid protects users from such dangerous operations.
+BECH32 addresses(starting with `bc1` on mainnet, `tb1` on testnet) are not supported by the Omnilayer, and sending omni assets to BECH32 addresses will result in permanent fund loss. OBAndroid protects users from such dangerous operations.
 
 Bitcoin transactions support all legal BTC receiving addresses, including bech32 (starting with bc) addresses.
 
