@@ -55,6 +55,9 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String RESTORED_CHANNEL = "restoredChannel";
     private static final String TOTAL_BLOCK = "totalBlock";
     private static final String ASSETS_COUNT = "assetsCount";
+    private static final String KEY_HEADER_BIN_CHECKED = "headerBinChecked";
+    private static final String KEY_FILTER_HEADER_BIN_CHECKED = "filterBinChecked";
+    private static final String KEY_NEUTRINO_DB_CHECKED = "neutrinoDbChecked";
 
 
     /**
@@ -476,5 +479,29 @@ public class PreferencesUtils extends BasePreferencesUtils {
 
     public static void saveNewPassMd5String(Context context, String value) {
         putString(SETTINGS,context,KEY_NEW_PASS_MD5_STRING,value);
+    }
+
+    public static void saveHeaderBinChecked(Context context, boolean value) {
+        putBoolean(SETTINGS,context,KEY_HEADER_BIN_CHECKED,value);
+    }
+
+    public static boolean getHeaderBinChecked(Context context) {
+        return getBoolean(SETTINGS,context,KEY_HEADER_BIN_CHECKED);
+    }
+
+    public static void saveFilterHeaderBinChecked(Context context, boolean value) {
+        putBoolean(SETTINGS,context,KEY_FILTER_HEADER_BIN_CHECKED,value);
+    }
+
+    public static boolean getFilterHeaderBinChecked(Context context) {
+        return getBoolean(SETTINGS,context,KEY_FILTER_HEADER_BIN_CHECKED);
+    }
+
+    public static void saveNeutrinoDbChecked(Context context, boolean value) {
+        putBoolean(SETTINGS,context,KEY_NEUTRINO_DB_CHECKED,value);
+    }
+
+    public static boolean getNeutrinoDbChecked(Context context) {
+        return getBoolean(SETTINGS,context,KEY_NEUTRINO_DB_CHECKED);
     }
 }

@@ -98,6 +98,12 @@ public class User {
 
     private String newPassMd5String;
 
+    private boolean headerBinChecked;
+
+    private boolean filterHeaderBinChecked;
+
+    private boolean neutrinoDbChecked;
+
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
         return token;
@@ -483,6 +489,36 @@ public class User {
     public void setNewPasswordMd5(Context context, String newPassMd5String) {
         PreferencesUtils.saveNewPassMd5String(context, newPassMd5String);
         this.newPassMd5String = newPassMd5String;
+    }
+
+    public boolean isHeaderBinChecked(Context context){
+        headerBinChecked = PreferencesUtils.getHeaderBinChecked(context);
+        return headerBinChecked;
+    }
+
+    public void setHeaderBinChecked(Context context, boolean headerBinChecked) {
+        PreferencesUtils.saveHeaderBinChecked(context, headerBinChecked);
+        this.headerBinChecked = headerBinChecked;
+    }
+
+    public boolean isFilterHeaderBinChecked(Context context){
+        filterHeaderBinChecked = PreferencesUtils.getFilterHeaderBinChecked(context);
+        return filterHeaderBinChecked;
+    }
+
+    public void setFilterHeaderBinChecked(Context context, boolean filterHeaderBinChecked) {
+        PreferencesUtils.saveHeaderBinChecked(context, filterHeaderBinChecked);
+        this.filterHeaderBinChecked = filterHeaderBinChecked;
+    }
+
+    public boolean isNeutrinoDbChecked(Context context){
+        neutrinoDbChecked = PreferencesUtils.getNeutrinoDbChecked(context);
+        return neutrinoDbChecked;
+    }
+
+    public void setNeutrinoDbChecked(Context context, boolean neutrinoDbChecked) {
+        PreferencesUtils.saveNeutrinoDbChecked(context, neutrinoDbChecked);
+        this.neutrinoDbChecked = neutrinoDbChecked;
     }
 
     /**
