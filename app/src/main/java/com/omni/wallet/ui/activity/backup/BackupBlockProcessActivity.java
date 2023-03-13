@@ -147,6 +147,12 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         commitNumSyncView.setText(String.valueOf(totalBlock));
         syncBlockNumView.setText(String.valueOf(totalBlock));
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                WalletState.getInstance().subscribeWalletState(mContext);
+            }
+        });
         runOnUiThread(()->{
             obdLogFileObserver.startWatching();
         });
@@ -259,7 +265,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         String createType = User.getInstance().getInitWalletType(mContext);
         if(createType.equals("recoveryStepTwo")){
             getOldAddress();
-
         }else{
             newAddress();
 

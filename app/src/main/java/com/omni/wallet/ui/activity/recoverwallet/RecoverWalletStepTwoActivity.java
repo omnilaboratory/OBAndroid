@@ -271,13 +271,26 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                 @Override
                 public void onError(Exception e) {
                     Log.e("initWallet Error",e.toString());
+                    if (e.getMessage().contains("wallet already exists")){
+                        switchActivity(BackupBlockProcessActivity.class);
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLoadingDialog.dismiss();
+                        }});
                     e.printStackTrace();
-                    mLoadingDialog.dismiss();
+
+
                 }
                 @Override
                 public void onResponse(byte[] bytes) {
                     if (bytes == null){
-                        mLoadingDialog.dismiss();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mLoadingDialog.dismiss();
+                            }});
                         return;
                     }
                     try {
