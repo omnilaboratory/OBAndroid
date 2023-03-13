@@ -130,6 +130,7 @@ public class SplashActivity extends AppBaseActivity {
             switch (networkType) {
                 case ConnectivityManager.TYPE_WIFI:
                     if (!networkIsConnected) {
+                        downloadView.setVisibility(View.VISIBLE);
                         refreshBtnImageView.setVisibility(View.VISIBLE);
                         ToastUtils.showToast(mContext, "Network is wifi!");
                     }
@@ -137,6 +138,7 @@ public class SplashActivity extends AppBaseActivity {
                     break;
                 case ConnectivityManager.TYPE_MOBILE:
                     if (!networkIsConnected) {
+                        downloadView.setVisibility(View.VISIBLE);
                         refreshBtnImageView.setVisibility(View.VISIBLE);
                         ToastUtils.showToast(mContext, "Network is mobile!");
                     }
@@ -534,7 +536,7 @@ public class SplashActivity extends AppBaseActivity {
         String filePath = downloadDirectoryPath + ConstantInOB.neutrinoDB;
         File file = new File(filePath);
         if (file.exists()) {
-            handler.postDelayed(this::startNode, Constants.SPLASH_SLEEP_TIME);
+            startNode();
             return;
         }
         DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build();
@@ -566,7 +568,7 @@ public class SplashActivity extends AppBaseActivity {
                 boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
                 if (checkFileMd5Matched) {
                     User.getInstance().setNeutrinoDbChecked(mContext,true);
-                    handler.postDelayed(()->startNode(), Constants.SPLASH_SLEEP_TIME);
+                    startNode();
                 } else {
                     File file1 = new File(filePath);
                     file1.delete();
@@ -603,9 +605,9 @@ public class SplashActivity extends AppBaseActivity {
                     runOnUiThread(() -> {
                         String walletInitType = User.getInstance().getInitWalletType(mContext);
                         if (walletInitType.equals("initialed")) {
-                            switchActivityFinish(UnlockActivity.class);
+                            handler.postDelayed(()->{switchActivityFinish(UnlockActivity.class);},Constants.SPLASH_SLEEP_TIME);
                         } else {
-                            switchActivityFinish(InitWalletMenuActivity.class);
+                            handler.postDelayed(()->{switchActivityFinish(InitWalletMenuActivity.class);},Constants.SPLASH_SLEEP_TIME);
                         }
                     });
                 } else if (e.getMessage().contains("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
@@ -684,7 +686,7 @@ public class SplashActivity extends AppBaseActivity {
                     if (nowMillis - fileHeaderLastEdit > ConstantInOB.DAY_MILLIS * 7) {
                         downloadManifestFile();
                     } else {
-                        handler.postDelayed(this::startNode, Constants.SPLASH_SLEEP_TIME);
+                        startNode();
                     }
                 }else{
                     readManifestFile();
@@ -733,14 +735,14 @@ public class SplashActivity extends AppBaseActivity {
             Log.d(TAG,"walletState:" + walletState);
             switch (walletState) {
                 case 4:
-                    switchActivityFinish(AccountLightningActivity.class);
+                    handler.postDelayed(()->{switchActivityFinish(AccountLightningActivity.class);},Constants.SPLASH_SLEEP_TIME);
                     break;
                 case 255:
                     if (walletInitType.equals("initialed")) {
-                        switchActivityFinish(UnlockActivity.class);
+                        handler.postDelayed(()->{switchActivityFinish(UnlockActivity.class);},Constants.SPLASH_SLEEP_TIME);
                         break;
                     } else {
-                        switchActivityFinish(InitWalletMenuActivity.class);
+                        handler.postDelayed(()->{switchActivityFinish(InitWalletMenuActivity.class);},Constants.SPLASH_SLEEP_TIME);
                         break;
                     }
 
