@@ -280,13 +280,27 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                 @Override
                 public void onError(Exception e) {
                     Log.e("initWallet Error",e.toString());
+                    if (e.getMessage().contains("wallet already exists")){
+                        switchActivity(BackupBlockProcessActivity.class);
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLoadingDialog.dismiss();
+                        }
+                    });
                     e.printStackTrace();
-                    mLoadingDialog.dismiss();
+
                 }
                 @Override
                 public void onResponse(byte[] bytes) {
                     if (bytes == null){
-                        mLoadingDialog.dismiss();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mLoadingDialog.dismiss();
+                            }
+                        });
                         return;
                     }
                     try {
@@ -295,10 +309,21 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                         User.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8());
                         User.getInstance().setCreated(mContext,true);
                         User.getInstance().setInitWalletType(mContext,"createStepThree");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mLoadingDialog.dismiss();
+                            }
+                        });
                         switchActivity(BackupBlockProcessActivity.class);
                     } catch (InvalidProtocolBufferException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mLoadingDialog.dismiss();
+                            }
+                        });
                         e.printStackTrace();
-                        mLoadingDialog.dismiss();
                     }
                 }
             });
@@ -313,7 +338,12 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             Toast checkSetPassToast = Toast.makeText(CreateWalletStepThreeActivity.this,checkSetPassWrongString,Toast.LENGTH_LONG);
             checkSetPassToast.setGravity(Gravity.TOP,0,30);
             checkSetPassToast.show();
-            mLoadingDialog.dismiss();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mLoadingDialog.dismiss();
+                }
+            });
         }
 
     }
