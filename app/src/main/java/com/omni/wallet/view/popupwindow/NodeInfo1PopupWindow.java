@@ -14,12 +14,10 @@ import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
-
-import org.greenrobot.eventbus.EventBus;
+import com.omni.wallet.view.dialog.UnlockDialog;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -183,9 +181,11 @@ public class NodeInfo1PopupWindow {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        EventBus.getDefault().post(new LoginOutEvent());
+//                        EventBus.getDefault().post(new LoginOutEvent());
                         mBasePopWindow.dismiss();
                         mLoadingDialog.dismiss();
+                        UnlockDialog mUnlockDialog = new UnlockDialog(mContext);
+                        mUnlockDialog.show();
                     }
                 });
             }
@@ -196,9 +196,11 @@ public class NodeInfo1PopupWindow {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        EventBus.getDefault().post(new LoginOutEvent());
+//                        EventBus.getDefault().post(new LoginOutEvent());
                         mBasePopWindow.dismiss();
                         mLoadingDialog.dismiss();
+                        UnlockDialog mUnlockDialog = new UnlockDialog(mContext);
+                        mUnlockDialog.show();
                     }
                 });
             }

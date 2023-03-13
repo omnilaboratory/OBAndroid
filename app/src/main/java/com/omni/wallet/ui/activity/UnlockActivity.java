@@ -1,6 +1,5 @@
 package com.omni.wallet.ui.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -28,11 +27,9 @@ import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
-import com.omni.wallet.utils.GetRequestHeader;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
-import com.omni.wallet.utils.UtilFunctions;
 import com.omni.wallet.utils.WalletState;
 import com.omni.wallet.view.dialog.LoginLoadingDialog;
 
@@ -109,6 +106,11 @@ public class UnlockActivity extends AppBaseActivity {
         changePassword();
 
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return super.onDoubleClickExit(keyCode, event);
     }
 
     @Override

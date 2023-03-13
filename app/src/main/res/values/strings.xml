@@ -285,6 +285,10 @@
     <string name="swap_to">Swap To</string>
     <string name="slippage_tolerance">Slippage\ntolerance</string>
     <string name="num_exceeds">The number of red packets exceeds</string>
+    <string name="tv_dialog_permission_desc_1">You need to grant the APP permission to read and write external storage of the phone</string>
+    <string name="tv_dialog_permission_desc_2">You need to grant the APP permission to read and write the mobile phone status</string>
+    <string name="tv_dialog_permission_desc_3">The APP needs you to grant the permission to read and write the mobile phone storage. Please go to "Settings ->Application" or "Settings ->Permission Management" to grant the storage permission</string>
+    <string name="tv_dialog_permission_desc_4">The APP requires you to grant the permission to read and write the status of the mobile phone. Please go to "Settings ->Application" or "Settings ->Permission Management" to grant the storage permission</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

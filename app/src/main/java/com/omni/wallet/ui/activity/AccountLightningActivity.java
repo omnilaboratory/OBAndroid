@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -923,6 +924,11 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRebootEvent(RebootEvent event) {
         finish();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return super.onDoubleClickExit(keyCode, event);
     }
 
     @Override

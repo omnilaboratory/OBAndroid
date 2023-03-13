@@ -12,10 +12,7 @@ import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.ui.activity.ForgetPwdActivity;
 import com.omni.wallet.utils.Md5Util;
-
-import static com.omni.wallet.baselibrary.utils.ActivityUtils.switchActivity;
 
 public class UnlockDialog {
     private static final String TAG = UnlockDialog.class.getSimpleName();
@@ -34,6 +31,8 @@ public class UnlockDialog {
             mAlertDialog = new AlertDialog.Builder(mContext, R.style.dialog_translucent_theme)
                     .setContentView(R.layout.layout_popupwindow_unlock)
                     .setAnimation(R.style.popup_anim_style)
+                    .setCancelable(false)
+                    .setCanceledOnTouchOutside(false)
                     .fullWidth()
                     .fullHeight()
                     .create();
