@@ -197,7 +197,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sync_block"
-                        android:textSize="16sp"
+                        android:textSize="16dp"
                         android:textColor="#7f000000"
                         android:layout_marginRight="5dp"/>
                     <TextView
@@ -205,7 +205,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sync_block_percent"
-                        android:textSize="16sp"
+                        android:textSize="16dp"
                         android:textColor="#7F06D78F"/>
                     <ImageView
                         android:id="@+id/refresh_btn"
@@ -246,7 +246,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="@string/block"
-                        android:textSize="16sp"
+                        android:textSize="16dp"
                         android:textColor="@color/color_black_80"/>
                     <TextView
                         android:id="@+id/block_num_synced"
@@ -254,14 +254,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="@string/block_synced_num"
-                        android:textSize="16sp"
+                        android:textSize="16dp"
                         android:textColor="@color/color_black_80"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="@string/block_of"
-                        android:textSize="16sp"
+                        android:textSize="16dp"
                         android:textColor="@color/color_black_80"/>
                     <TextView
                         android:id="@+id/block_num_sync"
@@ -269,7 +269,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="@string/block_sync_num"
-                        android:textSize="16sp"
+                        android:textSize="16dp"
                         android:textColor="@color/color_black_80"/>
 
                 </LinearLayout>
@@ -288,7 +288,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="@string/commit_filter"
-                        android:textSize="16sp"
+                        android:textSize="16dp"
                         android:textColor="@color/color_black_80"/>
                     <TextView
                         android:id="@+id/commit_num_synced"
@@ -296,14 +296,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="@string/block_synced_num"
-                        android:textSize="16sp"
+                        android:textSize="16dp"
                         android:textColor="@color/color_black_80"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="@string/block_of"
-                        android:textSize="16sp"
+                        android:textSize="16dp"
                         android:textColor="@color/color_black_80"/>
                     <TextView
                         android:id="@+id/commit_num_sync"
@@ -311,7 +311,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="@string/block_sync_num"
-                        android:textSize="16sp"
+                        android:textSize="16dp"
                         android:textColor="@color/color_black_80"/>
 
                 </LinearLayout>

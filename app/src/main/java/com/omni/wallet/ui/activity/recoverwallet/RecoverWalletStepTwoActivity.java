@@ -122,13 +122,6 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                     pass_strong_text.setTextColor(getResources().getColor(R.color.color_red));
                     break;
                 case 2:
-                    easy.setBackgroundColor(getResources().getColor(R.color.color_red));
-                    normal.setBackgroundColor(getResources().getColor(R.color.color_orange));
-                    strong.setBackgroundColor(getResources().getColor(R.color.color_todo_grey));
-                    pass_strong_text.setVisibility(View.VISIBLE);
-                    pass_strong_text.setText("NORMAL");
-                    pass_strong_text.setTextColor(getResources().getColor(R.color.color_orange));
-                    break;
                 case 3:
                     easy.setBackgroundColor(getResources().getColor(R.color.color_red));
                     normal.setBackgroundColor(getResources().getColor(R.color.color_orange));
@@ -167,6 +160,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
             pass_strong_text.setText("");
             pass_strong_text.setTextColor(getResources().getColor(R.color.color_10_white));
         }
+        passwordRepeatChangeCheck();
     }
 
     /**
