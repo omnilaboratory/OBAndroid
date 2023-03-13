@@ -168,7 +168,7 @@ public class SplashActivity extends AppBaseActivity {
 
         runOnUiThread(() -> registerReceiver(networkChangeReceiver, intentFilter));
 
-        /*
+        /**
          * check version code to update all states
          * 检查版本号，更新各个状态
          */
