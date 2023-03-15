@@ -113,8 +113,8 @@ public class RestoreChannelActivity extends AppBaseActivity {
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initRecyclerView(){
@@ -299,17 +299,17 @@ public class RestoreChannelActivity extends AppBaseActivity {
                     Obdmobile.verifyChanBackup(chanBackupSnapshot.toByteArray(), new Callback() {
                         @Override
                         public void onError(Exception e) {
-                            if(e.getMessage().equals("rpc error: code = Unknown desc = invalid single channel backup: chacha20poly1305: message authentication failed")){
+                            if(e.getMessage().contains("rpc error: code = Unknown desc = invalid single channel backup: chacha20poly1305: message authentication failed")){
                                 runOnUiThread(()->{
                                     PublicUtils.closeLoading(mLoadingDialog);
                                     ToastUtils.showToast(mContext,"The file authenticated failed,please make sure the file and your wallet is matched!");
                                 });
-                            }else if(e.getMessage().trim().equals("rpc error: code = Unknown desc = only one Single is accepted at a time")){
+                            }else if(e.getMessage().trim().contains("rpc error: code = Unknown desc = only one Single is accepted at a time")){
                                 runOnUiThread(()->{
                                     PublicUtils.closeLoading(mLoadingDialog);
                                     ToastUtils.showToast(mContext,e.getMessage());
                                 });
-                            }else if(e.getMessage().equals("rpc error: code = Unknown desc = invalid multi channel backup: chacha20poly1305: message authentication failed")){
+                            }else if(e.getMessage().contains("rpc error: code = Unknown desc = invalid multi channel backup: chacha20poly1305: message authentication failed")){
                                 runOnUiThread(()->{
                                     PublicUtils.closeLoading(mLoadingDialog);
                                     ToastUtils.showToast(mContext,"The file authenticated failed,please make sure the file and your wallet is matched!");

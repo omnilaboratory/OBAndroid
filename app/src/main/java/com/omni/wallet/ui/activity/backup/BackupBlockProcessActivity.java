@@ -174,11 +174,11 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         EventBus.getDefault().unregister(this);
         PublicUtils.closeLoading(mLoadingDialog);
         unregisterReceiver(networkChangeReceiver);
         blockData.unregisterOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
-        super.onDestroy();
     }
 
     @SuppressLint("LongLogTag")
