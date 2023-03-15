@@ -448,7 +448,12 @@ public class PayInvoiceDialog {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    EventBus.getDefault().post(new PayInvoiceFailedEvent());
                                     mLoadingDialog.dismiss();
+                                    mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
+                                    mAlertDialog.findViewById(R.id.lv_pay_invoice_step_failed).setVisibility(View.VISIBLE);
+                                    mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                    mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
                                     showStepFailed(e.getMessage());
                                 }
                             });

@@ -3,6 +3,8 @@ package com.omni.wallet.view.popupwindow;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -52,6 +54,22 @@ public class NodeInfoPopupWindow {
 
             mLoadingDialog = new LoadingDialog(mContext);
             nameTv = rootView.findViewById(R.id.tv_node_name);
+            nameTv.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    User.getInstance().setAlias(mContext, s.toString());
+                }
+            });
             TextView versionTv = rootView.findViewById(R.id.tv_node_version);
             TextView backendTv = rootView.findViewById(R.id.tv_node_backend);
             TextView modeTv = rootView.findViewById(R.id.tv_node_mode);
@@ -174,7 +192,7 @@ public class NodeInfoPopupWindow {
     }
 
     public void startNode() {
-        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
+        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + User.getInstance().getAlias(mContext), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startOnError------------------" + e.getMessage());

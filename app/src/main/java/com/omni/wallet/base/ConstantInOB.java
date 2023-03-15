@@ -27,16 +27,17 @@ public class ConstantInOB {
     public static String regLiquidityNodePubkey="0357702800d8926b9077a621bc04320b187b73bcecf381ae07d0a2b36defd1a715@43.138.107.248:9735";
 
 
-    public static final String neutrinoRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
+    public static final String neutrinoRegTestConfig = "--trickledelay=5000 --debuglevel=debug \n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=neutrino " +
             "--enable-upfront-shutdown " +
             "--tlsdisableautofill " +
             "--norest "+
             "--neutrino.connect=" + BTCHostAddressRegTest +
-            " --omnicoreproxy.rpchost=" + OMNIHostAddressPortRegTest ;
+            " --omnicoreproxy.rpchost=" + OMNIHostAddressPortRegTest +
+            "--alias=";
 
-    public static final String normalRegTestConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
+    public static final String normalRegTestConfig = "--trickledelay=5000 --debuglevel=debug \n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.regtest --bitcoin.node=omnicoreproxy " +
             "--enable-upfront-shutdown " +
@@ -44,20 +45,22 @@ public class ConstantInOB {
             "--norest "+
             "--omnicoreproxy.rpchost=" + BTCHostAddressRegTest + ":18332 " +
             "--omnicoreproxy.zmqpubrawblock=tcp://" + BTCHostAddressRegTest + ":28332 " +
-            "--omnicoreproxy.zmqpubrawtx=tcp://" + BTCHostAddressRegTest + ":28333";
+            "--omnicoreproxy.zmqpubrawtx=tcp://" + BTCHostAddressRegTest + ":28333" +
+            "--alias=";
 
-    public static final String neutrinoTestNetConfig = "--trickledelay=5000 --debuglevel=debug --alias=alice\n" +
+    public static final String neutrinoTestNetConfig = "--trickledelay=5000 --debuglevel=debug \n" +
             "--autopilot.active --maxpendingchannels=100 " +
             "--bitcoin.active --bitcoin.testnet --bitcoin.node=neutrino " +
             "--enable-upfront-shutdown " +
             "--tlsdisableautofill " +
             "--norest "+
             "--neutrino.connect=" + TEST_NET_BTC_HOST_ADDRESS +
-            " --omnicoreproxy.rpchost=" + TEST_NET_OMNI_HOST_ADDRESS_PORT;
+            " --omnicoreproxy.rpchost=" + TEST_NET_OMNI_HOST_ADDRESS_PORT +
+            "--alias=";
 
 //    testnet config
 
-    public static final String usingNeutrinoConfig = neutrinoTestNetConfig;
+    public static String usingNeutrinoConfig = neutrinoTestNetConfig;
     public static final String usingDownloadBaseUrl = downloadBaseUrlTestNet;
     public static final String usingBTCHostAddress = TEST_NET_BTC_HOST_ADDRESS;
     public static final String usingLogPath = testLogPath;
@@ -65,7 +68,7 @@ public class ConstantInOB {
     public static final String usingLiquidityNodePubkey = testLiquidityNodePubkey;
 
 //    regTest neutrino config
-    /*public static final String usingNeutrinoConfig = neutrinoRegTestConfig;
+    /*public static String usingNeutrinoConfig = neutrinoRegTestConfig;
     public static final String usingDownloadBaseUrl = downloadBaseUrl;
     public static final String usingBTCHostAddress = BTCHostAddressRegTest;
     public static final String usingLogPath = regTestLogPath;

@@ -42,8 +42,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import lnrpc.LightningOuterClass;
@@ -364,7 +362,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
     
     public void startOBMobile(){
-        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
+        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + User.getInstance().getAlias(mContext), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());

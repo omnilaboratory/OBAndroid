@@ -66,7 +66,6 @@ public class ReceiveLuckyPacketDialog {
                     .fullHeight()
                     .create();
         }
-        getChannelBalance(mAssetId);
         /**
          * @备注： 关闭按钮
          * @description: Click close button
@@ -83,21 +82,22 @@ public class ReceiveLuckyPacketDialog {
         mAlertDialog.show();
         mLoadingDialog = new LoadingDialog(mContext);
         mLoadingDialog.show();
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(data);
+            mAssetId = Long.parseLong(jsonObject.get("asstId").toString());
+            id = (int) jsonObject.get("id");
+            time = jsonObject.get("time").toString();
+            amount = jsonObject.get("amt").toString();
+            number = jsonObject.get("totalNum").toString();
+            besyWishes = jsonObject.get("bestWishes").toString();
+            getChannelBalance(mAssetId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                JSONObject jsonObject;
-                try {
-                    jsonObject = new JSONObject(data);
-                    mAssetId = Long.parseLong(jsonObject.get("asstId").toString());
-                    id = (int) jsonObject.get("id");
-                    time = jsonObject.get("time").toString();
-                    amount = jsonObject.get("amt").toString();
-                    number = jsonObject.get("totalNum").toString();
-                    besyWishes = jsonObject.get("bestWishes").toString();
-                    showStepDecodePay();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                showStepDecodePay();
             }
         }, 1000);
     }
@@ -117,6 +117,7 @@ public class ReceiveLuckyPacketDialog {
             mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
                 @Override
                 public void onClick() {
+                    mLoadingDialog.dismiss();
                     mAlertDialog.dismiss();
                 }
             });

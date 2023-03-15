@@ -127,7 +127,7 @@ public class MenuPopupWindow {
                 }
             });
 //            select directory
-            rootView.findViewById(R.id.backup_directory_select).setOnClickListener(new View.OnClickListener(){
+            rootView.findViewById(R.id.backup_directory_select).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mMenuPopWindow.dismiss();
@@ -189,7 +189,7 @@ public class MenuPopupWindow {
     }
 
     public void startNode() {
-        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
+        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + User.getInstance().getAlias(mContext), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startOnError------------------" + e.getMessage());

@@ -49,6 +49,8 @@ public class User {
     // 是否正在显示版本更新的Dialog
     private boolean isShowUpdateDialog = false;
     /***************************Omni Wallet**********************************/
+    // Alias(别名)
+    private String alias;
     // Network type(网络类型)
     private String network;
     // Wallet address(钱包地址)
@@ -212,6 +214,15 @@ public class User {
     }
 
     /***************************Omni Wallet**********************************/
+    public String getAlias(Context context) {
+        alias = PreferencesUtils.getAliasFromLocal(context);
+        return alias;
+    }
+
+    public void setAlias(Context context, String alias) {
+        PreferencesUtils.saveAliasToLocal(context, alias);
+        this.alias = alias;
+    }
 
     public String getNetwork(Context context) {
         network = PreferencesUtils.getNetworkFromLocal(context);

@@ -24,6 +24,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_FIRST_LOGIN = "firstLoginKey";// 新用户第一次登陆标识Ke
     private static final String KEY_VERSION_CODE = "versionCodeKey";// 保存版本信息的Key
     /****************************Omni Wallet*********************************/
+    private static final String KEY_ALIAS = "aliasKey";// Save the key of the alias(保存别名的Key)
     private static final String KEY_NETWORK = "networkKey";// Save the key of the network type(保存网络类型的Key)
     private static final String KEY_WALLET_ADDRESS = "walletAddressKey";// Save the key of the wallet address(保存钱包地址的Key)
     private static final String KEY_NODE_VERSION = "nodeVersionKey";// Save the key of the node version(保存节点版本的Key)
@@ -216,6 +217,24 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /***************************Omni Wallet**********************************/
+    /**
+     * getAliasFromLocal
+     *
+     * 获取本地保存的别名
+     */
+    public static String getAliasFromLocal(Context context) {
+        return getString(SETTINGS, context, KEY_ALIAS);
+    }
+
+    /**
+     * saveAliasToLocal
+     *
+     * 别名本地化
+     */
+    public static void saveAliasToLocal(Context context, String value) {
+        putString(SETTINGS, context, KEY_ALIAS, value);
+    }
+
     /**
      * getNetworkFromLocal
      *

@@ -44,6 +44,9 @@ public class CreateNewChannelTipDialog {
             @Override
             public void onClick(View v) {
                 mAlertDialog.dismiss();
+                if (mCallback != null) {
+                    mCallback.onClick();
+                }
             }
         });
         /**
@@ -68,6 +71,9 @@ public class CreateNewChannelTipDialog {
         mAlertDialog.findViewById(R.id.layout_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mCallback != null) {
+                    mCallback.onClick();
+                }
                 mAlertDialog.dismiss();
             }
         });

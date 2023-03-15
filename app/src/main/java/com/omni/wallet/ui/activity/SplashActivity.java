@@ -15,10 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.downloader.Error;
-import com.downloader.OnDownloadListener;
-import com.downloader.PRDownloader;
-import com.downloader.request.DownloadRequest;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.base.ConstantInOB;
@@ -27,6 +23,7 @@ import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.framelibrary.common.Constants;
 import com.omni.wallet.framelibrary.entity.User;
@@ -46,6 +43,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -99,6 +97,8 @@ public class SplashActivity extends AppBaseActivity {
     PreFilesUtils preFilesUtils;
 
     boolean isDownloading = false;
+    int downloadingId = -1;
+    String alias;
 
     @Override
     protected boolean isFullScreenStyle() {
@@ -416,7 +416,17 @@ public class SplashActivity extends AppBaseActivity {
 
 
     public void startNode() {
-        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
+        if(StringUtils.isEmpty(User.getInstance().getAlias(mContext))){
+            Random random = new Random();
+            int randonNum = random.nextInt(100) +1;
+            alias = "alice"+ "(" + randonNum + ")";
+            User.getInstance().setAlias(mContext,alias);
+        } else {
+            alias = User.getInstance().getAlias(mContext);
+        }
+        LogUtils.e("================", alias);
+        LogUtils.e("================", ConstantInOB.usingNeutrinoConfig + alias);
+        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + alias, new Callback() {
             @Override
             public void onError(Exception e) {
                 if (e.getMessage().contains("lnd already started")) {
