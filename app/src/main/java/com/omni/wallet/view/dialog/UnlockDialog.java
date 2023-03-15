@@ -77,7 +77,7 @@ public class UnlockDialog {
         EditText textView = mAlertDialog.findViewById(R.id.password_input);
         String passwordInput = textView.getText().toString();
         String passwordInputMd5 = Md5Util.getMD5Str(passwordInput);
-        if (newPasswordMd5.equals("")){
+        if (!newPasswordMd5.equals("")){
             if (passwordInputMd5.equals(newPasswordMd5)){
                 release();
             }else{
