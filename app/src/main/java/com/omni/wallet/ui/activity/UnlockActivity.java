@@ -115,7 +115,6 @@ public class UnlockActivity extends AppBaseActivity {
 
     @Override
     protected void onDestroy() {
-
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }

@@ -73,14 +73,24 @@ public class UnlockDialog {
 
     private void unlockWallet(){
         String passwordMd5 = User.getInstance().getPasswordMd5(mContext);
+        String newPasswordMd5 = User.getInstance().getNewPasswordMd5(mContext);
         EditText textView = mAlertDialog.findViewById(R.id.password_input);
         String passwordInput = textView.getText().toString();
         String passwordInputMd5 = Md5Util.getMD5Str(passwordInput);
-        if (passwordInputMd5.equals(passwordMd5)){
-            release();
+        if (newPasswordMd5.equals("")){
+            if (passwordInputMd5.equals(newPasswordMd5)){
+                release();
+            }else{
+                String toastString = mContext.getResources().getString(R.string.toast_unlock_error);
+                ToastUtils.showToast(mContext,toastString);
+            }
         }else{
-            String toastString = mContext.getResources().getString(R.string.toast_unlock_error);
-            ToastUtils.showToast(mContext,toastString);
+            if (passwordInputMd5.equals(passwordMd5)){
+                release();
+            }else{
+                String toastString = mContext.getResources().getString(R.string.toast_unlock_error);
+                ToastUtils.showToast(mContext,toastString);
+            }
         }
     }
 
