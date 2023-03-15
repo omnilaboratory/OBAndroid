@@ -33,6 +33,7 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.AppVersionUtils;
 import com.omni.wallet.utils.FilesUtils;
 import com.omni.wallet.utils.NetworkChangeReceiver;
+import com.omni.wallet.utils.PreFilesUtils;
 import com.omni.wallet.utils.WalletState;
 
 import java.io.BufferedReader;
@@ -95,9 +96,9 @@ public class SplashActivity extends AppBaseActivity {
     NetworkChangeReceiver.CallBackNetWork callBackNetWork = null;
 
     Map<String, String> manifestInfo = new HashMap<>();
+    PreFilesUtils preFilesUtils;
 
     boolean isDownloading = false;
-    int downloadingId = -1;
 
     @Override
     protected boolean isFullScreenStyle() {
@@ -117,6 +118,7 @@ public class SplashActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         constantInOB = new ConstantInOB(mContext);
+        preFilesUtils = PreFilesUtils.getInstance(mContext);
         networkChangeReceiver = new NetworkChangeReceiver();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
@@ -157,7 +159,6 @@ public class SplashActivity extends AppBaseActivity {
                     networkIsConnected = false;
                     Log.e(TAG, "Network is disconnected!");
                     ToastUtils.showToast(mContext, "Network is disconnected!");
-                    PRDownloader.pause(downloadingId);
                     break;
                 default:
                     break;
@@ -328,275 +329,91 @@ public class SplashActivity extends AppBaseActivity {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void getManifestFile() {
+
+    public void getManifest(){
+        PreFilesUtils.DownloadCallback downloadCallback = () -> {
+            readManifestFile();
+            preFilesUtils.readManifestFile();
+            getHeaderBinFile();
+        };
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
         String filePath = downloadDirectoryPath + "manifest.txt";
         File file = new File(filePath);
         if (file.exists()) {
             readManifestFile();
-            downloadHeaderBinFile();
+            getHeaderBinFile();
         } else {
-            downloadManifestFile();
+            preFilesUtils.downloadManifest(downloadView,downloadCallback);
         }
-
     }
 
-    public void downloadManifestFile() {
-        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        DownloadRequest pro = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + "manifest.txt", downloadDirectoryPath, "manifest.txt").build();
-        downloadingId = pro.getDownloadId();
-        pro.start(new OnDownloadListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onDownloadComplete() {
-                try {
-                    BufferedReader bfr;
-                    bfr = new BufferedReader(new FileReader(downloadDirectoryPath + "manifest.txt"));
-                    String line = bfr.readLine();
-                    StringBuilder sb = new StringBuilder();
-                    while (line != null) {
-                        String oldLine = line;
-                        sb.append(line);
-                        sb.append("\n");
-                        Log.e(TAG, line);
-                        String[] lineArray = oldLine.split(" {2}");
-                        if (lineArray[1].endsWith(ConstantInOB.blockHeaderBin)) {
-                            downloadVersion = lineArray[1].substring(0, 10);
-                            manifestInfo.put(ConstantInOB.blockHeader, lineArray[0]);
-                        } else if (lineArray[1].endsWith(ConstantInOB.neutrinoDB)) {
-                            manifestInfo.put(ConstantInOB.neutrino, lineArray[0]);
-                        } else if (lineArray[1].endsWith(ConstantInOB.regFilterHeaderBin)) {
-                            manifestInfo.put(ConstantInOB.regFilterHeader, lineArray[0]);
-                        }
-                        line = bfr.readLine();
-                        if (line == null) {
-                            downloadHeaderBinFile();
-                        }
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    public void getHeaderBinFile(){
+        PreFilesUtils.DownloadCallback downloadCallback = () -> {
+            String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+            String filePath = downloadDirectoryPath + ConstantInOB.blockHeaderBin;
+            if(preFilesUtils.checkBlockHeaderMd5Matched()){
+                User.getInstance().setHeaderBinChecked(mContext, true);
+                getRegHeadersFile();
+            }else{
+                File file = new File(filePath);
+                file.delete();
+                getHeaderBinFile();
             }
-
-            @Override
-            public void onError(Error error) {
-                boolean connectionError = error.isConnectionError();
-                boolean serverError = error.isServerError();
-                if (connectionError) {
-                    Log.e(TAG, "Manifest download ConnectError");
-                } else if (serverError) {
-                    Log.e(TAG, "Manifest download ConnectError");
-                } else {
-                    Log.e(TAG, "Manifest" + error.toString());
-                }
-
-            }
-        });
-    }
-
-    @SuppressLint({"DefaultLocale", "SetTextI18n"})
-    public void downloadHeaderBinFile() {
-        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        String filePath = downloadDirectoryPath + ConstantInOB.blockHeaderBin;
-        File file = new File(filePath);
-        if (file.exists()) {
-            downloadFilterHeaderBinFile();
-            return;
+        };
+        boolean isExist = preFilesUtils.checkHeaderBinFileExist();
+        boolean isMatched = preFilesUtils.checkBlockHeaderMd5Matched();
+        if (!(isExist && isMatched)) {
+            preFilesUtils.downloadBlockHeader(downloadView,downloadCallback);
+        }else{
+            getRegHeadersFile();
         }
-        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.blockHeaderBin, downloadDirectoryPath, ConstantInOB.blockHeaderBin).build();
-        downloadRequest.setDownloadId(1);
-        downloadingId = downloadRequest.getDownloadId();
-        Log.d(TAG, "downloadHeaderBinFile: " + downloadingId);
-        final double[] totalBytes = {(double) downloadRequest.getTotalBytes() / 1024 / 1024};
-        downloadRequest.setOnStartOrResumeListener(() -> {
-            Log.d(TAG, "downloadHeaderBinFile: download resume");
-            downloadView.setVisibility(View.VISIBLE);
-            refreshBtnImageView.setVisibility(View.INVISIBLE);
-            isDownloading = true;
-            doExplainTv.setText(mContext.getString(R.string.download_header));
-            totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
-            syncBlockNumView.setText(String.format("%.2f", totalBytes[0]) + "MB");
-        });
-        downloadRequest.setOnPauseListener(() -> Log.e(TAG, "Pause download " + ConstantInOB.blockHeaderBin));
-        downloadRequest.setOnCancelListener(() -> Log.e(TAG, "Cancel download " + ConstantInOB.blockHeaderBin));
-        downloadRequest.setOnProgressListener(progress -> {
-            refreshBtnImageView.setVisibility(View.INVISIBLE);
-            double currentM = (double) progress.currentBytes / 1024 / 1024;
-            updateDataView(currentM, totalBytes[0]);
-        });
-        downloadRequest.start(new OnDownloadListener() {
-            @Override
-            public void onDownloadComplete() {
-                String fileMd5 = manifestInfo.get(ConstantInOB.blockHeader);
-                Log.e(TAG, fileMd5);
-                boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
-                if (checkFileMd5Matched) {
-                    User.getInstance().setHeaderBinChecked(mContext, true);
-                    downloadFilterHeaderBinFile();
-                } else {
-                    File file1 = new File(filePath);
-                    file1.delete();
-                    file1.exists();
-                    downloadHeaderBinFile();
-                }
-            }
-
-            @Override
-            public void onError(Error error) {
-                boolean connectionError = error.isConnectionError();
-                boolean serverError = error.isServerError();
-                if (connectionError) {
-                    refreshBtnImageView.setVisibility(View.VISIBLE);
-                    ToastUtils.showToast(mContext, "HeaderBin download Connect Error");
-                    Log.e(TAG, "HeaderBin download Connect Error");
-                } else if (serverError) {
-                    ToastUtils.showToast(mContext, "HeaderBin download server Error");
-                    Log.e(TAG, "HeaderBin download server Error");
-                } else {
-                    Log.e(TAG, "HeaderBin" + error.toString());
-                }
-            }
-        });
     }
 
-    public void downloadFilterHeaderBinFile() {
-        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        String filePath = downloadDirectoryPath + ConstantInOB.regFilterHeaderBin;
-        File file = new File(filePath);
-        if (file.exists()) {
-            downloadDBFile();
-            return;
+    public void getRegHeadersFile(){
+        PreFilesUtils.DownloadCallback downloadCallback = () -> {
+            String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+            String filePath = downloadDirectoryPath + ConstantInOB.regFilterHeaderBin;
+            if(preFilesUtils.checkFilterHeaderMd5Matched()){
+                User.getInstance().setFilterHeaderBinChecked(mContext, true);
+                getNeutrinoFile();
+            }else{
+                File file = new File(filePath);
+                file.delete();
+                getRegHeadersFile();
+            }
+        };
+        boolean isExist = preFilesUtils.checkFilterHeaderBinFileExist();
+        boolean isMatched = preFilesUtils.checkFilterHeaderMd5Matched();
+        if (!(isExist && isMatched)) {
+            preFilesUtils.downloadFilterHeader(downloadView,downloadCallback);
+        }else{
+            getNeutrinoFile();
         }
-        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.regFilterHeaderBin, downloadDirectoryPath, ConstantInOB.regFilterHeaderBin).build();
-        downloadRequest.setDownloadId(2);
-        downloadingId = downloadRequest.getDownloadId();
-        Log.d(TAG, "downloadFilterHeaderBinFile: " + downloadingId);
-        final double[] totalBytes = {0};
-        downloadRequest.setOnStartOrResumeListener(() -> {
-            downloadView.setVisibility(View.VISIBLE);
-            refreshBtnImageView.setVisibility(View.INVISIBLE);
-            Log.d(TAG, "downloadFilterHeaderBinFile: download resume");
-            isDownloading = true;
-            totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
-            syncBlockNumView.setText(String.format("%.2f", totalBytes[0]) + "MB");
-            doExplainTv.setText(mContext.getString(R.string.download_filter_header));
-        });
-        downloadRequest.setOnPauseListener(() -> {
-            Log.e(TAG, "Pause download " + ConstantInOB.regFilterHeaderBin);
-        });
-        downloadRequest.setOnCancelListener(() -> {
-            Log.e(TAG, "Cancel download " + ConstantInOB.regFilterHeaderBin);
-        });
-        downloadRequest.setOnProgressListener(progress -> {
-            refreshBtnImageView.setVisibility(View.INVISIBLE);
-            double currentM = (double) progress.currentBytes / 1024 / 1024;
-            updateDataView(currentM, totalBytes[0]);
-        });
-        downloadRequest.start(new OnDownloadListener() {
-            @Override
-            public void onDownloadComplete() {
-                String fileMd5 = manifestInfo.get(ConstantInOB.regFilterHeader);
-                Log.e(TAG, fileMd5);
-                boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
-                if (checkFileMd5Matched) {
-                    User.getInstance().setFilterHeaderBinChecked(mContext, true);
-                    downloadDBFile();
-                } else {
-                    File file1 = new File(filePath);
-                    file1.delete();
-                    file1.exists();
-                    downloadFilterHeaderBinFile();
-                }
-            }
-
-
-            @Override
-            public void onError(Error error) {
-                boolean connectionError = error.isConnectionError();
-                boolean serverError = error.isServerError();
-                if (connectionError) {
-                    refreshBtnImageView.setVisibility(View.VISIBLE);
-                    ToastUtils.showToast(mContext, "FilterHeaderBin download Connect Error");
-                    Log.e(TAG, "FilterHeaderBin download Connect Error");
-
-                } else if (serverError) {
-                    ToastUtils.showToast(mContext, "FilterHeaderBin download server Error");
-                    Log.e(TAG, "FilterHeaderBin download server Error");
-                } else {
-                    Log.e(TAG, "FilterHeaderBin" + error.toString());
-                }
-            }
-        });
     }
 
-    @SuppressLint({"DefaultLocale", "SetTextI18n"})
-    public void downloadDBFile() {
-        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        String filePath = downloadDirectoryPath + ConstantInOB.neutrinoDB;
-        File file = new File(filePath);
-        if (file.exists()) {
+    public void getNeutrinoFile(){
+        PreFilesUtils.DownloadCallback downloadCallback = () -> {
+            String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+            String filePath = downloadDirectoryPath + ConstantInOB.neutrinoDB;
+            if(preFilesUtils.checkNeutrinoMd5Matched()){
+                User.getInstance().setNeutrinoDbChecked(mContext, true);
+                startNode();
+            }else{
+                File file = new File(filePath);
+                file.delete();
+                getNeutrinoFile();
+            }
+        };
+        boolean isExist = preFilesUtils.checkNeutrinoFileExist();
+        boolean isMatched = preFilesUtils.checkNeutrinoMd5Matched();
+        if (!(isExist && isMatched)) {
+            preFilesUtils.downloadNeutrino(downloadView,downloadCallback);
+        }else{
             startNode();
-            return;
         }
-        DownloadRequest downloadRequest = PRDownloader.download(ConstantInOB.usingDownloadBaseUrl + downloadVersion + ConstantInOB.neutrinoDB, downloadDirectoryPath, ConstantInOB.neutrinoDB).build();
-        downloadRequest.setDownloadId(3);
-        downloadingId = downloadRequest.getDownloadId();
-        Log.d(TAG, "downloadDBFile: " + downloadingId);
-        final double[] totalBytes = {0};
-        downloadRequest.setOnStartOrResumeListener(() -> {
-            downloadView.setVisibility(View.VISIBLE);
-            refreshBtnImageView.setVisibility(View.INVISIBLE);
-            Log.d(TAG, "downloadDBFile: download resume");
-            isDownloading = true;
-            totalBytes[0] = (double) downloadRequest.getTotalBytes() / 1024 / 1024;
-            doExplainTv.setText(mContext.getString(R.string.download_db));
-            syncBlockNumView.setText(String.format("%.2f", totalBytes[0]) + "MB");
-        });
-        downloadRequest.setOnPauseListener(() -> Log.e(TAG, "Pause download " + ConstantInOB.neutrinoDB));
-        downloadRequest.setOnCancelListener(() -> Log.e(TAG, "Cancel download " + ConstantInOB.neutrinoDB));
-        downloadRequest.setOnProgressListener(progress -> {
-            refreshBtnImageView.setVisibility(View.INVISIBLE);
-            double currentM = (double) progress.currentBytes / 1024 / 1024;
-            updateDataView(currentM, totalBytes[0]);
-        });
-        downloadRequest.start(new OnDownloadListener() {
-            @Override
-            public void onDownloadComplete() {
-                String fileMd5 = manifestInfo.get(ConstantInOB.neutrino);
-                Log.e(TAG, fileMd5);
-                boolean checkFileMd5Matched = FilesUtils.checkFileMd5Matched(filePath, fileMd5);
-                if (checkFileMd5Matched) {
-                    User.getInstance().setNeutrinoDbChecked(mContext, true);
-                    startNode();
-                } else {
-                    File file1 = new File(filePath);
-                    file1.delete();
-                    file1.exists();
-                    downloadDBFile();
-                }
-
-            }
-
-            @Override
-            public void onError(Error error) {
-                boolean connectionError = error.isConnectionError();
-                boolean serverError = error.isServerError();
-                if (connectionError) {
-                    refreshBtnImageView.setVisibility(View.VISIBLE);
-                    ToastUtils.showToast(mContext, "DBFile download Connect Error");
-                    Log.e(TAG, "DBFile download Connect Error");
-
-                } else if (serverError) {
-                    ToastUtils.showToast(mContext, "DBFile download server Error");
-                    Log.e(TAG, "DBFile download server Error");
-                } else {
-                    Log.e(TAG, "DBFile" + error.toString());
-                }
-            }
-        });
     }
+
+
 
     public void startNode() {
         Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
@@ -678,9 +495,11 @@ public class SplashActivity extends AppBaseActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void actionAfterPromise() {
+        isDownloading = true;
         boolean isHeaderBinChecked = User.getInstance().isHeaderBinChecked(mContext);
         boolean isFilterHeaderBinChecked = User.getInstance().isFilterHeaderBinChecked(mContext);
         boolean isNeutrinoDbChecked = User.getInstance().isNeutrinoDbChecked(mContext);
+        Log.d(TAG, "actionAfterPromise: " + isHeaderBinChecked + " " + isFilterHeaderBinChecked + "" + isNeutrinoDbChecked);
 
         if (isHeaderBinChecked) {
             if (isFilterHeaderBinChecked) {
@@ -688,21 +507,21 @@ public class SplashActivity extends AppBaseActivity {
                     long nowMillis = Calendar.getInstance().getTimeInMillis();
                     String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
                     long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
-                    if (nowMillis - fileHeaderLastEdit > ConstantInOB.DAY_MILLIS * 7) {
-                        downloadManifestFile();
+                    if (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS) {
+                        getManifest();
                     } else {
                         startNode();
                     }
                 } else {
                     readManifestFile();
-                    downloadDBFile();
+                    getNeutrinoFile();
                 }
             } else {
                 readManifestFile();
-                downloadFilterHeaderBinFile();
+                getRegHeadersFile();
             }
         } else {
-            getManifestFile();
+            getManifest();
         }
 //        startNode();
     }
@@ -711,15 +530,21 @@ public class SplashActivity extends AppBaseActivity {
     @OnClick(R.id.refresh_btn)
     public void clickRefreshBtn() {
         refreshBtnImageView.setVisibility(View.INVISIBLE);
+        int downloadingId = preFilesUtils.downloadingId;
+        Log.d(TAG, "clickRefreshBtn: " + downloadingId);
+//        preFilesUtils.resumeDownloading();
         switch (downloadingId) {
             case 1:
-                downloadHeaderBinFile();
+                getManifest();
                 break;
             case 2:
-                downloadFilterHeaderBinFile();
+                getHeaderBinFile();
                 break;
             case 3:
-                downloadDBFile();
+                getRegHeadersFile();
+                break;
+            case 4:
+                getNeutrinoFile();
                 break;
             default:
                 break;

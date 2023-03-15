@@ -507,7 +507,7 @@ public class User {
     }
 
     public void setFilterHeaderBinChecked(Context context, boolean filterHeaderBinChecked) {
-        PreferencesUtils.saveHeaderBinChecked(context, filterHeaderBinChecked);
+        PreferencesUtils.saveFilterHeaderBinChecked(context, filterHeaderBinChecked);
         this.filterHeaderBinChecked = filterHeaderBinChecked;
     }
 

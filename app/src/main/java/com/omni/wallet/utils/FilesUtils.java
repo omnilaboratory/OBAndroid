@@ -11,9 +11,10 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class FilesUtils {
     private String path;
-
+    private static final String TAG = FilesUtils.class.getSimpleName();
     public static List<BackupFile> getDirectoryAndFile(String path, Context context) {
         List<BackupFile> fileInfoList = new ArrayList<>();
         File file = new File(path);
@@ -105,6 +106,7 @@ public class FilesUtils {
     public static boolean checkFileMd5Matched (String filePath,String fileMd5){
         boolean isMatched = false;
         String fileCheckMd5 = getFileMd5(filePath);
+        Log.d(TAG, "checkFileMd5Matched: " + fileCheckMd5 + " " + fileMd5);
         if(fileCheckMd5.equals(fileMd5)){
             isMatched = true;
         }else{
