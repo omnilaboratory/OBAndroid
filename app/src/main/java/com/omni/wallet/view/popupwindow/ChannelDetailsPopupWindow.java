@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.protobuf.ByteString;
@@ -63,7 +64,11 @@ public class ChannelDetailsPopupWindow {
     private TextView mActivity;
     private TextView mTotalSent;
     private TextView mTotalReceived;
-    private LinearLayout mCloseChannelButton;
+    private RelativeLayout mCloseChannelParentLayout;
+    private LinearLayout mCloseChannelLayout;
+    private TextView mCloseChannelButton;
+    private TextView mCloseChannelNoButton;
+    private ImageView mCloseChannelIv;
     private LinearLayout mAnotherInfo;
 
     CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
@@ -106,7 +111,11 @@ public class ChannelDetailsPopupWindow {
             mActivity = rootView.findViewById(R.id.tv_activity);
             mTotalSent = rootView.findViewById(R.id.tv_total_sent);
             mTotalReceived = rootView.findViewById(R.id.tv_total_received);
-            mCloseChannelButton = rootView.findViewById(R.id.layout_close_channel);
+            mCloseChannelParentLayout = rootView.findViewById(R.id.layout_close_channel_parent);
+            mCloseChannelLayout = rootView.findViewById(R.id.layout_close_channel);
+            mCloseChannelButton = rootView.findViewById(R.id.tv_close_channel);
+            mCloseChannelNoButton = rootView.findViewById(R.id.tv_close_channel_no);
+            mCloseChannelIv = rootView.findViewById(R.id.iv_close_channel);
             mAnotherInfo = rootView.findViewById(R.id.layout_another_info);
 
             // set progress bar
@@ -305,12 +314,26 @@ public class ChannelDetailsPopupWindow {
     }
 
     private void showClosingButton(boolean forceClose, int csvDelay) {
-        mCloseChannelButton.setVisibility(View.VISIBLE);
+        mCloseChannelParentLayout.setVisibility(View.VISIBLE);
+        mCloseChannelParentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCloseChannelIv.setVisibility(View.INVISIBLE);
+                mCloseChannelLayout.setVisibility(View.VISIBLE);
+            }
+        });
         mCloseChannelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mLoadingDialog.show();
                 closeChannel(forceClose, csvDelay);
+            }
+        });
+        mCloseChannelNoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCloseChannelIv.setVisibility(View.VISIBLE);
+                mCloseChannelLayout.setVisibility(View.GONE);
             }
         });
     }

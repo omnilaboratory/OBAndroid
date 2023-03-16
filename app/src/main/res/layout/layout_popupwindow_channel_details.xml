@@ -482,30 +482,66 @@
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/layout_close_channel"
+                <RelativeLayout
+                    android:id="@+id/layout_close_channel_parent"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:gravity="center"
-                    android:orientation="vertical"
                     android:visibility="gone">
 
-                    <ImageView
-                        android:layout_width="@dimen/main_36"
-                        android:layout_height="@dimen/main_36"
-                        android:src="@mipmap/icon_close_x_red"/>
-
-                    <TextView
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/main_2"
-                        android:letterSpacing="0.08"
-                        android:text="@string/close_channel"
-                        android:textColor="@color/color_red"
-                        android:textSize="@dimen/text_16"/>
-                </LinearLayout>
+                        android:gravity="center"
+                        android:layout_centerInParent="true"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/iv_close_channel"
+                            android:layout_width="@dimen/main_36"
+                            android:layout_height="@dimen/main_36"
+                            android:src="@mipmap/icon_close_x_red"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/main_2"
+                            android:letterSpacing="0.08"
+                            android:text="@string/close_channel"
+                            android:textColor="@color/color_red"
+                            android:textSize="@dimen/text_16"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_close_channel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tv_close_channel"
+                            android:layout_width="@dimen/main_64"
+                            android:layout_height="@dimen/main_32"
+                            android:background="@drawable/bg_e51414_rectangle_round_6"
+                            android:gravity="center"
+                            android:text="YES"
+                            android:textSize="@dimen/text_16"
+                            android:textColor="@color/color_white"/>
+
+                        <TextView
+                            android:id="@+id/tv_close_channel_no"
+                            android:layout_width="@dimen/main_64"
+                            android:layout_height="@dimen/main_32"
+                            android:layout_marginLeft="@dimen/main_9"
+                            android:background="@drawable/bg_d9d9d9_rectangle_round_6"
+                            android:gravity="center"
+                            android:text="NO"
+                            android:textSize="@dimen/text_16"
+                            android:textColor="@color/color_black"/>
+                    </LinearLayout>
+                </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
 
