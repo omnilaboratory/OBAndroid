@@ -276,7 +276,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
     protected void initView() {
         if (network.equals("lightning")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_vector);
-            mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
             if (assetId == 0) {
                 mNetworkTypeTv.setText("BTC lightning network");
                 mNetworkTv.setText("BTC lightning network");
@@ -302,19 +301,46 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mRootMyInvoicesLayout.setVisibility(View.VISIBLE);
         } else if (network.equals("link")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_link_black);
-            mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
             if (assetId == 0) {
-                mNetworkTypeTv.setText("BTC Mainnet");
-                mNetworkTv.setText("BTC Mainnet");
-                mNetwork1Tv.setText("BTC Mainnet");
-                mNetwork2Tv.setText("BTC Mainnet");
-                mNetwork3Tv.setText("BTC Mainnet");
+                if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+                    mNetworkTypeTv.setText("BTC Testnet");
+                    mNetworkTv.setText("BTC Testnet");
+                    mNetwork1Tv.setText("BTC Testnet");
+                    mNetwork2Tv.setText("BTC Testnet");
+                    mNetwork3Tv.setText("BTC Testnet");
+                } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+                    mNetworkTypeTv.setText("BTC Regtest");
+                    mNetworkTv.setText("BTC Regtest");
+                    mNetwork1Tv.setText("BTC Regtest");
+                    mNetwork2Tv.setText("BTC Regtest");
+                    mNetwork3Tv.setText("BTC Regtest");
+                } else { //mainnet
+                    mNetworkTypeTv.setText("BTC Mainnet");
+                    mNetworkTv.setText("BTC Mainnet");
+                    mNetwork1Tv.setText("BTC Mainnet");
+                    mNetwork2Tv.setText("BTC Mainnet");
+                    mNetwork3Tv.setText("BTC Mainnet");
+                }
             } else {
-                mNetworkTypeTv.setText("Omnilayer Mainnet");
-                mNetworkTv.setText("Omnilayer Mainnet");
-                mNetwork1Tv.setText("Omnilayer Mainnet");
-                mNetwork2Tv.setText("Omnilayer Mainnet");
-                mNetwork3Tv.setText("Omnilayer Mainnet");
+                if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+                    mNetworkTypeTv.setText("Omnilayer Testnet");
+                    mNetworkTv.setText("Omnilayer Testnet");
+                    mNetwork1Tv.setText("Omnilayer Testnet");
+                    mNetwork2Tv.setText("Omnilayer Testnet");
+                    mNetwork3Tv.setText("Omnilayer Testnet");
+                } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+                    mNetworkTypeTv.setText("Omnilayer Regtest");
+                    mNetworkTv.setText("Omnilayer Regtest");
+                    mNetwork1Tv.setText("Omnilayer Regtest");
+                    mNetwork2Tv.setText("Omnilayer Regtest");
+                    mNetwork3Tv.setText("Omnilayer Regtest");
+                } else { //mainnet
+                    mNetworkTypeTv.setText("Omnilayer Mainnet");
+                    mNetworkTv.setText("Omnilayer Mainnet");
+                    mNetwork1Tv.setText("Omnilayer Mainnet");
+                    mNetwork2Tv.setText("Omnilayer Mainnet");
+                    mNetwork3Tv.setText("Omnilayer Mainnet");
+                }
             }
             mLightningNetworkLayout.setVisibility(View.GONE);
             mLinkNetworkLayout.setVisibility(View.VISIBLE);

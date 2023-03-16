@@ -22,16 +22,19 @@ import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.baselibrary.utils.image.BitmapUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.client.LuckPkClient;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.GetRequestHeader;
 import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.CreateNewChannelTipDialog;
+import com.omni.wallet.view.dialog.InvoiceQRCodeDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
 import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
@@ -362,6 +365,22 @@ public class CreateInvoiceStepOnePopupWindow {
 //        Bitmap mQRBitmap = CodeUtils.createQRCodeBitmap(qrCodeUrl, DisplayUtil.dp2px(mContext, 50), DisplayUtil.dp2px(mContext, 50),"UTF-8","L", "1", Color.BLACK, Color.WHITE);;
         qrCodeIv.setImageBitmap(mQRBitmap);
 
+        qrCodeIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InvoiceQRCodeDialog mInvoiceQRCodeDialog = new InvoiceQRCodeDialog(mContext);
+                mInvoiceQRCodeDialog.show(qrCodeUrl);
+            }
+        });
+        qrCodeIv.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                String fileName = "invoice_" + User.getInstance().getAlias(mContext) + ".jpg";
+                BitmapUtils.saveBitmap2Gallery(mContext, mQRBitmap, fileName);
+                ToastUtils.showToast(mContext, "QR code saved successfully");
+                return true;
+            }
+        });
         copyIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

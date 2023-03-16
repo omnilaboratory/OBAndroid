@@ -624,4 +624,18 @@ public class HttpRequestUtils {
                 .addParams("pageSize", num)
                 .execute(callback);
     }
+
+    /**
+     * 获取Github上的数据
+     * getGithubData
+     * @param context  上下文
+     * @param callback 回调
+     * @param <T>      泛型
+     */
+    public static <T> void getGithubData(Context context, DefaultHttpCallback<T> callback) {
+        HttpUtils.with(context)
+                .get()
+                .url("https://qiusunshine.github.io/HdyLove/Json/article.js")
+                .execute(callback);
+    }
 }

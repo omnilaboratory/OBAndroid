@@ -268,8 +268,8 @@
     <string name="nickname">Nickname</string>
     <string name="save_upper">SAVE</string>
     <string name="reboot_first_upper">Reboot</string>
-    <string name="create_channel_tip">You have not created a channel for this asset, please create at least one channel with the liquidity node first and with enough funds, and then continue to pay (or create an invoice). </string>
-    <string name="create_new_channel_tip">Sorry, your available balance is insufficient, please create new channel with the liquidity node first and with enough funds, and then continue to pay (or create an invoice). </string>
+    <string name="create_channel_tip">You have not created a channel for this asset, please create at least one channel with the liquidity node first and with enough funds, and then continue to proceed (pay, create an invoice, collect a gift, etc).</string>
+    <string name="create_new_channel_tip">You have not created a channel for this asset, please create at least one channel with enough funds, and then continue to proceed (pay, create an invoice, collect a gift, etc).</string>
     <string name="received_first_upper">Received</string>
     <string name="time_first_upper">Time</string>
     <string name="what_is_channel_upper">WHAT IS CHANNEL</string>
