@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
+import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
@@ -80,16 +82,16 @@ public class UnlockActivity extends AppBaseActivity {
         mLoadingDialog = new LoginLoadingDialog(mContext);
         PasswordFilter passwordFilter = new PasswordFilter();
         mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
-        TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE){
-                    clickUnlock();
-                }
-                return true;
+        TextView.OnEditorActionListener listener = (v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                clickUnlock();
             }
+            return true;
         };
         mPwdEdit.setOnEditorActionListener(listener);
+        LinearLayout pageContent = findViewById(R.id.pageContent);
+        RelativeLayout mOutView = findViewById(R.id.form_unlock_content);
+        KeyboardScrollView.controlKeyboardLayout(pageContent, mOutView);
     }
 
     @Override

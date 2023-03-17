@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
 import com.omni.wallet.utils.CheckInputRules;
+import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.view.dialog.LoadingDialog;
@@ -82,6 +85,9 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             return true;
         };
         mConfirmPwdEdit.setOnEditorActionListener(listener);
+        LinearLayout pageContent = findViewById(R.id.create_wallet_step_three);
+        RelativeLayout mOutView = findViewById(R.id.form_unlock_content);
+        KeyboardScrollView.controlKeyboardLayout(pageContent, mOutView);
     }
 
     @Override

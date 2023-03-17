@@ -8,7 +8,9 @@
     android:orientation="vertical"
     android:gravity="bottom"
     tools:context=".ui.activity.recoverwallet.RecoverWalletStepTwoActivity"
-    android:background="@color/page_white">
+    android:background="@color/page_white"
+    android:id="@+id/recover_wallet_step_two"
+    android:fillViewport="true">
 
     <RelativeLayout
         android:id="@+id/logo_content"

@@ -11,6 +11,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CheckInputRules;
+import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.WalletState;
 
@@ -62,6 +66,11 @@ public class ForgetPwdNextDialog {
         }
 
         EditText passwordInputEditText = mAlertDialog.findViewById(R.id.password_input);
+
+        /*LinearLayout pageContent = mAlertDialog.findViewById(R.id.layout_parent);
+        LinearLayout unlockContain = mAlertDialog.findViewById(R.id.form_unlock_content);
+        KeyboardScrollView.controlKeyboardLayout(pageContent, unlockContain);*/
+
         passwordInputEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

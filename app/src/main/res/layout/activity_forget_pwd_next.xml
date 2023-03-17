@@ -8,7 +8,9 @@
     android:orientation="vertical"
     android:gravity="bottom"
     tools:context=".ui.activity.ForgetPwdNextActivity"
-    android:background="@color/page_white">
+    android:background="@color/page_white"
+    android:id="@+id/forget_pwd_next"
+    android:fillViewport="true">
 
     <RelativeLayout
         android:id="@+id/logo_content"

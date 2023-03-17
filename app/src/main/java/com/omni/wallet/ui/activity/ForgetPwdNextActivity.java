@@ -1,7 +1,6 @@
 package com.omni.wallet.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
@@ -9,11 +8,12 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +24,7 @@ import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CheckInputRules;
+import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
@@ -81,6 +82,9 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
             return true;
         };
         mConfirmPwdEdit.setOnEditorActionListener(listener);
+        LinearLayout pageContent = findViewById(R.id.forget_pwd_next);
+        RelativeLayout mOutView = findViewById(R.id.form_unlock_content);
+        KeyboardScrollView.controlKeyboardLayout(pageContent, mOutView);
         runOnUiThread(this::subscribeState);
     }
 

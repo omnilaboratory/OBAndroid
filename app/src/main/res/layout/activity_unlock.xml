@@ -10,7 +10,8 @@
     android:orientation="vertical"
     android:gravity="bottom"
     android:paddingBottom="@dimen/main_40"
-    android:background="@drawable/bg_page">
+    android:background="@drawable/bg_page"
+    android:id="@+id/pageContent">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,6 +29,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="@dimen/main_10"
         android:background="@drawable/bg_white_conner_shadow"
+        android:id="@+id/form_unlock_content"
         android:elevation="10dp">
         <LinearLayout
             android:layout_width="match_parent"

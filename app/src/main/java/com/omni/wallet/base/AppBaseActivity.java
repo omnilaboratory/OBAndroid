@@ -70,6 +70,7 @@ public abstract class AppBaseActivity extends FrameBaseActivity {
                     case "ForgetPwdActivity":
                     case "ForgetPwdNextActivity":
                     case "createwallet":
+                    case "InitWalletMenuActivity":
                         break;
                     default:
                         mUnlockDialog = new UnlockDialog(mContext);

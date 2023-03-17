@@ -8,7 +8,8 @@
     android:orientation="vertical"
     android:gravity="bottom"
     tools:context=".ui.activity.createwallet.CreateWalletStepThreeActivity"
-    android:background="@color/page_white">
+    android:background="@color/page_white"
+    android:id="@+id/create_wallet_step_three">
 
     <RelativeLayout
         android:id="@+id/logo_content"

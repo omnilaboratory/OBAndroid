@@ -37,37 +37,23 @@ public class UnlockDialog {
                     .fullHeight()
                     .create();
         }
-        mAlertDialog.findViewById(R.id.btn_unlock).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                unlockWallet();
+        mAlertDialog.findViewById(R.id.btn_unlock).setOnClickListener(v -> unlockWallet());
+        mAlertDialog.findViewById(R.id.pass_switch).setOnClickListener(v -> {
+            EditText mPwdEdit = mAlertDialog.findViewById(R.id.password_input);
+            ImageView mPwdEyeIv = mAlertDialog.findViewById(R.id.pass_switch);
+            if (mCanClick) {
+                mCanClick = false;
+                mPwdEyeIv.setImageResource(R.mipmap.icon_eye_open);
+                //显示密码(show password)
+                mPwdEdit.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            } else {
+                mCanClick = true;
+                mPwdEyeIv.setImageResource(R.mipmap.icon_eye_close);
+                //隐藏密码(hide password)
+                mPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
             }
         });
-        mAlertDialog.findViewById(R.id.pass_switch).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText mPwdEdit = mAlertDialog.findViewById(R.id.password_input);
-                ImageView mPwdEyeIv = mAlertDialog.findViewById(R.id.pass_switch);
-                if (mCanClick) {
-                    mCanClick = false;
-                    mPwdEyeIv.setImageResource(R.mipmap.icon_eye_open);
-                    //显示密码(show password)
-                    mPwdEdit.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                } else {
-                    mCanClick = true;
-                    mPwdEyeIv.setImageResource(R.mipmap.icon_eye_close);
-                    //隐藏密码(hide password)
-                    mPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                }
-            }
-        });
-        mAlertDialog.findViewById(R.id.btv_forget_button).setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                forgetPassword();
-            }
-        });
+        mAlertDialog.findViewById(R.id.btv_forget_button).setOnClickListener(v -> forgetPassword());
         mAlertDialog.show();
     }
 

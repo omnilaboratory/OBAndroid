@@ -1,6 +1,5 @@
 package com.omni.wallet.ui.activity.recoverwallet;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
@@ -8,11 +7,12 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +24,7 @@ import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
 import com.omni.wallet.utils.CheckInputRules;
+import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.view.dialog.LoadingDialog;
@@ -42,7 +43,6 @@ import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
 public class RecoverWalletStepTwoActivity extends AppBaseActivity {
-    Context ctx = RecoverWalletStepTwoActivity.this;
     @BindView(R.id.password_input)
     public EditText mPwdEdit;
     @BindView(R.id.pass_switch)
@@ -63,30 +63,31 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_create_wallet_step_three;
+        return R.layout.activity_recover_wallet_step_two;
     }
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         mLoadingDialog = new LoadingDialog(mContext);
         PasswordFilter passwordFilter = new PasswordFilter();
         mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
         mConfirmPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
-        TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE){
-                    clickForward();
-                }
-                return true;
+        TextView.OnEditorActionListener listener = (v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                clickForward();
             }
+            return true;
         };
         mConfirmPwdEdit.setOnEditorActionListener(listener);
+        LinearLayout pageContent = findViewById(R.id.recover_wallet_step_two);
+        RelativeLayout mOutView = findViewById(R.id.form_unlock_content);
+        KeyboardScrollView.controlKeyboardLayout(pageContent, mOutView);
     }
 
     @Override
     protected void initData() {
-        EventBus.getDefault().register(this);
+
     }
 
     @Override

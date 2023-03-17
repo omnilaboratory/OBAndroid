@@ -1,5 +1,6 @@
 package com.omni.wallet.view.dialog;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -9,7 +10,9 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -21,6 +24,7 @@ import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.template.DisablePasteEditText;
 import com.omni.wallet.utils.CheckRules;
+import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.NumberFormatter;
 import com.omni.wallet.utils.SeedFilter;
 
@@ -52,6 +56,12 @@ public class ForgetPwdDialog {
                     .create();
         }
         LinearLayout editListContent = mAlertDialog.findViewById(R.id.edit_text_Content);
+        int [] editTextIds = new int[24];
+        for (int idx = 0; idx<editTextIds.length; idx++){
+            int id = View.generateViewId();
+            Log.d(TAG, "initEditViewForSeeds: " + id);
+            editTextIds[idx] = id;
+        }
         for (int row = 1; row <= 8; row++) {
             RelativeLayout rowContent = new RelativeLayout(mContext);
             RelativeLayout.LayoutParams rowContentParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -97,6 +107,39 @@ public class ForgetPwdDialog {
                 SeedFilter seedFilter = new SeedFilter();
                 cellEditText.setFilters(new InputFilter[]{seedFilter});
 
+                int d = (row - 1)*3 + cell;
+                int id = editTextIds[(row - 1)*3 + cell - 1];
+                cellEditText.setId(id);
+                if (d < 24){
+                    cellEditText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+                    cellEditText.setNextFocusUpId(editTextIds[(row - 1)*3 + cell]);
+                    int finalCell = cell;
+                    int finalRow = row;
+                    TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            Log.d(TAG, "onEditorAction: " + actionId);
+                            if (actionId == EditorInfo.IME_ACTION_NEXT){
+                                mAlertDialog.findViewById(editTextIds[(finalRow - 1)*3 + finalCell]).requestFocus();
+                            }
+                            return true;
+                        }
+                    };
+                    cellEditText.setOnEditorActionListener(listener);
+                }else{
+                    cellEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                    TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            if (actionId == EditorInfo.IME_ACTION_DONE){
+                                clickForward();
+                            }
+                            return true;
+                        }
+                    };
+                    cellEditText.setOnEditorActionListener(listener);
+                }
+
                 cellInner.addView(noText);
                 cellInner.addView(cellEditText);
                 cellContent.addView(cellInner);
@@ -108,6 +151,8 @@ public class ForgetPwdDialog {
             rowContent.addView(rowInner);
             editListContent.addView(rowContent);
         }
+        LinearLayout pageContent = mAlertDialog.findViewById(R.id.layout_dialog_forget_password);
+        KeyboardScrollView.controlKeyboardLayout(pageContent, editListContent);
 
         mAlertDialog.findViewById(R.id.btn_paste).setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -140,7 +185,10 @@ public class ForgetPwdDialog {
     public void clickPaste() {
         ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(mContext.CLIPBOARD_SERVICE);
         ClipData clipData =   clipboard.getPrimaryClip();
-        ClipData.Item item = clipData.getItemAt(0);
+        ClipData.Item item = null;
+        if (clipData!=null){
+            item = clipData.getItemAt(0);
+        }
         if(item!=null){
             String seedsString = item.getText().toString();
             boolean checkStringFlag = CheckRules.checkSeedString(seedsString);
