@@ -429,20 +429,22 @@ public class SplashActivity extends AppBaseActivity {
         Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + alias, new Callback() {
             @Override
             public void onError(Exception e) {
-                if (e.getMessage().contains("lnd already started")) {
+                /*if (e.getMessage().contains("lnd already started")) {
                     runOnUiThread(() -> {
                         String walletInitType = User.getInstance().getInitWalletType(mContext);
                         if (walletInitType.equals("initialed")) {
+                            Log.d(TAG, "onError: wallet already started");
                             handler.postDelayed(() -> {
                                 switchActivityFinish(UnlockActivity.class);
                             }, Constants.SPLASH_SLEEP_TIME);
                         } else {
+                            Log.d(TAG, "onError: wallet already started3");
                             handler.postDelayed(() -> {
                                 switchActivityFinish(InitWalletMenuActivity.class);
                             }, Constants.SPLASH_SLEEP_TIME);
                         }
                     });
-                } else if (e.getMessage().contains("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
+                } else*/ if (e.getMessage().contains("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
                     ToastUtils.showToast(mContext, "unable to unpack single backups that message authentication failed");
                 } else if (e.getMessage().contains("error creating wallet config: unable to initialize neutrino backend: unable to create neutrino database: cannot allocate memory")) {
                     ToastUtils.showToast(mContext, "Failed to start, please check your cache is sufficient. After confirming that the cache is sufficient, please restart the App.");
@@ -579,19 +581,23 @@ public class SplashActivity extends AppBaseActivity {
                         switchActivityFinish(AccountLightningActivity.class);
                     }, Constants.SPLASH_SLEEP_TIME);
                     break;
+                case 255:
+                    startNode();
+                    break;
                 case 1:
+                case -1:
                     if (walletInitType.equals("initialed")) {
                         handler.postDelayed(() -> {
-                            startNode();
+                            switchActivityFinish(UnlockActivity.class);
                         }, Constants.SPLASH_SLEEP_TIME);
                         break;
                     } else {
                         handler.postDelayed(() -> {
+                            Log.d(TAG, "onError: wallet already started2");
                             switchActivityFinish(InitWalletMenuActivity.class);
                         }, Constants.SPLASH_SLEEP_TIME);
                         break;
                     }
-
                 default:
                     break;
             }
