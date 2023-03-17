@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_D1123A50">
+
+    <LinearLayout
+        android:id="@+id/layout_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.25"
+            android:text="@string/new_version_found"
+            android:gravity="center"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/text_16"/>
+
+        <RelativeLayout
+            android:layout_width="@dimen/main_224"
+            android:layout_height="@dimen/main_503"
+            android:layout_marginTop="@dimen/main_30">
+
+            <RelativeLayout
+                android:layout_width="@dimen/main_224"
+                android:layout_height="@dimen/main_493"
+                android:background="@mipmap/img_new_version_bg"
+                android:orientation="vertical">
+
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_update"
+                android:layout_width="@dimen/main_135"
+                android:layout_height="@dimen/main_33"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:gravity="center"
+                android:text="@string/update_upper"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/text_16"
+                android:letterSpacing="0.25"
+                android:background="@drawable/bg_green_percent_rectangle_round"/>
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/layout_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_45"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/main_56"
+                android:layout_height="@dimen/main_56"
+                android:src="@mipmap/icon_close_x_white"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.25"
+                android:text="@string/close"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/text_16"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

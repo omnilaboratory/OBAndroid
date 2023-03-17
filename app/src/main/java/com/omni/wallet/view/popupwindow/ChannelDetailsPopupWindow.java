@@ -376,20 +376,27 @@ public class ChannelDetailsPopupWindow {
 
             @Override
             public void onResponse(byte[] bytes) {
-                LogUtils.e(TAG, "------------------closeChannelOnResponse------------------");
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        EventBus.getDefault().post(new CloseChannelEvent());
-                        if (mBasePopWindow != null) {
-                            mBasePopWindow.dismiss();
-                        }
-                        if (mLoadingDialog != null) {
-                            mLoadingDialog.dismiss();
-                        }
-                        mSendSuccessDialog.show(mContext.getString(R.string.channel_close_success));
+                try {
+                    LightningOuterClass.CloseStatusUpdate resp = LightningOuterClass.CloseStatusUpdate.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------closeChannelOnResponse------------------" + resp.getClosePending().getTxid());
+                    if (resp.hasClosePending()) {
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                EventBus.getDefault().post(new CloseChannelEvent());
+                                if (mBasePopWindow != null) {
+                                    mBasePopWindow.dismiss();
+                                }
+                                if (mLoadingDialog != null) {
+                                    mLoadingDialog.dismiss();
+                                }
+                                mSendSuccessDialog.show(mContext.getString(R.string.channel_close_success));
+                            }
+                        });
                     }
-                });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
