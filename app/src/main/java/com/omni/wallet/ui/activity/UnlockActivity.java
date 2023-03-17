@@ -153,6 +153,9 @@ public class UnlockActivity extends AppBaseActivity {
             @Override
             public void onError(Exception e) {
                 ToastUtils.showToast(mContext, e.getMessage());
+                runOnUiThread(() -> {
+                    mLoadingDialog.dismiss();
+                });
                 e.printStackTrace();
             }
 
