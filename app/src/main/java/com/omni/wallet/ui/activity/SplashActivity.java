@@ -582,7 +582,7 @@ public class SplashActivity extends AppBaseActivity {
                 case 255:
                     if (walletInitType.equals("initialed")) {
                         handler.postDelayed(() -> {
-                            switchActivityFinish(UnlockActivity.class);
+                            startNode();
                         }, Constants.SPLASH_SLEEP_TIME);
                         break;
                     } else {

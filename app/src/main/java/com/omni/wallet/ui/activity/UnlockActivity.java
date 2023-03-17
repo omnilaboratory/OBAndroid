@@ -182,8 +182,12 @@ public class UnlockActivity extends AppBaseActivity {
                                 runOnUiThread(
                                         () -> {
                                             PublicUtils.closeLoading(mLoadingDialog);
-                                            if(e.getMessage().equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
+                                            if(e.getMessage().contains("wallet already unlocked")){
                                                 switchActivityFinish(AccountLightningActivity.class);
+                                            } else if(e.getMessage().contains("wallet not found")){
+                                                ToastUtils.showToast(mContext,"wallet not found,please contact administrator");
+                                            } else{
+                                                ToastUtils.showToast(mContext,e.getMessage());
                                             }
                                         }
                                 );
