@@ -579,7 +579,7 @@ public class SplashActivity extends AppBaseActivity {
                         switchActivityFinish(AccountLightningActivity.class);
                     }, Constants.SPLASH_SLEEP_TIME);
                     break;
-                case 255:
+                case 1:
                     if (walletInitType.equals("initialed")) {
                         handler.postDelayed(() -> {
                             startNode();
