@@ -156,6 +156,37 @@ public class PayInvoiceDialog {
                 lnInvoice = data.toLowerCase();
                 // Remove the "lightning:" uri scheme if it is present, LND needs it without uri scheme
                 lnInvoice = UriUtil.removeURI(lnInvoice);
+                if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+                    if (!lnInvoice.contains("obto")) {
+                        mLoadingDialog.dismiss();
+                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.GONE);
+                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_error).setVisibility(View.VISIBLE);
+                        mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                        mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                        showStepError();
+                        return;
+                    }
+                } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+                    if (!lnInvoice.contains("obort")) {
+                        mLoadingDialog.dismiss();
+                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.GONE);
+                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_error).setVisibility(View.VISIBLE);
+                        mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                        mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                        showStepError();
+                        return;
+                    }
+                } else { //mainnet
+                    if (!lnInvoice.contains("obo")) {
+                        mLoadingDialog.dismiss();
+                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.GONE);
+                        mAlertDialog.findViewById(R.id.lv_pay_invoice_step_error).setVisibility(View.VISIBLE);
+                        mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                        mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                        showStepError();
+                        return;
+                    }
+                }
                 LightningOuterClass.PayReqString decodePaymentRequest = LightningOuterClass.PayReqString.newBuilder()
                         .setPayReq(lnInvoice)
                         .build();
@@ -817,6 +848,65 @@ public class PayInvoiceDialog {
             public void onClick(View v) {
                 mContext.startActivity(ShareUtil.getTwitterIntent(mContext, lnInvoice));
 //                mAlertDialog.dismiss();
+                shareLayout.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void showStepError() {
+        TextView fromNodeAddressErrorTv = mAlertDialog.findViewById(R.id.tv_from_node_address_error);
+        fromNodeAddressErrorTv.setText(mAddress);
+
+        RelativeLayout shareLayout = mAlertDialog.findViewById(R.id.layout_share_error);
+        mAlertDialog.findViewById(R.id.layout_parent).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareLayout.setVisibility(View.GONE);
+            }
+        });
+        /**
+         * @备注： 点击back后退到第一步
+         * @description: Click back button,back to step one
+         */
+        mAlertDialog.findViewById(R.id.layout_back_to_error).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAlertDialog.findViewById(R.id.lv_pay_invoice_step_one).setVisibility(View.VISIBLE);
+                mAlertDialog.findViewById(R.id.lv_pay_invoice_step_error).setVisibility(View.GONE);
+                mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.VISIBLE);
+                mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.GONE);
+            }
+        });
+        /**
+         * @备注： 点击share to，显示可分享的选项
+         * @description: Click share to button,then show the layout for select options
+         */
+        mAlertDialog.findViewById(R.id.layout_share_to_error).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println(shareLayout.toString());
+                shareLayout.setVisibility(View.VISIBLE);
+            }
+        });
+        /**
+         * @备注： 点击face book 图标
+         * @description: Click face book icon
+         */
+        mAlertDialog.findViewById(R.id.iv_facebook_share_error).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastUtils.showToast(mContext, "Not yet open, please wait");
+                shareLayout.setVisibility(View.GONE);
+            }
+        });
+        /**
+         * @备注： 点击twitter 图标
+         * @description: Click twitter icon
+         */
+        mAlertDialog.findViewById(R.id.iv_twitter_share_error).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContext.startActivity(ShareUtil.getTwitterIntent(mContext, lnInvoice));
                 shareLayout.setVisibility(View.GONE);
             }
         });
