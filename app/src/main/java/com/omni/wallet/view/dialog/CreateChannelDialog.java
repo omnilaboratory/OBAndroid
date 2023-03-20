@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -22,10 +24,16 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
+import com.omni.wallet.baselibrary.http.HttpUtils;
+import com.omni.wallet.baselibrary.http.callback.EngineCallback;
+import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
+import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.LiquidityNodeEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.OpenChannelEvent;
 import com.omni.wallet.framelibrary.entity.User;
@@ -38,11 +46,14 @@ import com.omni.wallet.view.popupwindow.SelectAssetUnitPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -77,6 +88,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     String mWalletAddress;
     LoadingDialog mLoadingDialog;
     private List<String> txidList;
+    private List<LiquidityNodeEntity> mData = new ArrayList<>();
 
     public CreateChannelDialog(Context context) {
         this.mContext = context;
@@ -141,6 +153,76 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
             }
         });
         /**
+         * 流动性节点列表
+         * @desc: Liquidity node list
+         */
+        RecyclerView mRecyclerView = mAlertDialog.findViewById(R.id.recycler_liquidity_node_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(layoutManager);
+        MyAdapter mAdapter = new MyAdapter(mContext, mData, R.layout.layout_item_liquidity_node_list);
+        mRecyclerView.setAdapter(mAdapter);
+        HttpUtils.with(mContext)
+                .get()
+                .url("https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/LiquidityNodeList.json")
+                .execute(new EngineCallback() {
+                    @Override
+                    public void onPreExecute(Context context, Map<String, Object> params) {
+
+                    }
+
+                    @Override
+                    public void onCancel(Context context) {
+
+                    }
+
+                    @Override
+                    public void onError(Context context, String errorCode, String errorMsg) {
+                        LogUtils.e(TAG, "getCenterNodePubkeyError:" + errorMsg);
+                        mData.clear();
+                        LiquidityNodeEntity entity = new LiquidityNodeEntity();
+                        entity.setAddress(ConstantInOB.testLiquidityNodePubkey);
+                        mData.add(entity);
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            mAdapter.notifyDataSetChanged();
+                        });
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, String result) {
+                        LogUtils.e(TAG, "---------------centerNodePubkey---------------------" + result.toString());
+                        mData.clear();
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                LiquidityNodeEntity entity = new LiquidityNodeEntity();
+                                entity.setAddress(String.valueOf(jsonArray.get(i)));
+                                mData.add(entity);
+                            }
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                mAdapter.notifyDataSetChanged();
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, byte[] result) {
+
+                    }
+
+                    @Override
+                    public void onProgressInThread(Context context, Progress progress) {
+
+                    }
+
+                    @Override
+                    public void onFileSuccess(Context context, String filePath) {
+
+                    }
+                });
+        /**
          * @描述： 扫描二维码
          * @desc: scan qrcode
          */
@@ -191,6 +273,32 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 mWhatIsChannelDialog.show();
             }
         });
+    }
+
+    /**
+     * 流动性节点列表适配器
+     * @desc: Liquidity node list Adapter
+     */
+    private class MyAdapter extends CommonRecyclerAdapter<LiquidityNodeEntity> {
+
+        public MyAdapter(Context context, List<LiquidityNodeEntity> data, int layoutId) {
+            super(context, data, layoutId);
+        }
+
+
+        @Override
+        public void convert(ViewHolder holder, final int position, final LiquidityNodeEntity item) {
+            holder.setText(R.id.tv_liquidity_node, item.getAddress());
+            holder.setOnItemClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    nodePubkey = item.getAddress();
+                    mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
+                    mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
+                    showStepTwo();
+                }
+            });
+        }
     }
 
     private void showStepTwo() {

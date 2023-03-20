@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/main_16"
+    android:layout_marginRight="@dimen/main_16">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/main_26"
+            android:gravity="center"
+            android:text="uname"
+            android:textColor="@color/color_black"
+            android:textSize="@dimen/text_16"/>
+
+        <TextView
+            android:id="@+id/tv_liquidity_node"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/main_80"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:text="0273ec25347ba3f6f90a54bfd2e815aaa8efd3a7fa1a158c8cbb0a80c63b4315d8"
+            android:textColor="@color/color_99_transparent"
+            android:textSize="@dimen/text_16"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_1"
+            android:layout_marginLeft="@dimen/main_24"
+            android:layout_marginRight="@dimen/main_24"
+            android:layout_marginTop="@dimen/main_8"
+            android:background="@color/color_80p_transparent"/>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="@dimen/main_72"
+        android:layout_height="@dimen/main_48"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:src="@mipmap/icon_connect_green_bg"/>
+</RelativeLayout>

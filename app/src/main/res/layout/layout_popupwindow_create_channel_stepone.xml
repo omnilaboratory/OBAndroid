@@ -68,7 +68,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_16"
                 android:layout_marginRight="@dimen/main_16"
-                android:layout_marginTop="@dimen/main_29">
+                android:layout_marginTop="@dimen/main_29"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -117,7 +118,7 @@
                 android:layout_marginLeft="@dimen/main_16"
                 android:layout_marginRight="@dimen/main_16"
                 android:layout_marginTop="@dimen/main_20"
-                android:visibility="invisible">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -167,7 +168,7 @@
                 android:layout_marginLeft="@dimen/main_16"
                 android:layout_marginRight="@dimen/main_16"
                 android:layout_marginTop="@dimen/main_20"
-                android:visibility="invisible">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -211,12 +212,20 @@
                     android:src="@mipmap/icon_connect_green"/>
             </RelativeLayout>
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_liquidity_node_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1000"
+                android:layout_marginTop="@dimen/main_29"/>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_30"
                 android:layout_marginRight="@dimen/main_30"
-                android:layout_marginTop="@dimen/main_45">
+                android:layout_marginTop="@dimen/main_45"
+                android:layout_marginBottom="@dimen/main_20">
 
                 <LinearLayout
                     android:id="@+id/layout_scan_qrcode"
