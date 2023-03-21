@@ -10,7 +10,7 @@ import lnrpc.LightningOuterClass;
  * author: guoyalei
  * date: 2023/2/15
  */
-public class TransactionAssetEntity {
+public class TransactionAssetEntity implements Comparable<TransactionAssetEntity> {
     private long blockTime;
     private List<LightningOuterClass.AssetTx> list;
 
@@ -28,5 +28,10 @@ public class TransactionAssetEntity {
 
     public void setList(List<LightningOuterClass.AssetTx> list) {
         this.list = list;
+    }
+
+    @Override
+    public int compareTo(TransactionAssetEntity o) {
+        return (int) (o.getBlockTime() - this.getBlockTime());
     }
 }

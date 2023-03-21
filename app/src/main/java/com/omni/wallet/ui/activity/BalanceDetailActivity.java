@@ -508,9 +508,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
                                 }
                             }
                             LogUtils.e("========filterList========", String.valueOf(filterList));
+                            //排序(sort)
+                            Collections.sort(filterList);
                             mTransactionsChainData.clear();
                             mTransactionsChainData.addAll(filterList);
-                            Collections.reverse(mTransactionsChainData);
                             mTransactionsChainAdapter.notifyDataSetChanged();
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
@@ -599,9 +600,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
                                 }
                             }
                             LogUtils.e("========assetTxList========", String.valueOf(filterList));
+                            //排序(sort)
+                            Collections.sort(filterList);
                             mTransactionsAssetData.clear();
                             mTransactionsAssetData.addAll(filterList);
-                            Collections.reverse(mTransactionsAssetData);
                             mTransactionsAssetAdapter.notifyDataSetChanged();
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
@@ -717,9 +719,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             for (Map.Entry<String, TransactionLightingEntity> entry : hashMap.entrySet()) {
                                 list.add(entry.getValue());
                             }
+                            //排序(sort)
+                            Collections.sort(list);
                             mTransactionsData.clear();
                             mTransactionsData.addAll(list);
-                            Collections.reverse(mTransactionsData);
                             mTransactionsAdapter.notifyDataSetChanged();
                             fetchReceiveInvoicesFromLND(time, 100);
                         } catch (InvalidProtocolBufferException e) {
@@ -805,9 +808,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
                                 for (Map.Entry<String, TransactionLightingEntity> entry : hashMap.entrySet()) {
                                     list.add(entry.getValue());
                                 }
+                                //排序(sort)
+                                Collections.sort(list);
                                 mTransactionsData.clear();
                                 mTransactionsData.addAll(list);
-                                Collections.reverse(mTransactionsData);
                                 mTransactionsAdapter.notifyDataSetChanged();
                             } else {
                                 fetchReceiveInvoicesFromLND(time, lastIndex + 100);

@@ -10,7 +10,7 @@ import lnrpc.LightningOuterClass;
  * author: guoyalei
  * date: 2023/2/14
  */
-public class TransactionChainEntity {
+public class TransactionChainEntity implements Comparable<TransactionChainEntity> {
     private long timeStamp;
     private List<LightningOuterClass.Transaction> list;
 
@@ -28,5 +28,10 @@ public class TransactionChainEntity {
 
     public void setList(List<LightningOuterClass.Transaction> list) {
         this.list = list;
+    }
+
+    @Override
+    public int compareTo(TransactionChainEntity o) {
+        return (int) (o.getTimeStamp() - this.getTimeStamp());
     }
 }
