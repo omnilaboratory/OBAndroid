@@ -164,7 +164,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         mRecyclerView.setAdapter(mAdapter);
         HttpUtils.with(mContext)
                 .get()
-                .url("https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/LiquidityNodeList.json")
+                .url("https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/liquidityNodeList.json")
                 .execute(new EngineCallback() {
                     @Override
                     public void onPreExecute(Context context, Map<String, Object> params) {
