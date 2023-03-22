@@ -92,7 +92,11 @@ public class TransactionsAssetView extends LinearLayout {
             holder.setText(R.id.tv_time, DateUtils.Hourmin(item.getBlocktime() + ""));
             DecimalFormat df = new DecimalFormat("0.00######");
             if (item.getType().equals("Simple Send")) {
-                holder.setText(R.id.tv_amount, "+ " + df.format(Double.parseDouble(item.getAmount())));
+                if (item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                    holder.setText(R.id.tv_amount, "- " + df.format(Double.parseDouble(item.getAmount())));
+                } else if (!item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                    holder.setText(R.id.tv_amount, "+ " + df.format(Double.parseDouble(item.getAmount())));
+                }
                 if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
                     holder.setText(R.id.tv_state, "Unnamed");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);

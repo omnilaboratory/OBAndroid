@@ -64,7 +64,7 @@ public class InvoiceDetailsPopupWindow {
                 assetTypeTv.setText("dollar");
                 amountTypeTv.setText("dollar");
             }
-            expirationTv.setText(item.getExpiry() / 60 + " Hours");
+            expirationTv.setText(item.getExpiry() / 3600 + " Hours");
             dateTv.setText(DateUtils.yearMonthDay(String.valueOf(item.getCreationDate())));
             timeTv.setText(DateUtils.Hourmin(String.valueOf(item.getCreationDate())));
             payerTv.setText(item.getMemo());

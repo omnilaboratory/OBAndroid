@@ -33,7 +33,70 @@
                 android:background="@mipmap/img_new_version_bg"
                 android:orientation="vertical">
 
+                <android.support.v4.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/main_120"
+                    android:layout_marginLeft="@dimen/main_16"
+                    android:layout_marginRight="@dimen/main_16"
+                    android:layout_marginBottom="@dimen/main_40"
+                    android:scrollbars="vertical">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_version"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="V0.0.1"
+                            android:textSize="@dimen/text_18"
+                            android:textColor="@color/color_white"
+                            android:letterSpacing="0.25"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/main_10"
+                            android:text="[New Feature]"
+                            android:textSize="@dimen/text_18"
+                            android:textColor="@color/color_white"
+                            android:letterSpacing="0.25"/>
+
+                        <TextView
+                            android:id="@+id/tv_new_feature"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/main_10"
+                            android:layout_marginLeft="@dimen/main_20"
+                            android:text=""
+                            android:textSize="@dimen/text_18"
+                            android:textColor="@color/color_white"
+                            android:letterSpacing="0.25"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/main_45"
+                            android:text="Optimization"
+                            android:textSize="@dimen/text_18"
+                            android:textColor="@color/color_white"
+                            android:letterSpacing="0.25"/>
+
+                        <TextView
+                            android:id="@+id/tv_optimization"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/main_10"
+                            android:layout_marginLeft="@dimen/main_20"
+                            android:text=""
+                            android:textSize="@dimen/text_18"
+                            android:textColor="@color/color_white"
+                            android:letterSpacing="0.25"/>
+                    </LinearLayout>
+                </android.support.v4.widget.NestedScrollView>
             </RelativeLayout>
 
             <TextView
@@ -49,7 +112,6 @@
                 android:letterSpacing="0.25"
                 android:background="@drawable/bg_green_percent_rectangle_round"/>
         </RelativeLayout>
-
 
         <LinearLayout
             android:id="@+id/layout_close"
