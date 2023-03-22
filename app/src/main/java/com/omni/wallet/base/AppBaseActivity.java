@@ -8,6 +8,8 @@ import android.util.Log;
 import com.omni.wallet.framelibrary.base.FrameBaseActivity;
 import com.omni.wallet.view.dialog.UnlockDialog;
 
+import java.util.List;
+
 /**
  * App的Activity父类
  * Created by fa on 2018/8/2.
@@ -41,21 +43,38 @@ public abstract class AppBaseActivity extends FrameBaseActivity {
         AppBaseActivity.stopApp = stopApp;
     }
 
+    public boolean isRunningForeground() {
+        ActivityManager activityManager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> appProcessInfos = activityManager.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo appProcessInfo : appProcessInfos) {
+            if (appProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                if (appProcessInfo.processName.equals(this.getApplicationInfo().processName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-    @Override
+
+        @Override
     protected void onStop() {
-        long stopTime = System.currentTimeMillis();
-        setStopTime(stopTime);
-        setStopApp(true);
         super.onStop();
+        boolean isRunningSelf = isRunningForeground();
+        if (!isRunningSelf){
+            long stopTime = System.currentTimeMillis();
+            setStopTime(stopTime);
+            setStopApp(true);
+        }
     }
 
     @Override
     protected void onResume() {
-        long startTime = System.currentTimeMillis();
-        long stopTime = getStopTime();
-        long stopMills = startTime - stopTime;
+        super.onResume();
         if (isStopApp()){
+            long startTime = System.currentTimeMillis();
+            long stopTime = getStopTime();
+            long stopMills = startTime - stopTime;
             setStopApp(false);
             if (stopMills >= ConstantInOB.MINUTE_MILLIS * 5){
                 String runningActivityName = getRunningActivityName();
@@ -79,7 +98,7 @@ public abstract class AppBaseActivity extends FrameBaseActivity {
                 }
             }
         }
-        super.onResume();
+
     }
 
     @Override
