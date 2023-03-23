@@ -58,6 +58,8 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     LinearLayout mParentLayout;
     @BindView(R.id.view_top)
     View mTopView;
+    @BindView(R.id.tv_network_type)
+    TextView mNetworkTypeTv;
     @BindView(R.id.iv_menu)
     ImageView mMenuIv;
     @BindView(R.id.tv_balance_amount)
@@ -115,6 +117,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
 
     @Override
     protected void initView() {
+        mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
         if (balanceAmount == 0) {
             DecimalFormat df = new DecimalFormat("0.00");
             mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));

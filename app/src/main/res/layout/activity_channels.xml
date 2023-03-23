@@ -33,7 +33,9 @@
                 android:layout_height="@dimen/main_30"
                 android:layout_centerVertical="true"
                 android:src="@mipmap/icon_lightning_logo"/>
+
             <TextView
+                android:id="@+id/tv_network_type"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -42,7 +44,6 @@
                 android:textColor="@color/color_A6_transparent"
                 android:textSize="@dimen/text_24"
                 android:gravity="center"/>
-
         </LinearLayout>
 
         <ImageView

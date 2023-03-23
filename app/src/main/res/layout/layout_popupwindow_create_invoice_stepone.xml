@@ -444,7 +444,8 @@
                             android:gravity="center_vertical|right"
                             android:singleLine="true"
                             android:textColor="@color/color_99_transparent"
-                            android:textSize="@dimen/text_16"/>
+                            android:textSize="@dimen/text_16"
+                            android:digits="@string/text_digits_num_code"/>
                     </RelativeLayout>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
