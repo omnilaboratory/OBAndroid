@@ -30,6 +30,7 @@ import com.omni.wallet.data.AssetsActions;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
+import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.entity.event.InitChartEvent;
@@ -394,24 +395,11 @@ public class AccountLightningActivity extends AppBaseActivity {
                                 LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
                                 blockData.clear();
                                 for (int i = 0; i < resp.getListList().size(); i++) {
-
                                     ListAssetItemEntity entity = new ListAssetItemEntity();
                                     entity.setAmount(resp.getListList().get(i).getBalance());
                                     entity.setPropertyid(resp.getListList().get(i).getPropertyid());
                                     entity.setType(1);
                                     blockData.add(entity);
-                                    /*switch (Long.toString(resp.getListList().get(i).getPropertyid())){
-                                        case "2147483651":
-                                            DollarData dollarData = new DollarData(mContext);
-                                            try {
-                                                dollarData.updateAmount(resp.getListList().get(i).getBalance() / 100000000);
-                                            } catch (ParseException e) {
-                                                e.printStackTrace();
-                                            }
-                                            break;
-                                        default:
-                                            break;
-                                    }*/
                                     getChannelBalance(resp.getListList().get(i).getPropertyid());
                                 }
                                 allData.addAll(blockData);
@@ -860,6 +848,15 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onOpenChannelEvent(OpenChannelEvent event) {
+        getAssetAndBtcData();
+    }
+
+    /**
+     * 关闭通道后的消息通知监听
+     * Message notification monitoring after close channel
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCloseChannelEvent(CloseChannelEvent event) {
         getAssetAndBtcData();
     }
 

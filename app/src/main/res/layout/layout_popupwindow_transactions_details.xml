@@ -161,13 +161,13 @@
                             android:layout_height="wrap_content"
                             android:text="StarBucks"
                             android:textColor="@color/color_80p_transparent"
-                            android:textSize="@dimen/text_16"/>
+                            android:textSize="@dimen/text_16"
+                            android:visibility="gone"/>
 
                         <TextView
                             android:id="@+id/tv_to_address"
                             android:layout_width="@dimen/main_135"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/main_5"
                             android:singleLine="true"
                             android:ellipsize="middle"
                             android:gravity="right"

@@ -17,8 +17,8 @@ import java.text.DecimalFormat;
 import lnrpc.LightningOuterClass;
 
 /**
- * 汉:
- * En:
+ * 汉: 资产交易详情的弹窗
+ * En: TransactionsDetailsAssetPopupWindow
  * author: guoyalei
  * date: 2022/12/20
  */
