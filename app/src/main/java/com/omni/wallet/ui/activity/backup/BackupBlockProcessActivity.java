@@ -285,17 +285,18 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                     Bitmap mQRBitmap = CodeUtils.createQRCode(address, DisplayUtil.dp2px(mContext, 100));
                     runOnUiThread(() -> {
                         Log.d(TAG, "onResponse: " + initWalletType);
+                        qrAddressTv.setText(address);
+                        qrAddressIv.setImageBitmap(mQRBitmap);
+                        obdLogFileObserver.stopWatching();
+                        User.getInstance().setWalletAddress(mContext,address);
                         if(initWalletType.equals("recoveryStepTwo")){
                             User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
                             initWalletType = "toBeRestoreChannel";
-                            qrAddressTv.setText(address);
-                            qrAddressIv.setImageBitmap(mQRBitmap);
-                            obdLogFileObserver.stopWatching();
-                            User.getInstance().setWalletAddress(mContext,address);
                             updateSyncDataView(totalBlock);
                         }else{
                             User.getInstance().setInitWalletType(mContext,"initialed");
                             initWalletType = "initialed";
+                            updateSyncDataView(totalBlock);
                         }
 
 
