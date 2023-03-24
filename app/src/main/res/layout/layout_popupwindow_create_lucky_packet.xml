@@ -105,8 +105,7 @@
                             android:text="Wish you good health"
                             android:textColor="@color/color_black"
                             android:textSize="@dimen/text_16"
-                            android:background="@null"
-                            android:digits="@string/text_digits_num_code"/>
+                            android:background="@null"/>
                     </LinearLayout>
 
                     <View

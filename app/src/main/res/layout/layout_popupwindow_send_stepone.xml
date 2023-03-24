@@ -1477,8 +1477,7 @@
                         android:gravity="start"
                         android:background="@drawable/bg_black_rectangle_round_0_thin"
                         android:textColor="@color/color_99_transparent"
-                        android:textSize="@dimen/text_16"
-                        android:digits="@string/text_digits_num_code"/>
+                        android:textSize="@dimen/text_16"/>
                 </LinearLayout>
             </LinearLayout>
 

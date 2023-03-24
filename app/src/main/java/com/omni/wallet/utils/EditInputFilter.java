@@ -11,6 +11,7 @@ import android.text.TextUtils;
  * date: 2023/3/6
  */
 public class EditInputFilter implements InputFilter {
+
     public EditInputFilter(int max_count) {
         this.max_count = max_count;
     }
@@ -38,6 +39,12 @@ public class EditInputFilter implements InputFilter {
                 return source.toString().substring(0, getValidIndex(sourceLength, source.toString()));
             }
 
+        }
+        if (source.equals("")) { // for backspace
+            return source;
+        }
+        if (source.toString().matches("[a-zA-Z\\\\u4E00-\\\\u9FA5 ]+")) {
+            return source;
         }
         return null;
     }
