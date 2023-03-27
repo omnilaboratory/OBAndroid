@@ -55,6 +55,8 @@ public class SelectAssetTypePopupWindow {
             View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_select_asset);
             mBasePopWindow.setWidth(view.getWidth());
             mBasePopWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+            mBasePopWindow.setOutsideTouchable(true);
+            mBasePopWindow.setFocusable(false);
             mRecyclerView = rootView.findViewById(R.id.recycler_asset_list);
 
             LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
