@@ -36,6 +36,7 @@ import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.ScanSendActivity;
+import com.omni.wallet.utils.DecimalInputFilter;
 import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.ValidateBitcoinAddress;
 import com.omni.wallet.utils.Wallet;
@@ -296,6 +297,7 @@ public class SendDialog implements Wallet.ScanSendListener {
         }
         fetchWalletBalance();
         final EditText amountInputView = mAlertDialog.findViewById(R.id.etv_send_amount);
+        amountInputView.setFilters(new InputFilter[]{new DecimalInputFilter(8)});
         amountInputView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -795,7 +797,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                         if (source.equals("")) { // for backspace
                             return source;
                         }
-                        if (source.toString().matches("[a-zA-Z\\\\u4E00-\\\\u9FA5 ]+")) {
+                        if (source.toString().matches("[a-zA-Z0-9 ]+")) {
                             return source;
                         }
                         return "";

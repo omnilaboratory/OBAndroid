@@ -38,6 +38,7 @@ import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.RedCodeUtils;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.DecimalInputFilter;
 import com.omni.wallet.utils.EditInputFilter;
 import com.omni.wallet.utils.RefConstants;
 import com.omni.wallet.utils.ShareUtil;
@@ -164,6 +165,7 @@ public class CreateLuckyPacketPopupWindow {
         mProgressBar = rootView.findViewById(R.id.progressbar);
         TextView amountMaxTv = rootView.findViewById(R.id.tv_amount_max);
         EditText amountEdit = rootView.findViewById(R.id.edit_amount);
+        amountEdit.setFilters(new InputFilter[]{new DecimalInputFilter(8)});
         TextView amountUnitTv = rootView.findViewById(R.id.tv_amount_unit);
         Button timeButton = rootView.findViewById(R.id.btn_time);
         EditText amountTimeEdit = rootView.findViewById(R.id.edit_time);

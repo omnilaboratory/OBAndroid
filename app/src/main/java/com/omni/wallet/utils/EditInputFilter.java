@@ -43,10 +43,10 @@ public class EditInputFilter implements InputFilter {
         if (source.equals("")) { // for backspace
             return source;
         }
-        if (source.toString().matches("[a-zA-Z\\\\u4E00-\\\\u9FA5 ]+")) {
+        if (source.toString().matches("[a-zA-Z0-9 ]+")) {
             return source;
         }
-        return null;
+        return "";
     }
 
     /**
