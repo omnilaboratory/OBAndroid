@@ -64,7 +64,12 @@ public class InvoiceDetailsPopupWindow {
                 assetTypeTv.setText("dollar");
                 amountTypeTv.setText("dollar");
             }
-            expirationTv.setText(item.getExpiry() / 3600 + " Hours");
+            if (item.getExpiry() < 3600) {
+                DecimalFormat df = new DecimalFormat("0.0##");
+                expirationTv.setText(df.format(Double.parseDouble(String.valueOf(item.getExpiry())) / 3600) + " Hours");
+            } else {
+                expirationTv.setText(item.getExpiry() / 3600 + " Hours");
+            }
             dateTv.setText(DateUtils.yearMonthDay(String.valueOf(item.getCreationDate())));
             timeTv.setText(DateUtils.Hourmin(String.valueOf(item.getCreationDate())));
             payerTv.setText(item.getMemo());

@@ -80,6 +80,7 @@ public class CreateInvoiceStepOnePopupWindow {
     String timeType;
     String qrCodeUrl;
     LoadingDialog mLoadingDialog;
+    String expiryTime = "86400";
 
     public CreateInvoiceStepOnePopupWindow(Context context) {
         this.mContext = context;
@@ -253,6 +254,13 @@ public class CreateInvoiceStepOnePopupWindow {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
                     return;
                 }
+                if (timeType.equals("Minutes")) {
+                    expiryTime = String.valueOf(Integer.parseInt(timeInput) * 60);
+                } else if (timeType.equals("Hours")) {
+                    expiryTime = String.valueOf(Integer.parseInt(timeInput) * 3600);
+                } else if (timeType.equals("Days")) {
+                    expiryTime = String.valueOf(Integer.parseInt(timeInput) * 86400);
+                }
                 mLoadingDialog.show();
                 LightningOuterClass.Invoice asyncInvoiceRequest;
                 if (mAssetId == 0) {
@@ -260,7 +268,7 @@ public class CreateInvoiceStepOnePopupWindow {
                             .setAssetId((int) mAssetId)
                             .setValueMsat((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000 * 1000))
                             .setMemo(memoEdit.getText().toString())
-                            .setExpiry(Long.parseLong("86400")) // in seconds
+                            .setExpiry(Long.parseLong(expiryTime)) // in seconds
                             .setPrivate(false)
                             .build();
                 } else {
@@ -268,7 +276,7 @@ public class CreateInvoiceStepOnePopupWindow {
                             .setAssetId((int) mAssetId)
                             .setAmount((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000))
                             .setMemo(memoEdit.getText().toString())
-                            .setExpiry(Long.parseLong("86400")) // in seconds
+                            .setExpiry(Long.parseLong(expiryTime)) // in seconds
                             .setPrivate(false)
                             .build();
                 }
