@@ -14,6 +14,7 @@ import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.utils.PreventContinuousClicksUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -112,8 +113,10 @@ public class TransactionsChainView extends LinearLayout {
             holder.setOnItemClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mCallback != null) {
-                        mCallback.onClickItem(item);
+                    if (PreventContinuousClicksUtil.isNotFastClick()) {
+                        if (mCallback != null) {
+                            mCallback.onClickItem(item);
+                        }
                     }
                 }
             });

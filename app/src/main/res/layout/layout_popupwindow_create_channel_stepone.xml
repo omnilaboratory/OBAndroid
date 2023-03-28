@@ -391,14 +391,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_10"
-                android:layout_marginRight="@dimen/main_10"
+                android:layout_marginRight="@dimen/main_20"
                 android:layout_marginTop="@dimen/main_7"
                 android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/edit_channel_amount"
-                    android:layout_width="@dimen/main_218"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/main_32"
+                    android:layout_weight="1"
                     android:paddingLeft="@dimen/main_5"
                     android:background="@drawable/bg_black_rectangle_round_0"
                     android:singleLine="true"
@@ -408,7 +409,7 @@
 
                 <Button
                     android:id="@+id/btn_amount_unit"
-                    android:layout_width="@dimen/main_61"
+                    android:layout_width="@dimen/main_71"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/main_12"
                     android:background="@drawable/bg_black_rectangle_round_0"
@@ -448,7 +449,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
                         android:layout_marginRight="@dimen/main_5"
-                        android:text="100.00"
+                        android:text="0"
                         android:textColor="@color/color_80p_transparent"
                         android:textSize="@dimen/text_16"/>
 

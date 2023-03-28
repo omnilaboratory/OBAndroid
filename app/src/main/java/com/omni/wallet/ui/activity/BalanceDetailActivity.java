@@ -51,6 +51,7 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.PaymentRequestUtil;
+import com.omni.wallet.utils.PreventContinuousClicksUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.TransactionsAssetView;
 import com.omni.wallet.view.TransactionsChainView;
@@ -1260,8 +1261,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
             holder.getView(R.id.layout_to_be_paid_list).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mPayInvoiceDialog = new PayInvoiceDialog(mContext);
-                    mPayInvoiceDialog.show(pubkey, assetId, UriUtil.generateLightningUri(item.getInvoice()));
+                    if (PreventContinuousClicksUtil.isNotFastClick()) {
+                        mPayInvoiceDialog = new PayInvoiceDialog(mContext);
+                        mPayInvoiceDialog.show(pubkey, assetId, UriUtil.generateLightningUri(item.getInvoice()));
+                    }
                 }
             });
         }
@@ -1504,8 +1507,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
             holder.getView(R.id.layout_invoice_item).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    InvoiceDetailsPopupWindow mInvoiceDetailsPopupWindow = new InvoiceDetailsPopupWindow(mContext);
-                    mInvoiceDetailsPopupWindow.show(mParentLayout, item);
+                    if (PreventContinuousClicksUtil.isNotFastClick()) {
+                        InvoiceDetailsPopupWindow mInvoiceDetailsPopupWindow = new InvoiceDetailsPopupWindow(mContext);
+                        mInvoiceDetailsPopupWindow.show(mParentLayout, item);
+                    }
                 }
             });
         }

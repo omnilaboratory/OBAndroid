@@ -330,7 +330,7 @@
 
     <!--backup页面-->
     <string name="welcome_upper">WELCOME</string>
-    <string name="deposite_upper">DEPOSITE YOUR WALLET</string>
+    <string name="deposite_upper">FUND YOUR WALLET</string>
     <string name="sync_block">Syncing Chain Data:</string>
     <string name="download_db">Downloading neutrino.db:</string>
     <string name="download_header">Downloading block_header.bin:</string>
