@@ -690,7 +690,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             mPayData.clear();
                             for (int i = 0; i < resp.getPaymentsList().size(); i++) {
                                 PaymentEntity paymentEntity = new PaymentEntity();
-                                paymentEntity.setDate(resp.getPaymentsList().get(i).getCreationDate());
+                                paymentEntity.setDate(Long.parseLong(String.valueOf(resp.getPaymentsList().get(i).getHtlcs(0).getResolveTimeNs()).substring(0, 10)));
                                 paymentEntity.setAssetId(resp.getPaymentsList().get(i).getAssetId());
                                 paymentEntity.setAmount(resp.getPaymentsList().get(i).getValueMsat());
                                 paymentEntity.setType(1);

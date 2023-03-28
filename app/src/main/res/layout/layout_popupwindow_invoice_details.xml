@@ -288,7 +288,7 @@
                 android:id="@+id/iv_qrcode"
                 android:layout_width="@dimen/main_230"
                 android:layout_height="@dimen/main_230"
-                android:layout_marginTop="@dimen/main_10"
+                android:layout_marginTop="@dimen/main_5"
                 android:layout_gravity="center"
                 android:src="@mipmap/icon_qr_code_default"/>
         </LinearLayout>

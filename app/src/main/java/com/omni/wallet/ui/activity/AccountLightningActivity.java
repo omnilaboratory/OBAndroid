@@ -216,6 +216,8 @@ public class AccountLightningActivity extends AppBaseActivity {
         mRecyclerViewBlock.setLayoutManager(new LinearLayoutManager(mContext));
         mAdapter = new MyAdapter(mContext, allData, R.layout.layout_item_assets_list);
         mRecyclerViewBlock.setAdapter(mAdapter);
+        mRecyclerViewBlock.setHasFixedSize(true);
+        mRecyclerViewBlock.setNestedScrollingEnabled(false);
     }
 
     // TODO: 2023/1/12 待完善
