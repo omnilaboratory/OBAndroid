@@ -1639,6 +1639,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
         bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
         bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
         bundle.putString(ChannelsActivity.KEY_PUBKEY, pubkey);
+        if (assetId == 0) {
+            bundle.putString(ChannelsActivity.KEY_CHANNEL, "btc");
+        } else {
+            bundle.putString(ChannelsActivity.KEY_CHANNEL, "asset");
+        }
         switchActivity(ChannelsActivity.class, bundle);
     }
 

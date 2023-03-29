@@ -714,6 +714,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
         bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, User.getInstance().getWalletAddress(mContext));
         bundle.putString(ChannelsActivity.KEY_PUBKEY, pubkey);
+        bundle.putString(ChannelsActivity.KEY_CHANNEL, "all");
         switchActivity(ChannelsActivity.class, bundle);
     }
 
