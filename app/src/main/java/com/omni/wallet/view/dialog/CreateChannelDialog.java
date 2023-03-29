@@ -8,7 +8,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -22,10 +25,16 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
+import com.omni.wallet.baselibrary.http.HttpUtils;
+import com.omni.wallet.baselibrary.http.callback.EngineCallback;
+import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
+import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.LiquidityNodeEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.OpenChannelEvent;
 import com.omni.wallet.framelibrary.entity.User;
@@ -33,16 +42,20 @@ import com.omni.wallet.lightning.LightningNodeUri;
 import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.ui.activity.ScanChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
+import com.omni.wallet.utils.DecimalInputFilter;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.popupwindow.SelectAssetUnitPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -77,6 +90,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     String mWalletAddress;
     LoadingDialog mLoadingDialog;
     private List<String> txidList;
+    private List<LiquidityNodeEntity> mData = new ArrayList<>();
 
     public CreateChannelDialog(Context context) {
         this.mContext = context;
@@ -141,6 +155,76 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
             }
         });
         /**
+         * 流动性节点列表
+         * @desc: Liquidity node list
+         */
+        RecyclerView mRecyclerView = mAlertDialog.findViewById(R.id.recycler_liquidity_node_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(layoutManager);
+        MyAdapter mAdapter = new MyAdapter(mContext, mData, R.layout.layout_item_liquidity_node_list);
+        mRecyclerView.setAdapter(mAdapter);
+        HttpUtils.with(mContext)
+                .get()
+                .url("https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/liquidityNodeList.json")
+                .execute(new EngineCallback() {
+                    @Override
+                    public void onPreExecute(Context context, Map<String, Object> params) {
+
+                    }
+
+                    @Override
+                    public void onCancel(Context context) {
+
+                    }
+
+                    @Override
+                    public void onError(Context context, String errorCode, String errorMsg) {
+                        LogUtils.e(TAG, "getCenterNodePubkeyError:" + errorMsg);
+                        mData.clear();
+                        LiquidityNodeEntity entity = new LiquidityNodeEntity();
+                        entity.setAddress(ConstantInOB.testLiquidityNodePubkey);
+                        mData.add(entity);
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            mAdapter.notifyDataSetChanged();
+                        });
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, String result) {
+                        LogUtils.e(TAG, "---------------centerNodePubkey---------------------" + result.toString());
+                        mData.clear();
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                LiquidityNodeEntity entity = new LiquidityNodeEntity();
+                                entity.setAddress(String.valueOf(jsonArray.get(i)));
+                                mData.add(entity);
+                            }
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                mAdapter.notifyDataSetChanged();
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, byte[] result) {
+
+                    }
+
+                    @Override
+                    public void onProgressInThread(Context context, Progress progress) {
+
+                    }
+
+                    @Override
+                    public void onFileSuccess(Context context, String filePath) {
+
+                    }
+                });
+        /**
          * @描述： 扫描二维码
          * @desc: scan qrcode
          */
@@ -193,11 +277,38 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         });
     }
 
+    /**
+     * 流动性节点列表适配器
+     * @desc: Liquidity node list Adapter
+     */
+    private class MyAdapter extends CommonRecyclerAdapter<LiquidityNodeEntity> {
+
+        public MyAdapter(Context context, List<LiquidityNodeEntity> data, int layoutId) {
+            super(context, data, layoutId);
+        }
+
+
+        @Override
+        public void convert(ViewHolder holder, final int position, final LiquidityNodeEntity item) {
+            holder.setText(R.id.tv_liquidity_node, item.getAddress());
+            holder.setOnItemClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    nodePubkey = item.getAddress();
+                    mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.GONE);
+                    mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
+                    showStepTwo();
+                }
+            });
+        }
+    }
+
     private void showStepTwo() {
         EditText vaildPubkeyEdit = mAlertDialog.findViewById(R.id.edit_vaild_pubkey);
         TextView nodeNameTv = mAlertDialog.findViewById(R.id.tv_node_name);
         TextView validPubkeyTv = mAlertDialog.findViewById(R.id.tv_valid_pubkey);
         EditText channelAmountEdit = mAlertDialog.findViewById(R.id.edit_channel_amount);
+        channelAmountEdit.setFilters(new InputFilter[]{new DecimalInputFilter(8)});
         channelAmountTv = mAlertDialog.findViewById(R.id.tv_channel_amount);
         channelFeeTv = mAlertDialog.findViewById(R.id.tv_channel_fee);
         feePerByteTv = mAlertDialog.findViewById(R.id.tv_fee_per_byte);
@@ -245,13 +356,17 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!StringUtils.isEmpty(s.toString())) {
+                    DecimalFormat df1 = new DecimalFormat("0.00");
                     if (assetId == 0) {
                         estimateOnChainFee((long) (Double.parseDouble(s.toString()) * 100000000), time);
+                        channelAmountTv.setText(df1.format(Double.parseDouble(s.toString()) * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                     } else {
                         estimateOnChainFee(20000, time);
+                        channelAmountTv.setText(df1.format(Double.parseDouble(s.toString()) * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                     }
                 } else {
                     estimateOnChainFee(0, time);
+                    channelAmountTv.setText("0");
                 }
             }
         });
@@ -317,14 +432,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             feePerByteTv.setText(R.string.unit_per_byte);
                         }
                         assetId = item.getPropertyid();
-                        if (item.getAmount() == 0) {
-                            DecimalFormat df = new DecimalFormat("0.00");
-                            assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
-                        } else {
-                            DecimalFormat df = new DecimalFormat("0.00######");
-                            assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
-                        }
-                        channelAmountTv.setText(assetBalanceMax);
+                        channelAmountEdit.setText("");
+                        channelAmountTv.setText("0");
                         if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                             if (assetId == 0) {
                                 estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
@@ -503,6 +612,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
                             bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
                             bundle.putString(ChannelsActivity.KEY_PUBKEY, User.getInstance().getFromPubKey(mContext));
+                            bundle.putString(ChannelsActivity.KEY_CHANNEL, "all");
                             Intent intent = new Intent(mContext, ChannelsActivity.class);
                             intent.putExtras(bundle);
                             mContext.startActivity(intent);
@@ -711,7 +821,6 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                                 DecimalFormat df = new DecimalFormat("0.00######");
                                 assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000);
                             }
-                            channelAmountTv.setText(assetBalanceMax);
                         }
                     });
                 } catch (InvalidProtocolBufferException e) {

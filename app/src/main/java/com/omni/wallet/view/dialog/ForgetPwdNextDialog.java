@@ -1,7 +1,6 @@
 package com.omni.wallet.view.dialog;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,6 +11,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,23 +21,22 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CheckInputRules;
+import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.Md5Util;
-import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.utils.WalletState;
 
-import java.util.ArrayList;
 import android.os.Handler;
-import java.util.logging.LogRecord;
 
+import lnrpc.Stateservice;
 import lnrpc.Walletunlocker;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
 
 public class ForgetPwdNextDialog {
     public static final String TAG = ForgetPwdNextDialog.class.getSimpleName();
-
     private Context mContext;
     private AlertDialog mAlertDialog;
     private boolean mCanClick = true;
@@ -43,10 +44,10 @@ public class ForgetPwdNextDialog {
     private AlertDialog mForgetPwdDialog;
     private AlertDialog mUnlockDialog;
     private LoadingDialog mLoadingDialog;
-    Handler mHandler = new Handler();
+    private Handler mHandler = new Handler();
 
 
-    public ForgetPwdNextDialog(Context context, AlertDialog forgetPwdDialog, AlertDialog unlockDialog){
+    ForgetPwdNextDialog(Context context, AlertDialog forgetPwdDialog, AlertDialog unlockDialog){
         this.mContext = context;
         this.mForgetPwdDialog = forgetPwdDialog;
         this.mUnlockDialog = unlockDialog;
@@ -64,11 +65,12 @@ public class ForgetPwdNextDialog {
                     .create();
         }
 
-        new Thread(()->{
-            subscribeState();
-        }).run();
-
         EditText passwordInputEditText = mAlertDialog.findViewById(R.id.password_input);
+
+        /*LinearLayout pageContent = mAlertDialog.findViewById(R.id.layout_parent);
+        LinearLayout unlockContain = mAlertDialog.findViewById(R.id.form_unlock_content);
+        KeyboardScrollView.controlKeyboardLayout(pageContent, unlockContain);*/
+
         passwordInputEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -104,39 +106,20 @@ public class ForgetPwdNextDialog {
             }
         });
 
-        mAlertDialog.findViewById(R.id.pass_switch).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickPwdEye();
-            }
-        });
+        mAlertDialog.findViewById(R.id.pass_switch).setOnClickListener(v -> clickPwdEye());
 
-        mAlertDialog.findViewById(R.id.pass_switch_repeat).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickConfirmPwdEye();
-            }
-        });
+        mAlertDialog.findViewById(R.id.pass_switch_repeat).setOnClickListener(v -> clickConfirmPwdEye());
 
-        mAlertDialog.findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickBack();
-            }
-        });
+        mAlertDialog.findViewById(R.id.btn_back).setOnClickListener(v -> clickBack());
 
-        mAlertDialog.findViewById(R.id.btn_forward).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickForward();
-            }
-        });
+        mAlertDialog.findViewById(R.id.btn_forward).setOnClickListener(v -> clickForward());
 
         mAlertDialog.show();
 
     }
 
-    public void passwordChangeCheck(){
+    @SuppressLint("SetTextI18n")
+    private void passwordChangeCheck(){
         EditText mPwdEdit =  mAlertDialog.findViewById(R.id.password_input);
         String password = mPwdEdit.getText().toString();
         int strongerPwd = CheckInputRules.checkePwd(password);
@@ -203,15 +186,16 @@ public class ForgetPwdNextDialog {
             pass_strong_text.setText("EMPTY");
             pass_strong_text.setTextColor(mContext.getResources().getColor(R.color.color_todo_grey));
         }
+        passwordRepeatChangeCheck();
     }
 
-    public void passwordRepeatChangeCheck(){
+    private void passwordRepeatChangeCheck(){
         TextView passwordView = mAlertDialog.findViewById(R.id.password_input);
         String passwordString = passwordView.getText().toString();
         TextView passwordViewRepeat = mAlertDialog.findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         ImageView passwordRepeatCheck = mAlertDialog.findViewById(R.id.pass_input_check_repeat);
-        if(passwordRepeatString==""){
+        if(passwordRepeatString.equals("")){
             passwordRepeatCheck.setVisibility(View.INVISIBLE);
         }else{
             if(passwordString.equals(passwordRepeatString)){
@@ -241,7 +225,7 @@ public class ForgetPwdNextDialog {
         }
     }
 
-    public void clickConfirmPwdEye() {
+    private void clickConfirmPwdEye() {
         ImageView mConfirmPwdEyeIv = mAlertDialog.findViewById(R.id.pass_switch_repeat);
         EditText mConfirmPwdEdit = mAlertDialog.findViewById(R.id.password_input_repeat);
         if (mConfirmCanClick) {
@@ -275,95 +259,30 @@ public class ForgetPwdNextDialog {
              * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
              */
             String newPassMd5String = Md5Util.getMD5Str(password);
-            String oldPassMd5String = User.getInstance().getPasswordMd5(mContext);
-            Walletunlocker.ChangePasswordRequest changePasswordRequest = Walletunlocker.ChangePasswordRequest.newBuilder()
-                    .setCurrentPassword(ByteString.copyFromUtf8(oldPassMd5String))
-                    .setNewPassword(ByteString.copyFromUtf8(newPassMd5String))
-                    .build();
-            Obdmobile.changePassword(changePasswordRequest.toByteArray(), new Callback() {
-                @Override
-                public void onError(Exception e) {
-                    mHandler.post(()->{
-                        mLoadingDialog.dismiss();
-                    });
-                    String errorMessage = e.getMessage();
-                    Log.e(TAG+"onError: ", errorMessage);
-                    if (errorMessage.equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
-                        release();
-                        if (mForgetPwdDialog!=null){
-                            mForgetPwdDialog.dismiss();
-                            mForgetPwdDialog = null;
-                        }
+            User.getInstance().setNewPasswordMd5(mContext,newPassMd5String);
+            mLoadingDialog.dismiss();
+            release();
+            if (mForgetPwdDialog!=null){
+                mForgetPwdDialog.dismiss();
+                mForgetPwdDialog = null;
+            }
 
-                        if (mUnlockDialog!=null){
-                            mUnlockDialog.dismiss();
-                            mUnlockDialog = null;
-                        }
-                    }
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(byte[] bytes) {
-                    if(bytes == null){
-                        mHandler.post(()->{
-                            mLoadingDialog.dismiss();
-                        });
-                        return;
-                    }
-                    try {
-                        Walletunlocker.ChangePasswordResponse changePasswordResponse = Walletunlocker.ChangePasswordResponse.parseFrom(bytes);
-                        String macaroon = changePasswordResponse.getAdminMacaroon().toString();
-                        Log.d("macaroon",macaroon);
-                        User.getInstance().setPasswordMd5(mContext,newPassMd5String);
-                        User.getInstance().setMacaroonString(mContext,macaroon);
-                        mHandler.post(()->{
-                            mLoadingDialog.dismiss();
-                        });
-                    } catch (InvalidProtocolBufferException e) {
-                        mHandler.post(()->{
-                            mLoadingDialog.dismiss();
-                        });
-                        e.printStackTrace();
-                    }
-
-
-                }
-            });
+            if (mUnlockDialog!=null){
+                mUnlockDialog.dismiss();
+                mUnlockDialog = null;
+            }
         }else{
             String checkSetPassWrongString = "";
             if(strongerPwd<0){
                 checkSetPassWrongString = mContext.getResources().getString(R.string.toast_create_check_pass_wrong);
             }else if(!passwordRepeatString.equals(password)){
-                checkSetPassWrongString =  mContext.getResources().getString(R.string.toast_create_check_pass_diff);;
+                checkSetPassWrongString =  mContext.getResources().getString(R.string.toast_create_check_pass_diff);
             }
             Toast checkSetPassToast = Toast.makeText(mContext,checkSetPassWrongString,Toast.LENGTH_LONG);
             checkSetPassToast.setGravity(Gravity.TOP,0,30);
             checkSetPassToast.show();
         }
 
-    }
-
-    public void subscribeState() {
-        WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
-            switch (walletState){
-                case 4:
-                    release();
-                    if (mForgetPwdDialog!=null){
-                        mForgetPwdDialog.dismiss();
-                        mForgetPwdDialog = null;
-                    }
-
-                    if (mUnlockDialog!=null){
-                        mUnlockDialog.dismiss();
-                        mUnlockDialog = null;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        };
-        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
     }
 
     public void release(){

@@ -76,15 +76,18 @@
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16"/>
 
-                            <TextView
+                            <EditText
                                 android:id="@+id/tv_node_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
+                                android:drawableRight="@mipmap/icon_edit_black"
+                                android:drawablePadding="@dimen/main_5"
                                 android:text="unname"
                                 android:textColor="@color/color_99_transparent"
-                                android:textSize="@dimen/text_16"/>
+                                android:textSize="@dimen/text_16"
+                                android:background="@null" />
                         </RelativeLayout>
 
                         <RelativeLayout

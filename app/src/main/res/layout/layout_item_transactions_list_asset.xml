@@ -13,7 +13,7 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_weight="2">
 
             <TextView
                 android:id="@+id/tv_time"
@@ -27,21 +27,6 @@
                 android:singleLine="true"
                 android:ellipsize="middle"
                 android:text="Today"
-                android:textColor="@color/color_A6_transparent"
-                android:textSize="@dimen/text_16" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:visibility="invisible">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="@string/date"
                 android:textColor="@color/color_A6_transparent"
                 android:textSize="@dimen/text_16" />
         </RelativeLayout>

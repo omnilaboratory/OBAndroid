@@ -42,8 +42,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import lnrpc.LightningOuterClass;
@@ -141,8 +139,9 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         mLoadingDialog = new LoadingDialog(mContext);
         String passwordMd5 = user.getPasswordMd5(mContext);
         connectivityManager = getSystemService(ConnectivityManager.class);
-        Log.e("password",passwordMd5);
+        Log.d("password",passwordMd5);
         initWalletType = user.getInitWalletType(mContext);
+        Log.d(TAG, "initView: initWalletType" + initWalletType);
         totalBlock = user.getTotalBlock(mContext);
         commitNumSyncView.setText(String.valueOf(totalBlock));
         syncBlockNumView.setText(String.valueOf(totalBlock));
@@ -168,11 +167,11 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         EventBus.getDefault().unregister(this);
         PublicUtils.closeLoading(mLoadingDialog);
         unregisterReceiver(networkChangeReceiver);
         blockData.unregisterOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
-        super.onDestroy();
     }
 
     @SuppressLint("LongLogTag")
@@ -236,6 +235,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     @OnClick(R.id.btn_start)
     public void clickStart(){
         Log.d(TAG,"click start");
+        Log.d(TAG, "clickStart: " + initWalletType);
         if(newCreatedAddress.isEmpty()){
             String toastMsg = "Block is syncing now,please wait a moment!";
             Toast copySuccessToast = Toast.makeText(ctx,toastMsg,Toast.LENGTH_LONG);
@@ -259,7 +259,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         String createType = User.getInstance().getInitWalletType(mContext);
         if(createType.equals("recoveryStepTwo")){
             getOldAddress();
-
         }else{
             newAddress();
 
@@ -268,7 +267,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
 
     public void newAddress(){
-
         LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
         Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
             @Override
@@ -286,17 +284,19 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                     newCreatedAddress = address;
                     Bitmap mQRBitmap = CodeUtils.createQRCode(address, DisplayUtil.dp2px(mContext, 100));
                     runOnUiThread(() -> {
+                        Log.d(TAG, "onResponse: " + initWalletType);
                         qrAddressTv.setText(address);
                         qrAddressIv.setImageBitmap(mQRBitmap);
                         obdLogFileObserver.stopWatching();
                         User.getInstance().setWalletAddress(mContext,address);
-                        updateSyncDataView(totalBlock);
                         if(initWalletType.equals("recoveryStepTwo")){
                             User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
                             initWalletType = "toBeRestoreChannel";
+                            updateSyncDataView(totalBlock);
                         }else{
                             User.getInstance().setInitWalletType(mContext,"initialed");
                             initWalletType = "initialed";
+                            updateSyncDataView(totalBlock);
                         }
 
 
@@ -335,13 +335,13 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                     newCreatedAddress = address;
                     Bitmap mQRBitmap = CodeUtils.createQRCode(address, DisplayUtil.dp2px(mContext, 100));
                     runOnUiThread(() -> {
+                        User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
+                        initWalletType = "toBeRestoreChannel";
                         qrAddressTv.setText(address);
                         qrAddressIv.setImageBitmap(mQRBitmap);
                         obdLogFileObserver.stopWatching();
                         User.getInstance().setWalletAddress(mContext,address);
                         updateSyncDataView(totalBlock);
-                        User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
-                        initWalletType = "toBeRestoreChannel";
                     });
 
                 } catch (InvalidProtocolBufferException e) {
@@ -359,7 +359,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
     
     public void startOBMobile(){
-        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
+        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + User.getInstance().getAlias(mContext), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());

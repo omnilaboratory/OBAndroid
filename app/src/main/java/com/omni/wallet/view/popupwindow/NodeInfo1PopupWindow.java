@@ -3,6 +3,8 @@ package com.omni.wallet.view.popupwindow;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,12 +16,10 @@ import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
-
-import org.greenrobot.eventbus.EventBus;
+import com.omni.wallet.view.dialog.UnlockDialog;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -54,6 +54,22 @@ public class NodeInfo1PopupWindow {
 
             mLoadingDialog = new LoadingDialog(mContext);
             nameTv = rootView.findViewById(R.id.tv_node_name);
+            nameTv.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    User.getInstance().setAlias(mContext, s.toString());
+                }
+            });
             TextView versionTv = rootView.findViewById(R.id.tv_node_version);
             TextView backendTv = rootView.findViewById(R.id.tv_node_backend);
             TextView modeTv = rootView.findViewById(R.id.tv_node_mode);
@@ -176,16 +192,18 @@ public class NodeInfo1PopupWindow {
     }
 
     public void startNode() {
-        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
+        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + User.getInstance().getAlias(mContext), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startOnError------------------" + e.getMessage());
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        EventBus.getDefault().post(new LoginOutEvent());
+//                        EventBus.getDefault().post(new LoginOutEvent());
                         mBasePopWindow.dismiss();
                         mLoadingDialog.dismiss();
+                        UnlockDialog mUnlockDialog = new UnlockDialog(mContext);
+                        mUnlockDialog.show();
                     }
                 });
             }
@@ -196,9 +214,11 @@ public class NodeInfo1PopupWindow {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        EventBus.getDefault().post(new LoginOutEvent());
+//                        EventBus.getDefault().post(new LoginOutEvent());
                         mBasePopWindow.dismiss();
                         mLoadingDialog.dismiss();
+                        UnlockDialog mUnlockDialog = new UnlockDialog(mContext);
+                        mUnlockDialog.show();
                     }
                 });
             }

@@ -8,7 +8,7 @@
     tools:context=".ui.activity.createwallet.CreateWalletStepOneActivity">
 
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -19,10 +19,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:orientation="vertical"
-            tools:ignore="UselessParent">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textView3"
@@ -55,35 +52,37 @@
                 android:textColor="#FF4A92FF"
                 android:textSize="14sp" />
         </LinearLayout>
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="15dp"
         android:layout_weight="1"
+        android:accessibilityLiveRegion="none"
         android:elevation="10dp"
-        android:gravity="center"
-        >
+        android:gravity="center">
+
         <LinearLayout
             android:id="@+id/seed_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_create_content_green"
             android:elevation="10dp"
             android:orientation="vertical"
             android:padding="@dimen/main_10"
-            android:translationZ="@dimen/main_10"
-            android:background="@drawable/bg_create_content_green"
-            >
+            android:translationZ="@dimen/main_10">
+
             <GridView
                 android:id="@+id/seed_grid_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="false"
+                android:gravity="top"
                 android:numColumns="3"
-                android:verticalSpacing="@dimen/main_30"
                 android:paddingTop="@dimen/main_15"
-                android:paddingBottom="@dimen/main_15"/>
+                android:paddingBottom="@dimen/main_15"
+                 />
         </LinearLayout>
 
     </LinearLayout>

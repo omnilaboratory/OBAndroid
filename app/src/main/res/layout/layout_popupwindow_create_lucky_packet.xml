@@ -99,15 +99,13 @@
                             android:id="@+id/tv_address"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/main_15"
+                            android:paddingBottom="@dimen/main_15"
                             android:layout_marginLeft="@dimen/main_45"
-                            android:layout_marginRight="@dimen/main_20"
-                            android:layout_marginTop="@dimen/main_5"
+                            android:paddingTop="@dimen/main_5"
                             android:text="Wish you good health"
                             android:textColor="@color/color_black"
                             android:textSize="@dimen/text_16"
-                            android:background="@null"
-                            android:digits="@string/text_digits_num_code"/>
+                            android:background="@null"/>
                     </LinearLayout>
 
                     <View
@@ -500,7 +498,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/layout_next"
+                    android:id="@+id/layout_confirm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -510,14 +508,14 @@
                     <ImageView
                         android:layout_width="@dimen/main_36"
                         android:layout_height="@dimen/main_36"
-                        android:src="@mipmap/icon_arrow_right_green"/>
+                        android:src="@mipmap/icon_tick_green_small"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/main_7"
                         android:letterSpacing="0.25"
-                        android:text="@string/next_big"
+                        android:text="@string/confirm"
                         android:textColor="@color/color_black"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>
@@ -852,7 +850,7 @@
                 android:layout_marginRight="@dimen/main_30">
 
                 <LinearLayout
-                    android:id="@+id/layout_back"
+                    android:id="@+id/layout_save"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -861,14 +859,14 @@
                     <ImageView
                         android:layout_width="@dimen/main_36"
                         android:layout_height="@dimen/main_36"
-                        android:src="@mipmap/icon_arrow_left_green"/>
+                        android:src="@mipmap/icon_save_green"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/main_7"
                         android:letterSpacing="0.25"
-                        android:text="@string/back_big"
+                        android:text="@string/save_upper"
                         android:textColor="@color/color_black"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>

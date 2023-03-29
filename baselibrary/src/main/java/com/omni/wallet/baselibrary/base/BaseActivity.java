@@ -1,6 +1,7 @@
 package com.omni.wallet.baselibrary.base;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -337,7 +338,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         // 双击退出程序
         if (System.currentTimeMillis() - exitTime > 2000) {
             final String appName = AppUtils.getAppName(mContext);
-            ToastUtils.showToast(mContext, "再按一次退出" + appName);
+            ToastUtils.showToast(mContext, "Press again to exit" + appName);
             exitTime = System.currentTimeMillis();
         } else {
             // 退出应用的时候的操作
@@ -348,10 +349,29 @@ public abstract class BaseActivity extends AppCompatActivity {
             ToastUtils.cancelToast();
             // 关闭页面，onDestroy里边会跟进标志位exitApp
             finish();
+            killAppProcess();
         }
         return true;
     }
 
+    /**
+     * 注意：不能先杀掉主进程，否则逻辑代码无法继续执行，需先杀掉相关进程最后杀掉主进程
+     * Note: You cannot kill the main process first, otherwise the logic code cannot continue to execute. You need to kill the related process first and then kill the main process
+     */
+    public void killAppProcess() {
+        LogUtils.e(TAG, "killAppProcess");
+        ActivityManager mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> processInfos = mActivityManager.getRunningAppProcesses();
+        // 先杀掉相关进程，最后再杀掉主进程(Kill the related process first, and then the main process)
+        for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : processInfos) {
+            if (runningAppProcessInfo.pid != android.os.Process.myPid()) {
+                android.os.Process.killProcess(runningAppProcessInfo.pid);
+            }
+        }
+        android.os.Process.killProcess(android.os.Process.myPid());
+        // 正常退出程序，也就是结束当前正在运行的java虚拟机(Exit the program normally, that is, end the currently running java virtual machine)
+        System.exit(0);
+    }
 
     /**
      * 当应用退出的时候回调
@@ -363,6 +383,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         // 修复InputMethod导致的内存泄漏（部分机型好像没啥用）
         try {
             MemoryUtils.releaseInputMethodManagerFocus(this);
@@ -376,7 +397,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         // 异步请求的时候有可能页面已经Destroy了，所以可以在异步请求的回调中根据mBinder是否为null
         // 来判断是否已经解绑，如果已经解绑了就return，否则NullPointException
         mBinder = null;
-        super.onDestroy();
+
         // 是否退出应用，放在这里是为了解决退出应用的时候Toast不消失的问题
         if (mExitApp) {
             AppManager.getInstance().appExit(mContext);

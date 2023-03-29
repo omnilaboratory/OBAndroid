@@ -14,13 +14,11 @@ import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
-import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.view.dialog.LoadingDialog;
-
-import org.greenrobot.eventbus.EventBus;
+import com.omni.wallet.view.dialog.UnlockDialog;
 
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -131,7 +129,7 @@ public class Menu1PopupWindow {
                 }
             });
 //            select directory
-            rootView.findViewById(R.id.backup_directory_select).setOnClickListener(new View.OnClickListener(){
+            rootView.findViewById(R.id.backup_directory_select).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mMenuPopWindow.dismiss();
@@ -179,7 +177,10 @@ public class Menu1PopupWindow {
             rootView.findViewById(R.id.layout_lock).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EventBus.getDefault().post(new LoginOutEvent());
+//                    EventBus.getDefault().post(new LoginOutEvent());
+                    mMenuPopWindow.dismiss();
+                    UnlockDialog mUnlockDialog = new UnlockDialog(mContext);
+                    mUnlockDialog.show();
                 }
             });
             if (mMenuPopWindow.isShowing()) {
@@ -190,16 +191,18 @@ public class Menu1PopupWindow {
     }
 
     public void startNode() {
-        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig, new Callback() {
+        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + User.getInstance().getAlias(mContext), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startOnError------------------" + e.getMessage());
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        EventBus.getDefault().post(new LoginOutEvent());
+//                        EventBus.getDefault().post(new LoginOutEvent());
                         mMenuPopWindow.dismiss();
                         mLoadingDialog.dismiss();
+                        UnlockDialog mUnlockDialog = new UnlockDialog(mContext);
+                        mUnlockDialog.show();
                     }
                 });
             }
@@ -210,9 +213,11 @@ public class Menu1PopupWindow {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        EventBus.getDefault().post(new LoginOutEvent());
+//                        EventBus.getDefault().post(new LoginOutEvent());
                         mMenuPopWindow.dismiss();
                         mLoadingDialog.dismiss();
+                        UnlockDialog mUnlockDialog = new UnlockDialog(mContext);
+                        mUnlockDialog.show();
                     }
                 });
             }

@@ -269,8 +269,8 @@
     <string name="nickname">Nickname</string>
     <string name="save_upper">保存</string>
     <string name="reboot_first_upper">Reboot</string>
-    <string name="create_channel_tip">You have not created a channel for this asset, please create at least one channel with the liquidity node first and with enough funds, and then continue to pay (or create an invoice). </string>
-    <string name="create_new_channel_tip">Sorry, your available balance is insufficient, please create new channel with the liquidity node first and with enough funds, and then continue to pay (or create an invoice). </string>
+    <string name="create_channel_tip">You have not created a channel for this asset, please create at least one channel with the liquidity node first and with enough funds, and then continue to proceed (pay, create an invoice, collect a gift, etc).</string>
+    <string name="create_new_channel_tip">You have not created a channel for this asset, please create at least one channel with enough funds, and then continue to proceed (pay, create an invoice, collect a gift, etc).</string>
     <string name="received_first_upper">Received</string>
     <string name="time_first_upper">Time</string>
     <string name="what_is_channel_upper">WHAT IS CHANNEL</string>
@@ -286,6 +286,14 @@
     <string name="swap_to">Swap To</string>
     <string name="slippage_tolerance">Slippage\ntolerance</string>
     <string name="num_exceeds">The number of red packets exceeds</string>
+    <string name="tv_dialog_permission_desc_1">需要您授予该APP读写手机外部存储的权限</string>
+    <string name="tv_dialog_permission_desc_2">需要您授予该APP读写手机状态的权限</string>
+    <string name="tv_dialog_permission_desc_3">该APP需要您授予读写手机存储的权限，请到“设置->应用”或者“设置->权限管理”授予存储权限</string>
+    <string name="tv_dialog_permission_desc_4">该APP需要您授予读写手机状态的权限，请到“设置->应用”或者“设置->权限管理”授予存储权限</string>
+    <string name="invoice_detail">Invoice Detail</string>
+    <string name="payer_first_upper">Payer</string>
+    <string name="new_version_found">NEW VERSION\nFOUND</string>
+    <string name="update_upper">UPDATE</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>
@@ -327,6 +335,7 @@
     <string name="sync_block">同步链上数据:</string>
     <string name="download_db">正在下载neutrino.db:</string>
     <string name="download_header">正在下载 block_header.bin:</string>
+    <string name="download_manifest">正在下载 manifest.txt:</string>
     <string name="download_filter_header">正在下载 filter_block_header.bin:</string>
     <string name="sync_block_percent">0%</string>
     <string name="block">Block</string>

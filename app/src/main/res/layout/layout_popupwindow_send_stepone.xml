@@ -333,7 +333,7 @@
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="@dimen/main_179"
                     android:layout_height="@dimen/main_48"
                     android:layout_alignParentRight="true"
@@ -342,12 +342,21 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
+                    <TextView
+                        android:id="@+id/tv_amount_type"
+                        android:layout_width="@dimen/main_60"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="dollar"
+                        android:textColor="@color/color_99_transparent"
+                        android:textSize="@dimen/text_16"/>
+
                     <EditText
                         android:id="@+id/etv_send_amount"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_10"
-                        android:layout_weight="1"
+                        android:paddingRight="@dimen/main_65"
                         android:hint="0"
                         android:inputType="number|numberDecimal"
                         android:gravity="right"
@@ -355,17 +364,7 @@
                         android:textColor="@color/color_99_transparent"
                         android:background="@null"
                         android:textSize="@dimen/text_16"/>
-
-                    <TextView
-                        android:id="@+id/tv_amount_type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/main_5"
-                        android:layout_marginRight="@dimen/main_30"
-                        android:text="dollar"
-                        android:textColor="@color/color_99_transparent"
-                        android:textSize="@dimen/text_16"/>
-                </LinearLayout>
+                </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout
@@ -1478,7 +1477,7 @@
                         android:gravity="start"
                         android:background="@drawable/bg_black_rectangle_round_0_thin"
                         android:textColor="@color/color_99_transparent"
-                        android:textSize="@dimen/text_16"></EditText>
+                        android:textSize="@dimen/text_16"/>
                 </LinearLayout>
             </LinearLayout>
 

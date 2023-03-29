@@ -30,6 +30,8 @@ public class SelectTimePopupWindow {
             View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_select_time);
             mBasePopWindow.setWidth(view.getWidth());
             mBasePopWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+            mBasePopWindow.setOutsideTouchable(true);
+            mBasePopWindow.setFocusable(false);
             // Click Minutes
             rootView.findViewById(R.id.tv_minutes).setOnClickListener(new View.OnClickListener() {
                 @Override

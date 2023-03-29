@@ -20,6 +20,8 @@ import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.ObdLogFileObserver;
 
+import java.util.Objects;
+
 import static android.content.Context.MODE_PRIVATE;
 import static android.widget.ListPopupWindow.MATCH_PARENT;
 
@@ -44,8 +46,8 @@ public class LoginLoadingDialog {
         this.totalBlock = User.getInstance().getTotalBlock(context);
     }
 
-    private void updateSyncDataView(AlertDialog alertDialog,long syncedHeight) {
-        Log.e(TAG, "update_synced_Height");
+    @SuppressLint("SetTextI18n")
+    private void updateSyncDataView(AlertDialog alertDialog, long syncedHeight) {
         double totalHeight = totalBlock;
         double currentHeight = syncedHeight;
         if (syncedHeight > totalBlock) {
@@ -55,11 +57,9 @@ public class LoginLoadingDialog {
         double percent = (currentHeight / totalHeight * 100);
 
         LinearLayout rvProcessOuter = alertDialog.getViewById(R.id.progress_bar_outer);
-        Display alertDisplay = mAlertDialog.getWindow().getWindowManager().getDefaultDisplay();
+        Display alertDisplay = Objects.requireNonNull(mAlertDialog.getWindow()).getWindowManager().getDefaultDisplay();
         int windowWidth = alertDisplay.getWidth();
         LinearLayout.LayoutParams rvOuterParam = new LinearLayout.LayoutParams(windowWidth - 120,12);
-        Log.e(TAG +"rvProcessOuter", String.valueOf(rvProcessOuter.getWidth()));
-        Log.e(TAG +"rvProcessOuter", String.valueOf(rvProcessOuter.getHeight()));
         rvProcessOuter.setLayoutParams(rvOuterParam);
         int innerWidth = (int) ((windowWidth - 120) * percent / 100)-1;
         LinearLayout.LayoutParams rlInnerParam = new LinearLayout.LayoutParams(innerWidth, 10);
@@ -86,6 +86,7 @@ public class LoginLoadingDialog {
         }
     };
 
+    @SuppressLint("DefaultLocale")
     public void show() {
         if (mAlertDialog == null) {
             mAlertDialog = new AlertDialog.Builder(mContext, R.style.dialog_translucent_theme_loading)

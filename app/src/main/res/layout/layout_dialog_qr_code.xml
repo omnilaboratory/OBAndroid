@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_D1123A50">
+
+    <RelativeLayout
+        android:id="@+id/layout_son"
+        android:layout_width="@dimen/main_330"
+        android:layout_height="@dimen/main_370"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_white_rectangle_round_25">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_25"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.15"
+                android:text="QR CODE"
+                android:textColor="@color/color_80p_transparent"
+                android:textSize="@dimen/text_18" />
+
+            <ImageView
+                android:id="@+id/iv_qrcode"
+                android:layout_width="@dimen/main_250"
+                android:layout_height="@dimen/main_250"
+                android:layout_marginTop="@dimen/main_20"
+                android:src="@mipmap/icon_qr_code_default" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_son"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/main_31"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/main_56"
+            android:layout_height="@dimen/main_56"
+            android:src="@mipmap/icon_close_x_white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.25"
+            android:text="@string/close"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/text_16" />
+    </LinearLayout>
+</RelativeLayout>

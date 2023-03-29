@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,16 +23,21 @@ import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.baselibrary.utils.image.BitmapUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.client.LuckPkClient;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.DecimalInputFilter;
+import com.omni.wallet.utils.EditInputFilter;
 import com.omni.wallet.utils.GetRequestHeader;
 import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.CreateNewChannelTipDialog;
+import com.omni.wallet.view.dialog.InvoiceQRCodeDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
 import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
@@ -74,6 +80,7 @@ public class CreateInvoiceStepOnePopupWindow {
     String timeType;
     String qrCodeUrl;
     LoadingDialog mLoadingDialog;
+    String expiryTime = "86400";
 
     public CreateInvoiceStepOnePopupWindow(Context context) {
         this.mContext = context;
@@ -130,10 +137,13 @@ public class CreateInvoiceStepOnePopupWindow {
         mProgressBar = rootView.findViewById(R.id.progressbar);
         TextView amountMaxTv = rootView.findViewById(R.id.tv_amount_max);
         EditText amountEdit = rootView.findViewById(R.id.edit_amount);
+        amountEdit.setFilters(new InputFilter[]{new DecimalInputFilter(8)});
         TextView amountUnitTv = rootView.findViewById(R.id.tv_amount_unit);
         Button timeButton = rootView.findViewById(R.id.btn_time);
         EditText amountTimeEdit = rootView.findViewById(R.id.edit_time);
         EditText memoEdit = rootView.findViewById(R.id.edit_memo);
+        InputFilter[] filters = {new EditInputFilter(36)};
+        memoEdit.setFilters(filters);
         if (mAssetId == 0) {
             assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
             assetTypeTv.setText("BTC");
@@ -244,6 +254,13 @@ public class CreateInvoiceStepOnePopupWindow {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
                     return;
                 }
+                if (timeType.equals("Minutes")) {
+                    expiryTime = String.valueOf(Integer.parseInt(timeInput) * 60);
+                } else if (timeType.equals("Hours")) {
+                    expiryTime = String.valueOf(Integer.parseInt(timeInput) * 3600);
+                } else if (timeType.equals("Days")) {
+                    expiryTime = String.valueOf(Integer.parseInt(timeInput) * 86400);
+                }
                 mLoadingDialog.show();
                 LightningOuterClass.Invoice asyncInvoiceRequest;
                 if (mAssetId == 0) {
@@ -251,7 +268,7 @@ public class CreateInvoiceStepOnePopupWindow {
                             .setAssetId((int) mAssetId)
                             .setValueMsat((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000 * 1000))
                             .setMemo(memoEdit.getText().toString())
-                            .setExpiry(Long.parseLong("86400")) // in seconds
+                            .setExpiry(Long.parseLong(expiryTime)) // in seconds
                             .setPrivate(false)
                             .build();
                 } else {
@@ -259,7 +276,7 @@ public class CreateInvoiceStepOnePopupWindow {
                             .setAssetId((int) mAssetId)
                             .setAmount((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000))
                             .setMemo(memoEdit.getText().toString())
-                            .setExpiry(Long.parseLong("86400")) // in seconds
+                            .setExpiry(Long.parseLong(expiryTime)) // in seconds
                             .setPrivate(false)
                             .build();
                 }
@@ -362,6 +379,22 @@ public class CreateInvoiceStepOnePopupWindow {
 //        Bitmap mQRBitmap = CodeUtils.createQRCodeBitmap(qrCodeUrl, DisplayUtil.dp2px(mContext, 50), DisplayUtil.dp2px(mContext, 50),"UTF-8","L", "1", Color.BLACK, Color.WHITE);;
         qrCodeIv.setImageBitmap(mQRBitmap);
 
+        qrCodeIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InvoiceQRCodeDialog mInvoiceQRCodeDialog = new InvoiceQRCodeDialog(mContext);
+                mInvoiceQRCodeDialog.show(qrCodeUrl);
+            }
+        });
+        qrCodeIv.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                String fileName = "invoice_" + User.getInstance().getAlias(mContext) + ".jpg";
+                BitmapUtils.saveBitmap2Gallery(mContext, mQRBitmap, fileName);
+                ToastUtils.showToast(mContext, "QR code saved successfully");
+                return true;
+            }
+        });
         copyIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

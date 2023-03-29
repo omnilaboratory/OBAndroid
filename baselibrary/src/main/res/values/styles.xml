@@ -23,7 +23,13 @@
         <!--模糊-->
         <item name="android:backgroundDimEnabled">false</item>
     </style>
-
+    <style name="dialog_lock_theme" parent="dialog_default_theme">
+        <!--半透明-->
+        <item name="android:windowIsTranslucent">false</item>
+        <!--模糊-->
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
 
     <!--Dialog底部进出动画-->
     <style name="dialog_from_bottom_anim" parent="android:Animation">

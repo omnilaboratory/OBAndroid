@@ -51,6 +51,7 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.PaymentRequestUtil;
+import com.omni.wallet.utils.PreventContinuousClicksUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.TransactionsAssetView;
 import com.omni.wallet.view.TransactionsChainView;
@@ -276,13 +277,14 @@ public class BalanceDetailActivity extends AppBaseActivity {
     protected void initView() {
         if (network.equals("lightning")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_vector);
-            mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
             if (assetId == 0) {
+                mNetworkTypeTv.setText("BTC lightning network");
                 mNetworkTv.setText("BTC lightning network");
                 mNetwork1Tv.setText("BTC lightning network");
                 mNetwork2Tv.setText("BTC lightning network");
                 mNetwork3Tv.setText("BTC lightning network");
             } else {
+                mNetworkTypeTv.setText("dollar lightning network");
                 mNetworkTv.setText("dollar lightning network");
                 mNetwork1Tv.setText("dollar lightning network");
                 mNetwork2Tv.setText("dollar lightning network");
@@ -300,17 +302,46 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mRootMyInvoicesLayout.setVisibility(View.VISIBLE);
         } else if (network.equals("link")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_link_black);
-            mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
             if (assetId == 0) {
-                mNetworkTv.setText("BTC Mainnet");
-                mNetwork1Tv.setText("BTC Mainnet");
-                mNetwork2Tv.setText("BTC Mainnet");
-                mNetwork3Tv.setText("BTC Mainnet");
+                if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+                    mNetworkTypeTv.setText("BTC Testnet");
+                    mNetworkTv.setText("BTC Testnet");
+                    mNetwork1Tv.setText("BTC Testnet");
+                    mNetwork2Tv.setText("BTC Testnet");
+                    mNetwork3Tv.setText("BTC Testnet");
+                } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+                    mNetworkTypeTv.setText("BTC Regtest");
+                    mNetworkTv.setText("BTC Regtest");
+                    mNetwork1Tv.setText("BTC Regtest");
+                    mNetwork2Tv.setText("BTC Regtest");
+                    mNetwork3Tv.setText("BTC Regtest");
+                } else { //mainnet
+                    mNetworkTypeTv.setText("BTC Mainnet");
+                    mNetworkTv.setText("BTC Mainnet");
+                    mNetwork1Tv.setText("BTC Mainnet");
+                    mNetwork2Tv.setText("BTC Mainnet");
+                    mNetwork3Tv.setText("BTC Mainnet");
+                }
             } else {
-                mNetworkTv.setText("Omnilayer Mainnet");
-                mNetwork1Tv.setText("Omnilayer Mainnet");
-                mNetwork2Tv.setText("Omnilayer Mainnet");
-                mNetwork3Tv.setText("Omnilayer Mainnet");
+                if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+                    mNetworkTypeTv.setText("Omnilayer Testnet");
+                    mNetworkTv.setText("Omnilayer Testnet");
+                    mNetwork1Tv.setText("Omnilayer Testnet");
+                    mNetwork2Tv.setText("Omnilayer Testnet");
+                    mNetwork3Tv.setText("Omnilayer Testnet");
+                } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+                    mNetworkTypeTv.setText("Omnilayer Regtest");
+                    mNetworkTv.setText("Omnilayer Regtest");
+                    mNetwork1Tv.setText("Omnilayer Regtest");
+                    mNetwork2Tv.setText("Omnilayer Regtest");
+                    mNetwork3Tv.setText("Omnilayer Regtest");
+                } else { //mainnet
+                    mNetworkTypeTv.setText("Omnilayer Mainnet");
+                    mNetworkTv.setText("Omnilayer Mainnet");
+                    mNetwork1Tv.setText("Omnilayer Mainnet");
+                    mNetwork2Tv.setText("Omnilayer Mainnet");
+                    mNetwork3Tv.setText("Omnilayer Mainnet");
+                }
             }
             mLightningNetworkLayout.setVisibility(View.GONE);
             mLinkNetworkLayout.setVisibility(View.VISIBLE);
@@ -478,9 +509,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
                                 }
                             }
                             LogUtils.e("========filterList========", String.valueOf(filterList));
+                            //排序(sort)
+                            Collections.sort(filterList);
                             mTransactionsChainData.clear();
                             mTransactionsChainData.addAll(filterList);
-                            Collections.reverse(mTransactionsChainData);
                             mTransactionsChainAdapter.notifyDataSetChanged();
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
@@ -569,9 +601,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
                                 }
                             }
                             LogUtils.e("========assetTxList========", String.valueOf(filterList));
+                            //排序(sort)
+                            Collections.sort(filterList);
                             mTransactionsAssetData.clear();
                             mTransactionsAssetData.addAll(filterList);
-                            Collections.reverse(mTransactionsAssetData);
                             mTransactionsAssetAdapter.notifyDataSetChanged();
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
@@ -657,7 +690,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             mPayData.clear();
                             for (int i = 0; i < resp.getPaymentsList().size(); i++) {
                                 PaymentEntity paymentEntity = new PaymentEntity();
-                                paymentEntity.setDate(resp.getPaymentsList().get(i).getCreationDate());
+                                paymentEntity.setDate(Long.parseLong(String.valueOf(resp.getPaymentsList().get(i).getHtlcs(0).getResolveTimeNs()).substring(0, 10)));
                                 paymentEntity.setAssetId(resp.getPaymentsList().get(i).getAssetId());
                                 paymentEntity.setAmount(resp.getPaymentsList().get(i).getValueMsat());
                                 paymentEntity.setType(1);
@@ -687,9 +720,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             for (Map.Entry<String, TransactionLightingEntity> entry : hashMap.entrySet()) {
                                 list.add(entry.getValue());
                             }
+                            //排序(sort)
+                            Collections.sort(list);
                             mTransactionsData.clear();
                             mTransactionsData.addAll(list);
-                            Collections.reverse(mTransactionsData);
                             mTransactionsAdapter.notifyDataSetChanged();
                             fetchReceiveInvoicesFromLND(time, 100);
                         } catch (InvalidProtocolBufferException e) {
@@ -775,9 +809,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
                                 for (Map.Entry<String, TransactionLightingEntity> entry : hashMap.entrySet()) {
                                     list.add(entry.getValue());
                                 }
+                                //排序(sort)
+                                Collections.sort(list);
                                 mTransactionsData.clear();
                                 mTransactionsData.addAll(list);
-                                Collections.reverse(mTransactionsData);
                                 mTransactionsAdapter.notifyDataSetChanged();
                             } else {
                                 fetchReceiveInvoicesFromLND(time, lastIndex + 100);
@@ -1226,8 +1261,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
             holder.getView(R.id.layout_to_be_paid_list).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mPayInvoiceDialog = new PayInvoiceDialog(mContext);
-                    mPayInvoiceDialog.show(pubkey, assetId, UriUtil.generateLightningUri(item.getInvoice()));
+                    if (PreventContinuousClicksUtil.isNotFastClick()) {
+                        mPayInvoiceDialog = new PayInvoiceDialog(mContext);
+                        mPayInvoiceDialog.show(pubkey, assetId, UriUtil.generateLightningUri(item.getInvoice()));
+                    }
                 }
             });
         }
@@ -1470,8 +1507,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
             holder.getView(R.id.layout_invoice_item).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    InvoiceDetailsPopupWindow mInvoiceDetailsPopupWindow = new InvoiceDetailsPopupWindow(mContext);
-                    mInvoiceDetailsPopupWindow.show(mParentLayout, item);
+                    if (PreventContinuousClicksUtil.isNotFastClick()) {
+                        InvoiceDetailsPopupWindow mInvoiceDetailsPopupWindow = new InvoiceDetailsPopupWindow(mContext);
+                        mInvoiceDetailsPopupWindow.show(mParentLayout, item);
+                    }
                 }
             });
         }
@@ -1600,6 +1639,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
         bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
         bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
         bundle.putString(ChannelsActivity.KEY_PUBKEY, pubkey);
+        if (assetId == 0) {
+            bundle.putString(ChannelsActivity.KEY_CHANNEL, "btc");
+        } else {
+            bundle.putString(ChannelsActivity.KEY_CHANNEL, "asset");
+        }
         switchActivity(ChannelsActivity.class, bundle);
     }
 

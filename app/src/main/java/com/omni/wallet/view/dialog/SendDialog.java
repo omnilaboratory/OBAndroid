@@ -9,6 +9,8 @@ import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +36,7 @@ import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.ScanSendActivity;
+import com.omni.wallet.utils.DecimalInputFilter;
 import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.ValidateBitcoinAddress;
 import com.omni.wallet.utils.Wallet;
@@ -294,6 +297,7 @@ public class SendDialog implements Wallet.ScanSendListener {
         }
         fetchWalletBalance();
         final EditText amountInputView = mAlertDialog.findViewById(R.id.etv_send_amount);
+        amountInputView.setFilters(new InputFilter[]{new DecimalInputFilter(8)});
         amountInputView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -785,8 +789,23 @@ public class SendDialog implements Wallet.ScanSendListener {
      */
     private void showStepAddAddressBook() {
         TextView addressTv = mAlertDialog.findViewById(R.id.tv_address);
-        TextView nicknameEdit = mAlertDialog.findViewById(R.id.edit_nickname);
+        addressTv.setFilters(new InputFilter[]{
+                new InputFilter() {
+                    @Override
+                    public CharSequence filter(CharSequence source, int start,
+                                               int end, Spanned spanned, int dStart, int dEnd) {
+                        if (source.equals("")) { // for backspace
+                            return source;
+                        }
+                        if (source.toString().matches("[a-zA-Z0-9 ]+")) {
+                            return source;
+                        }
+                        return "";
+                    }
+                }
+        });
         addressTv.setText(selectAddress);
+        TextView nicknameEdit = mAlertDialog.findViewById(R.id.edit_nickname);
         mAlertDialog.findViewById(R.id.layout_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

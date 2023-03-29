@@ -19,6 +19,7 @@ import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.entity.event.RebootEvent;
@@ -58,6 +59,8 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     LinearLayout mParentLayout;
     @BindView(R.id.view_top)
     View mTopView;
+    @BindView(R.id.tv_network_type)
+    TextView mNetworkTypeTv;
     @BindView(R.id.iv_menu)
     ImageView mMenuIv;
     @BindView(R.id.tv_balance_amount)
@@ -82,9 +85,11 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     public static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";
     public static final String KEY_WALLET_ADDRESS = "walletAddressKey";
     public static final String KEY_PUBKEY = "pubkeyKey";
+    public static final String KEY_CHANNEL = "channelKey";
     long balanceAmount;
     String walletAddress;
     private String pubkey;
+    private String channelKey;
     private String mCurrentSearchString = "";
 
     PayInvoiceDialog mPayInvoiceDialog;
@@ -96,6 +101,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
 //        walletAddress = bundle.getString(KEY_WALLET_ADDRESS);
         walletAddress = User.getInstance().getWalletAddress(mContext);
         pubkey = bundle.getString(KEY_PUBKEY);
+        channelKey = bundle.getString(KEY_CHANNEL);
     }
 
     @Override
@@ -115,6 +121,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
 
     @Override
     protected void initView() {
+        mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
         if (balanceAmount == 0) {
             DecimalFormat df = new DecimalFormat("0.00");
             mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));
@@ -168,11 +175,31 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
         // Add all open channel items
         if (Wallet.getInstance().mOpenChannelsList != null) {
             for (LightningOuterClass.Channel c : Wallet.getInstance().mOpenChannelsList) {
-                OpenChannelItem openChannelItem = new OpenChannelItem(c);
-                if (c.getActive()) {
-                    mChannelItems.add(openChannelItem);
-                } else {
-                    offlineChannels.add(openChannelItem);
+                if (channelKey.equals("all")) {
+                    OpenChannelItem openChannelItem = new OpenChannelItem(c);
+                    if (c.getActive()) {
+                        mChannelItems.add(openChannelItem);
+                    } else {
+                        offlineChannels.add(openChannelItem);
+                    }
+                } else if (channelKey.equals("btc")) {
+                    if (StringUtils.isEmpty(String.valueOf(c.getAssetId())) || c.getAssetId() == 0) {
+                        OpenChannelItem openChannelItem = new OpenChannelItem(c);
+                        if (c.getActive()) {
+                            mChannelItems.add(openChannelItem);
+                        } else {
+                            offlineChannels.add(openChannelItem);
+                        }
+                    }
+                } else if (channelKey.equals("asset")) {
+                    if (c.getAssetId() != 0) {
+                        OpenChannelItem openChannelItem = new OpenChannelItem(c);
+                        if (c.getActive()) {
+                            mChannelItems.add(openChannelItem);
+                        } else {
+                            offlineChannels.add(openChannelItem);
+                        }
+                    }
                 }
             }
         }
@@ -180,29 +207,77 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
         // Add open pending
         if (Wallet.getInstance().mPendingOpenChannelsList != null) {
             for (LightningOuterClass.PendingChannelsResponse.PendingOpenChannel c : Wallet.getInstance().mPendingOpenChannelsList) {
-                PendingOpenChannelItem pendingOpenChannelItem = new PendingOpenChannelItem(c);
-                mChannelItems.add(pendingOpenChannelItem);
+                if (channelKey.equals("all")) {
+                    PendingOpenChannelItem pendingOpenChannelItem = new PendingOpenChannelItem(c);
+                    mChannelItems.add(pendingOpenChannelItem);
+                } else if (channelKey.equals("btc")) {
+                    if (StringUtils.isEmpty(String.valueOf(c.getChannel().getAssetId())) || c.getChannel().getAssetId() == 0) {
+                        PendingOpenChannelItem pendingOpenChannelItem = new PendingOpenChannelItem(c);
+                        mChannelItems.add(pendingOpenChannelItem);
+                    }
+                } else if (channelKey.equals("asset")) {
+                    if (c.getChannel().getAssetId() != 0) {
+                        PendingOpenChannelItem pendingOpenChannelItem = new PendingOpenChannelItem(c);
+                        mChannelItems.add(pendingOpenChannelItem);
+                    }
+                }
             }
         }
         // Add closing pending
         if (Wallet.getInstance().mPendingClosedChannelsList != null) {
             for (LightningOuterClass.PendingChannelsResponse.ClosedChannel c : Wallet.getInstance().mPendingClosedChannelsList) {
-                PendingClosingChannelItem pendingClosingChannelItem = new PendingClosingChannelItem(c);
-                mChannelItems.add(pendingClosingChannelItem);
+                if (channelKey.equals("all")) {
+                    PendingClosingChannelItem pendingClosingChannelItem = new PendingClosingChannelItem(c);
+                    mChannelItems.add(pendingClosingChannelItem);
+                } else if (channelKey.equals("btc")) {
+                    if (StringUtils.isEmpty(String.valueOf(c.getChannel().getAssetId())) || c.getChannel().getAssetId() == 0) {
+                        PendingClosingChannelItem pendingClosingChannelItem = new PendingClosingChannelItem(c);
+                        mChannelItems.add(pendingClosingChannelItem);
+                    }
+                } else if (channelKey.equals("asset")) {
+                    if (c.getChannel().getAssetId() != 0) {
+                        PendingClosingChannelItem pendingClosingChannelItem = new PendingClosingChannelItem(c);
+                        mChannelItems.add(pendingClosingChannelItem);
+                    }
+                }
             }
         }
         // Add force closing pending
         if (Wallet.getInstance().mPendingForceClosedChannelsList != null) {
             for (LightningOuterClass.PendingChannelsResponse.ForceClosedChannel c : Wallet.getInstance().mPendingForceClosedChannelsList) {
-                PendingForceClosingChannelItem pendingForceClosingChannelItem = new PendingForceClosingChannelItem(c);
-                mChannelItems.add(pendingForceClosingChannelItem);
+                if (channelKey.equals("all")) {
+                    PendingForceClosingChannelItem pendingForceClosingChannelItem = new PendingForceClosingChannelItem(c);
+                    mChannelItems.add(pendingForceClosingChannelItem);
+                } else if (channelKey.equals("btc")) {
+                    if (StringUtils.isEmpty(String.valueOf(c.getChannel().getAssetId())) || c.getChannel().getAssetId() == 0) {
+                        PendingForceClosingChannelItem pendingForceClosingChannelItem = new PendingForceClosingChannelItem(c);
+                        mChannelItems.add(pendingForceClosingChannelItem);
+                    }
+                } else if (channelKey.equals("asset")) {
+                    if (c.getChannel().getAssetId() != 0) {
+                        PendingForceClosingChannelItem pendingForceClosingChannelItem = new PendingForceClosingChannelItem(c);
+                        mChannelItems.add(pendingForceClosingChannelItem);
+                    }
+                }
             }
         }
         // Add waiting for close
         if (Wallet.getInstance().mPendingWaitingCloseChannelsList != null) {
             for (LightningOuterClass.PendingChannelsResponse.WaitingCloseChannel c : Wallet.getInstance().mPendingWaitingCloseChannelsList) {
-                WaitingCloseChannelItem waitingCloseChannelItem = new WaitingCloseChannelItem(c);
-                mChannelItems.add(waitingCloseChannelItem);
+                if (channelKey.equals("all")) {
+                    WaitingCloseChannelItem waitingCloseChannelItem = new WaitingCloseChannelItem(c);
+                    mChannelItems.add(waitingCloseChannelItem);
+                } else if (channelKey.equals("btc")) {
+                    if (StringUtils.isEmpty(String.valueOf(c.getChannel().getAssetId())) || c.getChannel().getAssetId() == 0) {
+                        WaitingCloseChannelItem waitingCloseChannelItem = new WaitingCloseChannelItem(c);
+                        mChannelItems.add(waitingCloseChannelItem);
+                    }
+                } else if (channelKey.equals("asset")) {
+                    if (c.getChannel().getAssetId() != 0) {
+                        WaitingCloseChannelItem waitingCloseChannelItem = new WaitingCloseChannelItem(c);
+                        mChannelItems.add(waitingCloseChannelItem);
+                    }
+                }
             }
         }
         // Show offline channels at the bottom
@@ -321,7 +396,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
      */
     @OnClick(R.id.iv_filter)
     public void clickFilter() {
-        ToastUtils.showToast(mContext,"Not yet open, please wait");
+        ToastUtils.showToast(mContext, "Not yet open, please wait");
     }
 
     @OnClick(R.id.iv_create_channel)

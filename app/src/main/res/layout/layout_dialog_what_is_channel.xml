@@ -17,8 +17,7 @@
             android:layout_width="@dimen/main_320"
             android:layout_height="@dimen/main_580"
             android:background="@drawable/bg_white_rectangle_round_20"
-            android:orientation="vertical"
-            android:scrollbars="vertical">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -34,7 +33,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/main_25"
-                android:layout_marginBottom="@dimen/main_40">
+                android:layout_marginBottom="@dimen/main_40"
+                android:scrollbars="vertical">
 
                 <RelativeLayout
                     android:layout_width="match_parent"

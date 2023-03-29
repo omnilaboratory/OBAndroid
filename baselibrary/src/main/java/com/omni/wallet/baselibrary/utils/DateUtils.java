@@ -66,6 +66,16 @@ public class DateUtils {
     }
 
     /**
+     * 十位时间戳字符串转年月日
+     */
+    public static String yearMonthDay(String time) {
+        SimpleDateFormat sdr = new SimpleDateFormat("yyyy/MM/dd");
+        int i = Integer.parseInt(time);
+        String times = sdr.format(new Date(i * 1000L));
+        return times;
+    }
+
+    /**
      * 格式化当前时间
      */
     public static String formatCurrentDate() {

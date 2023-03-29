@@ -49,6 +49,8 @@ public class User {
     // 是否正在显示版本更新的Dialog
     private boolean isShowUpdateDialog = false;
     /***************************Omni Wallet**********************************/
+    // Alias(别名)
+    private String alias;
     // Network type(网络类型)
     private String network;
     // Wallet address(钱包地址)
@@ -95,6 +97,14 @@ public class User {
 
     // Balance amount(账户余额)
     private long balanceAmount;
+
+    private String newPassMd5String;
+
+    private boolean headerBinChecked;
+
+    private boolean filterHeaderBinChecked;
+
+    private boolean neutrinoDbChecked;
 
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
@@ -204,6 +214,15 @@ public class User {
     }
 
     /***************************Omni Wallet**********************************/
+    public String getAlias(Context context) {
+        alias = PreferencesUtils.getAliasFromLocal(context);
+        return alias;
+    }
+
+    public void setAlias(Context context, String alias) {
+        PreferencesUtils.saveAliasToLocal(context, alias);
+        this.alias = alias;
+    }
 
     public String getNetwork(Context context) {
         network = PreferencesUtils.getNetworkFromLocal(context);
@@ -470,6 +489,49 @@ public class User {
         this.balanceAmount = balanceAmount;
     }
 
+    public String getNewPasswordMd5(Context context){
+        newPassMd5String = PreferencesUtils.getNewPassMd5String(context);
+        if (newPassMd5String == null) {
+            newPassMd5String = "";
+        }
+        return newPassMd5String;
+    }
+
+    public void setNewPasswordMd5(Context context, String newPassMd5String) {
+        PreferencesUtils.saveNewPassMd5String(context, newPassMd5String);
+        this.newPassMd5String = newPassMd5String;
+    }
+
+    public boolean isHeaderBinChecked(Context context){
+        headerBinChecked = PreferencesUtils.getHeaderBinChecked(context);
+        return headerBinChecked;
+    }
+
+    public void setHeaderBinChecked(Context context, boolean headerBinChecked) {
+        PreferencesUtils.saveHeaderBinChecked(context, headerBinChecked);
+        this.headerBinChecked = headerBinChecked;
+    }
+
+    public boolean isFilterHeaderBinChecked(Context context){
+        filterHeaderBinChecked = PreferencesUtils.getFilterHeaderBinChecked(context);
+        return filterHeaderBinChecked;
+    }
+
+    public void setFilterHeaderBinChecked(Context context, boolean filterHeaderBinChecked) {
+        PreferencesUtils.saveFilterHeaderBinChecked(context, filterHeaderBinChecked);
+        this.filterHeaderBinChecked = filterHeaderBinChecked;
+    }
+
+    public boolean isNeutrinoDbChecked(Context context){
+        neutrinoDbChecked = PreferencesUtils.getNeutrinoDbChecked(context);
+        return neutrinoDbChecked;
+    }
+
+    public void setNeutrinoDbChecked(Context context, boolean neutrinoDbChecked) {
+        PreferencesUtils.saveNeutrinoDbChecked(context, neutrinoDbChecked);
+        this.neutrinoDbChecked = neutrinoDbChecked;
+    }
+
     /**
      * 清空用户登录相关信息
      */
@@ -499,6 +561,7 @@ public class User {
     public void clear() {
         mInstance = null;
     }
+
 
 
 }

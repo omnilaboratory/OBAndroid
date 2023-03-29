@@ -1013,6 +1013,7 @@
     <dimen name="main_560">560dp</dimen>
     <dimen name="main_580">580dp</dimen>
     <dimen name="main_590">590dp</dimen>
+    <dimen name="main_600">600dp</dimen>
     <dimen name="main_610">610dp</dimen>
 
     <!--负数-->

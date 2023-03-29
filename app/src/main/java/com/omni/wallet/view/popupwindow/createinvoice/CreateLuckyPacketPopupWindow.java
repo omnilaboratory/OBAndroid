@@ -28,14 +28,17 @@ import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.baselibrary.utils.image.BitmapUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.client.LuckPkClient;
 import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.RedCodeUtils;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.DecimalInputFilter;
 import com.omni.wallet.utils.EditInputFilter;
 import com.omni.wallet.utils.RefConstants;
 import com.omni.wallet.utils.ShareUtil;
@@ -43,6 +46,7 @@ import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.CreateChannelTipDialog;
 import com.omni.wallet.view.dialog.CreateNewChannelTipDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
+import com.omni.wallet.view.dialog.RedQRCodeDialog;
 import com.omni.wallet.view.popupwindow.SelectChannelBalancePopupWindow;
 import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
 
@@ -161,6 +165,7 @@ public class CreateLuckyPacketPopupWindow {
         mProgressBar = rootView.findViewById(R.id.progressbar);
         TextView amountMaxTv = rootView.findViewById(R.id.tv_amount_max);
         EditText amountEdit = rootView.findViewById(R.id.edit_amount);
+        amountEdit.setFilters(new InputFilter[]{new DecimalInputFilter(8)});
         TextView amountUnitTv = rootView.findViewById(R.id.tv_amount_unit);
         Button timeButton = rootView.findViewById(R.id.btn_time);
         EditText amountTimeEdit = rootView.findViewById(R.id.edit_time);
@@ -241,10 +246,10 @@ public class CreateLuckyPacketPopupWindow {
             }
         });
         /**
-         * @描述： 点击Next
-         * @desc: click next button
+         * @描述： 点击confirm
+         * @desc: click confirm button
          */
-        rootView.findViewById(R.id.layout_next).setOnClickListener(new View.OnClickListener() {
+        rootView.findViewById(R.id.layout_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 amountInput = amountEdit.getText().toString();
@@ -703,6 +708,22 @@ public class CreateLuckyPacketPopupWindow {
         Bitmap mQRBitmap = RedCodeUtils.createQRCode(qrCodeCotent, DisplayUtil.dp2px(mContext, 100));
         qrCodeIv.setImageBitmap(mQRBitmap);
 
+        qrCodeIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RedQRCodeDialog mRedQrCodeDialog = new RedQRCodeDialog(mContext);
+                mRedQrCodeDialog.show(qrCodeCotent);
+            }
+        });
+        qrCodeIv.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                String fileName = "luckyPacket_" + User.getInstance().getAlias(mContext) + ".jpg";
+                BitmapUtils.saveBitmap2Gallery(mContext, mQRBitmap, fileName);
+                ToastUtils.showToast(mContext, "QR code saved successfully");
+                return true;
+            }
+        });
         copyIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -716,17 +737,15 @@ public class CreateLuckyPacketPopupWindow {
             }
         });
         /**
-         * @描述： 点击Back
-         * @desc: click back button
+         * @描述： 点击save
+         * @desc: click save button
          */
-        rootView.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
+        rootView.findViewById(R.id.layout_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.GONE);
-                rootView.findViewById(R.id.layout_cancel).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.layout_close).setVisibility(View.GONE);
-                showStepOne(rootView);
+                String fileName = "luckyPacket_" + User.getInstance().getAlias(mContext) + ".jpg";
+                BitmapUtils.saveBitmap2Gallery(mContext, mQRBitmap, fileName);
+                ToastUtils.showToast(mContext, "QR code saved successfully");
             }
         });
 

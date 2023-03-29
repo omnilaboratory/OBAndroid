@@ -24,6 +24,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_FIRST_LOGIN = "firstLoginKey";// 新用户第一次登陆标识Ke
     private static final String KEY_VERSION_CODE = "versionCodeKey";// 保存版本信息的Key
     /****************************Omni Wallet*********************************/
+    private static final String KEY_ALIAS = "aliasKey";// Save the key of the alias(保存别名的Key)
     private static final String KEY_NETWORK = "networkKey";// Save the key of the network type(保存网络类型的Key)
     private static final String KEY_WALLET_ADDRESS = "walletAddressKey";// Save the key of the wallet address(保存钱包地址的Key)
     private static final String KEY_NODE_VERSION = "nodeVersionKey";// Save the key of the node version(保存节点版本的Key)
@@ -32,6 +33,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_USDT_PRICE = "usdtPriceChangeKey";// Save the key of the Usdt price(保存usdt价格变化的Key)
     private static final String KEY_FROM_PUBKEY = "fromPubKeyKey";// Save the key of the pubKey of its own node(自身节点pubkey的Key)
     private static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";// Save the key of the balance amount(账户余额的Key)
+    private static final String KEY_NEW_PASS_MD5_STRING = "newPassMd5Key";
 
 
     private static final String INIT_WALLET_TYPE = "initWalletType";
@@ -54,6 +56,9 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String RESTORED_CHANNEL = "restoredChannel";
     private static final String TOTAL_BLOCK = "totalBlock";
     private static final String ASSETS_COUNT = "assetsCount";
+    private static final String KEY_HEADER_BIN_CHECKED = "headerBinChecked";
+    private static final String KEY_FILTER_HEADER_BIN_CHECKED = "filterBinChecked";
+    private static final String KEY_NEUTRINO_DB_CHECKED = "neutrinoDbChecked";
 
 
     /**
@@ -212,6 +217,24 @@ public class PreferencesUtils extends BasePreferencesUtils {
     }
 
     /***************************Omni Wallet**********************************/
+    /**
+     * getAliasFromLocal
+     *
+     * 获取本地保存的别名
+     */
+    public static String getAliasFromLocal(Context context) {
+        return getString(SETTINGS, context, KEY_ALIAS);
+    }
+
+    /**
+     * saveAliasToLocal
+     *
+     * 别名本地化
+     */
+    public static void saveAliasToLocal(Context context, String value) {
+        putString(SETTINGS, context, KEY_ALIAS, value);
+    }
+
     /**
      * getNetworkFromLocal
      *
@@ -467,5 +490,37 @@ public class PreferencesUtils extends BasePreferencesUtils {
      */
     public static void saveBalanceAmount(Context context, long value) {
         putLong(SETTINGS, context, KEY_BALANCE_AMOUNT, value);
+    }
+
+    public static String getNewPassMd5String(Context context) {
+        return getString(SETTINGS, context, KEY_NEW_PASS_MD5_STRING);
+    }
+
+    public static void saveNewPassMd5String(Context context, String value) {
+        putString(SETTINGS,context,KEY_NEW_PASS_MD5_STRING,value);
+    }
+
+    public static void saveHeaderBinChecked(Context context, boolean value) {
+        putBoolean(SETTINGS,context,KEY_HEADER_BIN_CHECKED,value);
+    }
+
+    public static boolean getHeaderBinChecked(Context context) {
+        return getBoolean(SETTINGS,context,KEY_HEADER_BIN_CHECKED);
+    }
+
+    public static void saveFilterHeaderBinChecked(Context context, boolean value) {
+        putBoolean(SETTINGS,context,KEY_FILTER_HEADER_BIN_CHECKED,value);
+    }
+
+    public static boolean getFilterHeaderBinChecked(Context context) {
+        return getBoolean(SETTINGS,context,KEY_FILTER_HEADER_BIN_CHECKED);
+    }
+
+    public static void saveNeutrinoDbChecked(Context context, boolean value) {
+        putBoolean(SETTINGS,context,KEY_NEUTRINO_DB_CHECKED,value);
+    }
+
+    public static boolean getNeutrinoDbChecked(Context context) {
+        return getBoolean(SETTINGS,context,KEY_NEUTRINO_DB_CHECKED);
     }
 }

@@ -57,15 +57,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/download_header"
-                    android:textSize="16sp"
+                    android:textSize="16dp"
                     android:textColor="#7f000000"
-                    android:layout_marginRight="5dp"/>
+                    android:layout_marginEnd="5dp"/>
                 <TextView
                     android:id="@+id/sync_percent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sync_block_percent"
-                    android:textSize="16sp"
+                    android:textSize="16dp"
                     android:textColor="#7F06D78F"/>
                 <ImageView
                     android:id="@+id/refresh_btn"

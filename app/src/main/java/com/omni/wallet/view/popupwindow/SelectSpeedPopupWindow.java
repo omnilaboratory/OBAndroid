@@ -30,6 +30,8 @@ public class SelectSpeedPopupWindow {
             View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_select_speed);
             mBasePopWindow.setWidth(view.getWidth());
             mBasePopWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+            mBasePopWindow.setOutsideTouchable(true);
+            mBasePopWindow.setFocusable(false);
             // Click SLOW
             rootView.findViewById(R.id.tv_slow).setOnClickListener(new View.OnClickListener() {
                 @Override
