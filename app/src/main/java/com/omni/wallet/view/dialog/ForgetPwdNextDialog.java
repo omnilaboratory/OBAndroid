@@ -11,29 +11,16 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
-import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CheckInputRules;
-import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.Md5Util;
-import com.omni.wallet.utils.WalletState;
 
 import android.os.Handler;
-
-import lnrpc.Stateservice;
-import lnrpc.Walletunlocker;
-import obdmobile.Callback;
-import obdmobile.Obdmobile;
 
 public class ForgetPwdNextDialog {
     public static final String TAG = ForgetPwdNextDialog.class.getSimpleName();
@@ -44,7 +31,6 @@ public class ForgetPwdNextDialog {
     private AlertDialog mForgetPwdDialog;
     private AlertDialog mUnlockDialog;
     private LoadingDialog mLoadingDialog;
-    private Handler mHandler = new Handler();
 
 
     ForgetPwdNextDialog(Context context, AlertDialog forgetPwdDialog, AlertDialog unlockDialog){
@@ -254,9 +240,9 @@ public class ForgetPwdNextDialog {
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
             Log.d(TAG,"start change password");
-            /**
-             * 使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
-             * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
+            /*
+              使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
+              Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
              */
             String newPassMd5String = Md5Util.getMD5Str(password);
             User.getInstance().setNewPasswordMd5(mContext,newPassMd5String);
