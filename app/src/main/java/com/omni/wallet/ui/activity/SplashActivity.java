@@ -23,15 +23,15 @@ import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
-import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.framelibrary.common.Constants;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.obdMethods.NodeStart;
 import com.omni.wallet.utils.AppVersionUtils;
 import com.omni.wallet.utils.FilesUtils;
 import com.omni.wallet.utils.NetworkChangeReceiver;
 import com.omni.wallet.utils.PreFilesUtils;
-import com.omni.wallet.utils.WalletState;
+import com.omni.wallet.obdMethods.WalletState;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,12 +43,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import obdmobile.Callback;
-import obdmobile.Obdmobile;
 
 /**
  * The page for initial
@@ -97,8 +94,6 @@ public class SplashActivity extends AppBaseActivity {
     PreFilesUtils preFilesUtils;
 
     boolean isDownloading = false;
-    int downloadingId = -1;
-    String alias;
 
     @Override
     protected boolean isFullScreenStyle() {
@@ -166,12 +161,12 @@ public class SplashActivity extends AppBaseActivity {
 
         };
         networkChangeReceiver.setCallBackNetWork(callBackNetWork);
-
+        subscribeWalletState();
         runOnUiThread(() -> registerReceiver(networkChangeReceiver, intentFilter));
 
-        /**
-         * check version code to update all states
-         * 检查版本号，更新各个状态
+        /*
+          check version code to update all states
+          检查版本号，更新各个状态
          */
         AppVersionUtils.checkVersion(mContext);
     }
@@ -416,62 +411,7 @@ public class SplashActivity extends AppBaseActivity {
 
 
     public void startNode() {
-        if(StringUtils.isEmpty(User.getInstance().getAlias(mContext))){
-            Random random = new Random();
-            int randonNum = random.nextInt(100) +1;
-            alias = "alice"+ "(" + randonNum + ")";
-            User.getInstance().setAlias(mContext,alias);
-        } else {
-            alias = User.getInstance().getAlias(mContext);
-        }
-        LogUtils.e("================", alias);
-        LogUtils.e("================", ConstantInOB.usingNeutrinoConfig + alias);
-        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + alias, new Callback() {
-            @Override
-            public void onError(Exception e) {
-                /*if (e.getMessage().contains("lnd already started")) {
-                    runOnUiThread(() -> {
-                        String walletInitType = User.getInstance().getInitWalletType(mContext);
-                        if (walletInitType.equals("initialed")) {
-                            Log.d(TAG, "onError: wallet already started");
-                            handler.postDelayed(() -> {
-                                switchActivityFinish(UnlockActivity.class);
-                            }, Constants.SPLASH_SLEEP_TIME);
-                        } else {
-                            Log.d(TAG, "onError: wallet already started3");
-                            handler.postDelayed(() -> {
-                                switchActivityFinish(InitWalletMenuActivity.class);
-                            }, Constants.SPLASH_SLEEP_TIME);
-                        }
-                    });
-                } else*/ if (e.getMessage().contains("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
-                    ToastUtils.showToast(mContext, "unable to unpack single backups that message authentication failed");
-                } else if (e.getMessage().contains("error creating wallet config: unable to initialize neutrino backend: unable to create neutrino database: cannot allocate memory")) {
-                    ToastUtils.showToast(mContext, "Failed to start, please check your cache is sufficient. After confirming that the cache is sufficient, please restart the App.");
-                }
-
-                LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                runOnUiThread(() -> subscribeWalletState());
-                LogUtils.e(TAG, "------------------startonSuccess------------------");
-            }
-        });
-    }
-
-    @SuppressLint({"DefaultLocale", "SetTextI18n"})
-    private void updateDataView(double currentMb, double totalMb) {
-        double percent = (currentMb / totalMb * 100);
-        double totalWidth = rvMyProcessOuter.getWidth();
-        int innerHeight = rvMyProcessOuter.getHeight() - 2;
-        int innerWidth = (int) (totalWidth * percent / 100);
-        String percentString = String.format("%.2f", percent);
-        syncPercentView.setText(percentString + "%");
-        RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth, innerHeight);
-        rvProcessInner.setLayoutParams(rlInnerParam);
-        syncedBlockNumView.setText(String.format("%.2f", currentMb) + "MB");
+        NodeStart.getInstance().startWhenStopWithSubscribeState(mContext);
     }
 
     public void readManifestFile() {
@@ -511,7 +451,6 @@ public class SplashActivity extends AppBaseActivity {
         boolean isHeaderBinChecked = User.getInstance().isHeaderBinChecked(mContext);
         boolean isFilterHeaderBinChecked = User.getInstance().isFilterHeaderBinChecked(mContext);
         boolean isNeutrinoDbChecked = User.getInstance().isNeutrinoDbChecked(mContext);
-        Log.d(TAG, "actionAfterPromise: " + isHeaderBinChecked + " " + isFilterHeaderBinChecked + "" + isNeutrinoDbChecked);
 
         if (isHeaderBinChecked) {
             if (isFilterHeaderBinChecked) {
@@ -561,7 +500,6 @@ public class SplashActivity extends AppBaseActivity {
             default:
                 break;
         }
-
     }
 
 
@@ -571,7 +509,9 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     public void subscribeWalletState() {
+        Log.d(TAG, "subscribeWalletState: " +User.getInstance().getSeedString(mContext));
         Log.d(TAG, "do subscribe action");
+        WalletState.getInstance().setWalletState(-100);
         String walletInitType = User.getInstance().getInitWalletType(mContext);
         WalletState.WalletStateCallback walletStateCallback = walletState -> {
             Log.d(TAG, "walletState:" + walletState);
@@ -586,24 +526,19 @@ public class SplashActivity extends AppBaseActivity {
                     break;
                 case 1:
                 case -1:
-                    if (walletInitType.equals("initialed")) {
-                        handler.postDelayed(() -> {
+                    handler.postDelayed(() -> {
+                        if (walletInitType.equals("initialed")) {
                             switchActivityFinish(UnlockActivity.class);
-                        }, Constants.SPLASH_SLEEP_TIME);
-                        break;
-                    } else {
-                        handler.postDelayed(() -> {
-                            Log.d(TAG, "onError: wallet already started2");
+                        } else {
                             switchActivityFinish(InitWalletMenuActivity.class);
-                        }, Constants.SPLASH_SLEEP_TIME);
-                        break;
-                    }
+                        }
+                    }, Constants.SPLASH_SLEEP_TIME);
+                    break;
                 default:
                     break;
             }
         };
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
-        WalletState.getInstance().subscribeWalletState(mContext);
     }
 
 }

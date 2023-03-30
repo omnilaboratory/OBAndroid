@@ -28,7 +28,7 @@ import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
-import com.omni.wallet.utils.WalletState;
+import com.omni.wallet.obdMethods.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;

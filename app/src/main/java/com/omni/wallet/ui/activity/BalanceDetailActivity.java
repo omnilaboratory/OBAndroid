@@ -34,6 +34,7 @@ import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
+import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuStateListener;
 import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.PaymentEntity;
 import com.omni.wallet.entity.TransactionAssetEntity;
@@ -1219,13 +1220,28 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 holder.setText(R.id.tv_receiver, "unknown");
             }
             final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_to_be_paid_list_swipe_menu);
+            menuLayout.setSwipeMenuStateListener(new SwipeMenuStateListener() {
+                @Override
+                public void menuIsOpen(boolean isOpen) {
+                    if (!isOpen) {
+                        holder.getView(R.id.layout_to_be_paid_delete).setVisibility(View.GONE);
+                    }
+                }
+            });
             holder.getView(R.id.tv_to_be_paid_delete).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.getView(R.id.layout_to_be_paid_delete).setVisibility(View.VISIBLE);
+                }
+            });
+            holder.getView(R.id.tv_to_be_paid_confirm).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     /**
                      * Used to delete a payment probe.
                      * 删除付款
                      */
+                    holder.getView(R.id.layout_to_be_paid_delete).setVisibility(View.GONE);
                     menuLayout.quickClose();
                     if (item.getAssetId() == 0) {
                         mToBePaidData.remove(position);
@@ -1256,6 +1272,12 @@ public class BalanceDetailActivity extends AppBaseActivity {
                         editor.putString("invoiceListKey", jsonStr);
                         editor.commit();
                     }
+                }
+            });
+            holder.getView(R.id.tv_to_be_paid_no).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.getView(R.id.layout_to_be_paid_delete).setVisibility(View.GONE);
                 }
             });
             holder.getView(R.id.layout_to_be_paid_list).setOnClickListener(new View.OnClickListener() {
@@ -1471,7 +1493,21 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     }
                 }
             }
+            menuLayout.setSwipeMenuStateListener(new SwipeMenuStateListener() {
+                @Override
+                public void menuIsOpen(boolean isOpen) {
+                    if (!isOpen) {
+                        holder.getView(R.id.layout_my_invoices_delete).setVisibility(View.GONE);
+                    }
+                }
+            });
             holder.getView(R.id.tv_my_invoices_delete).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.getView(R.id.layout_my_invoices_delete).setVisibility(View.VISIBLE);
+                }
+            });
+            holder.getView(R.id.tv_my_invoices_confirm).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     /**
@@ -1489,9 +1525,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
                         @Override
                         public void onResponse(byte[] bytes) {
+                            LogUtils.e(TAG, "------------------invoicesCancelInvoiceOnResponse------------------");
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    holder.getView(R.id.layout_my_invoices_delete).setVisibility(View.GONE);
                                     menuLayout.quickClose();
                                     mMyInvoicesData.remove(position);
                                     mMyInvoicesAdapter.notifyRemoveItem(position);
@@ -1502,6 +1540,12 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             });
                         }
                     });
+                }
+            });
+            holder.getView(R.id.tv_my_invoices_no).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.getView(R.id.layout_my_invoices_delete).setVisibility(View.GONE);
                 }
             });
             holder.getView(R.id.layout_invoice_item).setOnClickListener(new View.OnClickListener() {

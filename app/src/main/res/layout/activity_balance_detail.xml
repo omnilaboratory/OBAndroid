@@ -970,34 +970,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/main_10"
                         android:layout_marginBottom="@dimen/main_30"/>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/main_30"
-                        android:orientation="horizontal"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/tv_to_be_paid_confirm"
-                            android:layout_width="@dimen/main_100"
-                            android:layout_height="@dimen/main_40"
-                            android:background="@drawable/bg_e51414_rectangle_round_6"
-                            android:gravity="center"
-                            android:text="@string/confirm"
-                            android:textColor="@color/color_white"/>
-
-                        <TextView
-                            android:id="@+id/tv_to_be_paid_no"
-                            android:layout_width="@dimen/main_100"
-                            android:layout_height="@dimen/main_40"
-                            android:layout_marginLeft="@dimen/main_40"
-                            android:background="@drawable/bg_d9d9d9_rectangle_round_6"
-                            android:gravity="center"
-                            android:text="@string/no"
-                            android:textColor="@color/color_black"/>
-                    </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
 
@@ -1205,34 +1177,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/main_10"
                         android:layout_marginBottom="@dimen/main_30"/>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/main_30"
-                        android:orientation="horizontal"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/tv_my_invoices_confirm"
-                            android:layout_width="@dimen/main_100"
-                            android:layout_height="@dimen/main_40"
-                            android:background="@drawable/bg_e51414_rectangle_round_6"
-                            android:gravity="center"
-                            android:text="@string/confirm"
-                            android:textColor="@color/color_white"/>
-
-                        <TextView
-                            android:id="@+id/tv_my_invoices_no"
-                            android:layout_width="@dimen/main_100"
-                            android:layout_height="@dimen/main_40"
-                            android:layout_marginLeft="@dimen/main_40"
-                            android:background="@drawable/bg_d9d9d9_rectangle_round_6"
-                            android:gravity="center"
-                            android:text="@string/no"
-                            android:textColor="@color/color_black"/>
-                    </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>
