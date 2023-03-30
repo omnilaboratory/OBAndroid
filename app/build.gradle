@@ -97,6 +97,7 @@ android {
         exclude 'META-INF/NOTICE' // will not include NOTICE file
         exclude 'META-INF/LICENSE' // will not include LICENSE file
         exclude 'META-INF/INDEX.LIST' // will not include INDEX.LIST file
+        doNotStrip '**/*.so'
     }
 }
 
