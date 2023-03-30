@@ -187,7 +187,7 @@ public class AssetsActions {
                     Log.d(TAG, "initOrUpdateDataStartApp: price: " + priceString);
                     double price = Double.parseDouble(priceString);
                     String id = priceList.getJSONObject(i).getString("id");
-                    String propertyId="";
+                    String propertyId;
                     // Update the price and today's asset value according to propertyId
                     switch (id) {
                         case "bitcoin":
@@ -221,9 +221,10 @@ public class AssetsActions {
             AssetsDataDao assetsDataDao = new AssetsDataDao(context);
             for (int i = 0; i < usingAssetsList.size(); i++) {
                 String id = (String) usingAssetsList.get(i).get("token_name");
-                String propertyId = "";
-                List<Map<String, Object>> list = new ArrayList<>();
+                String propertyId;
+                List<Map<String, Object>> list;
                 // Update the price and today's asset value according to propertyId
+                assert id != null;
                 switch (id) {
                     case "btc":
                         propertyId = (String) propertyMap.get("btc");
@@ -286,7 +287,7 @@ public class AssetsActions {
         WalletServiceUtil.GetAssetChannelBalanceCallback getAssetChannelBalanceCallback
                 = (Context mContext, String propertyId, long channelAmountLong, int index, int assetCount) -> {
 
-            double channelAmount = 0.0;
+            double channelAmount;
             if (propertyId.equals("0")) {
                 channelAmount = UtilFunctions.parseAmount(channelAmountLong, 11);
             } else {
@@ -434,15 +435,13 @@ public class AssetsActions {
      */
     public static Map<String, Object> getDataForChart(Context context) {
         AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
-        List<Map<String, Object>> valueList2 = assetsValueDataDao.queryAssetValueDataAll();
         List<Map<String, Object>> valueList = assetsValueDataDao.queryAssetValueDataOneYear();
         Map<String, Double> changeMap = new HashMap<>();
         List<Map<String, Object>> chartDataList = new ArrayList<>();
         Collections.reverse(valueList);
-        Log.d(TAG + "getDataForChart ", valueList.toString());
         if (valueList.size() > 0) {
-            double value = 0;
-            double changePercent = 0;
+            double value;
+            double changePercent;
             if (valueList.size() > 1) {
                 value = (double) valueList.get(valueList.size() - 1).get("value");
                 if ((double)valueList.get(valueList.size() - 2).get("value") == 0 ){

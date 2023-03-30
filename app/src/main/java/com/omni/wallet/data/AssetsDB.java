@@ -1,5 +1,6 @@
 package com.omni.wallet.data;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -17,11 +18,10 @@ import java.util.Map;
 public class AssetsDB extends SQLiteOpenHelper {
     private final static String TAG = AssetsDB.class.getSimpleName();
 
+    @SuppressLint("StaticFieldLeak")
     private static AssetsDB mInstance;
 
-    private static Context mContext;
-
-    public AssetsDB(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
+    private AssetsDB(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 

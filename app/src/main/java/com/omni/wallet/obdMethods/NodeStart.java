@@ -78,7 +78,7 @@ public class NodeStart {
         }
     }
     public void startWhenStopWithSubscribeState (Context context){
-        Thread thread =new Thread(() -> WalletState.getInstance().subscribeWalletState());
+        Thread thread =new Thread(() -> WalletState.getInstance().subscribeWalletState(context));
         thread.start();
         startWhenStop(context);
     }

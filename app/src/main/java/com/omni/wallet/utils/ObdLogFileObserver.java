@@ -153,7 +153,6 @@ public class ObdLogFileObserver extends FileObserver {
             }
 
         }
-        
     }
     
     

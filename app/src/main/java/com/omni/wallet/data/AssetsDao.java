@@ -64,44 +64,6 @@ public class AssetsDao {
         }
     }
 
-    public List<Map<String,Object>> getAssetsList(){
-        List<Map<String,Object>> assetsList = new ArrayList<Map<String, Object>>();
-        String sql = "select * from assets";
-        SQLiteDatabase db = mInstance.getReadableDatabase();
-        Cursor cursor = db.rawQuery(sql, new String[]{});
-        while (cursor.moveToNext()){
-            Map<String,Object> asset = new HashMap<>();
-            asset.put("property_id",cursor.getString(cursor.getColumnIndex("property_id")));
-            asset.put("token_name",cursor.getString(cursor.getColumnIndex("token_name")));
-            assetsList.add(asset);
-        }
-        cursor.close();
-//        db.close();
-        return assetsList;
-    }
-
-    public int getAssetsCount(){
-        int count = 0;
-        String sql = "select * from assets";
-        SQLiteDatabase db = mInstance.getReadableDatabase();
-        Cursor cursor = db.rawQuery(sql, new String[]{});
-        count = cursor.getCount();
-        cursor.close();
-//        db.close();
-        return count;
-    }
-
-    public int getUsingAssetCount(){
-        int count = 0;
-        String sql = "select * from assets where has_balance = 1";
-        SQLiteDatabase db = mInstance.getReadableDatabase();
-        Cursor cursor = db.rawQuery(sql, new String[]{});
-        count = cursor.getCount();
-        cursor.close();
-//        db.close();
-        return count;
-    }
-
     public List<Map<String,Object>> getUsingAssetsList(){
         List<Map<String,Object>> assetsList = new ArrayList<Map<String, Object>>();
         String sql = "select * from assets where has_balance = 1";

@@ -1,6 +1,7 @@
 package com.omni.wallet.obdMethods;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
@@ -22,6 +23,7 @@ public class WalletState {
     private WalletStateCallback walletStateCallback = null;
     private Handler handler = new Handler();
     private int WALLET_STATE = -100;
+    private Context mContext;
     @SuppressLint("CommitPrefEdits")
     public WalletState() {
     }
@@ -58,7 +60,8 @@ public class WalletState {
         this.walletStateCallback = walletStateCallback;
     }
 
-    public void subscribeWalletState(){
+    public void subscribeWalletState(Context context){
+        this.mContext = context;
         handler.post(walletStateRunnable);
     }
 
@@ -87,11 +90,11 @@ public class WalletState {
                     if (walletState != WALLET_STATE){
                         Log.d(TAG,String.valueOf(walletState));
                         WALLET_STATE = walletState;
-                        walletStateCallback.callback(walletState);
-
                         if (WALLET_STATE == 4){
+                            BackupUtils.getInstance().backupChannelToFile(mContext);
                             cancelSubscribe();
                         }
+                        walletStateCallback.callback(walletState);
                     }
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();

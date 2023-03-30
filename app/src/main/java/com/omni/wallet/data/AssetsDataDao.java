@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.utils.TimeFormatUtil;
 
 import java.text.ParseException;
@@ -15,14 +14,13 @@ import java.util.List;
 import java.util.Map;
 
 public class AssetsDataDao {
-    private static AssetsDB mInstance;
-    private final static String TAG = AssetsDataDao.class.getSimpleName();
+    private  AssetsDB mInstance;
 
-    public AssetsDataDao(Context context){
+    AssetsDataDao(Context context){
         this.mInstance = AssetsDB.getInstance(context);
     }
 
-    public void insertAssetsData(String propertyId,double price,double amount,double channelAmount,long date){
+    void insertAssetsData(String propertyId, double price, double amount, double channelAmount, long date){
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -37,7 +35,7 @@ public class AssetsDataDao {
 //        db.close();
     }
 
-    public void insertAssetsData(String propertyId,double price,double amount,double channelAmount){
+    private void insertAssetsData(String propertyId, double price, double amount, double channelAmount){
         try {
             long  date = TimeFormatUtil.getCurrentDayMills();
             insertAssetsData(propertyId,price,amount,channelAmount,date);
@@ -46,7 +44,7 @@ public class AssetsDataDao {
         }
     }
 
-    public void updateAssetDataPrice(String propertyId,double price,long date){
+    private void updateAssetDataPrice(String propertyId, double price, long date){
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -58,7 +56,7 @@ public class AssetsDataDao {
 
 
 
-    public void updateAssetDataPrice(String propertyId,double price){
+    void updateAssetDataPrice(String propertyId, double price){
         try {
             long  date = TimeFormatUtil.getCurrentDayMills();
             updateAssetDataPrice(propertyId,price,date);
@@ -67,7 +65,7 @@ public class AssetsDataDao {
         }
     }
 
-    public void updateAssetDataAmount(String propertyId,double amount,long date){
+    private void updateAssetDataAmount(String propertyId, double amount, long date){
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -77,7 +75,7 @@ public class AssetsDataDao {
 //        db.close();
     }
 
-    public void updateAssetDataAmount(String propertyId,double amount){
+    private void updateAssetDataAmount(String propertyId, double amount){
         try {
             long  date = TimeFormatUtil.getCurrentDayMills();
             updateAssetDataAmount(propertyId,amount,date);
@@ -86,7 +84,7 @@ public class AssetsDataDao {
         }
     }
 
-    public void updateAssetDataChannelAmount(String propertyId,double channelAmount,long date){
+    private void updateAssetDataChannelAmount(String propertyId, double channelAmount, long date){
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -96,7 +94,7 @@ public class AssetsDataDao {
 //        db.close();
     }
 
-    public void updateAssetDataChannelAmount(String propertyId,double channelAmount){
+    void updateAssetDataChannelAmount(String propertyId, double channelAmount){
         try {
             long  date = TimeFormatUtil.getCurrentDayMills();
             updateAssetDataChannelAmount(propertyId,channelAmount,date);
@@ -105,25 +103,7 @@ public class AssetsDataDao {
         }
     }
 
-    public List<Map<String,Object>> queryAllAssetsData(){
-        List<Map<String,Object>> queryList = new ArrayList<>();
-        SQLiteDatabase db = mInstance.getWritableDatabase();
-        String sql = "select * from assets_data ";
-        Cursor cursor = db.rawQuery(sql, new String[]{});
-        while (cursor.moveToNext()){
-            Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getString(cursor.getColumnIndex("update_date")));
-            queryRow.put("price",cursor.getDouble(cursor.getColumnIndex("price")));
-            queryRow.put("amount",cursor.getDouble(cursor.getColumnIndex("amount")));
-            queryRow.put("channelAmount",cursor.getDouble(cursor.getColumnIndex("channel_amount")));
-            queryList.add(queryRow);
-        }
-        cursor.close();
-//        db.close();
-        return queryList;
-    }
-
-    public List<Map<String,Object>> queryAllAssetsDataByDate(long date){
+    List<Map<String,Object>> queryAllAssetsDataByDate(long date){
         List<Map<String,Object>> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
         String sql = "select * from assets_data where update_date=?";
@@ -141,7 +121,7 @@ public class AssetsDataDao {
         return queryList;
     }
 
-    public List<Map<String,Object>> queryAssetLastDataByPropertyId(String propertyId){
+    List<Map<String,Object>> queryAssetLastDataByPropertyId(String propertyId){
         List<Map<String,Object>> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
         String sql = "select * from assets_data where property_id=? order by update_date desc limit 1";
@@ -159,7 +139,7 @@ public class AssetsDataDao {
         return queryList;
     }
 
-    public boolean checkDataExist(String propertyId,long date){
+    private boolean checkDataExist(String propertyId, long date){
         boolean dataExist =false;
         List<Map<String,Object>> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
@@ -180,7 +160,7 @@ public class AssetsDataDao {
 
 
 
-    public Map<String,Object> insertOrUpdateAssetDataByAmount(String propertyId,double amount,long date){
+    void insertOrUpdateAssetDataByAmount(String propertyId, double amount, long date){
         boolean dataExist = checkDataExist(propertyId,date);
         double price = 0;
         double channelAmount = 0;
@@ -196,15 +176,13 @@ public class AssetsDataDao {
             }else {
                 insertAssetsData(propertyId,0,amount,0);
             }
-
         }
         Map<String ,Object> map = new HashMap<>();
         map.put("price",price);
         map.put("channelAmount",channelAmount);
         map.put("amount",amount);
         map.put("date",date);
-        return map;
-//        db.close();
+        //        db.close();
     }
 
     public void clearData(){
