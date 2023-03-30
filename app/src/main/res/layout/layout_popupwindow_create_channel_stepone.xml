@@ -409,14 +409,14 @@
 
                 <Button
                     android:id="@+id/btn_amount_unit"
-                    android:layout_width="@dimen/main_71"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:minWidth="@dimen/main_61"
                     android:layout_marginLeft="@dimen/main_12"
                     android:background="@drawable/bg_black_rectangle_round_0"
                     android:drawableRight="@mipmap/icon_arrow_down_black_one"
                     android:gravity="center"
-                    android:paddingLeft="@dimen/main_2"
-                    android:paddingRight="@dimen/main_2"
+                    android:paddingLeft="@dimen/main_5"
                     android:text="BTC"
                     android:textColor="@color/color_99_transparent"
                     android:textSize="@dimen/text_16"/>

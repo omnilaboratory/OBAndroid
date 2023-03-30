@@ -432,6 +432,13 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             feePerByteTv.setText(R.string.unit_per_byte);
                         }
                         assetId = item.getPropertyid();
+                        if (item.getAmount() == 0) {
+                            DecimalFormat df = new DecimalFormat("0.00");
+                            assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
+                        } else {
+                            DecimalFormat df = new DecimalFormat("0.00######");
+                            assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
+                        }
                         channelAmountEdit.setText("");
                         channelAmountTv.setText("0");
                         if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
