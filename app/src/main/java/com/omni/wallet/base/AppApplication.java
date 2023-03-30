@@ -22,6 +22,7 @@ import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.BackupUtils;
+import com.omni.wallet.obdMethods.WalletState;
 
 import org.conscrypt.Conscrypt;
 import org.greenrobot.eventbus.EventBus;
@@ -128,15 +129,15 @@ public class AppApplication extends BaseApplication {
                 if(usdtPrice==null){
                     User.getInstance().setUsdtPrice(mContext,"1");
                 }
-
-
                 getBtcPrice();
                 // 在此处添加执行的代码
                 handler.postDelayed(this, 60000);// 60s后执行
                 BackupUtils.getInstance().backupChannelToFile(mContext);
+
                 getTotalBlock();
             }
         };
+
         handler.postDelayed(runnable, 0);// 打开定时器立即执行
         // 更新余额的定时监听
         Runnable balanceRunnable = new Runnable() {

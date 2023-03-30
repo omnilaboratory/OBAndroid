@@ -32,7 +32,7 @@ import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
-import com.omni.wallet.utils.WalletState;
+import com.omni.wallet.obdMethods.WalletState;
 import com.omni.wallet.view.dialog.LoginLoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -48,7 +48,6 @@ import obdmobile.Obdmobile;
 
 public class UnlockActivity extends AppBaseActivity {
     String TAG = UnlockActivity.class.getSimpleName();
-    String localPass = "";
     String localSeed = "";
     LoginLoadingDialog mLoadingDialog;
     boolean isCreated = false;
@@ -153,9 +152,7 @@ public class UnlockActivity extends AppBaseActivity {
             @Override
             public void onError(Exception e) {
                 ToastUtils.showToast(mContext, e.getMessage());
-                runOnUiThread(() -> {
-                    mLoadingDialog.dismiss();
-                });
+                runOnUiThread(() -> mLoadingDialog.dismiss());
                 e.printStackTrace();
             }
 
@@ -173,7 +170,7 @@ public class UnlockActivity extends AppBaseActivity {
                             switchActivityFinish(AccountLightningActivity.class);
                         });
                     }else {
-                        runOnUiThread(()->{subscribeState();});
+                        runOnUiThread(()-> subscribeState());
                         Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
                         Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
                             @Override
@@ -215,10 +212,8 @@ public class UnlockActivity extends AppBaseActivity {
         if (!newPasswordStr.equals("")){
             Log.d(TAG, "changePassword : will be change");
             Handler handler = new Handler();
-            runOnUiThread(()->{
-                subscribeStateForChangePass();
-            });
-            handler.postDelayed(() -> changePasswordAction(),10000);
+            runOnUiThread(this::subscribeStateForChangePass);
+            handler.postDelayed(this::changePasswordAction,10000);
         }else {
             mLoadingDialog.dismiss();
         }
@@ -235,9 +230,7 @@ public class UnlockActivity extends AppBaseActivity {
             @Override
             public void onError(Exception e) {
                 Log.e(TAG, "changePassword onError: " + e.getMessage());
-                runOnUiThread(()->{
-                    ToastUtils.showToast(mContext,e.getMessage());
-                });
+                runOnUiThread(()-> ToastUtils.showToast(mContext,e.getMessage()));
 
                 e.printStackTrace();
             }
@@ -259,22 +252,10 @@ public class UnlockActivity extends AppBaseActivity {
     }
 
     public boolean checkedPassMatched(String inputPass){
-        boolean isMatched = false;
+        boolean isMatched;
         String localPass = User.getInstance().getPasswordMd5(mContext);
-        if(inputPass.equals(localPass)){
-            isMatched = true;
-        }else{
-            isMatched = false;
-        }
+        isMatched = inputPass.equals(localPass);
         return isMatched;
-    }
-
-    public void passWrongShow (){
-        PublicUtils.closeLoading(mLoadingDialog);
-        String toastString = getResources().getString(R.string.toast_unlock_error);
-        Toast checkPassToast = Toast.makeText(UnlockActivity.this, toastString, Toast.LENGTH_LONG);
-        checkPassToast.setGravity(Gravity.TOP, 0, 20);
-        checkPassToast.show();
     }
 
 
@@ -301,15 +282,11 @@ public class UnlockActivity extends AppBaseActivity {
 
     public void subscribeState() {
         WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
-            switch (walletState){
-                case 4:
-                    runOnUiThread(()->{
-                        PublicUtils.closeLoading(mLoadingDialog);
-                        switchActivityFinish(AccountLightningActivity.class);
-                    });
-                    break;
-                default:
-                    break;
+            if (walletState == 4) {
+                runOnUiThread(() -> {
+                    PublicUtils.closeLoading(mLoadingDialog);
+                    switchActivityFinish(AccountLightningActivity.class);
+                });
             }
         };
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
@@ -318,14 +295,8 @@ public class UnlockActivity extends AppBaseActivity {
     public void subscribeStateForChangePass() {
         WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
             Log.d(TAG, "subscribeStateForChangePass: " + walletState);
-            switch (walletState){
-                case 4:
-                    runOnUiThread(()->{
-                        PublicUtils.closeLoading(mLoadingDialog);
-                    });
-                    break;
-                default:
-                    break;
+            if (walletState == 4) {
+                runOnUiThread(() -> PublicUtils.closeLoading(mLoadingDialog));
             }
         };
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);

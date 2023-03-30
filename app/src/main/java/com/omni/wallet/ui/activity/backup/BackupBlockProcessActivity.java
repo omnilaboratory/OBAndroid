@@ -35,7 +35,7 @@ import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.NetworkChangeReceiver;
 import com.omni.wallet.utils.ObdLogFileObserver;
 import com.omni.wallet.utils.PublicUtils;
-import com.omni.wallet.utils.WalletState;
+import com.omni.wallet.obdMethods.WalletState;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -146,12 +146,8 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         commitNumSyncView.setText(String.valueOf(totalBlock));
         syncBlockNumView.setText(String.valueOf(totalBlock));
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
-        runOnUiThread(()->{
-            obdLogFileObserver.startWatching();
-        });
-        runOnUiThread(()->{
-            blockData.registerOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
-        });
+        runOnUiThread(()-> obdLogFileObserver.startWatching());
+        runOnUiThread(()-> blockData.registerOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener));
     }
     @Override
     protected void initData() {
@@ -176,7 +172,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     @SuppressLint("LongLogTag")
     private final SharedPreferences.OnSharedPreferenceChangeListener currentBlockSharePreferenceChangeListener = (sharedPreferences, key) -> {
-        if (key == "currentBlockHeight"){
+        if (key.equals("currentBlockHeight")){
             int currentHeight = sharedPreferences.getInt("currentBlockHeight",0);
             updateSyncDataView(currentHeight);
             
@@ -194,7 +190,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         }
         double percent = (currentHeight/totalHeight * 100);
         double totalWidth =  rvMyProcessOuter.getWidth();
-        int innerHeight = (int)rvMyProcessOuter.getHeight()-2;
+        int innerHeight = rvMyProcessOuter.getHeight() -2;
         int innerWidth = (int) (totalWidth*percent/100);
         @SuppressLint("DefaultLocale") String percentString = String.format("%.2f",percent);
         syncPercentView.setText(percentString + "%");
@@ -424,31 +420,6 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         }
     };
 
-    public void getExistAddress(){
-        LightningOuterClass.ListAddressesRequest listAddressesRequest = LightningOuterClass.ListAddressesRequest.newBuilder().build();
-        Obdmobile.oB_ListAddresses(listAddressesRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                Log.e("getAddress Error",e.toString());
-                e.printStackTrace();
-                mLoadingDialog.dismiss();
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                if(bytes == null){
-                    return;
-                }
-                try {
-                    LightningOuterClass.ListAddressesResponse listAddressesResponse = LightningOuterClass.ListAddressesResponse.parseFrom(bytes);
-                    String address = listAddressesResponse.getItems(0);
-                    Log.d("TAG",address);
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
     @Subscribe(threadMode = ThreadMode.MAIN)
         public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
             finish();
