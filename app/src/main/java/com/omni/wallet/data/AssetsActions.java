@@ -38,18 +38,18 @@ public class AssetsActions {
         try {
             long date = TimeFormatUtil.getCurrentDayMills();
             // Get a list of all assets today
-            List<Map<String, Object>> dataList = assetsDataDao.queryAllAssetsDataByDate(date);
+            List<AssetsDataItem> dataList = assetsDataDao.queryAllAssetsDataByDate(date);
             Log.d(TAG, "updateAssetsValueDataValueLast: dataList" + dataList.toString());
             // Calculate the sum of today's asset values
             double value = 0.0;
             for (int i = 0; i < dataList.size(); i++) {
                 double dataValue;
-                Map<String, Object> item = dataList.get(i);
-                double price = (double) item.get("price");
-                double amount = (double) item.get("amount");
+                AssetsDataItem item = dataList.get(i);
+                double price = item.getPrice();
+                double amount = item.getAmount();
                 double channel_amount = 0;
-                if (item.get("channelAmount") != null) {
-                    channel_amount = (double) item.get("channelAmount");
+                if (item.getChannel_amount() != 0) {
+                    channel_amount = item.getChannel_amount();
                 }
                 dataValue = (channel_amount + amount) * price;
                 value = dataValue + value;
@@ -216,22 +216,22 @@ public class AssetsActions {
         };
         // Execute when getting the price fails
         WalletServiceUtil.GetUsingAssetsPriceErrorCallback getUsingAssetsPriceErrorCallback
-                = (Context mContext, String errorCode, String errorMsg, List<Map<String, Object>> usingAssetsList, Map<String, Object> propertyMap) -> {
+                = (Context mContext, String errorCode, String errorMsg, List<AssetsItem> usingAssetsList, Map<String, Object> propertyMap) -> {
             Log.d(TAG, "getPriceError:" + errorMsg);
             AssetsDataDao assetsDataDao = new AssetsDataDao(context);
             for (int i = 0; i < usingAssetsList.size(); i++) {
-                String id = (String) usingAssetsList.get(i).get("token_name");
+                String id = usingAssetsList.get(i).getToken_name();
                 String propertyId;
-                List<Map<String, Object>> list;
+                List<AssetsDataItem> list;
                 // Update the price and today's asset value according to propertyId
                 assert id != null;
                 switch (id) {
                     case "btc":
                         propertyId = (String) propertyMap.get("btc");
                         list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
-                        Map<String, Object> map = list.get(0);
+                        AssetsDataItem map = list.get(0);
                         if (map != null) {
-                            double price = (Double) map.get("price");
+                            double price =  map.getPrice();
                             if (price == 0) {
                                 AssetsActions.updateAssetsPriceS(context, propertyId, 16000.0);
                             } else {
@@ -250,9 +250,9 @@ public class AssetsActions {
                             propertyId = (String) propertyMap.get("Usd");
                         }
                         list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
-                        Map<String, Object> mapT = list.get(0);
+                        AssetsDataItem mapT = list.get(0);
                         if (mapT != null) {
-                            double price = (Double) mapT.get("price");
+                            double price = mapT.getPrice();
                             if (price == 0) {
                                 AssetsActions.updateAssetsPriceS(context, propertyId, 1.0);
                             } else {
@@ -433,76 +433,68 @@ public class AssetsActions {
      * @description get the data for line chart
      * @描述 获取折线图所需数据
      */
-    public static Map<String, Object> getDataForChart(Context context) {
+    public static ChartData getDataForChart(Context context) {
         AssetsValueDataDao assetsValueDataDao = new AssetsValueDataDao(context);
-        List<Map<String, Object>> valueList = assetsValueDataDao.queryAssetValueDataOneYear();
-        Map<String, Double> changeMap = new HashMap<>();
-        List<Map<String, Object>> chartDataList = new ArrayList<>();
+        List<AssetsValueDataItem> valueList = assetsValueDataDao.queryAssetValueDataOneYear();
+
+        List<AssetsValueDataItem> chartDataList = new ArrayList<>();
         Collections.reverse(valueList);
+        ChangeData changeMap = new ChangeData(0,0);
         if (valueList.size() > 0) {
             double value;
             double changePercent;
             if (valueList.size() > 1) {
-                value = (double) valueList.get(valueList.size() - 1).get("value");
-                if ((double)valueList.get(valueList.size() - 2).get("value") == 0 ){
+                value =  valueList.get(valueList.size() - 1).getValue();
+                if (valueList.get(valueList.size() - 2).getValue() == 0 ){
                     changePercent = 0;
                 }else{
                     changePercent = Math.floor(
-                            ((double) valueList.get(valueList.size() - 1).get("value")
-                                    - (double) valueList.get(valueList.size() - 2).get("value"))
-                                    / (double) valueList.get(valueList.size() - 2).get("value") * 10000
+                            (valueList.get(valueList.size() - 1).getValue()
+                                    - valueList.get(valueList.size() - 2).getValue())
+                                    / valueList.get(valueList.size() - 2).getValue() * 10000
                     ) / 100.0;
                 }
             } else {
-                value = (double) valueList.get(valueList.size() - 1).get("value");
+                value = valueList.get(valueList.size() - 1).getValue();
                 changePercent = 0;
             }
 
-            changeMap.put("value", value);
-            changeMap.put("percent", changePercent);
+            changeMap = new ChangeData(value,changePercent);
 
 
             if (valueList.size() > 14) {
                 for (int i = valueList.size() - 1; i > valueList.size() - 8; i--) {
-                    Map<String, Object> chartData = new HashMap<>();
-                    long dateMills = (long) valueList.get(i).get("date");
-                    double mapValue = (double) valueList.get(i).get("value");
-                    chartData.put("date", dateMills);
-                    chartData.put("value", mapValue);
-                    chartDataList.add(chartData);
+                    long dateMills =valueList.get(i).getUpdate_date();
+                    double mapValue = valueList.get(i).getValue();
+                    AssetsValueDataItem item = new AssetsValueDataItem(mapValue,dateMills);
+                    chartDataList.add(item);
                 }
 
                 for (int j = valueList.size() - 8; j > 6; j = j - 7) {
-                    Map<String, Object> chartData = new HashMap<>();
-                    long dateMills = (long) valueList.get(j - 3).get("date");
-                    double mapValue = ((double) valueList.get(j).get("value")
-                            + (double) valueList.get(j - 1).get("value")
-                            + (double) valueList.get(j - 2).get("value")
-                            + (double) valueList.get(j - 3).get("value")
-                            + (double) valueList.get(j - 4).get("value")
-                            + (double) valueList.get(j - 5).get("value")
-                            + (double) valueList.get(j - 6).get("value")) / 7;
-                    chartData.put("date", dateMills);
-                    chartData.put("value", mapValue);
-                    chartDataList.add(chartData);
+                    long dateMills = valueList.get(j - 3).getUpdate_date();
+                    double mapValue = ( valueList.get(j).getValue()
+                            + valueList.get(j - 1).getValue()
+                            + valueList.get(j - 2).getValue()
+                            + valueList.get(j - 3).getValue()
+                            + valueList.get(j - 4).getValue()
+                            + valueList.get(j - 5).getValue()
+                            + valueList.get(j - 6).getValue()) / 7;
+                    AssetsValueDataItem item = new AssetsValueDataItem(mapValue,dateMills);
+                    chartDataList.add(item);
                 }
                 Collections.reverse(chartDataList);
 
             } else {
                 for (int i = 0; i < valueList.size(); i++) {
-                    Map<String, Object> chartData = new HashMap<>();
-                    long dateMills = (long) valueList.get(i).get("date");
-                    double mapValue = (double) valueList.get(i).get("value");
-                    chartData.put("date", dateMills);
-                    chartData.put("value", mapValue);
-                    chartDataList.add(chartData);
+                    long dateMills = valueList.get(i).getUpdate_date();
+                    double mapValue = valueList.get(i).getValue();
+                    AssetsValueDataItem item = new AssetsValueDataItem(mapValue,dateMills);
+                    chartDataList.add(item);
                 }
             }
         }
+        ChartData data = new ChartData(chartDataList,changeMap);
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("changeData", changeMap);
-        data.put("chartData", chartDataList);
         return data;
 
     }

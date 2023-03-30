@@ -9,9 +9,7 @@ import com.omni.wallet.utils.TimeFormatUtil;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AssetsDataDao {
     private  AssetsDB mInstance;
@@ -103,36 +101,37 @@ public class AssetsDataDao {
         }
     }
 
-    List<Map<String,Object>> queryAllAssetsDataByDate(long date){
-        List<Map<String,Object>> queryList = new ArrayList<>();
+    List<AssetsDataItem> queryAllAssetsDataByDate(long date){
+        List<AssetsDataItem> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
         String sql = "select * from assets_data where update_date=?";
         Cursor cursor = db.rawQuery(sql,new String[]{String.valueOf(date)});
         while (cursor.moveToNext()){
-            Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getString(cursor.getColumnIndex("update_date")));
-            queryRow.put("price",cursor.getDouble(cursor.getColumnIndex("price")));
-            queryRow.put("amount",cursor.getDouble(cursor.getColumnIndex("amount")));
-            queryRow.put("channelAmount",cursor.getDouble(cursor.getColumnIndex("channel_amount")));
-            queryList.add(queryRow);
+            long update_date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            double price = cursor.getDouble(cursor.getColumnIndex("price"));
+            double amount = cursor.getDouble(cursor.getColumnIndex("amount"));
+            double channel_amount = cursor.getDouble(cursor.getColumnIndex("channel_amount"));
+            String propertyId = cursor.getString(cursor.getColumnIndex("property_id"));
+            AssetsDataItem row = new AssetsDataItem(propertyId,price,amount,channel_amount,update_date);
+            queryList.add(row);
         }
         cursor.close();
 //        db.close();
         return queryList;
     }
 
-    List<Map<String,Object>> queryAssetLastDataByPropertyId(String propertyId){
-        List<Map<String,Object>> queryList = new ArrayList<>();
+    List<AssetsDataItem> queryAssetLastDataByPropertyId(String propertyId){
+        List<AssetsDataItem> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
         String sql = "select * from assets_data where property_id=? order by update_date desc limit 1";
         Cursor cursor = db.rawQuery(sql,new String[]{propertyId});
         while (cursor.moveToNext()){
-            Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getString(cursor.getColumnIndex("update_date")));
-            queryRow.put("price",cursor.getDouble(cursor.getColumnIndex("price")));
-            queryRow.put("amount",cursor.getDouble(cursor.getColumnIndex("amount")));
-            queryRow.put("channelAmount",cursor.getDouble(cursor.getColumnIndex("channel_amount")));
-            queryList.add(queryRow);
+            long update_date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            double price = cursor.getDouble(cursor.getColumnIndex("price"));
+            double amount = cursor.getDouble(cursor.getColumnIndex("amount"));
+            double channel_amount = cursor.getDouble(cursor.getColumnIndex("channel_amount"));
+            AssetsDataItem row = new AssetsDataItem(propertyId,price,amount,channel_amount,update_date);
+            queryList.add(row);
         }
         cursor.close();
 //        db.close();
@@ -141,17 +140,17 @@ public class AssetsDataDao {
 
     private boolean checkDataExist(String propertyId, long date){
         boolean dataExist =false;
-        List<Map<String,Object>> queryList = new ArrayList<>();
+        List<AssetsDataItem> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
         String sql = "select * from assets_data where property_id=? and update_date = ? limit 1";
         Cursor cursor = db.rawQuery(sql,new String[]{propertyId, String.valueOf(date)});
         while (cursor.moveToNext()){
-            Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getString(cursor.getColumnIndex("update_date")));
-            queryRow.put("price",cursor.getDouble(cursor.getColumnIndex("price")));
-            queryRow.put("amount",cursor.getDouble(cursor.getColumnIndex("amount")));
-            queryRow.put("channelAmount",cursor.getDouble(cursor.getColumnIndex("channel_amount")));
-            queryList.add(queryRow);
+            long update_date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            double price = cursor.getDouble(cursor.getColumnIndex("price"));
+            double amount = cursor.getDouble(cursor.getColumnIndex("amount"));
+            double channel_amount = cursor.getDouble(cursor.getColumnIndex("channel_amount"));
+            AssetsDataItem row = new AssetsDataItem(propertyId,price,amount,channel_amount,update_date);
+            queryList.add(row);
         }
         cursor.close();
         if (queryList.size()>0) dataExist = true;
@@ -167,22 +166,16 @@ public class AssetsDataDao {
         if (dataExist){
             updateAssetDataAmount(propertyId,amount);
         }else{
-            List<Map<String,Object>> lastDataList = queryAssetLastDataByPropertyId(propertyId);
+            List<AssetsDataItem> lastDataList = queryAssetLastDataByPropertyId(propertyId);
             if (lastDataList.size()>0){
-                Map<String,Object> item = lastDataList.get(0);
-                price = (double) item.get("price");
-                channelAmount = (double) item.get("channelAmount");
+                AssetsDataItem item = lastDataList.get(0);
+                price = item.getPrice();
+                channelAmount = item.getChannel_amount();
                 insertAssetsData(propertyId,price,amount,channelAmount);
             }else {
                 insertAssetsData(propertyId,0,amount,0);
             }
         }
-        Map<String ,Object> map = new HashMap<>();
-        map.put("price",price);
-        map.put("channelAmount",channelAmount);
-        map.put("amount",amount);
-        map.put("date",date);
-        //        db.close();
     }
 
     public void clearData(){

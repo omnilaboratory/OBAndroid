@@ -1,6 +1,5 @@
 package com.omni.wallet.data;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,19 +11,17 @@ import com.omni.wallet.utils.TimeFormatUtil;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AssetsValueDataDao {
     private AssetsDB mInstance;
     private final static String TAG = AssetsValueDataDao.class.getSimpleName();
 
-    AssetsValueDataDao(Context context){
+    AssetsValueDataDao(Context context) {
         this.mInstance = AssetsDB.getInstance(context);
     }
 
-    void insertAssetValueData(double value, long date){
+    void insertAssetValueData(double value, long date) {
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -36,25 +33,25 @@ public class AssetsValueDataDao {
 //        db.close();
     }
 
-    void updateAssetValueData(double value, long date){
+    void updateAssetValueData(double value, long date) {
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
         }
         String sql = "update assets_value_data set value =? where update_date=?";
-        db.execSQL(sql, new Object[]{value,date});
+        db.execSQL(sql, new Object[]{value, date});
 //        db.close();
     }
 
-    private List<Map<String ,Object>> queryAssetValueDataLast(){
-        List<Map<String,Object>> queryList = new ArrayList<>();
+    private List<AssetsValueDataItem> queryAssetValueDataLast() {
+        List<AssetsValueDataItem> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
         String sql = "select * from assets_value_data order by update_date desc limit 1";
         Cursor cursor = db.rawQuery(sql, new String[]{});
-        while (cursor.moveToNext()){
-            Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getLong(cursor.getColumnIndex("update_date")));
-            queryRow.put("value",cursor.getDouble(cursor.getColumnIndex("value")));
+        while (cursor.moveToNext()) {
+            long date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            double value = cursor.getLong(cursor.getColumnIndex("value"));
+            AssetsValueDataItem queryRow = new AssetsValueDataItem(value,date);
             queryList.add(queryRow);
         }
         cursor.close();
@@ -62,29 +59,29 @@ public class AssetsValueDataDao {
         return queryList;
     }
 
-    void completeAssetData(){
-        List<Map<String,Object>> lastDataList =  queryAssetValueDataLast();
-        Log.d(TAG, "completeAssetData: "+ lastDataList.toString());
-        if (lastDataList.size()>0){
-            Map<String,Object> data =  lastDataList.get(0);
-            Log.d(TAG, "completeAssetData: "+ data.toString());
-            long lastUpdateTime = (long) data.get("date");
-            double lastValue = (double) data.get("value");
+    void completeAssetData() {
+        List<AssetsValueDataItem> lastDataList = queryAssetValueDataLast();
+        Log.d(TAG, "completeAssetData: " + lastDataList.toString());
+        if (lastDataList.size() > 0) {
+            AssetsValueDataItem data = lastDataList.get(0);
+            Log.d(TAG, "completeAssetData: " + data.toString());
+            long lastUpdateTime = data.getUpdate_date();
+            double lastValue =  data.getValue();
             try {
                 long nowDate = TimeFormatUtil.getCurrentDayMills();
-                int willCompleteNum = (int) (((nowDate - lastUpdateTime)/ ConstantInOB.DAY_MILLIS));
+                int willCompleteNum = (int) (((nowDate - lastUpdateTime) / ConstantInOB.DAY_MILLIS));
                 for (int i = 0; i < willCompleteNum; i++) {
-                    long update_date = lastUpdateTime + ConstantInOB.DAY_MILLIS * (i+1);
-                    insertAssetValueData(lastValue,update_date);
+                    long update_date = lastUpdateTime + ConstantInOB.DAY_MILLIS * (i + 1);
+                    insertAssetValueData(lastValue, update_date);
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-        }else{
+        } else {
             try {
                 double lastValue = 0.0;
                 long update_date = TimeFormatUtil.getCurrentDayMills();
-                insertAssetValueData(lastValue,update_date);
+                insertAssetValueData(lastValue, update_date);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -94,15 +91,15 @@ public class AssetsValueDataDao {
     }
 
 
-    List<Map<String ,Object>> queryAssetValueDataOneYear(){
-        List<Map<String,Object>> queryList = new ArrayList<>();
+    List<AssetsValueDataItem> queryAssetValueDataOneYear() {
+        List<AssetsValueDataItem> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
         String sql = "select * from assets_value_data order by update_date desc limit 365";
         Cursor cursor = db.rawQuery(sql, new String[]{});
-        while (cursor.moveToNext()){
-            Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getLong(cursor.getColumnIndex("update_date")));
-            queryRow.put("value",cursor.getDouble(cursor.getColumnIndex("value")));
+        while (cursor.moveToNext()) {
+            double value = cursor.getDouble(cursor.getColumnIndex("value"));
+            long date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            AssetsValueDataItem queryRow = new AssetsValueDataItem(value, date);
             queryList.add(queryRow);
         }
         cursor.close();
@@ -111,7 +108,7 @@ public class AssetsValueDataDao {
     }
 
 
-    public void clearData(){
+    public void clearData() {
         SQLiteDatabase db = mInstance.getWritableDatabase();
         String deleteSql = "delete from assets_value_data";
         db.execSQL(deleteSql);
