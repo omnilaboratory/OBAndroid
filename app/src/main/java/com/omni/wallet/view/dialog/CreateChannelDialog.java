@@ -612,6 +612,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
                             bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
                             bundle.putString(ChannelsActivity.KEY_PUBKEY, User.getInstance().getFromPubKey(mContext));
+                            bundle.putString(ChannelsActivity.KEY_CHANNEL, "all");
                             Intent intent = new Intent(mContext, ChannelsActivity.class);
                             intent.putExtras(bundle);
                             mContext.startActivity(intent);
