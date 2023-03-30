@@ -101,6 +101,7 @@ public class SwipeMenuLayout extends ViewGroup {
      * 20160929add 左滑右滑的开关,默认左滑打开菜单
      */
     private boolean isLeftSwipe;
+    private SwipeMenuStateListener mSwipeMenuStateListener;
 
     public SwipeMenuLayout(Context context) {
         this(context, null);
@@ -500,6 +501,9 @@ public class SwipeMenuLayout extends ViewGroup {
             @Override
             public void onAnimationEnd(Animator animation) {
                 isExpand = true;
+                if (mSwipeMenuStateListener != null) {
+                    mSwipeMenuStateListener.menuIsOpen(true);
+                }
             }
         });
         mExpandAnim.setDuration(300).start();
@@ -544,7 +548,9 @@ public class SwipeMenuLayout extends ViewGroup {
             @Override
             public void onAnimationEnd(Animator animation) {
                 isExpand = false;
-
+                if (mSwipeMenuStateListener != null) {
+                    mSwipeMenuStateListener.menuIsOpen(false);
+                }
             }
         });
         mCloseAnim.setDuration(300).start();
@@ -614,4 +620,8 @@ public class SwipeMenuLayout extends ViewGroup {
         }
     }
 
+    public SwipeMenuLayout setSwipeMenuStateListener(SwipeMenuStateListener listener) {
+        this.mSwipeMenuStateListener = listener;
+        return this;
+    }
 }
