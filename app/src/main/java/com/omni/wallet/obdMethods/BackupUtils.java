@@ -1,4 +1,4 @@
-package com.omni.wallet.utils;
+package com.omni.wallet.obdMethods;
 
 import android.content.Context;
 import android.os.Environment;
@@ -67,6 +67,7 @@ public class BackupUtils {
 
             @Override
             public void onResponse(byte[] bytes) {
+                Log.d(TAG, "onResponse: Channel changed");
                 try {
                     String directoryPath = "";
                     String userSettingDirectory =  getUserSettingDirectory(context);

@@ -166,6 +166,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         PublicUtils.closeLoading(mLoadingDialog);
+        obdLogFileObserver.stopWatching();
         unregisterReceiver(networkChangeReceiver);
         blockData.unregisterOnSharedPreferenceChangeListener(currentBlockSharePreferenceChangeListener);
     }

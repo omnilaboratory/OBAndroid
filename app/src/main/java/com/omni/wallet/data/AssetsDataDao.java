@@ -5,24 +5,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.omni.wallet.base.ConstantInOB;
 import com.omni.wallet.utils.TimeFormatUtil;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AssetsDataDao {
-    private static AssetsDB mInstance;
-    private final static String TAG = AssetsDataDao.class.getSimpleName();
+    private  AssetsDB mInstance;
 
-    public AssetsDataDao(Context context){
+    AssetsDataDao(Context context){
         this.mInstance = AssetsDB.getInstance(context);
     }
 
-    public void insertAssetsData(String propertyId,double price,double amount,double channelAmount,long date){
+    void insertAssetsData(String propertyId, double price, double amount, double channelAmount, long date){
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -37,7 +33,7 @@ public class AssetsDataDao {
 //        db.close();
     }
 
-    public void insertAssetsData(String propertyId,double price,double amount,double channelAmount){
+    private void insertAssetsData(String propertyId, double price, double amount, double channelAmount){
         try {
             long  date = TimeFormatUtil.getCurrentDayMills();
             insertAssetsData(propertyId,price,amount,channelAmount,date);
@@ -46,7 +42,7 @@ public class AssetsDataDao {
         }
     }
 
-    public void updateAssetDataPrice(String propertyId,double price,long date){
+    private void updateAssetDataPrice(String propertyId, double price, long date){
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -58,7 +54,7 @@ public class AssetsDataDao {
 
 
 
-    public void updateAssetDataPrice(String propertyId,double price){
+    void updateAssetDataPrice(String propertyId, double price){
         try {
             long  date = TimeFormatUtil.getCurrentDayMills();
             updateAssetDataPrice(propertyId,price,date);
@@ -67,7 +63,7 @@ public class AssetsDataDao {
         }
     }
 
-    public void updateAssetDataAmount(String propertyId,double amount,long date){
+    private void updateAssetDataAmount(String propertyId, double amount, long date){
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -77,7 +73,7 @@ public class AssetsDataDao {
 //        db.close();
     }
 
-    public void updateAssetDataAmount(String propertyId,double amount){
+    private void updateAssetDataAmount(String propertyId, double amount){
         try {
             long  date = TimeFormatUtil.getCurrentDayMills();
             updateAssetDataAmount(propertyId,amount,date);
@@ -86,7 +82,7 @@ public class AssetsDataDao {
         }
     }
 
-    public void updateAssetDataChannelAmount(String propertyId,double channelAmount,long date){
+    private void updateAssetDataChannelAmount(String propertyId, double channelAmount, long date){
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -96,7 +92,7 @@ public class AssetsDataDao {
 //        db.close();
     }
 
-    public void updateAssetDataChannelAmount(String propertyId,double channelAmount){
+    void updateAssetDataChannelAmount(String propertyId, double channelAmount){
         try {
             long  date = TimeFormatUtil.getCurrentDayMills();
             updateAssetDataChannelAmount(propertyId,channelAmount,date);
@@ -105,73 +101,56 @@ public class AssetsDataDao {
         }
     }
 
-    public List<Map<String,Object>> queryAllAssetsData(){
-        List<Map<String,Object>> queryList = new ArrayList<>();
-        SQLiteDatabase db = mInstance.getWritableDatabase();
-        String sql = "select * from assets_data ";
-        Cursor cursor = db.rawQuery(sql, new String[]{});
-        while (cursor.moveToNext()){
-            Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getString(cursor.getColumnIndex("update_date")));
-            queryRow.put("price",cursor.getDouble(cursor.getColumnIndex("price")));
-            queryRow.put("amount",cursor.getDouble(cursor.getColumnIndex("amount")));
-            queryRow.put("channelAmount",cursor.getDouble(cursor.getColumnIndex("channel_amount")));
-            queryList.add(queryRow);
-        }
-        cursor.close();
-//        db.close();
-        return queryList;
-    }
-
-    public List<Map<String,Object>> queryAllAssetsDataByDate(long date){
-        List<Map<String,Object>> queryList = new ArrayList<>();
+    List<AssetsDataItem> queryAllAssetsDataByDate(long date){
+        List<AssetsDataItem> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
         String sql = "select * from assets_data where update_date=?";
         Cursor cursor = db.rawQuery(sql,new String[]{String.valueOf(date)});
         while (cursor.moveToNext()){
-            Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getString(cursor.getColumnIndex("update_date")));
-            queryRow.put("price",cursor.getDouble(cursor.getColumnIndex("price")));
-            queryRow.put("amount",cursor.getDouble(cursor.getColumnIndex("amount")));
-            queryRow.put("channelAmount",cursor.getDouble(cursor.getColumnIndex("channel_amount")));
-            queryList.add(queryRow);
+            long update_date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            double price = cursor.getDouble(cursor.getColumnIndex("price"));
+            double amount = cursor.getDouble(cursor.getColumnIndex("amount"));
+            double channel_amount = cursor.getDouble(cursor.getColumnIndex("channel_amount"));
+            String propertyId = cursor.getString(cursor.getColumnIndex("property_id"));
+            AssetsDataItem row = new AssetsDataItem(propertyId,price,amount,channel_amount,update_date);
+            queryList.add(row);
         }
         cursor.close();
 //        db.close();
         return queryList;
     }
 
-    public List<Map<String,Object>> queryAssetLastDataByPropertyId(String propertyId){
-        List<Map<String,Object>> queryList = new ArrayList<>();
+    List<AssetsDataItem> queryAssetLastDataByPropertyId(String propertyId){
+        List<AssetsDataItem> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
         String sql = "select * from assets_data where property_id=? order by update_date desc limit 1";
         Cursor cursor = db.rawQuery(sql,new String[]{propertyId});
         while (cursor.moveToNext()){
-            Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getString(cursor.getColumnIndex("update_date")));
-            queryRow.put("price",cursor.getDouble(cursor.getColumnIndex("price")));
-            queryRow.put("amount",cursor.getDouble(cursor.getColumnIndex("amount")));
-            queryRow.put("channelAmount",cursor.getDouble(cursor.getColumnIndex("channel_amount")));
-            queryList.add(queryRow);
+            long update_date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            double price = cursor.getDouble(cursor.getColumnIndex("price"));
+            double amount = cursor.getDouble(cursor.getColumnIndex("amount"));
+            double channel_amount = cursor.getDouble(cursor.getColumnIndex("channel_amount"));
+            AssetsDataItem row = new AssetsDataItem(propertyId,price,amount,channel_amount,update_date);
+            queryList.add(row);
         }
         cursor.close();
 //        db.close();
         return queryList;
     }
 
-    public boolean checkDataExist(String propertyId,long date){
+    private boolean checkDataExist(String propertyId, long date){
         boolean dataExist =false;
-        List<Map<String,Object>> queryList = new ArrayList<>();
+        List<AssetsDataItem> queryList = new ArrayList<>();
         SQLiteDatabase db = mInstance.getWritableDatabase();
         String sql = "select * from assets_data where property_id=? and update_date = ? limit 1";
         Cursor cursor = db.rawQuery(sql,new String[]{propertyId, String.valueOf(date)});
         while (cursor.moveToNext()){
-            Map<String,Object> queryRow = new HashMap<>();
-            queryRow.put("date",cursor.getString(cursor.getColumnIndex("update_date")));
-            queryRow.put("price",cursor.getDouble(cursor.getColumnIndex("price")));
-            queryRow.put("amount",cursor.getDouble(cursor.getColumnIndex("amount")));
-            queryRow.put("channelAmount",cursor.getDouble(cursor.getColumnIndex("channel_amount")));
-            queryList.add(queryRow);
+            long update_date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            double price = cursor.getDouble(cursor.getColumnIndex("price"));
+            double amount = cursor.getDouble(cursor.getColumnIndex("amount"));
+            double channel_amount = cursor.getDouble(cursor.getColumnIndex("channel_amount"));
+            AssetsDataItem row = new AssetsDataItem(propertyId,price,amount,channel_amount,update_date);
+            queryList.add(row);
         }
         cursor.close();
         if (queryList.size()>0) dataExist = true;
@@ -180,31 +159,23 @@ public class AssetsDataDao {
 
 
 
-    public Map<String,Object> insertOrUpdateAssetDataByAmount(String propertyId,double amount,long date){
+    void insertOrUpdateAssetDataByAmount(String propertyId, double amount, long date){
         boolean dataExist = checkDataExist(propertyId,date);
         double price = 0;
         double channelAmount = 0;
         if (dataExist){
             updateAssetDataAmount(propertyId,amount);
         }else{
-            List<Map<String,Object>> lastDataList = queryAssetLastDataByPropertyId(propertyId);
+            List<AssetsDataItem> lastDataList = queryAssetLastDataByPropertyId(propertyId);
             if (lastDataList.size()>0){
-                Map<String,Object> item = lastDataList.get(0);
-                price = (double) item.get("price");
-                channelAmount = (double) item.get("channelAmount");
+                AssetsDataItem item = lastDataList.get(0);
+                price = item.getPrice();
+                channelAmount = item.getChannel_amount();
                 insertAssetsData(propertyId,price,amount,channelAmount);
             }else {
                 insertAssetsData(propertyId,0,amount,0);
             }
-
         }
-        Map<String ,Object> map = new HashMap<>();
-        map.put("price",price);
-        map.put("channelAmount",channelAmount);
-        map.put("amount",amount);
-        map.put("date",date);
-        return map;
-//        db.close();
     }
 
     public void clearData(){

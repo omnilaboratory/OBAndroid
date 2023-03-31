@@ -27,6 +27,9 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.refreshView.RefreshLayout;
 import com.omni.wallet.data.AssetsActions;
+import com.omni.wallet.data.AssetsValueDataItem;
+import com.omni.wallet.data.ChangeData;
+import com.omni.wallet.data.ChartData;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
@@ -112,11 +115,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     private List<ListAssetItemEntity> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
     private List<ListAssetItemEntity> allData = new ArrayList<>();
-    private ByteString backupChannelBytes;
-    private List<ByteString> channelBackupBytesList = new ArrayList<ByteString>();
-    private List<Integer> outputIndexList = new ArrayList<Integer>();
-    private List<ByteString> fundingTxIdBytesList = new ArrayList<ByteString>();
-    private List<String> fundingTxIdStrList = new ArrayList<String>();
+    List<AssetsValueDataItem> allChartDataList;
 
 
     MenuPopupWindow mMenuPopupWindow;
@@ -179,11 +178,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         EventBus.getDefault().register(this);
         getInfo();
         setDefaultAddress();
-        runOnUiThread(()->{
-//            AssetsActions.initOrUpdateAction(mContext,actionCallBack);
-            setAssetTrendChartViewShow();
-
-        });
+        runOnUiThread(this::setAssetTrendChartViewShow);
     }
 
     @Override
@@ -224,53 +219,52 @@ public class AccountLightningActivity extends AppBaseActivity {
     @SuppressLint("LongLogTag")
     private void setAssetTrendChartViewShow() {
         // get data for line chart
-        Map<String, Object> data = AssetsActions.getDataForChart(mContext);
+        ChartData data = AssetsActions.getDataForChart(mContext);
         Log.d(TAG+"setAssetTrendChartViewShow",data.toString());
-        List<Map<String, Object>> allList;
+        List<AssetsValueDataItem> allList;
         try {
-            allList = (List<Map<String, Object>>) data.get("chartData");
-            List<AssetTrendEntity> list = new ArrayList<>();
-            Log.d(TAG, "allList:" + allList.toString());
-            if (allList.size() == 1) {
-                AssetTrendEntity entity = new AssetTrendEntity();
-                String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills() - ConstantInOB.DAY_MILLIS);
-                entity.setTime(date);
-                entity.setAsset(Double.toString(0));
-                list.add(entity);
+            allList = data.getChartDataList();
+            assert allList != null;
+            if (!allList.equals(allChartDataList)){
+                List<AssetTrendEntity> list = new ArrayList<>();
+                Log.d(TAG, "allList:" + allList.toString());
+                if (allList.size() == 1) {
+                    AssetTrendEntity entity = new AssetTrendEntity();
+                    String date = TimeFormatUtil.formatDateLong(TimeFormatUtil.getCurrentDayMills() - ConstantInOB.DAY_MILLIS);
+                    entity.setTime(date);
+                    entity.setAsset(Double.toString(0));
+                    list.add(entity);
+                }
+                for (int i = 0; i < allList.size(); i++) {
+                    AssetTrendEntity entity = new AssetTrendEntity();
+                    AssetsValueDataItem item = allList.get(i);
+                    String date = TimeFormatUtil.formatDateLong( item.getUpdate_date());
+                    entity.setTime(date);
+                    entity.setAsset(Double.toString( item.getValue()));
+                    list.add(entity);
+                }
+
+                // set text for change percent and now assets value
+                ChangeData changeData = data.getChangeData();
+                assert changeData != null;
+                Log.d(TAG + "changeData",changeData.toString());
+                double percent =  changeData.getPercent();
+                @SuppressLint("DefaultLocale") String percentString = String.format("%.2f", percent) + "%";
+                Log.d(TAG, "setAssetTrendChartViewShow: " + percentString);
+                double value = changeData.getValue();
+                @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f", value);
+                mPriceChangeTv.setText(percentString);
+                if (percent>0){
+                    mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_06d78f));
+                    mPercentChangeView.setImageResource(R.mipmap.icon_arrow_up_green);
+                }else{
+                    mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_F13A3A));
+                    mPercentChangeView.setImageResource(R.mipmap.icon_arrow_down_red);
+                }
+                mBalanceValueTv.setText(valueString);
+                mAssetTrendChartView.setViewShow(list);
             }
-            for (int i = 0; i < allList.size(); i++) {
-                AssetTrendEntity entity = new AssetTrendEntity();
-                Map<String, Object> item = allList.get(i);
-                String date = TimeFormatUtil.formatDateLong((Long) item.get("date"));
-                entity.setTime(date);
-                entity.setAsset(Double.toString((Double) item.get("value")));
-                list.add(entity);
-            }
-            mAssetTrendChartView.setViewShow(list);
-            // set text for change percent and now assets value
-            Map<String,Object> changeData = (Map<String, Object>) data.get("changeData");
-            assert changeData != null;
-            Log.d(TAG + "changeData",changeData.toString());
-            double percent = 0.0;
-            if (changeData.get("percent") != null){
-                percent = (double) changeData.get("percent");
-            }
-            @SuppressLint("DefaultLocale") String percentString = String.format("%.2f", percent) + "%";
-            Log.d(TAG, "setAssetTrendChartViewShow: " + percentString);
-            double value = 0.0;
-            if (changeData.get("value")!=null){
-                value = (double) changeData.get("value");
-            }
-            @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f", value);
-            mPriceChangeTv.setText(percentString);
-            if (percent>0){
-                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_06d78f));
-                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_up_green);
-            }else{
-                mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_F13A3A));
-                mPercentChangeView.setImageResource(R.mipmap.icon_arrow_down_red);
-            }
-            mBalanceValueTv.setText(valueString);
+
             // Notify the page to update data
             EventBus.getDefault().post(new UpdateAssetsDataEvent());
         } catch (ParseException e) {
@@ -299,15 +293,12 @@ public class AccountLightningActivity extends AppBaseActivity {
                 try {
                     LightningOuterClass.GetInfoResponse resp = LightningOuterClass.GetInfoResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------getInfoOnResponse-----------------" + resp);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            pubkey = resp.getIdentityPubkey();
-                            mNetworkTypeTv.setText(resp.getChains(0).getNetwork());
-                            User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
-                            User.getInstance().setNodeVersion(mContext, resp.getVersion());
-                            User.getInstance().setFromPubKey(mContext, resp.getIdentityPubkey());
-                        }
+                    runOnUiThread(() -> {
+                        pubkey = resp.getIdentityPubkey();
+                        mNetworkTypeTv.setText(resp.getChains(0).getNetwork());
+                        User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
+                        User.getInstance().setNodeVersion(mContext, resp.getVersion());
+                        User.getInstance().setFromPubKey(mContext, resp.getIdentityPubkey());
                     });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
@@ -331,6 +322,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                 LogUtils.e(TAG, "------------------walletBalanceByAddressOnError------------------" + e.getMessage());
             }
 
+            @SuppressLint("SetTextI18n")
             @Override
             public void onResponse(byte[] bytes) {
                 if (bytes == null) {
@@ -339,44 +331,36 @@ public class AccountLightningActivity extends AppBaseActivity {
                 try {
                     LightningOuterClass.WalletBalanceByAddressResponse resp = LightningOuterClass.WalletBalanceByAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------walletBalanceByAddressOnResponse-----------------" + resp);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (resp.getConfirmedBalance() == 0) {
-                                mBalanceAmountTv.setText("My account 0.00 balance");
-                            } else {
-                                DecimalFormat df = new DecimalFormat("0.00######");
-                                User.getInstance().setBalanceAmount(mContext, resp.getConfirmedBalance());
-                                balanceAmount = resp.getConfirmedBalance();
-                                mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
-                                /*BTCData btcData = new BTCData(mContext);
-                                try {
-                                    btcData.updateAmount(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }*/
-                            }
-                            blockData.clear();
-                            ListAssetItemEntity entity = new ListAssetItemEntity();
-                            entity.setAmount(resp.getConfirmedBalance());
-                            entity.setPropertyid(0);
-                            entity.setType(1);
-                            blockData.add(entity);
-                            allData.addAll(blockData);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mAdapter.notifyDataSetChanged();
-                                }
-                            });
-                            if (mRefreshLayout != null) {
-                                mRefreshLayout.stopRefresh();
-                            }
+                    runOnUiThread(() -> {
+                        if (resp.getConfirmedBalance() == 0) {
+                            mBalanceAmountTv.setText("My account 0.00 balance");
+                        } else {
+                            DecimalFormat df = new DecimalFormat("0.00######");
+                            User.getInstance().setBalanceAmount(mContext, resp.getConfirmedBalance());
+                            balanceAmount = resp.getConfirmedBalance();
+                            mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000) + " balance");
+                            /*BTCData btcData = new BTCData(mContext);
+                            try {
+                                btcData.updateAmount(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }*/
+                        }
+                        blockData.clear();
+                        ListAssetItemEntity entity = new ListAssetItemEntity();
+                        entity.setAmount(resp.getConfirmedBalance());
+                        entity.setPropertyid(0);
+                        entity.setType(1);
+                        blockData.add(entity);
+                        allData.addAll(blockData);
+                        runOnUiThread(() -> mAdapter.notifyDataSetChanged());
+                        if (mRefreshLayout != null) {
+                            mRefreshLayout.stopRefresh();
                         }
                     });
-                    /**
-                     * request the interface of each asset balance list
-                     * 请求各资产余额列表的接口
+                    /*
+                      request the interface of each asset balance list
+                      请求各资产余额列表的接口
                      */
                     LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
                             .setAddress(User.getInstance().getWalletAddress(mContext))
@@ -405,12 +389,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     getChannelBalance(resp.getListList().get(i).getPropertyid());
                                 }
                                 allData.addAll(blockData);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mAdapter.notifyDataSetChanged();
-                                    }
-                                });
+                                runOnUiThread(() -> mAdapter.notifyDataSetChanged());
                                 getBtcChannelBalance(0);
                             } catch (InvalidProtocolBufferException e) {
                                 e.printStackTrace();

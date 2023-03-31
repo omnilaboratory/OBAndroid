@@ -29,7 +29,7 @@ public class AssetsDao {
         ContentValues values = new ContentValues();
         values.put("property_id", propertyId);
         values.put("token_name", tokenName);
-        values.put("has_balance", 0);
+        values.put("has_balance", AssetsItem.ASSET_UNUSED);
         db.insert("assets", null, values);
 //        db.close();
     }
@@ -64,53 +64,15 @@ public class AssetsDao {
         }
     }
 
-    public List<Map<String,Object>> getAssetsList(){
-        List<Map<String,Object>> assetsList = new ArrayList<Map<String, Object>>();
-        String sql = "select * from assets";
-        SQLiteDatabase db = mInstance.getReadableDatabase();
-        Cursor cursor = db.rawQuery(sql, new String[]{});
-        while (cursor.moveToNext()){
-            Map<String,Object> asset = new HashMap<>();
-            asset.put("property_id",cursor.getString(cursor.getColumnIndex("property_id")));
-            asset.put("token_name",cursor.getString(cursor.getColumnIndex("token_name")));
-            assetsList.add(asset);
-        }
-        cursor.close();
-//        db.close();
-        return assetsList;
-    }
-
-    public int getAssetsCount(){
-        int count = 0;
-        String sql = "select * from assets";
-        SQLiteDatabase db = mInstance.getReadableDatabase();
-        Cursor cursor = db.rawQuery(sql, new String[]{});
-        count = cursor.getCount();
-        cursor.close();
-//        db.close();
-        return count;
-    }
-
-    public int getUsingAssetCount(){
-        int count = 0;
-        String sql = "select * from assets where has_balance = 1";
-        SQLiteDatabase db = mInstance.getReadableDatabase();
-        Cursor cursor = db.rawQuery(sql, new String[]{});
-        count = cursor.getCount();
-        cursor.close();
-//        db.close();
-        return count;
-    }
-
-    public List<Map<String,Object>> getUsingAssetsList(){
-        List<Map<String,Object>> assetsList = new ArrayList<Map<String, Object>>();
+    public List<AssetsItem> getUsingAssetsList(){
+        List<AssetsItem> assetsList = new ArrayList<>();
         String sql = "select * from assets where has_balance = 1";
         SQLiteDatabase db = mInstance.getReadableDatabase();
         Cursor cursor = db.rawQuery(sql, new String[]{});
         while (cursor.moveToNext()){
-            Map<String,Object> asset = new HashMap<>();
-            asset.put("property_id",cursor.getString(cursor.getColumnIndex("property_id")));
-            asset.put("token_name",cursor.getString(cursor.getColumnIndex("token_name")));
+            String propertyId = cursor.getString(cursor.getColumnIndex("property_id"));
+            String token_name = cursor.getString(cursor.getColumnIndex("token_name"));
+            AssetsItem asset = new AssetsItem(propertyId,token_name,AssetsItem.ASSET_USING);
             assetsList.add(asset);
         }
         cursor.close();
