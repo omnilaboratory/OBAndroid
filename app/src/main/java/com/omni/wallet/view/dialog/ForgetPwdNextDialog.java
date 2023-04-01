@@ -61,16 +61,7 @@ public class ForgetPwdNextDialog {
         LinearLayout unlockContain = mAlertDialog.findViewById(R.id.form_unlock_content);
         KeyboardScrollView.controlKeyboardLayout(pageContent, unlockContain);*/
 
-        passwordInputEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus){
-                    passwordChangeCheck();
-                }
-            }
-        });
-
-        /*passwordInputEditText.addTextChangedListener(new TextWatcher() {
+        passwordInputEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -85,7 +76,7 @@ public class ForgetPwdNextDialog {
             public void afterTextChanged(Editable s) {
                 passwordChangeCheck();
             }
-        });*/
+        });
 
         EditText passwordInputRepeatEditText = mAlertDialog.findViewById(R.id.password_input_repeat);
         passwordInputRepeatEditText.addTextChangedListener(new TextWatcher() {
