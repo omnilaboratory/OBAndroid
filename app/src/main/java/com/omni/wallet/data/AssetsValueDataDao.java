@@ -49,8 +49,18 @@ public class AssetsValueDataDao {
         String sql = "select * from assets_value_data order by update_date desc limit 1";
         Cursor cursor = db.rawQuery(sql, new String[]{});
         while (cursor.moveToNext()) {
-            long date = cursor.getLong(cursor.getColumnIndex("update_date"));
-            double value = cursor.getLong(cursor.getColumnIndex("value"));
+            long date;
+            if (cursor.getColumnIndex("update_date")>=0){
+                date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            }else{
+                date = -1;
+            }
+            double value;
+            if (cursor.getColumnIndex("value")>=0){
+                value = cursor.getDouble(cursor.getColumnIndex("value"));
+            }else{
+                value = -1;
+            }
             AssetsValueDataItem queryRow = new AssetsValueDataItem(value,date);
             queryList.add(queryRow);
         }
@@ -97,8 +107,18 @@ public class AssetsValueDataDao {
         String sql = "select * from assets_value_data order by update_date desc limit 365";
         Cursor cursor = db.rawQuery(sql, new String[]{});
         while (cursor.moveToNext()) {
-            double value = cursor.getDouble(cursor.getColumnIndex("value"));
-            long date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            long date;
+            if (cursor.getColumnIndex("update_date")>=0){
+                date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            }else{
+                date = -1;
+            }
+            double value;
+            if (cursor.getColumnIndex("value")>=0){
+                value = cursor.getDouble(cursor.getColumnIndex("value"));
+            }else{
+                value = -1;
+            }
             AssetsValueDataItem queryRow = new AssetsValueDataItem(value, date);
             queryList.add(queryRow);
         }
