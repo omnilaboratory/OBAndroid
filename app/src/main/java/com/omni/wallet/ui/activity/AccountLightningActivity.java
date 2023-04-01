@@ -942,12 +942,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateAssetsDataOver(UpdateAssetsDataEvent event) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                AssetsActions.initOrUpdateAction(mContext);
-            }
-        };
+        Runnable runnable = () -> AssetsActions.initOrUpdateAction(mContext);
         handler.postDelayed(runnable,60000);
 
     }

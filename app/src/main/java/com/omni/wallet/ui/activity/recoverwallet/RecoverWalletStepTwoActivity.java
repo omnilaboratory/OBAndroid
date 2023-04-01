@@ -104,7 +104,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
     @OnTextChanged(R.id.password_input)
     public void passwordChangeCheck(){
         String password = mPwdEdit.getText().toString();
-        int strongerPwd = CheckInputRules.checkePwd(password);
+        int strongerPwd = CheckInputRules.checkPwd(password);
         View easy =findViewById(R.id.pass_strong_state_easy);
         View normal = findViewById(R.id.pass_strong_state_normal);
         View strong = findViewById(R.id.pass_strong_state_strong);
@@ -243,7 +243,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
     @OnClick(R.id.btn_forward)
     public void clickForward() {
         String password = mPwdEdit.getText().toString();
-        int strongerPwd = CheckInputRules.checkePwd(password);
+        int strongerPwd = CheckInputRules.checkPwd(password);
         TextView passwordViewRepeat = findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){

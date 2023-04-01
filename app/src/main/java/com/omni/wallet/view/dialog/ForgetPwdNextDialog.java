@@ -108,7 +108,7 @@ public class ForgetPwdNextDialog {
     private void passwordChangeCheck(){
         EditText mPwdEdit =  mAlertDialog.findViewById(R.id.password_input);
         String password = mPwdEdit.getText().toString();
-        int strongerPwd = CheckInputRules.checkePwd(password);
+        int strongerPwd = CheckInputRules.checkPwd(password);
         System.out.println(strongerPwd);
         View easy = mAlertDialog.findViewById(R.id.pass_strong_state_easy);
         View normal = mAlertDialog.findViewById(R.id.pass_strong_state_normal);
@@ -235,7 +235,7 @@ public class ForgetPwdNextDialog {
         mLoadingDialog.show();
         EditText mPwdEdit = mAlertDialog.findViewById(R.id.password_input);
         String password = mPwdEdit.getText().toString();
-        int strongerPwd = CheckInputRules.checkePwd(password);
+        int strongerPwd = CheckInputRules.checkPwd(password);
         TextView passwordViewRepeat = mAlertDialog.findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
