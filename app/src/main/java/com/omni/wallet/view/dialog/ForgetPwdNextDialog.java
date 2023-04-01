@@ -3,6 +3,7 @@ package com.omni.wallet.view.dialog;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -19,6 +20,7 @@ import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
+import com.omni.wallet.utils.PasswordFilter;
 
 import android.os.Handler;
 
@@ -52,12 +54,23 @@ public class ForgetPwdNextDialog {
         }
 
         EditText passwordInputEditText = mAlertDialog.findViewById(R.id.password_input);
+        PasswordFilter passwordFilter = new PasswordFilter();
+        passwordInputEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
 
         /*LinearLayout pageContent = mAlertDialog.findViewById(R.id.layout_parent);
         LinearLayout unlockContain = mAlertDialog.findViewById(R.id.form_unlock_content);
         KeyboardScrollView.controlKeyboardLayout(pageContent, unlockContain);*/
 
-        passwordInputEditText.addTextChangedListener(new TextWatcher() {
+        passwordInputEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus){
+                    passwordChangeCheck();
+                }
+            }
+        });
+
+        /*passwordInputEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -65,14 +78,14 @@ public class ForgetPwdNextDialog {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                passwordChangeCheck();
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 passwordChangeCheck();
             }
-        });
+        });*/
 
         EditText passwordInputRepeatEditText = mAlertDialog.findViewById(R.id.password_input_repeat);
         passwordInputRepeatEditText.addTextChangedListener(new TextWatcher() {
@@ -109,7 +122,6 @@ public class ForgetPwdNextDialog {
         EditText mPwdEdit =  mAlertDialog.findViewById(R.id.password_input);
         String password = mPwdEdit.getText().toString();
         int strongerPwd = CheckInputRules.checkPwd(password);
-        System.out.println(strongerPwd);
         View easy = mAlertDialog.findViewById(R.id.pass_strong_state_easy);
         View normal = mAlertDialog.findViewById(R.id.pass_strong_state_normal);
         View strong = mAlertDialog.findViewById(R.id.pass_strong_state_strong);

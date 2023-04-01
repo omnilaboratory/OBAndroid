@@ -39,7 +39,6 @@ public class AssetsActions {
             long date = TimeFormatUtil.getCurrentDayMills();
             // Get a list of all assets today
             List<AssetsDataItem> dataList = assetsDataDao.queryAllAssetsDataByDate(date);
-            Log.d(TAG, "updateAssetsValueDataValueLast: dataList" + dataList.toString());
             // Calculate the sum of today's asset values
             double value = 0.0;
             for (int i = 0; i < dataList.size(); i++) {
@@ -51,6 +50,7 @@ public class AssetsActions {
                 if (item.getChannel_amount() != 0) {
                     channel_amount = item.getChannel_amount();
                 }
+                Log.d(TAG, "updateAssetsValueDataValueLast: " + channel_amount +" " + amount +" " +price);
                 dataValue = (channel_amount + amount) * price;
                 value = dataValue + value;
             }
@@ -180,11 +180,9 @@ public class AssetsActions {
         // Execute when the price is obtained successfully
         WalletServiceUtil.GetUsingAssetsPriceCallback getUsingAssetsPriceCallback
                 = (Context context1, JSONArray priceList, Map<String, Object> propertyMap) -> {
-            Log.d(TAG, "initOrUpdateDataStartApp: getPriceSuccess");
             try {
                 for (int i = 0; i < priceList.length(); i++) {
                     String priceString = priceList.getJSONObject(i).getString("current_price");
-                    Log.d(TAG, "initOrUpdateDataStartApp: price: " + priceString);
                     double price = Double.parseDouble(priceString);
                     String id = priceList.getJSONObject(i).getString("id");
                     String propertyId;
@@ -458,7 +456,6 @@ public class AssetsActions {
                 value = valueList.get(valueList.size() - 1).getValue();
                 changePercent = 0;
             }
-
             changeMap = new ChangeData(value,changePercent);
 
 
@@ -493,6 +490,12 @@ public class AssetsActions {
                 }
             }
         }
+        for (int i = 0;i<chartDataList.size();i++) {
+            AssetsValueDataItem item = chartDataList.get(i);
+            Log.d(TAG, "getDataForChart: chartDataListItem" + i + " " + item.getValue() + " " + item.getUpdate_date());
+        }
+        Log.d(TAG, "getDataForChart: changeMap value" + changeMap.getValue());
+        Log.d(TAG, "getDataForChart: changeMap percent" + changeMap.getPercent());
         ChartData data = new ChartData(chartDataList,changeMap);
 
         return data;

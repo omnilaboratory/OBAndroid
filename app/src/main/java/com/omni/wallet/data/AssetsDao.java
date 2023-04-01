@@ -70,8 +70,18 @@ public class AssetsDao {
         SQLiteDatabase db = mInstance.getReadableDatabase();
         Cursor cursor = db.rawQuery(sql, new String[]{});
         while (cursor.moveToNext()){
-            String propertyId = cursor.getString(cursor.getColumnIndex("property_id"));
-            String token_name = cursor.getString(cursor.getColumnIndex("token_name"));
+            String propertyId;
+            if (cursor.getColumnIndex("property_id")>=0){
+                propertyId = cursor.getString(cursor.getColumnIndex("property_id"));
+            }else{
+                propertyId = "";
+            }
+            String token_name;
+            if (cursor.getColumnIndex("token_name")>=0){
+                token_name = cursor.getString(cursor.getColumnIndex("token_name"));
+            }else{
+                token_name = "";
+            }
             AssetsItem asset = new AssetsItem(propertyId,token_name,AssetsItem.ASSET_USING);
             assetsList.add(asset);
         }
