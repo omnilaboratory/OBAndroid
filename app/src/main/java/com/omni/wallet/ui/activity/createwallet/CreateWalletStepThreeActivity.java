@@ -110,7 +110,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
     @OnTextChanged(R.id.password_input)
     public void passwordChangeCheck(){
         String password = mPwdEdit.getText().toString();
-        int strongerPwd = CheckInputRules.checkePwd(password);
+        int strongerPwd = CheckInputRules.checkPwd(password);
         System.out.println(strongerPwd);
         View easy =findViewById(R.id.pass_strong_state_easy);
         View normal = findViewById(R.id.pass_strong_state_normal);
@@ -259,7 +259,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
     public void clickForward() {
         Log.d("initWallet response","start");
         String password = mPwdEdit.getText().toString();
-        int strongerPwd = CheckInputRules.checkePwd(password);
+        int strongerPwd = CheckInputRules.checkPwd(password);
         TextView passwordViewRepeat = findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
