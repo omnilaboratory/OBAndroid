@@ -1,6 +1,7 @@
 package com.omni.wallet.utils;
 
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.omni.wallet.framelibrary.utils.Base64;
@@ -37,7 +38,7 @@ public class SecretAESOperator {
     public String encrypt(String sSrc) {
         String secretString = "";
         try {
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance("AES");
             byte[] raw = sKey.getBytes();
             SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
             IvParameterSpec iv = new IvParameterSpec(ivParameter.getBytes());
@@ -59,7 +60,7 @@ public class SecretAESOperator {
         try {
             byte[] raw = sKey.getBytes(StandardCharsets.US_ASCII);
             SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance("AES");
             IvParameterSpec iv = new IvParameterSpec(ivParameter.getBytes());
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
             byte[] encrypted1 = Base64.decode(sSrc);
