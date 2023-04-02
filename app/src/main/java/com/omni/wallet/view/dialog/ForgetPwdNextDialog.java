@@ -21,6 +21,7 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
+import com.omni.wallet.utils.SecretAESOperator;
 
 import android.os.Handler;
 
@@ -247,7 +248,7 @@ public class ForgetPwdNextDialog {
               使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
               Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
              */
-            String newPassMd5String = Md5Util.getMD5Str(password);
+            String newPassMd5String = SecretAESOperator.getInstance().encrypt(password);
             User.getInstance().setNewPasswordMd5(mContext,newPassMd5String);
             mLoadingDialog.dismiss();
             release();

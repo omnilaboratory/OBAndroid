@@ -33,6 +33,7 @@ import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.obdMethods.WalletState;
+import com.omni.wallet.utils.SecretAESOperator;
 import com.omni.wallet.view.dialog.LoginLoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -266,11 +267,11 @@ public class UnlockActivity extends AppBaseActivity {
     @OnClick(R.id.btn_unlock)
     public void clickUnlock() {
         String passwordString = mPwdEdit.getText().toString();
-        String passMd5 = Md5Util.getMD5Str(passwordString);
-        boolean passIsMatched = checkedPassMatched(passMd5);
+        String newSecretString = SecretAESOperator.getInstance().encrypt(passwordString);
+        boolean passIsMatched = checkedPassMatched(newSecretString);
         PublicUtils.showLoading(mLoadingDialog);
         if (passIsMatched){
-            unlockWallet(passMd5);
+            unlockWallet(newSecretString);
         }else{
             PublicUtils.closeLoading(mLoadingDialog);
             String toastString = getResources().getString(R.string.toast_unlock_error);

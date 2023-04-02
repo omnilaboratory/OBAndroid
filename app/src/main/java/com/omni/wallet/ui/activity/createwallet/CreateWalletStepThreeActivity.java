@@ -30,6 +30,7 @@ import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
+import com.omni.wallet.utils.SecretAESOperator;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -264,7 +265,7 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
             mLoadingDialog.show();
-            String md5String = Md5Util.getMD5Str(password);
+            String md5String = SecretAESOperator.getInstance().encrypt(password);
             System.out.println(md5String);
             User.getInstance().setPasswordMd5(mContext,md5String);
             String seedsString = User.getInstance().getSeedString(mContext);

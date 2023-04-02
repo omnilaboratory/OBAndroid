@@ -27,6 +27,7 @@ import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
+import com.omni.wallet.utils.SecretAESOperator;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -248,7 +249,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
             mLoadingDialog.show();
-            String md5String = Md5Util.getMD5Str(password);
+            String md5String = SecretAESOperator.getInstance().encrypt(password);
             /**
              * 使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
              * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
