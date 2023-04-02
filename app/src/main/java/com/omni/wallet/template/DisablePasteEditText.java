@@ -5,10 +5,9 @@ import android.util.AttributeSet;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 
 
-public class DisablePasteEditText extends EditText
+public class DisablePasteEditText extends android.support.v7.widget.AppCompatEditText
 {
     private final Context context;
 
