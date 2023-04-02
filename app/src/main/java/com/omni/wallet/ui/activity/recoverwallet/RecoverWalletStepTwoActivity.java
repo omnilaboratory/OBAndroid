@@ -25,7 +25,6 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
 import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.KeyboardScrollView;
-import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.SecretAESOperator;
 import com.omni.wallet.view.dialog.LoadingDialog;

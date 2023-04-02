@@ -19,11 +19,8 @@ import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CheckInputRules;
-import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.SecretAESOperator;
-
-import android.os.Handler;
 
 public class ForgetPwdNextDialog {
     public static final String TAG = ForgetPwdNextDialog.class.getSimpleName();

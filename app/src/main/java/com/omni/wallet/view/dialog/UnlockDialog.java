@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -12,7 +11,6 @@ import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.utils.Md5Util;
 import com.omni.wallet.utils.SecretAESOperator;
 
 public class UnlockDialog {
