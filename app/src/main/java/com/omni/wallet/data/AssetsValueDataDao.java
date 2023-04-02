@@ -50,16 +50,18 @@ public class AssetsValueDataDao {
         Cursor cursor = db.rawQuery(sql, new String[]{});
         while (cursor.moveToNext()) {
             long date;
-            if (cursor.getColumnIndex("update_date")>=0){
-                date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            int update_date_index = cursor.getColumnIndex("update_date");
+            if (update_date_index>=0){
+                date = cursor.getLong(update_date_index);
             }else{
-                date = -1;
+                date = 0;
             }
             double value;
-            if (cursor.getColumnIndex("value")>=0){
-                value = cursor.getDouble(cursor.getColumnIndex("value"));
+            int value_index = cursor.getColumnIndex("value");
+            if (value_index>=0){
+                value = cursor.getDouble(value_index);
             }else{
-                value = -1;
+                value = 0;
             }
             AssetsValueDataItem queryRow = new AssetsValueDataItem(value,date);
             queryList.add(queryRow);
@@ -108,16 +110,18 @@ public class AssetsValueDataDao {
         Cursor cursor = db.rawQuery(sql, new String[]{});
         while (cursor.moveToNext()) {
             long date;
-            if (cursor.getColumnIndex("update_date")>=0){
-                date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            int update_date_index = cursor.getColumnIndex("update_date");
+            if (update_date_index>=0){
+                date = cursor.getLong(update_date_index);
             }else{
-                date = -1;
+                date = 0;
             }
             double value;
-            if (cursor.getColumnIndex("value")>=0){
-                value = cursor.getDouble(cursor.getColumnIndex("value"));
+            int value_index = cursor.getColumnIndex("value");
+            if (value_index>=0){
+                value = cursor.getDouble(value_index);
             }else{
-                value = -1;
+                value = 0;
             }
             AssetsValueDataItem queryRow = new AssetsValueDataItem(value, date);
             queryList.add(queryRow);

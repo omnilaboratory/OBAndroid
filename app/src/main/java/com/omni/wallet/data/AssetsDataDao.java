@@ -108,32 +108,37 @@ public class AssetsDataDao {
         Cursor cursor = db.rawQuery(sql,new String[]{String.valueOf(date)});
         while (cursor.moveToNext()){
             long update_date;
-            if (cursor.getColumnIndex("update_date")>=0){
-                update_date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            int update_date_index = cursor.getColumnIndex("update_date");
+            if (update_date_index>=0){
+                update_date = cursor.getLong(update_date_index);
             }else{
-                update_date = -1;
+                update_date = 0;
             }
             double price;
-            if (cursor.getColumnIndex("price")>=0){
-                price = cursor.getDouble(cursor.getColumnIndex("price"));
+            int price_index = cursor.getColumnIndex("price");
+            if (price_index>=0){
+                price = cursor.getDouble(price_index);
             }else{
-                price = -1;
+                price = 0;
             }
             double amount;
-            if (cursor.getColumnIndex("amount")>=0){
-                amount = cursor.getDouble(cursor.getColumnIndex("amount"));
+            int amount_index = cursor.getColumnIndex("amount");
+            if (amount_index>=0){
+                amount = cursor.getDouble(amount_index);
             }else{
-                amount = -1;
+                amount = 0;
             }
             double channel_amount;
-            if (cursor.getColumnIndex("channel_amount")>=0){
-                channel_amount = cursor.getDouble(cursor.getColumnIndex("channel_amount"));
+            int channel_amount_index = cursor.getColumnIndex("channel_amount");
+            if (channel_amount_index>=0){
+                channel_amount = cursor.getDouble(channel_amount_index);
             }else{
-                channel_amount = -1;
+                channel_amount = 0;
             }
             String propertyId;
-            if (cursor.getColumnIndex("property_id")>=0){
-                propertyId = cursor.getString(cursor.getColumnIndex("property_id"));
+            int propertyId_index = cursor.getColumnIndex("property_id");
+            if (propertyId_index>=0){
+                propertyId = cursor.getString(propertyId_index);
             }else{
                 propertyId = "";
             }
@@ -152,28 +157,32 @@ public class AssetsDataDao {
         Cursor cursor = db.rawQuery(sql,new String[]{propertyId});
         while (cursor.moveToNext()){
             long update_date;
-            if (cursor.getColumnIndex("update_date")>=0){
-                update_date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            int update_date_index = cursor.getColumnIndex("update_date");
+            if (update_date_index>=0){
+                update_date = cursor.getLong(update_date_index);
             }else{
-                update_date = -1;
+                update_date = 0;
             }
             double price;
-            if (cursor.getColumnIndex("price")>=0){
-                price = cursor.getDouble(cursor.getColumnIndex("price"));
+            int price_index = cursor.getColumnIndex("price");
+            if (price_index>=0){
+                price = cursor.getDouble(price_index);
             }else{
-                price = -1;
+                price = 0;
             }
             double amount;
-            if (cursor.getColumnIndex("amount")>=0){
-                amount = cursor.getDouble(cursor.getColumnIndex("amount"));
+            int amount_index = cursor.getColumnIndex("amount");
+            if (amount_index>=0){
+                amount = cursor.getDouble(amount_index);
             }else{
-                amount = -1;
+                amount = 0;
             }
             double channel_amount;
-            if (cursor.getColumnIndex("channel_amount")>=0){
-                channel_amount = cursor.getDouble(cursor.getColumnIndex("channel_amount"));
+            int channel_amount_index = cursor.getColumnIndex("channel_amount");
+            if (channel_amount_index>=0){
+                channel_amount = cursor.getDouble(channel_amount_index);
             }else{
-                channel_amount = -1;
+                channel_amount = 0;
             }
             AssetsDataItem row = new AssetsDataItem(propertyId,price,amount,channel_amount,update_date);
             queryList.add(row);
@@ -191,28 +200,32 @@ public class AssetsDataDao {
         Cursor cursor = db.rawQuery(sql,new String[]{propertyId, String.valueOf(date)});
         while (cursor.moveToNext()){
             long update_date;
-            if (cursor.getColumnIndex("update_date")>=0){
-                update_date = cursor.getLong(cursor.getColumnIndex("update_date"));
+            int update_date_index = cursor.getColumnIndex("update_date");
+            if (update_date_index>=0){
+                update_date = cursor.getLong(update_date_index);
             }else{
-                update_date = -1;
+                update_date = 0;
             }
             double price;
-            if (cursor.getColumnIndex("price")>=0){
-                price = cursor.getDouble(cursor.getColumnIndex("price"));
+            int price_index = cursor.getColumnIndex("price");
+            if (price_index>=0){
+                price = cursor.getDouble(price_index);
             }else{
-                price = -1;
+                price = 0;
             }
             double amount;
-            if (cursor.getColumnIndex("amount")>=0){
-                amount = cursor.getDouble(cursor.getColumnIndex("amount"));
+            int amount_index = cursor.getColumnIndex("amount");
+            if (amount_index>=0){
+                amount = cursor.getDouble(amount_index);
             }else{
-                amount = -1;
+                amount = 0;
             }
             double channel_amount;
-            if (cursor.getColumnIndex("channel_amount")>=0){
-                channel_amount = cursor.getDouble(cursor.getColumnIndex("channel_amount"));
+            int channel_amount_index = cursor.getColumnIndex("channel_amount");
+            if (channel_amount_index>=0){
+                channel_amount = cursor.getDouble(channel_amount_index);
             }else{
-                channel_amount = -1;
+                channel_amount = 0;
             }
             AssetsDataItem row = new AssetsDataItem(propertyId,price,amount,channel_amount,update_date);
             queryList.add(row);

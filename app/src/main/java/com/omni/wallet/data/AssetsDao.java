@@ -71,14 +71,16 @@ public class AssetsDao {
         Cursor cursor = db.rawQuery(sql, new String[]{});
         while (cursor.moveToNext()){
             String propertyId;
-            if (cursor.getColumnIndex("property_id")>=0){
-                propertyId = cursor.getString(cursor.getColumnIndex("property_id"));
+            int propertyIdIndex = cursor.getColumnIndex("property_id");
+            if (propertyIdIndex>=0){
+                propertyId = cursor.getString(propertyIdIndex);
             }else{
                 propertyId = "";
             }
             String token_name;
-            if (cursor.getColumnIndex("token_name")>=0){
-                token_name = cursor.getString(cursor.getColumnIndex("token_name"));
+            int tokenNameIndex = cursor.getColumnIndex("token_name");
+            if (tokenNameIndex>=0){
+                token_name = cursor.getString(tokenNameIndex);
             }else{
                 token_name = "";
             }
