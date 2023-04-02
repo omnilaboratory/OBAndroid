@@ -209,9 +209,9 @@ public class PieRadarChartTouchListener extends ChartTouchListener<PieRadarChart
 
         // Now if the "gesture" is over a too big of an angle - then we know the angles are inverted, and we need to move them closer to each other from both sides of the 360.0 wrapping point
         if (lastSample.angle - firstSample.angle > 180.0) {
-            firstSample.angle += 360.0;
+            firstSample.angle = (float) (lastSample.angle + 360.0);
         } else if (firstSample.angle - lastSample.angle > 180.0) {
-            lastSample.angle += 360.0;
+            lastSample.angle = (float) (lastSample.angle +360.0);
         }
 
         // The velocity

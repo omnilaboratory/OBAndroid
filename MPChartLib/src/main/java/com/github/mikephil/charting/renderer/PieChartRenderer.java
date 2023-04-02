@@ -427,7 +427,7 @@ public class PieChartRenderer extends DataRenderer {
 
             if (!mChart.isDrawSlicesUnderHoleEnabled() && mChart.isDrawRoundedSlicesEnabled()) {
                 // Add curved circle slice and spacing to rotation angle, so that it sits nicely inside
-                rotationAngle += roundedRadius * 360 / (Math.PI * 2 * radius);
+                rotationAngle = (float) (rotationAngle + roundedRadius * 360 / (Math.PI * 2 * radius));
             }
         }
 
@@ -1051,7 +1051,7 @@ public class PieChartRenderer extends DataRenderer {
     }
 
     /**
-     * Releases the drawing bitmap. This should be called when {@link LineChart#onDetachedFromWindow()}.
+     * Releases the drawing bitmap. This should be called when .
      */
     public void releaseBitmap() {
         if (mBitmapCanvas != null) {

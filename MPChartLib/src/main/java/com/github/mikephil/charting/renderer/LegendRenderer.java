@@ -307,9 +307,9 @@ public class LegendRenderer extends Renderer {
                 // Horizontally layed out legends do the center offset on a line basis,
                 // So here we offset the vertical ones only.
                 if (orientation == Legend.LegendOrientation.VERTICAL) {
-                    originPosX += (direction == Legend.LegendDirection.LEFT_TO_RIGHT
-                            ? -mLegend.mNeededWidth / 2.0 + xoffset
-                            : mLegend.mNeededWidth / 2.0 - xoffset);
+                    originPosX = (float) (originPosX + (direction == Legend.LegendDirection.LEFT_TO_RIGHT
+                                                ? -mLegend.mNeededWidth / 2.0 + xoffset
+                                                : mLegend.mNeededWidth / 2.0 - xoffset));
                 }
 
                 break;

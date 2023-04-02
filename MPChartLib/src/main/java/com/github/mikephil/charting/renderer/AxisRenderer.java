@@ -199,7 +199,7 @@ public abstract class AxisRenderer extends Renderer {
 
             for (int i = 0; i < labelCount; i++) {
                 mAxis.mEntries[i] = v;
-                v += interval;
+                v = (float) (v + interval);
             }
 
             n = labelCount;

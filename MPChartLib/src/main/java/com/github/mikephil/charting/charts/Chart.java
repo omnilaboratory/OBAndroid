@@ -406,7 +406,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
                         break;
 
                     case RIGHT:
-                        pt.x *= 2.0;
+                        pt.x = (float) (pt.x *2.0);
                         canvas.drawText(mNoDataText, pt.x, pt.y, mInfoPaint);
                         break;
 
