@@ -23,7 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
-import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
@@ -31,6 +31,7 @@ import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.utils.image.BitmapUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.client.LuckPkClient;
+import com.omni.wallet.common.ConstantWithNetwork;
 import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
@@ -291,7 +292,7 @@ public class CreateLuckyPacketPopupWindow {
                 }
                 mLoadingDialog.show();
                 try {
-                    LuckPkClient client = new LuckPkClient(ConstantInOB.usingBTCHostAddress, 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
+                    LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
                     try {
                         LuckPkOuterClass.LuckPk payRequest;
                         if (mAssetId == 0) {

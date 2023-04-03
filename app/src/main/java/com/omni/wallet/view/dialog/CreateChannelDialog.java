@@ -23,7 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
-import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.http.HttpUtils;
 import com.omni.wallet.baselibrary.http.callback.EngineCallback;
@@ -34,6 +34,7 @@ import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.common.ConstantWithNetwork;
 import com.omni.wallet.entity.LiquidityNodeEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.OpenChannelEvent;
@@ -115,7 +116,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
             mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.VISIBLE);
             showStepTwo();
         } else {
-            nodePubkey = ConstantInOB.usingLiquidityNodePubkey;
+            nodePubkey = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLiquidityNodePubKey();
             showStepOne();
         }
         /**
@@ -183,7 +184,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                         LogUtils.e(TAG, "getCenterNodePubkeyError:" + errorMsg);
                         mData.clear();
                         LiquidityNodeEntity entity = new LiquidityNodeEntity();
-                        entity.setAddress(ConstantInOB.testLiquidityNodePubkey);
+                        entity.setAddress(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLiquidityNodePubKey());
                         mData.add(entity);
                         new Handler(Looper.getMainLooper()).post(() -> {
                             mAdapter.notifyDataSetChanged();
@@ -460,7 +461,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         mAlertDialog.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nodePubkey = ConstantInOB.usingLiquidityNodePubkey;
+                nodePubkey = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLiquidityNodePubKey();
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_one).setVisibility(View.VISIBLE);
                 mAlertDialog.findViewById(R.id.lv_create_channel_step_two).setVisibility(View.GONE);
                 showStepOne();

@@ -17,13 +17,14 @@ import android.widget.TextView;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.base.PermissionConfig;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.common.ConstantWithNetwork;
 import com.omni.wallet.framelibrary.common.Constants;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.obdMethods.NodeStart;
@@ -331,7 +332,8 @@ public class SplashActivity extends AppBaseActivity {
             preFilesUtils.readManifestFile();
             getHeaderBinFile();
         };
-        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+        String downloadDirectoryPath = constantInOB.getBasePath()
+                + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
         String filePath = downloadDirectoryPath + preFilesUtils.MANIFEST_FILE_NAME;
         File file = new File(filePath);
         if (file.exists()) {
@@ -344,7 +346,8 @@ public class SplashActivity extends AppBaseActivity {
 
     public void getHeaderBinFile(){
         PreFilesUtils.DownloadCallback downloadCallback = () -> {
-            String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+            String downloadDirectoryPath = constantInOB.getBasePath()
+                    + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
             String filePath = downloadDirectoryPath + ConstantInOB.blockHeaderBin;
             if(preFilesUtils.checkBlockHeaderMd5Matched()){
                 User.getInstance().setHeaderBinChecked(mContext, true);
@@ -367,7 +370,8 @@ public class SplashActivity extends AppBaseActivity {
 
     public void getRegHeadersFile(){
         PreFilesUtils.DownloadCallback downloadCallback = () -> {
-            String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+            String downloadDirectoryPath = constantInOB.getBasePath()
+                    + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
             String filePath = downloadDirectoryPath + ConstantInOB.regFilterHeaderBin;
             if(preFilesUtils.checkFilterHeaderMd5Matched()){
                 User.getInstance().setFilterHeaderBinChecked(mContext, true);
@@ -389,7 +393,8 @@ public class SplashActivity extends AppBaseActivity {
 
     public void getNeutrinoFile(){
         PreFilesUtils.DownloadCallback downloadCallback = () -> {
-            String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+            String downloadDirectoryPath = constantInOB.getBasePath()
+                    + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
             String filePath = downloadDirectoryPath + ConstantInOB.neutrinoDB;
             if(preFilesUtils.checkNeutrinoMd5Matched()){
                 User.getInstance().setNeutrinoDbChecked(mContext, true);
@@ -416,7 +421,8 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     public void readManifestFile() {
-        String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+        String downloadDirectoryPath = constantInOB.getBasePath()
+                + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
         BufferedReader bfr;
         try {
             bfr = new BufferedReader(new FileReader(downloadDirectoryPath + "manifest.txt"));
@@ -457,7 +463,8 @@ public class SplashActivity extends AppBaseActivity {
             if (isFilterHeaderBinChecked) {
                 if (isNeutrinoDbChecked) {
                     long nowMillis = Calendar.getInstance().getTimeInMillis();
-                    String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
+                    String downloadDirectoryPath = constantInOB.getBasePath()
+                            + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
                     long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
                     if (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS) {
                         getManifest();

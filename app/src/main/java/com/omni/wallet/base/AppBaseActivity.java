@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.util.Log;
 
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.framelibrary.base.FrameBaseActivity;
 import com.omni.wallet.view.dialog.UnlockDialog;
 

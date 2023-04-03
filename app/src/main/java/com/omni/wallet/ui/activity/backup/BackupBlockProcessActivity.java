@@ -23,10 +23,13 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
+import com.omni.wallet.common.StartParams;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
@@ -130,7 +133,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     protected void initView() {
         User user = User.getInstance();
         constantInOB = new ConstantInOB(mContext);
-        String fileLocal = constantInOB.getRegTestLogPath();
+        String fileLocal = constantInOB.getBasePath() + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLogPath();
         obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
         blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
         isSynced = user.getSynced(mContext);
@@ -356,7 +359,9 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
     
     public void startOBMobile(){
-        Obdmobile.start("--lnddir=" + getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + User.getInstance().getAlias(mContext), new Callback() {
+        String lndDir = getApplicationContext().getExternalCacheDir().toString();
+        String startParams = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getStartParams();
+        Obdmobile.start("--lnddir=" + lndDir + startParams + User.getInstance().getAlias(mContext), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());

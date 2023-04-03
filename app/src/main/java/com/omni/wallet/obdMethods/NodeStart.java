@@ -1,11 +1,14 @@
 package com.omni.wallet.obdMethods;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.framelibrary.entity.User;
 
 import java.util.Random;
@@ -15,7 +18,6 @@ import obdmobile.Obdmobile;
 
 public class NodeStart {
     private final String TAG = NodeStart.class.getSimpleName();
-    private String startParams = ConstantInOB.usingNeutrinoConfig;
     private static boolean isStart = false;
     private static NodeStart mInstance;
     private NodeStart() {}
@@ -51,8 +53,11 @@ public class NodeStart {
             alias = User.getInstance().getAlias(context);
         }
         LogUtils.e("================", alias);
+        String lndDir = context.getApplicationContext().getExternalCacheDir().toString();
+        String startParams = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getStartParams();
+        Log.d(TAG, "startNode startParams: " + startParams + alias);
         LogUtils.e("================", startParams + alias);
-        Obdmobile.start("--lnddir=" + context.getApplicationContext().getExternalCacheDir() + startParams + alias, new Callback() {
+        Obdmobile.start("--lnddir=" + lndDir + startParams + alias, new Callback() {
             @Override
             public void onError(Exception e) {
                  if (e.getMessage().contains("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
