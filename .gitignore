@@ -15,6 +15,7 @@ error.text
 /error.txt
 /*.log
 /libjpeg/build
+/.github/workflows/codeql.yml
 
 /hs_err_pid12400.log
 /hs_err_pid14596.log
