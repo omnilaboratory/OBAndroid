@@ -383,7 +383,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         mWalletAddressTv.setText(walletAddress);
         initBalanceAccount();
         // 初始化日期选择器
-        filterTime = String.valueOf(DateUtils.getMonthFirstdayDateZero()).substring(0, 10);
+        filterTime = String.valueOf(DateUtils.getMonthLastdayDateZero()).substring(0, 10);
         mFilterTimeTv.setText(DateUtils.YearMonth(filterTime));
         showTimePicker();
         LogUtils.e(TAG, "------------------getCurrentMonth------------------" + filterTime);
@@ -505,7 +505,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             }
                             List<TransactionChainEntity> filterList = new ArrayList<>();
                             for (TransactionChainEntity entity : list) {
-                                if (entity.getTimeStamp() > Long.parseLong(time)) {
+                                if (entity.getTimeStamp() < Long.parseLong(time)) {
                                     filterList.add(entity);
                                 }
                             }
@@ -597,7 +597,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             }
                             List<TransactionAssetEntity> filterList = new ArrayList<>();
                             for (TransactionAssetEntity entity : list) {
-                                if (entity.getBlockTime() > Long.parseLong(time)) {
+                                if (entity.getBlockTime() < Long.parseLong(time)) {
                                     filterList.add(entity);
                                 }
                             }
@@ -660,14 +660,14 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(false)
                     .setIncludeIncomplete(false)
-                    .setStartTime(Long.parseLong(time))
+                    .setEndTime(Long.parseLong(time))
                     .build();
         } else {
             paymentsRequest = LightningOuterClass.ListPaymentsRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(true)
                     .setIncludeIncomplete(false)
-                    .setStartTime(Long.parseLong(time))
+                    .setEndTime(Long.parseLong(time))
                     .build();
         }
         Obdmobile.oB_ListPayments(paymentsRequest.toByteArray(), new Callback() {
@@ -747,14 +747,14 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(false)
                     .setNumMaxInvoices(lastIndex)
-                    .setStartTime(Long.parseLong(time))
+                    .setEndTime(Long.parseLong(time))
                     .build();
         } else {
             invoiceRequest = LightningOuterClass.ListInvoiceRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setIsQueryAsset(true)
                     .setNumMaxInvoices(lastIndex)
-                    .setStartTime(Long.parseLong(time))
+                    .setEndTime(Long.parseLong(time))
                     .build();
         }
         Obdmobile.oB_ListInvoices(invoiceRequest.toByteArray(), new Callback() {
@@ -867,24 +867,24 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 if (bytes == null) {
                     return;
                 }
-                try {
-                    LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------getPendingTxsChainOnResponse-----------------" + resp);
-                    for (LightningOuterClass.Transaction transaction : resp.getTransactionsList()) {
-                        if (StringUtils.isEmpty(String.valueOf(transaction.getNumConfirmations())) || transaction.getNumConfirmations() < 3) {
-                            mPendingTxsChainData.add(transaction);
-                        }
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------getPendingTxsChainOnResponse-----------------" + resp);
+                            for (LightningOuterClass.Transaction transaction : resp.getTransactionsList()) {
+                                if (StringUtils.isEmpty(String.valueOf(transaction.getNumConfirmations())) || transaction.getNumConfirmations() < 3) {
+                                    mPendingTxsChainData.add(transaction);
+                                }
+                            }
                             mToBePaidNumTv.setText(mPendingTxsChainData.size() + "");
                             mPendingTxsChainAdapter.notifyDataSetChanged();
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
                         }
-                    });
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
+                    }
+                });
             }
         });
     }
@@ -954,22 +954,23 @@ public class BalanceDetailActivity extends AppBaseActivity {
                         if (bytes == null) {
                             return;
                         }
-                        try {
-                            LightningOuterClass.AssetTx resp = LightningOuterClass.AssetTx.parseFrom(bytes);
-                            LogUtils.e(TAG, "------------------oB_GetOmniTransactionOnPendingResponse-----------------" + resp);
-                            if (StringUtils.isEmpty(String.valueOf(resp.getConfirmations())) || resp.getConfirmations() < 3) {
-                                mPendingTxsAssetData.add(resp);
-                            }
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    LightningOuterClass.AssetTx resp = LightningOuterClass.AssetTx.parseFrom(bytes);
+                                    LogUtils.e(TAG, "------------------oB_GetOmniTransactionOnPendingResponse-----------------" + resp);
+                                    if (StringUtils.isEmpty(String.valueOf(resp.getConfirmations())) || resp.getConfirmations() < 3) {
+                                        mPendingTxsAssetData.add(resp);
+                                    }
                                     mToBePaidNumTv.setText(mPendingTxsAssetData.size() + "");
                                     mPendingTxsAssetAdapter.notifyDataSetChanged();
+                                } catch (InvalidProtocolBufferException e) {
+                                    e.printStackTrace();
                                 }
-                            });
-                        } catch (InvalidProtocolBufferException e) {
-                            e.printStackTrace();
-                        }
+                            }
+                        });
+
                     }
                 });
             }
@@ -1058,25 +1059,25 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 if (bytes == null) {
                     return;
                 }
-                try {
-                    LightningOuterClass.ListInvoiceResponse resp = LightningOuterClass.ListInvoiceResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------invoiceOnResponse-----------------" + resp);
-                    if (resp.getLastIndexOffset() < lastIndex) {
-                        mMyInvoicesData.clear();
-                        mMyInvoicesData.addAll(Lists.reverse(resp.getInvoicesList()));
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            LightningOuterClass.ListInvoiceResponse resp = LightningOuterClass.ListInvoiceResponse.parseFrom(bytes);
+                            LogUtils.e(TAG, "------------------invoiceOnResponse-----------------" + resp);
+                            if (resp.getLastIndexOffset() < lastIndex) {
+                                mMyInvoicesData.clear();
+                                mMyInvoicesData.addAll(Lists.reverse(resp.getInvoicesList()));
                                 mMyInvoicesNumTv.setText(resp.getInvoicesList().size() + "");
                                 mMyInvoicesAdapter.notifyDataSetChanged();
+                            } else {
+                                fetchInvoicesFromLND(lastIndex + 100);
                             }
-                        });
-                    } else {
-                        fetchInvoicesFromLND(lastIndex + 100);
+                        } catch (InvalidProtocolBufferException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
+                });
             }
         });
     }
@@ -1921,7 +1922,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         mTimePickerView = new TimePickerView.Builder(this, new TimePickerView.OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                filterTime = String.valueOf(DateUtils.getMonthBegin(date)).substring(0, 10);
+                filterTime = String.valueOf(DateUtils.getMonthEnd(date)).substring(0, 10);
                 mFilterTimeTv.setText(DateUtils.YearMonth(filterTime));
                 initTransactionsData(filterTime);
                 LogUtils.e("==========filterTime==========", filterTime);
@@ -1981,7 +1982,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPayInvoiceSuccessEvent(PayInvoiceSuccessEvent event) {
-        filterTime = String.valueOf(DateUtils.getMonthFirstdayDateZero()).substring(0, 10);
+        filterTime = String.valueOf(DateUtils.getMonthLastdayDateZero()).substring(0, 10);
         mFilterTimeTv.setText(DateUtils.YearMonth(filterTime));
         fetchTransactionsFromLND(filterTime);
         fetchPaymentsFromLND();
@@ -2002,7 +2003,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCreateInvoiceEvent(CreateInvoiceEvent event) {
-        filterTime = String.valueOf(DateUtils.getMonthFirstdayDateZero()).substring(0, 10);
+        filterTime = String.valueOf(DateUtils.getMonthLastdayDateZero()).substring(0, 10);
         mFilterTimeTv.setText(DateUtils.YearMonth(filterTime));
         fetchTransactionsFromLND(filterTime);
         fetchInvoicesFromLND(100);
@@ -2014,7 +2015,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSendSuccessEvent(SendSuccessEvent event) {
-        filterTime = String.valueOf(DateUtils.getMonthFirstdayDateZero()).substring(0, 10);
+        filterTime = String.valueOf(DateUtils.getMonthLastdayDateZero()).substring(0, 10);
         mFilterTimeTv.setText(DateUtils.YearMonth(filterTime));
         if (assetId == 0) {
             getTransactions(filterTime);
