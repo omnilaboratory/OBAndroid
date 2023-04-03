@@ -262,11 +262,8 @@ public class CustomWebView extends LinearLayout {
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             // 接受所有的证书
-            try {
-                handler.proceed();
-            } catch (Exception e) {
-                handler.cancel();
-            }
+//            handler.proceed();
+            handler.cancel();
         }
 
         @Override
