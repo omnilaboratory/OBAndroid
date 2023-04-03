@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class PreFilesUtils {
     private static final String TAG = PreFilesUtils.class.getSimpleName();
-    private static final String MANIFEST_FILE_NAME = "manifest.txt";
+    public final String MANIFEST_FILE_NAME = "manifest-crc32.txt";
     private static final String BLOCK_HEADER_FILE_NAME = "block_headers.bin";
     private static final String REG_FILTER_HEADER_FILE_NAME = "reg_filter_headers.bin";
     private static final String NEUTRINO_FILE_NAME = "neutrino.db";
@@ -104,10 +104,10 @@ public class PreFilesUtils {
 
     public boolean checkBlockHeaderMd5Matched() {
         String filePath = downloadDictionaryPath + BLOCK_HEADER_FILE_NAME;
-        String fileMd5 = manifestInfo.get(BLOCK_HEADER_FILE_NAME);
+        String fileCRC32 = manifestInfo.get(BLOCK_HEADER_FILE_NAME);
         File file = new File(filePath);
         if (file.exists()){
-            return FilesUtils.checkFileMd5Matched(filePath, fileMd5);
+            return FilesUtils.checkFileCRC32Matched(filePath, fileCRC32);
         }
         return false;
 
@@ -115,20 +115,20 @@ public class PreFilesUtils {
 
     public boolean checkFilterHeaderMd5Matched() {
         String filePath = downloadDictionaryPath + REG_FILTER_HEADER_FILE_NAME;
-        String fileMd5 = manifestInfo.get(REG_FILTER_HEADER_FILE_NAME);
+        String fileCRC32 = manifestInfo.get(REG_FILTER_HEADER_FILE_NAME);
         File file = new File(filePath);
         if (file.exists()){
-            return FilesUtils.checkFileMd5Matched(filePath, fileMd5);
+            return FilesUtils.checkFileCRC32Matched(filePath, fileCRC32);
         }
         return false;
     }
 
     public boolean checkNeutrinoMd5Matched() {
         String filePath = downloadDictionaryPath + NEUTRINO_FILE_NAME;
-        String fileMd5 = manifestInfo.get(NEUTRINO_FILE_NAME);
+        String fileCRC32 = manifestInfo.get(NEUTRINO_FILE_NAME);
         File file = new File(filePath);
         if (file.exists()){
-            return FilesUtils.checkFileMd5Matched(filePath, fileMd5);
+            return FilesUtils.checkFileCRC32Matched(filePath, fileCRC32);
         }
         return false;
     }
@@ -338,31 +338,33 @@ public class PreFilesUtils {
     public void readManifestFile() {
         BufferedReader bfr;
         try {
-            bfr = new BufferedReader(new FileReader(downloadDictionaryPath + "manifest.txt"));
-            Log.d(TAG, "readManifestFile: " + downloadDictionaryPath + "manifest.txt");
+            bfr = new BufferedReader(new FileReader(downloadDictionaryPath + MANIFEST_FILE_NAME));
             String line = bfr.readLine();
-            Log.d(TAG, "readManifestFile: " + line);
-            String[] lineArray = line.split(" {2}");
-            downloadVersion = lineArray[1].substring(0, 10);
+            String[] lineArray = line.split("\\t");
+            String fileName = lineArray[lineArray.length - 1];
+            downloadVersion = fileName.substring(0, 10);
             StringBuilder sb = new StringBuilder();
             while (line != null) {
                 String oldLine = line;
                 sb.append(line);
                 sb.append("\n");
-                Log.e(TAG, line);
-                String[] readingLineArray = oldLine.split(" {2}");
-                if (readingLineArray[1].endsWith(BLOCK_HEADER_FILE_NAME)) {
-                    manifestInfo.put(BLOCK_HEADER_FILE_NAME, readingLineArray[0]);
-                } else if (readingLineArray[1].endsWith(NEUTRINO_FILE_NAME)) {
-                    manifestInfo.put(NEUTRINO_FILE_NAME, readingLineArray[0]);
-                } else if (readingLineArray[1].endsWith(REG_FILTER_HEADER_FILE_NAME)) {
-                    manifestInfo.put(REG_FILTER_HEADER_FILE_NAME, readingLineArray[0]);
+                String[] readingLineArray = oldLine.split("\\t");
+                String readingFileName = readingLineArray[lineArray.length - 1];
+                Log.d(TAG, "readManifestFile manifestInfo line: " + line);
+                if (readingFileName.endsWith(BLOCK_HEADER_FILE_NAME)) {
+                    manifestInfo.put(BLOCK_HEADER_FILE_NAME, readingLineArray[0].trim().toLowerCase());
+                } else if (readingFileName.endsWith(NEUTRINO_FILE_NAME)) {
+                    manifestInfo.put(NEUTRINO_FILE_NAME, readingLineArray[0].trim().toLowerCase());
+                } else if (readingFileName.endsWith(REG_FILTER_HEADER_FILE_NAME)) {
+                    manifestInfo.put(REG_FILTER_HEADER_FILE_NAME, readingLineArray[0].trim().toLowerCase());
                 }
+                Log.d(TAG, "readManifestFile manifestInfo: " + manifestInfo.toString());
                 line = bfr.readLine();
                 if (line == null) {
                     bfr.close();
                 }
             }
+            Log.d(TAG, "readManifestFile manifestInfo: " + manifestInfo.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

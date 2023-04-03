@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.CRC32;
 
 
 public class FilesUtils {
@@ -72,21 +73,6 @@ public class FilesUtils {
         return fileInfoList;
     }
 
-    public static boolean fileIsExist(String path){
-        try {
-            File file = new File(path);
-            if (!file.exists()){
-                Log.d(path + "is exist","false");
-                return false;
-            }
-        }catch (Exception e){
-            Log.d(path + "is exist","false");
-            return false;
-        }
-        Log.d(path + "is exist","true");
-        return true;
-    }
-
     public static long fileLastUpdate(String path){
         try {
             File file = new File(path);
@@ -103,61 +89,48 @@ public class FilesUtils {
         }
     }
 
-    public static boolean checkFileMd5Matched (String filePath,String fileMd5){
-        boolean isMatched = false;
-        String fileCheckMd5 = getFileMd5(filePath);
-        Log.d(TAG, "checkFileMd5Matched: " + fileCheckMd5 + " " + fileMd5);
-        if(fileCheckMd5.equals(fileMd5)){
+    public static boolean checkFileCRC32Matched(String filePath,String fileCRC32){
+        boolean isMatched;
+        String fileCheckCRC32 = getFileCRC32(filePath);
+        if (fileCheckCRC32.equals(fileCRC32)){
             isMatched = true;
         }else{
             isMatched = false;
         }
+        Log.d(TAG, "checkFileCRC32Matched: " + "filePath " + filePath + "fileCRC32 " + fileCRC32 + "fileCheckCRC32 " + fileCheckCRC32);
         return isMatched;
     }
 
-    public static String getFileMd5(String filePath){
-        String fileMd5 = "";
+    public static String getFileCRC32(String filePath){
+        String fileCRC32Str = "";
         File file = new File(filePath);
-        fileMd5 = getFileMD5(file);
-        return fileMd5;
+        fileCRC32Str = getFileCRC32(file);
+        return fileCRC32Str;
     }
 
-
-    public static String getFileMD5(File file) {
+    public static String getFileCRC32(File file){
+        long fileCRC32 = -1;
+        String fileCRC32Str = "";
+        CRC32 crc32 = new CRC32();
         if (!file.isFile()) {
-            return null;
+            return fileCRC32Str;
         }
-        MessageDigest digest = null;
-        FileInputStream in = null;
+        FileInputStream in;
         byte buffer[] = new byte[1024];
-        int len;
         try {
-            digest = MessageDigest.getInstance("MD5");
             in = new FileInputStream(file);
-            while ((len = in.read(buffer, 0, 1024)) != -1) {
-                digest.update(buffer, 0, len);
+            int len = in.read(buffer, 0, 1024);
+            while (len != -1) {
+                crc32.update(buffer, 0, len);
+                len = in.read(buffer, 0, 1024);
             }
             in.close();
+            fileCRC32 = crc32.getValue();
+            fileCRC32Str = Long.toHexString(fileCRC32).toLowerCase();
+            return fileCRC32Str;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return fileCRC32Str;
         }
-        return bytesToHexString(digest.digest());
-    }
-
-    public static String bytesToHexString(byte[] src) {
-        StringBuilder stringBuilder = new StringBuilder("");
-        if (src == null || src.length <= 0) {
-            return null;
-        }
-        for (int i = 0; i < src.length; i++) {
-            int v = src[i] & 0xFF;
-            String hv = Integer.toHexString(v);
-            if (hv.length() < 2) {
-                stringBuilder.append(0);
-            }
-            stringBuilder.append(hv);
-        }
-        return stringBuilder.toString();
     }
 }

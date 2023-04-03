@@ -12,7 +12,7 @@ import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 
 public class Crc32Util {
-    /**
+    /*
      * 采用BufferedInputStream的方式加载文件
      */
     public static long checksumBufferedInputStream(String filepath) {
@@ -33,7 +33,7 @@ public class Crc32Util {
         return crc.getValue();
     }
 
-    /**
+    /*
      * 使用CheckedInputStream计算CRC
      */
     public static Long getCRC32(String filepath) {

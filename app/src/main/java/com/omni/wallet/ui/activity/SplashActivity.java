@@ -332,7 +332,7 @@ public class SplashActivity extends AppBaseActivity {
             getHeaderBinFile();
         };
         String downloadDirectoryPath = constantInOB.getDownloadDirectoryPath();
-        String filePath = downloadDirectoryPath + "manifest.txt";
+        String filePath = downloadDirectoryPath + preFilesUtils.MANIFEST_FILE_NAME;
         File file = new File(filePath);
         if (file.exists()) {
             readManifestFile();
@@ -357,6 +357,7 @@ public class SplashActivity extends AppBaseActivity {
         };
         boolean isExist = preFilesUtils.checkHeaderBinFileExist();
         boolean isMatched = preFilesUtils.checkBlockHeaderMd5Matched();
+        Log.d(TAG, "getHeaderBinFile isMatched: " + isMatched);
         if (!(isExist && isMatched)) {
             preFilesUtils.downloadBlockHeader(downloadView,downloadCallback);
         }else{
