@@ -17,7 +17,8 @@ public class TrustAllSSLSocketFactory {
         SSLSocketFactory mSSLSocketFactory = null;
         try {
             SSLContext mSSLContext = SSLContext.getInstance("TLS");
-            mSSLContext.init(null, new TrustManager[]{new TrustAllManager()}, new SecureRandom());
+            TrustManager[] trustManagers = new TrustManager[]{new TrustAllManager()};
+            mSSLContext.init(null, trustManagers, new SecureRandom());
             mSSLSocketFactory = mSSLContext.getSocketFactory();
         } catch (Exception e) {
             e.printStackTrace();

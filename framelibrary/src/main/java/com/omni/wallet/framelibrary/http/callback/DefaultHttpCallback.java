@@ -16,7 +16,6 @@ import com.omni.wallet.baselibrary.http.dialog.LoadingDialog;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
-import com.omni.wallet.baselibrary.utils.MD5Utils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.framelibrary.R;
@@ -101,8 +100,6 @@ public class DefaultHttpCallback<T> implements EngineCallback {
         params.put(KEY_SERVER_TYPE, Constants.SERVER_TYPE_ANDROID);
         params.put(KEY_REQUEST_TIME, System.currentTimeMillis());
         params.put(KEY_IMEI, AppUtils.getPhoneIMEI(context));
-        // 创建加密字符串，并将加密字符串添加到公参
-        params.put("sign", MD5Utils.get32MD5(getSignStr(params)).toUpperCase());
         // 暴露一个回调方法给使用者，可以在这里设置进度条开始展示什么的
         onPreExecute(context);
     }
