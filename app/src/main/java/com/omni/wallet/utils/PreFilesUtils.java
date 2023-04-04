@@ -381,13 +381,7 @@ public class PreFilesUtils {
         try {
             bfr = new BufferedReader(new FileReader(downloadDictionaryPath + MANIFEST_FILE_NAME));
             String line = bfr.readLine();
-            String[] lineArray;
-            if(ConstantInOB.networkType.equals(NetworkType.MAIN)){
-                lineArray = line.split("\\t");
-            }else {
-                lineArray = line.split(" {2}");
-            }
-
+            String[] lineArray = line.split("\\t");
             String fileName = lineArray[lineArray.length - 1];
             downloadVersion = fileName.substring(0, 10);
             StringBuilder sb = new StringBuilder();
@@ -395,12 +389,7 @@ public class PreFilesUtils {
                 String oldLine = line;
                 sb.append(line);
                 sb.append("\n");
-                String[] readingLineArray;
-                if(ConstantInOB.networkType.equals(NetworkType.MAIN)){
-                    readingLineArray = oldLine.split("\\t");
-                }else {
-                    readingLineArray = oldLine.split(" {2}");
-                }
+                String[] readingLineArray = oldLine.split("\\t");
                 String readingFileName = readingLineArray[lineArray.length - 1];
                 Log.d(TAG, "readManifestFile manifestInfo line: " + line);
                 if (readingFileName.endsWith(BLOCK_HEADER_FILE_NAME)) {
