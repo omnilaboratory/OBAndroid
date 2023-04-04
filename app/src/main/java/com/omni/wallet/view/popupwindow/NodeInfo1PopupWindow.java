@@ -12,10 +12,12 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
-import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.view.dialog.LoadingDialog;
@@ -85,13 +87,7 @@ public class NodeInfo1PopupWindow {
             netWorkTv.setText(User.getInstance().getNetwork(mContext));
             // 网络类型
             // Network type
-            if (User.getInstance().getNetwork(mContext).equals("testnet")) {
-                rpchostTv.setText(ConstantInOB.TEST_NET_OMNI_HOST_ADDRESS_PORT);
-            } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
-                rpchostTv.setText(ConstantInOB.OMNIHostAddressPortRegTest);
-            } else if (User.getInstance().getNetwork(mContext).equals("mainnet")) {
-                rpchostTv.setText(ConstantInOB.OMNIHostAddressPortRegTest);
-            }
+            rpchostTv.setText(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getOMNI_HOST_ADDRESS_PORT());
             portsTv.setText("9735:9735");
             zmqpubrawblockTv.setText("omnicoreproxy.zmqpubrawblock=tcp://43.138.107.248:28332");
             zmqpubrawtxTv.setText("omnicoreproxy.zmqpubrawtx=tcp://43.138.107.248:28333");
@@ -192,7 +188,9 @@ public class NodeInfo1PopupWindow {
     }
 
     public void startNode() {
-        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + User.getInstance().getAlias(mContext), new Callback() {
+        String lndDir = mContext.getApplicationContext().getExternalCacheDir().toString();
+        String startParams = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getStartParams();
+        Obdmobile.start("--lnddir=" + lndDir + startParams + User.getInstance().getAlias(mContext), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startOnError------------------" + e.getMessage());

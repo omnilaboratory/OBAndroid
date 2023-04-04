@@ -13,8 +13,9 @@ import com.downloader.OnDownloadListener;
 import com.downloader.PRDownloader;
 import com.downloader.request.DownloadRequest;
 import com.omni.wallet.R;
-import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.common.ConstantWithNetwork;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,7 +43,8 @@ public class PreFilesUtils {
     private PreFilesUtils(Context context) {
         this.mContext = context;
         ConstantInOB constantInOB = new ConstantInOB(context);
-        this.downloadDictionaryPath = constantInOB.getDownloadDirectoryPath();
+        this.downloadDictionaryPath = constantInOB.getBasePath()
+                + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
         boolean manifestFileExist = checkManifestFileExist();
         if (manifestFileExist) {
             readManifestFile();
@@ -50,6 +52,7 @@ public class PreFilesUtils {
             int year = Calendar.getInstance().get(Calendar.YEAR);
             int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
             int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1;
+            Log.d(TAG, "PreFilesUtils year month day: " + year + month + (day + 1));
             String monthStr = month >= 10 ? String.valueOf(month) : ("0" + month);
             String dayStr = day >= 10 ? String.valueOf(day) : ("0" + day);
             downloadVersion = "" + year + "-" + monthStr + "-" + dayStr;
@@ -191,7 +194,7 @@ public class PreFilesUtils {
     public void downloadBlockHeader(View view, DownloadCallback downloadCallback) {
         String fileName = BLOCK_HEADER_FILE_NAME;
         String downloadFileName = downloadVersion + fileName;
-        String downloadUrl = ConstantInOB.usingDownloadBaseUrl + downloadFileName;
+        String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
         String filePath = downloadDictionaryPath;
         OnDownloadListener onDownloadListener = new OnDownloadListener() {
             @Override
@@ -218,7 +221,7 @@ public class PreFilesUtils {
     public void downloadFilterHeader(View view, DownloadCallback downloadCallback) {
         String fileName = REG_FILTER_HEADER_FILE_NAME;
         String downloadFileName = downloadVersion + fileName;
-        String downloadUrl = ConstantInOB.usingDownloadBaseUrl + downloadFileName;
+        String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
         String filePath = downloadDictionaryPath;
         OnDownloadListener onDownloadListener = new OnDownloadListener() {
             @Override
@@ -248,7 +251,7 @@ public class PreFilesUtils {
     public void downloadNeutrino(View view, DownloadCallback downloadCallback) {
         String fileName = NEUTRINO_FILE_NAME;
         String downloadFileName = downloadVersion + fileName;
-        String downloadUrl = ConstantInOB.usingDownloadBaseUrl + downloadFileName;
+        String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
         String filePath = downloadDictionaryPath;
         OnDownloadListener onDownloadListener = new OnDownloadListener() {
             @Override
@@ -278,7 +281,8 @@ public class PreFilesUtils {
     public void downloadManifest(View view, DownloadCallback downloadCallback){
         String fileName = MANIFEST_FILE_NAME;
         String downloadFileName = downloadVersion + fileName;
-        String downloadUrl = ConstantInOB.usingDownloadBaseUrl + downloadFileName;
+        String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
+        Log.d(TAG, "downloadManifest downloadUrl: " + downloadUrl);
         String filePath = downloadDictionaryPath;
         OnDownloadListener onDownloadListener = new OnDownloadListener() {
             @Override

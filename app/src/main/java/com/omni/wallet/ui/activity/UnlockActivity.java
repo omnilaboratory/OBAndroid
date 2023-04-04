@@ -22,7 +22,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;

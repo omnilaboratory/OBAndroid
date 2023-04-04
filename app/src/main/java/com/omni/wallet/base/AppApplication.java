@@ -17,11 +17,14 @@ import com.omni.wallet.baselibrary.http.interceptor.LogInterceptor;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.common.ConstantInOB;
+import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.obdMethods.BackupUtils;
+import com.omni.wallet.framelibrary.http.HttpRequestUtils;
 
 import org.conscrypt.Conscrypt;
 import org.greenrobot.eventbus.EventBus;
@@ -151,11 +154,14 @@ public class AppApplication extends BaseApplication {
 
     public void getTotalBlock(){
         String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
-        HttpUtils.with(mContext)
-                .postString()
-                .url("http://"+ConstantInOB.usingBTCHostAddress+":18332")
-                .addContent(jsonStr)
-                .execute(new EngineCallback() {
+        HttpUtils httpRequestUtils = HttpUtils.with(mContext);
+        if(ConstantInOB.networkType.equals(NetworkType.MAIN)){
+            httpRequestUtils.get();
+        }else {
+            httpRequestUtils.postString().addContent(jsonStr);
+        }
+        httpRequestUtils.url(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getGetBlockHeightUrl());
+        httpRequestUtils.execute(new EngineCallback() {
                     @Override
                     public void onPreExecute(Context context, Map<String, Object> params) {
 
@@ -168,17 +174,24 @@ public class AppApplication extends BaseApplication {
 
                     @Override
                     public void onError(Context context, String errorCode, String errorMsg) {
-
+                        Log.d(TAG, "getTotalBlock onError: " + errorMsg);
                     }
 
                     @Override
                     public void onSuccess(Context context, String result) {
                         try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONObject jsonObject1 = new JSONObject(jsonObject.getString("result"));
-                            String block = jsonObject1.getString("block");
-                            Log.e(TAG,"Total block:"+block);
-                            User.getInstance().setTotalBlock(mContext,Long.parseLong(block));
+                            if(ConstantInOB.networkType.equals(NetworkType.MAIN)){
+                                JSONObject jsonObject = new JSONObject(result);
+                                String block = jsonObject.getString("height");
+                                Log.e(TAG,"Total block:"+block);
+                                User.getInstance().setTotalBlock(mContext,Long.parseLong(block));
+                            }else {
+                                JSONObject jsonObject = new JSONObject(result);
+                                JSONObject jsonObject1 = new JSONObject(jsonObject.getString("result"));
+                                String block = jsonObject1.getString("block");
+                                Log.e(TAG,"Total block:"+block);
+                                User.getInstance().setTotalBlock(mContext,Long.parseLong(block));
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

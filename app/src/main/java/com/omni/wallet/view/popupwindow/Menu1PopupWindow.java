@@ -10,10 +10,12 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.omni.wallet.R;
-import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
@@ -191,7 +193,9 @@ public class Menu1PopupWindow {
     }
 
     public void startNode() {
-        Obdmobile.start("--lnddir=" + mContext.getApplicationContext().getExternalCacheDir() + ConstantInOB.usingNeutrinoConfig + User.getInstance().getAlias(mContext), new Callback() {
+        String lndDir = mContext.getApplicationContext().getExternalCacheDir().toString();
+        String startParams = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getStartParams();
+        Obdmobile.start("--lnddir=" + lndDir + startParams + User.getInstance().getAlias(mContext), new Callback() {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------startOnError------------------" + e.getMessage());

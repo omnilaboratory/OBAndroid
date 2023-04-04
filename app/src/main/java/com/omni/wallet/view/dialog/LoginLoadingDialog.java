@@ -5,18 +5,17 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.omni.wallet.R;
-import com.omni.wallet.base.ConstantInOB;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
+import com.omni.wallet.common.ConstantWithNetwork;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.ObdLogFileObserver;
 
@@ -40,7 +39,7 @@ public class LoginLoadingDialog {
     public LoginLoadingDialog(Context context) {
         this.mContext = context;
         this.constantInOB = new ConstantInOB(context);
-        String fileLocal = constantInOB.getRegTestLogPath();
+        String fileLocal = constantInOB.getBasePath() + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLogPath();
         this.obdLogFileObserver = new ObdLogFileObserver(fileLocal, context);
         this.blockData = context.getSharedPreferences("blockData", MODE_PRIVATE);
         this.totalBlock = User.getInstance().getTotalBlock(context);
