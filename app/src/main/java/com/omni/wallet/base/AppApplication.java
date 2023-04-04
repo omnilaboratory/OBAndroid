@@ -24,6 +24,7 @@ import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.framelibrary.http.HttpRequestUtils;
 
 import org.conscrypt.Conscrypt;
 import org.greenrobot.eventbus.EventBus;
@@ -153,16 +154,14 @@ public class AppApplication extends BaseApplication {
 
     public void getTotalBlock(){
         String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
+        HttpUtils httpRequestUtils = HttpUtils.with(mContext);
         if(ConstantInOB.networkType.equals(NetworkType.MAIN)){
-            jsonStr = "";
+            httpRequestUtils.get();
+        }else {
+            httpRequestUtils.postString().addContent(jsonStr);
         }
-
-        HttpUtils.with(mContext)
-                .get()
-//                .postString()
-                .url(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getGetBlockHeightUrl())
-//                .addContent(jsonStr)
-                .execute(new EngineCallback() {
+        httpRequestUtils.url(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getGetBlockHeightUrl());
+        httpRequestUtils.execute(new EngineCallback() {
                     @Override
                     public void onPreExecute(Context context, Map<String, Object> params) {
 
