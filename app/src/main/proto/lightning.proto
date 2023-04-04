@@ -315,6 +315,10 @@ service Lightning {
     */
     rpc CloseChannel (CloseChannelRequest) returns (stream CloseStatusUpdate);
 
+    // CooperativeClose with omni-simeplesend for mainnet
+    rpc Ob_SafeBox_CloseChannel (CloseChannelRequest)
+        returns (stream CloseStatusUpdate);
+
     /* lncli: `abandonchannel`
     AbandonChannel removes all channel state from the database except for a
     close summary. This method can be used to get rid of permanently unusable
@@ -2077,6 +2081,7 @@ message CloseChannelRequest {
     // current commitment transaction will be signed and broadcast.
     bool force = 2;
 
+    bool ob_simple_send = 7;
     // The target number of blocks that the closure transaction should be
     // confirmed by.
     int32 target_conf = 3;

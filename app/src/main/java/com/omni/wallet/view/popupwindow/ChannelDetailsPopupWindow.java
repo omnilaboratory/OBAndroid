@@ -19,6 +19,7 @@ import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.event.CloseChannelEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelListItem;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UtilFunctions;
@@ -347,58 +348,113 @@ public class ChannelDetailsPopupWindow {
         LightningOuterClass.CloseChannelRequest closeChannelRequest = LightningOuterClass.CloseChannelRequest.newBuilder()
                 .setChannelPoint(point)
                 .build();
-        Obdmobile.closeChannel(closeChannelRequest.toByteArray(), new RecvStream() {
-            @Override
-            public void onError(Exception e) {
-                if (e.getMessage().equals("EOF")) {
-                    return;
-                }
-                LogUtils.e(TAG, "------------------closeChannelOnError------------------" + e.getMessage());
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mBasePopWindow != null) {
-                            mBasePopWindow.dismiss();
-                        }
-                        if (mLoadingDialog != null) {
-                            mLoadingDialog.dismiss();
-                        }
-                        if (e.getMessage().toLowerCase().contains("offline")) {
-                            mSendFailedDialog.show(mContext.getString(R.string.error_channel_close_offline));
-                        } else if (e.getMessage().toLowerCase().contains("terminated")) {
-                            mSendFailedDialog.show(mContext.getString(R.string.error_channel_close_timeout));
-                        } else {
-                            mSendFailedDialog.show(mContext.getString(R.string.error_channel_close));
-                        }
+        if (User.getInstance().getNetwork(mContext).equals("mainnet")) {
+            Obdmobile.ob_SafeBox_CloseChannel(closeChannelRequest.toByteArray(), new RecvStream() {
+                @Override
+                public void onError(Exception e) {
+                    if (e.getMessage().equals("EOF")) {
+                        return;
                     }
-                });
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                try {
-                    LightningOuterClass.CloseStatusUpdate resp = LightningOuterClass.CloseStatusUpdate.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------closeChannelOnResponse------------------" + resp.getClosePending().getTxid());
-                    if (resp.hasClosePending()) {
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                EventBus.getDefault().post(new CloseChannelEvent());
-                                if (mBasePopWindow != null) {
-                                    mBasePopWindow.dismiss();
-                                }
-                                if (mLoadingDialog != null) {
-                                    mLoadingDialog.dismiss();
-                                }
-                                mSendSuccessDialog.show(mContext.getString(R.string.channel_close_success));
+                    LogUtils.e(TAG, "------------------oBSafeBoxCloseChannelOnError------------------" + e.getMessage());
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mBasePopWindow != null) {
+                                mBasePopWindow.dismiss();
                             }
-                        });
-                    }
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
+                            if (mLoadingDialog != null) {
+                                mLoadingDialog.dismiss();
+                            }
+                            if (e.getMessage().toLowerCase().contains("offline")) {
+                                mSendFailedDialog.show(mContext.getString(R.string.error_channel_close_offline));
+                            } else if (e.getMessage().toLowerCase().contains("terminated")) {
+                                mSendFailedDialog.show(mContext.getString(R.string.error_channel_close_timeout));
+                            } else {
+                                mSendFailedDialog.show(mContext.getString(R.string.error_channel_close));
+                            }
+                        }
+                    });
                 }
-            }
-        });
+
+                @Override
+                public void onResponse(byte[] bytes) {
+                    try {
+                        LightningOuterClass.CloseStatusUpdate resp = LightningOuterClass.CloseStatusUpdate.parseFrom(bytes);
+                        LogUtils.e(TAG, "------------------oBSafeBoxCloseChannelOnResponse------------------" + resp.getClosePending().getTxid());
+                        if (resp.hasClosePending()) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    EventBus.getDefault().post(new CloseChannelEvent());
+                                    if (mBasePopWindow != null) {
+                                        mBasePopWindow.dismiss();
+                                    }
+                                    if (mLoadingDialog != null) {
+                                        mLoadingDialog.dismiss();
+                                    }
+                                    mSendSuccessDialog.show(mContext.getString(R.string.channel_close_success));
+                                }
+                            });
+                        }
+                    } catch (InvalidProtocolBufferException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } else {
+            Obdmobile.closeChannel(closeChannelRequest.toByteArray(), new RecvStream() {
+                @Override
+                public void onError(Exception e) {
+                    if (e.getMessage().equals("EOF")) {
+                        return;
+                    }
+                    LogUtils.e(TAG, "------------------closeChannelOnError------------------" + e.getMessage());
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mBasePopWindow != null) {
+                                mBasePopWindow.dismiss();
+                            }
+                            if (mLoadingDialog != null) {
+                                mLoadingDialog.dismiss();
+                            }
+                            if (e.getMessage().toLowerCase().contains("offline")) {
+                                mSendFailedDialog.show(mContext.getString(R.string.error_channel_close_offline));
+                            } else if (e.getMessage().toLowerCase().contains("terminated")) {
+                                mSendFailedDialog.show(mContext.getString(R.string.error_channel_close_timeout));
+                            } else {
+                                mSendFailedDialog.show(mContext.getString(R.string.error_channel_close));
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(byte[] bytes) {
+                    try {
+                        LightningOuterClass.CloseStatusUpdate resp = LightningOuterClass.CloseStatusUpdate.parseFrom(bytes);
+                        LogUtils.e(TAG, "------------------closeChannelOnResponse------------------" + resp.getClosePending().getTxid());
+                        if (resp.hasClosePending()) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    EventBus.getDefault().post(new CloseChannelEvent());
+                                    if (mBasePopWindow != null) {
+                                        mBasePopWindow.dismiss();
+                                    }
+                                    if (mLoadingDialog != null) {
+                                        mLoadingDialog.dismiss();
+                                    }
+                                    mSendSuccessDialog.show(mContext.getString(R.string.channel_close_success));
+                                }
+                            });
+                        }
+                    } catch (InvalidProtocolBufferException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     public void release() {
