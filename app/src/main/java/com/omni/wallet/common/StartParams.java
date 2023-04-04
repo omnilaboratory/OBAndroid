@@ -59,7 +59,7 @@ public class StartParams {
                         "--norest "+
                         "--neutrino.feeurl=https://nodes.lightning.computer/fees/v1/btc-fee-estimates.json " +
                         "--nobootstrap" +
-                        "--neutrino.addpeer=btcd-mainnet.lightning.computer" +
+                        " --neutrino.addpeer=btcd-mainnet.lightning.computer" +
                         " --neutrino.addpeer=mainnet1-btcd.zaphq.io" +
                         " --neutrino.addpeer=mainnet2-btcd.zaphq.io" +
                         " --neutrino.addpeer=mainnet3-btcd.zaphq.io" +
