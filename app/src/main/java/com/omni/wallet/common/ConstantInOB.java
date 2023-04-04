@@ -11,7 +11,9 @@ public class ConstantInOB {
     public static String neutrino = "neutrino";
     public static String regFilterHeaderBin = "reg_filter_headers.bin";
     public static String regFilterHeader = "reg_filter_headers";
-    public static NetworkType networkType = NetworkType.MAIN;
+    public static String peer = "peer";
+    public static String peerJson = "peer.json";
+    public static NetworkType networkType = NetworkType.TEST;
 
     static String regTestLogPath = "/logs/bitcoin/regtest/lnd.log";
     static String testLogPath = "/logs/bitcoin/testnet/lnd.log";

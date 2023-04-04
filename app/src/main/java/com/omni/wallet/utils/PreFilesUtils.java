@@ -31,6 +31,7 @@ public class PreFilesUtils {
     private static final String BLOCK_HEADER_FILE_NAME = "block_headers.bin";
     private static final String REG_FILTER_HEADER_FILE_NAME = "reg_filter_headers.bin";
     private static final String NEUTRINO_FILE_NAME = "neutrino.db";
+    private static final String PEER_FILE_NAME = "peer.json";
 
     @SuppressLint("StaticFieldLeak")
     private Context mContext;
@@ -79,6 +80,12 @@ public class PreFilesUtils {
 
     public void setDownloadingId(int downloadingId){
         this.downloadingId = downloadingId;
+    }
+
+    public boolean checkPeerJsonFileExist() {
+        String filePath = downloadDictionaryPath + PEER_FILE_NAME;
+        File file = new File(filePath);
+        return file.exists();
     }
 
     public boolean checkManifestFileExist() {
@@ -179,16 +186,45 @@ public class PreFilesUtils {
                 break;
             case BLOCK_HEADER_FILE_NAME:
                 downloadingId =2;
-                    break;
+                break;
             case REG_FILTER_HEADER_FILE_NAME:
                 downloadingId =3;
                 break;
             case NEUTRINO_FILE_NAME:
                 downloadingId =4;
                 break;
+            case PEER_FILE_NAME:
+                downloadingId =5;
+                break;
         }
 
         downloadingRequest.start(onDownloadListener);
+    }
+
+    public void downloadPeerFile(View view, DownloadCallback downloadCallback){
+        String fileName = PEER_FILE_NAME;
+        String downloadFileName = fileName;
+        String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
+        String filePath = downloadDictionaryPath;
+        OnDownloadListener onDownloadListener = new OnDownloadListener() {
+            @Override
+            public void onDownloadComplete() {
+                downloadCallback.callback();
+            }
+
+            @Override
+            public void onError(Error error) {
+                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
+                if (error.isServerError()) {
+                    ToastUtils.showToast(mContext, fileName + "server occur error!");
+                } else if (error.isConnectionError()) {
+                    ToastUtils.showToast(mContext, fileName + "connection occur error!");
+                } else {
+                    ToastUtils.showToast(mContext, fileName + "download occur error:" + error.toString());
+                }
+            }
+        };
+        downloadFile(view, fileName, filePath, downloadUrl, onDownloadListener);
     }
 
     public void downloadBlockHeader(View view, DownloadCallback downloadCallback) {
