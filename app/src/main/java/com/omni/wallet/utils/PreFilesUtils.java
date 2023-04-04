@@ -16,6 +16,7 @@ import com.omni.wallet.R;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,6 +32,7 @@ public class PreFilesUtils {
     private static final String BLOCK_HEADER_FILE_NAME = "block_headers.bin";
     private static final String REG_FILTER_HEADER_FILE_NAME = "reg_filter_headers.bin";
     private static final String NEUTRINO_FILE_NAME = "neutrino.db";
+    private static final String PEER_FILE_NAME = "peers.json";
 
     @SuppressLint("StaticFieldLeak")
     private Context mContext;
@@ -79,6 +81,12 @@ public class PreFilesUtils {
 
     public void setDownloadingId(int downloadingId){
         this.downloadingId = downloadingId;
+    }
+
+    public boolean checkPeerJsonFileExist() {
+        String filePath = downloadDictionaryPath + PEER_FILE_NAME;
+        File file = new File(filePath);
+        return file.exists();
     }
 
     public boolean checkManifestFileExist() {
@@ -179,16 +187,45 @@ public class PreFilesUtils {
                 break;
             case BLOCK_HEADER_FILE_NAME:
                 downloadingId =2;
-                    break;
+                break;
             case REG_FILTER_HEADER_FILE_NAME:
                 downloadingId =3;
                 break;
             case NEUTRINO_FILE_NAME:
                 downloadingId =4;
                 break;
+            case PEER_FILE_NAME:
+                downloadingId =5;
+                break;
         }
 
         downloadingRequest.start(onDownloadListener);
+    }
+
+    public void downloadPeerFile(View view, DownloadCallback downloadCallback){
+        String fileName = PEER_FILE_NAME;
+        String downloadFileName = fileName;
+        String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
+        String filePath = downloadDictionaryPath;
+        OnDownloadListener onDownloadListener = new OnDownloadListener() {
+            @Override
+            public void onDownloadComplete() {
+                downloadCallback.callback();
+            }
+
+            @Override
+            public void onError(Error error) {
+                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
+                if (error.isServerError()) {
+                    ToastUtils.showToast(mContext, fileName + "server occur error!");
+                } else if (error.isConnectionError()) {
+                    ToastUtils.showToast(mContext, fileName + "connection occur error!");
+                } else {
+                    ToastUtils.showToast(mContext, fileName + "download occur error:" + error.toString());
+                }
+            }
+        };
+        downloadFile(view, fileName, filePath, downloadUrl, onDownloadListener);
     }
 
     public void downloadBlockHeader(View view, DownloadCallback downloadCallback) {
@@ -344,7 +381,13 @@ public class PreFilesUtils {
         try {
             bfr = new BufferedReader(new FileReader(downloadDictionaryPath + MANIFEST_FILE_NAME));
             String line = bfr.readLine();
-            String[] lineArray = line.split("\\t");
+            String[] lineArray;
+            if(ConstantInOB.networkType.equals(NetworkType.MAIN)){
+                lineArray = line.split("\\t");
+            }else {
+                lineArray = line.split(" {2}");
+            }
+
             String fileName = lineArray[lineArray.length - 1];
             downloadVersion = fileName.substring(0, 10);
             StringBuilder sb = new StringBuilder();
@@ -352,7 +395,12 @@ public class PreFilesUtils {
                 String oldLine = line;
                 sb.append(line);
                 sb.append("\n");
-                String[] readingLineArray = oldLine.split("\\t");
+                String[] readingLineArray;
+                if(ConstantInOB.networkType.equals(NetworkType.MAIN)){
+                    readingLineArray = oldLine.split("\\t");
+                }else {
+                    readingLineArray = oldLine.split(" {2}");
+                }
                 String readingFileName = readingLineArray[lineArray.length - 1];
                 Log.d(TAG, "readManifestFile manifestInfo line: " + line);
                 if (readingFileName.endsWith(BLOCK_HEADER_FILE_NAME)) {

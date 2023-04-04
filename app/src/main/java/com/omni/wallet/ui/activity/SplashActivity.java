@@ -25,6 +25,7 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.framelibrary.common.Constants;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.obdMethods.NodeStart;
@@ -326,11 +327,16 @@ public class SplashActivity extends AppBaseActivity {
     }
 
 
-    public void getManifest(){
+    public void getManifest() {
         PreFilesUtils.DownloadCallback downloadCallback = () -> {
             readManifestFile();
             preFilesUtils.readManifestFile();
-            getHeaderBinFile();
+            if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
+                getPeerFile();
+            }else {
+                getHeaderBinFile();
+            }
+
         };
         String downloadDirectoryPath = constantInOB.getBasePath()
                 + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
@@ -338,21 +344,38 @@ public class SplashActivity extends AppBaseActivity {
         File file = new File(filePath);
         if (file.exists()) {
             readManifestFile();
-            getHeaderBinFile();
+            if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
+                getPeerFile();
+            }else {
+                getHeaderBinFile();
+            }
         } else {
-            preFilesUtils.downloadManifest(downloadView,downloadCallback);
+            preFilesUtils.downloadManifest(downloadView, downloadCallback);
         }
     }
 
-    public void getHeaderBinFile(){
+    public void getPeerFile() {
+        String downloadDirectoryPath = constantInOB.getBasePath()
+                + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
+        String filePath = downloadDirectoryPath + ConstantInOB.peerJson;
+        PreFilesUtils.DownloadCallback downloadCallback = this::getHeaderBinFile;
+        boolean isExist = preFilesUtils.checkPeerJsonFileExist();
+        if (isExist){
+            File file = new File(filePath);
+            file.delete();
+        }
+        preFilesUtils.downloadPeerFile(downloadView,downloadCallback);
+    }
+
+    public void getHeaderBinFile() {
         PreFilesUtils.DownloadCallback downloadCallback = () -> {
             String downloadDirectoryPath = constantInOB.getBasePath()
                     + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
             String filePath = downloadDirectoryPath + ConstantInOB.blockHeaderBin;
-            if(preFilesUtils.checkBlockHeaderMd5Matched()){
+            if (preFilesUtils.checkBlockHeaderMd5Matched()) {
                 User.getInstance().setHeaderBinChecked(mContext, true);
                 getRegHeadersFile();
-            }else{
+            } else {
                 File file = new File(filePath);
                 file.delete();
                 getHeaderBinFile();
@@ -362,21 +385,21 @@ public class SplashActivity extends AppBaseActivity {
         boolean isMatched = preFilesUtils.checkBlockHeaderMd5Matched();
         Log.d(TAG, "getHeaderBinFile isMatched: " + isMatched);
         if (!(isExist && isMatched)) {
-            preFilesUtils.downloadBlockHeader(downloadView,downloadCallback);
-        }else{
+            preFilesUtils.downloadBlockHeader(downloadView, downloadCallback);
+        } else {
             getRegHeadersFile();
         }
     }
 
-    public void getRegHeadersFile(){
+    public void getRegHeadersFile() {
         PreFilesUtils.DownloadCallback downloadCallback = () -> {
             String downloadDirectoryPath = constantInOB.getBasePath()
                     + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
             String filePath = downloadDirectoryPath + ConstantInOB.regFilterHeaderBin;
-            if(preFilesUtils.checkFilterHeaderMd5Matched()){
+            if (preFilesUtils.checkFilterHeaderMd5Matched()) {
                 User.getInstance().setFilterHeaderBinChecked(mContext, true);
                 getNeutrinoFile();
-            }else{
+            } else {
                 File file = new File(filePath);
                 file.delete();
                 getRegHeadersFile();
@@ -385,21 +408,21 @@ public class SplashActivity extends AppBaseActivity {
         boolean isExist = preFilesUtils.checkFilterHeaderBinFileExist();
         boolean isMatched = preFilesUtils.checkFilterHeaderMd5Matched();
         if (!(isExist && isMatched)) {
-            preFilesUtils.downloadFilterHeader(downloadView,downloadCallback);
-        }else{
+            preFilesUtils.downloadFilterHeader(downloadView, downloadCallback);
+        } else {
             getNeutrinoFile();
         }
     }
 
-    public void getNeutrinoFile(){
+    public void getNeutrinoFile() {
         PreFilesUtils.DownloadCallback downloadCallback = () -> {
             String downloadDirectoryPath = constantInOB.getBasePath()
                     + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
             String filePath = downloadDirectoryPath + ConstantInOB.neutrinoDB;
-            if(preFilesUtils.checkNeutrinoMd5Matched()){
+            if (preFilesUtils.checkNeutrinoMd5Matched()) {
                 User.getInstance().setNeutrinoDbChecked(mContext, true);
                 startNode();
-            }else{
+            } else {
                 File file = new File(filePath);
                 file.delete();
                 getNeutrinoFile();
@@ -408,12 +431,11 @@ public class SplashActivity extends AppBaseActivity {
         boolean isExist = preFilesUtils.checkNeutrinoFileExist();
         boolean isMatched = preFilesUtils.checkNeutrinoMd5Matched();
         if (!(isExist && isMatched)) {
-            preFilesUtils.downloadNeutrino(downloadView,downloadCallback);
-        }else{
+            preFilesUtils.downloadNeutrino(downloadView, downloadCallback);
+        } else {
             startNode();
         }
     }
-
 
 
     public void startNode() {
@@ -517,7 +539,7 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     public void subscribeWalletState() {
-        Log.d(TAG, "subscribeWalletState: " +User.getInstance().getSeedString(mContext));
+        Log.d(TAG, "subscribeWalletState: " + User.getInstance().getSeedString(mContext));
         Log.d(TAG, "do subscribe action");
         WalletState.getInstance().setWalletState(-100);
         String walletInitType = User.getInstance().getInitWalletType(mContext);
