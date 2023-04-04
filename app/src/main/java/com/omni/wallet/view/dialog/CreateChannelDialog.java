@@ -51,6 +51,7 @@ import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
@@ -196,7 +197,15 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                         LogUtils.e(TAG, "---------------centerNodePubkey---------------------" + result.toString());
                         mData.clear();
                         try {
-                            JSONArray jsonArray = new JSONArray(result);
+                            JSONObject jsonObject = new JSONObject(result);
+                            JSONArray jsonArray = null;
+                            if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+                                jsonArray = jsonObject.getJSONArray("testnet");
+                            } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+                                jsonArray = jsonObject.getJSONArray("regtest");
+                            } else { //mainnet
+                                jsonArray = jsonObject.getJSONArray("mainnet");
+                            }
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 LiquidityNodeEntity entity = new LiquidityNodeEntity();
                                 entity.setAddress(String.valueOf(jsonArray.get(i)));
