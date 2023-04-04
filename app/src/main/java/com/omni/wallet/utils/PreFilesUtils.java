@@ -31,7 +31,7 @@ public class PreFilesUtils {
     private static final String BLOCK_HEADER_FILE_NAME = "block_headers.bin";
     private static final String REG_FILTER_HEADER_FILE_NAME = "reg_filter_headers.bin";
     private static final String NEUTRINO_FILE_NAME = "neutrino.db";
-    private static final String PEER_FILE_NAME = "peer.json";
+    private static final String PEER_FILE_NAME = "peers.json";
 
     @SuppressLint("StaticFieldLeak")
     private Context mContext;

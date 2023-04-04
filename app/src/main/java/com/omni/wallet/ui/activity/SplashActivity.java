@@ -25,6 +25,7 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.framelibrary.common.Constants;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.obdMethods.NodeStart;
@@ -330,7 +331,12 @@ public class SplashActivity extends AppBaseActivity {
         PreFilesUtils.DownloadCallback downloadCallback = () -> {
             readManifestFile();
             preFilesUtils.readManifestFile();
-            getPeerFile();
+            if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
+                getPeerFile();
+            }else {
+                getHeaderBinFile();
+            }
+
         };
         String downloadDirectoryPath = constantInOB.getBasePath()
                 + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
@@ -338,7 +344,11 @@ public class SplashActivity extends AppBaseActivity {
         File file = new File(filePath);
         if (file.exists()) {
             readManifestFile();
-            getPeerFile();
+            if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
+                getPeerFile();
+            }else {
+                getHeaderBinFile();
+            }
         } else {
             preFilesUtils.downloadManifest(downloadView, downloadCallback);
         }
@@ -348,9 +358,7 @@ public class SplashActivity extends AppBaseActivity {
         String downloadDirectoryPath = constantInOB.getBasePath()
                 + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
         String filePath = downloadDirectoryPath + ConstantInOB.peerJson;
-        PreFilesUtils.DownloadCallback downloadCallback = () -> {
-            getHeaderBinFile();
-        };
+        PreFilesUtils.DownloadCallback downloadCallback = this::getHeaderBinFile;
         boolean isExist = preFilesUtils.checkPeerJsonFileExist();
         if (isExist){
             File file = new File(filePath);
