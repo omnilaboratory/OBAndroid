@@ -290,8 +290,10 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                         obdLogFileObserver.stopWatching();
                         User.getInstance().setWalletAddress(mContext,address);
                         if(initWalletType.equals("recoveryStepTwo")){
-                            User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
-                            initWalletType = "toBeRestoreChannel";
+//                            User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
+//                            initWalletType = "toBeRestoreChannel";
+                            User.getInstance().setInitWalletType(mContext,"initialed");
+                            initWalletType = "initialed";
                             updateSyncDataView(totalBlock);
                         }else{
                             User.getInstance().setInitWalletType(mContext,"initialed");
@@ -335,8 +337,10 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                     newCreatedAddress = address;
                     Bitmap mQRBitmap = CodeUtils.createQRCode(address, DisplayUtil.dp2px(mContext, 100));
                     runOnUiThread(() -> {
-                        User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
-                        initWalletType = "toBeRestoreChannel";
+//                        User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
+//                        initWalletType = "toBeRestoreChannel";
+                        User.getInstance().setInitWalletType(mContext,"initialed");
+                        initWalletType = "initialed";
                         qrAddressTv.setText(address);
                         qrAddressIv.setImageBitmap(mQRBitmap);
                         obdLogFileObserver.stopWatching();

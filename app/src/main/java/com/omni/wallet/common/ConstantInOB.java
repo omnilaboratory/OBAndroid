@@ -29,7 +29,7 @@ public class ConstantInOB {
     static String BTCHostAddressRegTest = "43.138.107.248";
     static String TEST_NET_BTC_HOST_ADDRESS="192.144.199.67";
     static String TEST_NET_OMNI_HOST_ADDRESS_PORT="192.144.199.67:18332";
-    static String MAIN_NET_BTC_HOST_ADDRESS = "mainnet3-btcd.zaphq.io";
+    static String MAIN_NET_BTC_HOST_ADDRESS = "mainnet4-btcd.zaphq.io";
     static String MAIN_NET_OMNI_HOST_ADDRESS_PORT="54.187.22.125:18332";
 
     static String testLiquidityNodePubkey="025af4448f55bf1e6de1ae0486d4d103427c4e559a62ed7f8035bb1ed1af734f61@192.144.199.67:9735";
