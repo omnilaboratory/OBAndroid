@@ -62,7 +62,7 @@ Full OBAndroid functionality depends on running a certain version of obd on mobi
 ## Token/Bitcoin Testnet Faucets  
 
 ```
-token faucet: http://43.138.107.248:9090/swaggerTool/?surl=http://192.144.199.67:8090/openapiv2/foo.swagger.json  
+token faucet: http://43.138.107.248:9090/swaggerTool/?surl=http://192.144.199.67:8090/openapiv2/foo.swagger.json#/tools/tools_SendCoin
 token-property id: 2147485160  
 
 btc-testnet faucet: https://testnet-faucet.com/btc-testnet/ 
