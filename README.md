@@ -59,6 +59,16 @@ Full OBAndroid functionality depends on running a certain version of obd on mobi
 | -------- 	  |	----------- |	 
 | v0.1-alpha	|	to be added	|	 
  
+## Token/Bitcoin Testnet Faucets  
+
+```
+token faucet: http://43.138.107.248:9090/swaggerTool/?surl=http://192.144.199.67:8090/openapiv2/foo.swagger.json  
+token-property id: 2147485160  
+
+btc-testnet faucet: https://testnet-faucet.com/btc-testnet/ 
+```
+
+
 ## Get Help
 If you encounter any issues please report the issue in this [repo](https://github.com/omnilaboratory/OBAndroid/issues) or on [discord](http://discord.gg/2QYqzSMZuy) with screenshots and how to reproduce the bug/error.
 
