@@ -92,7 +92,8 @@ public abstract class ExceptionCrashHandler implements Thread.UncaughtExceptionH
             @Override
             public void run() {
                 Looper.prepare();
-                ToastUtils.showToast(mContext, "很抱歉,程序出现异常,即将退出.");
+//                ToastUtils.showToast(mContext, "很抱歉,程序出现异常,即将退出.");
+                ToastUtils.showToast(mContext, "Sorry, the program encountered an exception and is about to exit.");
                 Looper.loop();
             }
         }.start();
