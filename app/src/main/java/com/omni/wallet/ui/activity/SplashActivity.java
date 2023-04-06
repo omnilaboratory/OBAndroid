@@ -342,12 +342,19 @@ public class SplashActivity extends AppBaseActivity {
                 + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
         String filePath = downloadDirectoryPath + preFilesUtils.MANIFEST_FILE_NAME;
         File file = new File(filePath);
+        Log.d(TAG, "getManifest: manifest exist" + file.exists());
         if (file.exists()) {
-            readManifestFile();
-            if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
-                getPeerFile();
-            }else {
-                getHeaderBinFile();
+            long nowMillis = Calendar.getInstance().getTimeInMillis();
+            long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
+            if (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS) {
+                preFilesUtils.downloadManifest(downloadView, downloadCallback);
+            }else{
+                readManifestFile();
+                if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
+                    getPeerFile();
+                }else {
+                    getHeaderBinFile();
+                }
             }
         } else {
             preFilesUtils.downloadManifest(downloadView, downloadCallback);
@@ -482,13 +489,17 @@ public class SplashActivity extends AppBaseActivity {
         boolean isNeutrinoDbChecked = User.getInstance().isNeutrinoDbChecked(mContext);
 
         if (isHeaderBinChecked) {
+            Log.d(TAG, "actionAfterPromise: isHeaderBinChecked" + isHeaderBinChecked);
             if (isFilterHeaderBinChecked) {
+                Log.d(TAG, "actionAfterPromise: isFilterHeaderBinChecked" + isFilterHeaderBinChecked);
                 if (isNeutrinoDbChecked) {
+                    Log.d(TAG, "actionAfterPromise: isNeutrinoDbChecked" + isNeutrinoDbChecked);
                     long nowMillis = Calendar.getInstance().getTimeInMillis();
                     String downloadDirectoryPath = constantInOB.getBasePath()
                             + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
                     long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
                     if (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS) {
+                        Log.d(TAG, "actionAfterPromise: is7Days" + (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS));
                         getManifest();
                     } else {
                         startNode();

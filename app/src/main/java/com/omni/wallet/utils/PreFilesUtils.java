@@ -203,6 +203,7 @@ public class PreFilesUtils {
     }
 
     public void downloadPeerFile(View view, DownloadCallback downloadCallback){
+        Log.d(TAG, "downloadPeerFile");
         String fileName = PEER_FILE_NAME;
         String downloadFileName = fileName;
         String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
@@ -229,6 +230,7 @@ public class PreFilesUtils {
     }
 
     public void downloadBlockHeader(View view, DownloadCallback downloadCallback) {
+        Log.d(TAG, "downloadBlockHeader: ");
         String fileName = BLOCK_HEADER_FILE_NAME;
         String downloadFileName = downloadVersion + fileName;
         String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
@@ -251,11 +253,16 @@ public class PreFilesUtils {
                 }
             }
         };
-        downloadFile(view, fileName, filePath, downloadUrl, onDownloadListener);
+        boolean isExist = checkHeaderBinFileExist();
+        boolean isMatched = checkBlockHeaderMd5Matched();
+        if (!(isExist && isMatched)) {
+            downloadFile(view, fileName, filePath, downloadUrl, onDownloadListener);
+        }
 
     }
 
     public void downloadFilterHeader(View view, DownloadCallback downloadCallback) {
+        Log.d(TAG, "downloadFilterHeader: ");
         String fileName = REG_FILTER_HEADER_FILE_NAME;
         String downloadFileName = downloadVersion + fileName;
         String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
@@ -286,6 +293,7 @@ public class PreFilesUtils {
     }
 
     public void downloadNeutrino(View view, DownloadCallback downloadCallback) {
+        Log.d(TAG, "downloadNeutrino: ");
         String fileName = NEUTRINO_FILE_NAME;
         String downloadFileName = downloadVersion + fileName;
         String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
@@ -324,6 +332,7 @@ public class PreFilesUtils {
         OnDownloadListener onDownloadListener = new OnDownloadListener() {
             @Override
             public void onDownloadComplete() {
+                Log.d(TAG, "onDownloadComplete: success");
                 downloadCallback.callback();
             }
 
@@ -339,8 +348,13 @@ public class PreFilesUtils {
                 }
             }
         };
-        boolean isExist = checkNeutrinoFileExist();
+        boolean isExist = checkManifestFileExist();
+        Log.d(TAG, "downloadManifest isExist: " + isExist);
         if (!isExist) {
+            downloadFile(view, fileName, filePath, downloadUrl, onDownloadListener);
+        }else{
+            File file =new File(filePath);
+            file.deleteOnExit();
             downloadFile(view, fileName, filePath, downloadUrl, onDownloadListener);
         }
     }
