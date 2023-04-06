@@ -97,15 +97,32 @@ public class FilesUtils {
         }else{
             isMatched = false;
         }
-        Log.d(TAG, "checkFileCRC32Matched: " + "filePath " + filePath + "fileCRC32 " + fileCRC32 + "fileCheckCRC32 " + fileCheckCRC32);
+        Log.d(TAG, "checkFileCRC32Matched: " + " filePath " + filePath + " fileCRC32 " + fileCRC32 + " fileCheckCRC32 " + fileCheckCRC32);
         return isMatched;
     }
 
     public static String getFileCRC32(String filePath){
         String fileCRC32Str = "";
         File file = new File(filePath);
-        fileCRC32Str = getFileCRC32(file);
+        fileCRC32Str = get8FileCRC32(file);
         return fileCRC32Str;
+    }
+
+    // TODO: 2023/4/6 change return string for check file secret
+    public static String get8FileCRC32(File file){
+        String file8CRC32Str = "";
+        String fileCRC32Str = getFileCRC32(file);
+        int stringLength = fileCRC32Str.length();
+        if (stringLength<8){
+            String head = "";
+            for (int i =0 ;i< 8 -stringLength;i++){
+                head = head + "0";
+            }
+            file8CRC32Str = head + fileCRC32Str;
+        }else{
+            file8CRC32Str = fileCRC32Str;
+        }
+        return file8CRC32Str;
     }
 
     public static String getFileCRC32(File file){
