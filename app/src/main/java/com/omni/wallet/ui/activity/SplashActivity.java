@@ -35,16 +35,11 @@ import com.omni.wallet.utils.NetworkChangeReceiver;
 import com.omni.wallet.utils.PreFilesUtils;
 import com.omni.wallet.obdMethods.WalletState;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -92,7 +87,6 @@ public class SplashActivity extends AppBaseActivity {
 
     NetworkChangeReceiver.CallBackNetWork callBackNetWork = null;
 
-    Map<String, String> manifestInfo = new HashMap<>();
     PreFilesUtils preFilesUtils;
 
     boolean isDownloading = false;
@@ -329,7 +323,6 @@ public class SplashActivity extends AppBaseActivity {
 
     public void getManifest() {
         PreFilesUtils.DownloadCallback downloadCallback = () -> {
-            readManifestFile();
             preFilesUtils.readManifestFile();
             if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
                 getPeerFile();
@@ -349,7 +342,7 @@ public class SplashActivity extends AppBaseActivity {
             if (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS) {
                 preFilesUtils.downloadManifest(downloadView, downloadCallback);
             }else{
-                readManifestFile();
+                preFilesUtils.readManifestFile();
                 if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
                     getPeerFile();
                 }else {
@@ -369,7 +362,7 @@ public class SplashActivity extends AppBaseActivity {
         boolean isExist = preFilesUtils.checkPeerJsonFileExist();
         if (isExist){
             File file = new File(filePath);
-            file.delete();
+            file.deleteOnExit();
         }
         preFilesUtils.downloadPeerFile(downloadView,downloadCallback);
     }
@@ -384,7 +377,7 @@ public class SplashActivity extends AppBaseActivity {
                 getRegHeadersFile();
             } else {
                 File file = new File(filePath);
-                file.delete();
+                file.deleteOnExit();
                 getHeaderBinFile();
             }
         };
@@ -408,7 +401,7 @@ public class SplashActivity extends AppBaseActivity {
                 getNeutrinoFile();
             } else {
                 File file = new File(filePath);
-                file.delete();
+                file.deleteOnExit();
                 getRegHeadersFile();
             }
         };
@@ -431,7 +424,7 @@ public class SplashActivity extends AppBaseActivity {
                 startNode();
             } else {
                 File file = new File(filePath);
-                file.delete();
+                file.deleteOnExit();
                 getNeutrinoFile();
             }
         };
@@ -449,38 +442,6 @@ public class SplashActivity extends AppBaseActivity {
         NodeStart.getInstance().startWhenStopWithSubscribeState(mContext);
     }
 
-    public void readManifestFile() {
-        String downloadDirectoryPath = constantInOB.getBasePath()
-                + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
-        BufferedReader bfr;
-        try {
-            bfr = new BufferedReader(new FileReader(downloadDirectoryPath + "manifest.txt"));
-            String line = bfr.readLine();
-            StringBuilder sb = new StringBuilder();
-            while (line != null) {
-                String oldLine = line;
-                sb.append(line);
-                sb.append("\n");
-                Log.e(TAG, line);
-                String[] lineArray = oldLine.split(" {2}");
-                if (lineArray[1].endsWith(ConstantInOB.blockHeaderBin)) {
-                    downloadVersion = lineArray[1].substring(0, 10);
-                    manifestInfo.put(ConstantInOB.blockHeader, lineArray[0]);
-                } else if (lineArray[1].endsWith(ConstantInOB.neutrinoDB)) {
-                    manifestInfo.put(ConstantInOB.neutrino, lineArray[0]);
-                } else if (lineArray[1].endsWith(ConstantInOB.regFilterHeaderBin)) {
-                    manifestInfo.put(ConstantInOB.regFilterHeader, lineArray[0]);
-                }
-                line = bfr.readLine();
-                if (line == null) {
-                    bfr.close();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void actionAfterPromise() {
         isDownloading = true;
@@ -489,11 +450,8 @@ public class SplashActivity extends AppBaseActivity {
         boolean isNeutrinoDbChecked = User.getInstance().isNeutrinoDbChecked(mContext);
 
         if (isHeaderBinChecked) {
-            Log.d(TAG, "actionAfterPromise: isHeaderBinChecked" + isHeaderBinChecked);
             if (isFilterHeaderBinChecked) {
-                Log.d(TAG, "actionAfterPromise: isFilterHeaderBinChecked" + isFilterHeaderBinChecked);
                 if (isNeutrinoDbChecked) {
-                    Log.d(TAG, "actionAfterPromise: isNeutrinoDbChecked" + isNeutrinoDbChecked);
                     long nowMillis = Calendar.getInstance().getTimeInMillis();
                     String downloadDirectoryPath = constantInOB.getBasePath()
                             + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
@@ -505,11 +463,11 @@ public class SplashActivity extends AppBaseActivity {
                         startNode();
                     }
                 } else {
-                    readManifestFile();
+                    preFilesUtils.readManifestFile();
                     getNeutrinoFile();
                 }
             } else {
-                readManifestFile();
+                preFilesUtils.readManifestFile();
                 getRegHeadersFile();
             }
         } else {

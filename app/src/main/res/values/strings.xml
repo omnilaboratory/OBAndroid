@@ -335,6 +335,7 @@
     <string name="download_db">Downloading neutrino.db:</string>
     <string name="download_header">Downloading block_header.bin:</string>
     <string name="download_manifest">Downloading manifest.txt:</string>
+    <string name="download_peers">Downloading peers.json:</string>
     <string name="download_filter_header">Downloading filter_block_header.bin:</string>
     <string name="sync_block_percent">0%</string>
     <string name="block">Block</string>
