@@ -18,13 +18,13 @@ import android.widget.TextView;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.refreshView.RefreshLayout;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.data.AssetsActions;
 import com.omni.wallet.data.AssetsValueDataItem;
 import com.omni.wallet.data.ChangeData;
@@ -60,7 +60,6 @@ import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.dialog.ReceiveLuckyPacketDialog;
 import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.AccountManagePopupWindow;
-import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
@@ -119,7 +118,6 @@ public class AccountLightningActivity extends AppBaseActivity {
     MenuPopupWindow mMenuPopupWindow;
     FundPopupWindow mFundPopupWindow;
     AccountManagePopupWindow mAccountManagePopupWindow;
-    CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     SendDialog mSendDialog;
     SelectNodePopupWindow mSelectNodePopupWindow;
     private LoadingDialog mLoadingDialog;
@@ -917,9 +915,6 @@ public class AccountLightningActivity extends AppBaseActivity {
         }
         if (mFundPopupWindow != null) {
             mFundPopupWindow.release();
-        }
-        if (mCreateChannelStepOnePopupWindow != null) {
-            mCreateChannelStepOnePopupWindow.release();
         }
         if (mSendDialog != null) {
             mSendDialog.release();

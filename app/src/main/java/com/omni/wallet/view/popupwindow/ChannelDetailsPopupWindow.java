@@ -72,7 +72,6 @@ public class ChannelDetailsPopupWindow {
     private ImageView mCloseChannelIv;
     private LinearLayout mAnotherInfo;
 
-    CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     LoadingDialog mLoadingDialog;
     SendSuccessDialog mSendSuccessDialog;
     SendFailedDialog mSendFailedDialog;
@@ -461,9 +460,6 @@ public class ChannelDetailsPopupWindow {
         if (mBasePopWindow != null) {
             mBasePopWindow.dismiss();
             mBasePopWindow = null;
-        }
-        if (mCreateChannelStepOnePopupWindow != null) {
-            mCreateChannelStepOnePopupWindow.release();
         }
         if (mCreateChannelDialog != null) {
             mCreateChannelDialog.release();
