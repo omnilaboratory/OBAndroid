@@ -79,7 +79,7 @@ public class PreFilesUtils {
         return downloadingId;
     }
 
-    public void setDownloadingId(int downloadingId){
+    public void setDownloadingId(int downloadingId) {
         this.downloadingId = downloadingId;
     }
 
@@ -117,7 +117,7 @@ public class PreFilesUtils {
         String filePath = downloadDictionaryPath + BLOCK_HEADER_FILE_NAME;
         String fileCRC32 = manifestInfo.get(BLOCK_HEADER_FILE_NAME);
         File file = new File(filePath);
-        if (file.exists()){
+        if (file.exists()) {
             return FilesUtils.checkFileCRC32Matched(filePath, fileCRC32);
         }
         return false;
@@ -128,7 +128,7 @@ public class PreFilesUtils {
         String filePath = downloadDictionaryPath + REG_FILTER_HEADER_FILE_NAME;
         String fileCRC32 = manifestInfo.get(REG_FILTER_HEADER_FILE_NAME);
         File file = new File(filePath);
-        if (file.exists()){
+        if (file.exists()) {
             return FilesUtils.checkFileCRC32Matched(filePath, fileCRC32);
         }
         return false;
@@ -138,7 +138,7 @@ public class PreFilesUtils {
         String filePath = downloadDictionaryPath + NEUTRINO_FILE_NAME;
         String fileCRC32 = manifestInfo.get(NEUTRINO_FILE_NAME);
         File file = new File(filePath);
-        if (file.exists()){
+        if (file.exists()) {
             return FilesUtils.checkFileCRC32Matched(filePath, fileCRC32);
         }
         return false;
@@ -167,66 +167,47 @@ public class PreFilesUtils {
                         case MANIFEST_FILE_NAME:
                             setStartViewText(view, total, mContext.getString(R.string.download_manifest), fileName);
                             break;
+                        case PEER_FILE_NAME:
+//                            setStartViewText(view, total, mContext.getString(R.string.download_peers), fileName);
+                            break;
                     }
 
                 })
                 .setOnProgressListener((progress) -> {
-                    double total = fileName.equals(MANIFEST_FILE_NAME)
+                    boolean b = fileName.equals(MANIFEST_FILE_NAME) || fileName.equals(PEER_FILE_NAME);
+                    double total = b
                             ? (double) progress.totalBytes / 1024
                             : (double) progress.totalBytes / 1024 / 1024;
-                    double current = fileName.equals(MANIFEST_FILE_NAME)
+                    double current = b
                             ? (double) progress.currentBytes / 1024
                             : (double) progress.currentBytes / 1024 / 1024;
-                    setProgressViewText(view, total, current);
+                    Log.d(TAG, "downloadFile: total " + total + " current " + current);
+                    if(!fileName.equals(PEER_FILE_NAME)) {
+                        setProgressViewText(view, total, current, fileName);
+                    }
+
                 })
                 .setOnPauseListener(() -> ToastUtils.showToast(mContext, fileName + " downloading is paused!"))
                 .setOnCancelListener(() -> ToastUtils.showToast(mContext, fileName + " downloading is canceled!"));
-        switch (fileName){
+        switch (fileName) {
             case MANIFEST_FILE_NAME:
-                downloadingId =1;
+                downloadingId = 1;
                 break;
             case BLOCK_HEADER_FILE_NAME:
-                downloadingId =2;
+                downloadingId = 2;
                 break;
             case REG_FILTER_HEADER_FILE_NAME:
-                downloadingId =3;
+                downloadingId = 3;
                 break;
             case NEUTRINO_FILE_NAME:
-                downloadingId =4;
+                downloadingId = 4;
                 break;
             case PEER_FILE_NAME:
-                downloadingId =5;
+                downloadingId = 5;
                 break;
         }
 
         downloadingRequest.start(onDownloadListener);
-    }
-
-    public void downloadPeerFile(View view, DownloadCallback downloadCallback){
-        Log.d(TAG, "downloadPeerFile");
-        String fileName = PEER_FILE_NAME;
-        String downloadFileName = fileName;
-        String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
-        String filePath = downloadDictionaryPath;
-        OnDownloadListener onDownloadListener = new OnDownloadListener() {
-            @Override
-            public void onDownloadComplete() {
-                downloadCallback.callback();
-            }
-
-            @Override
-            public void onError(Error error) {
-                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
-                if (error.isServerError()) {
-                    ToastUtils.showToast(mContext, fileName + "server occur error!");
-                } else if (error.isConnectionError()) {
-                    ToastUtils.showToast(mContext, fileName + "connection occur error!");
-                } else {
-                    ToastUtils.showToast(mContext, fileName + "download occur error:" + error.toString());
-                }
-            }
-        };
-        downloadFile(view, fileName, filePath, downloadUrl, onDownloadListener);
     }
 
     public void downloadBlockHeader(View view, DownloadCallback downloadCallback) {
@@ -323,11 +304,10 @@ public class PreFilesUtils {
         }
     }
 
-    public void downloadManifest(View view, DownloadCallback downloadCallback){
+    public void downloadManifest(View view, DownloadCallback downloadCallback) {
         String fileName = MANIFEST_FILE_NAME;
         String downloadFileName = downloadVersion + fileName;
         String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
-        Log.d(TAG, "downloadManifest downloadUrl: " + downloadUrl);
         String filePath = downloadDictionaryPath;
         OnDownloadListener onDownloadListener = new OnDownloadListener() {
             @Override
@@ -352,8 +332,42 @@ public class PreFilesUtils {
         Log.d(TAG, "downloadManifest isExist: " + isExist);
         if (!isExist) {
             downloadFile(view, fileName, filePath, downloadUrl, onDownloadListener);
-        }else{
-            File file =new File(filePath);
+        } else {
+            File file = new File(filePath);
+            file.deleteOnExit();
+            downloadFile(view, fileName, filePath, downloadUrl, onDownloadListener);
+        }
+    }
+
+    public void downloadPeerFile(View view, DownloadCallback downloadCallback) {
+        Log.d(TAG, "downloadPeerFile");
+        String fileName = PEER_FILE_NAME;
+        String downloadFileName = fileName;
+        String downloadUrl = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadBaseUrl() + downloadFileName;
+        String filePath = downloadDictionaryPath;
+        OnDownloadListener onDownloadListener = new OnDownloadListener() {
+            @Override
+            public void onDownloadComplete() {
+                downloadCallback.callback();
+            }
+
+            @Override
+            public void onError(Error error) {
+                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
+                if (error.isServerError()) {
+                    ToastUtils.showToast(mContext, fileName + "server occur error!");
+                } else if (error.isConnectionError()) {
+                    ToastUtils.showToast(mContext, fileName + "connection occur error!");
+                } else {
+                    ToastUtils.showToast(mContext, fileName + "download occur error:" + error.toString());
+                }
+            }
+        };
+        boolean isExist = checkPeerJsonFileExist();
+        if (!isExist) {
+            downloadFile(view, fileName, filePath, downloadUrl, onDownloadListener);
+        } else {
+            File file = new File(filePath);
             file.deleteOnExit();
             downloadFile(view, fileName, filePath, downloadUrl, onDownloadListener);
         }
@@ -372,7 +386,8 @@ public class PreFilesUtils {
     }
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
-    private void setProgressViewText(View view, double total, double current) {
+    private void setProgressViewText(View view, double total, double current, String fileName) {
+        boolean b = fileName.equals(MANIFEST_FILE_NAME) || fileName.equals(PEER_FILE_NAME);
         LinearLayout downloadView = view.findViewById(R.id.download_view);
         downloadView.findViewById(R.id.refresh_btn).setVisibility(View.INVISIBLE);
         RelativeLayout rvProcessInner = downloadView.findViewById(R.id.process_inner);
@@ -387,7 +402,7 @@ public class PreFilesUtils {
         RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth, innerHeight);
         rvProcessInner.setLayoutParams(rlInnerParam);
         TextView syncedBlockNumView = downloadView.findViewById(R.id.block_num_synced);
-        syncedBlockNumView.setText(String.format("%.2f", current) + "MB");
+        syncedBlockNumView.setText(String.format("%.2f", current) + (b ? "KB" : "MB"));
     }
 
     public void readManifestFile() {
