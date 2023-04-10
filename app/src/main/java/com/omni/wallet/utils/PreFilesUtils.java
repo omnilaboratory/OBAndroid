@@ -181,7 +181,6 @@ public class PreFilesUtils {
                     double current = b
                             ? (double) progress.currentBytes / 1024
                             : (double) progress.currentBytes / 1024 / 1024;
-                    Log.d(TAG, "downloadFile: total " + total + " current " + current);
                     if(!fileName.equals(PEER_FILE_NAME)) {
                         setProgressViewText(view, total, current, fileName);
                     }

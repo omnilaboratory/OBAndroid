@@ -3,7 +3,6 @@ package com.omni.wallet.utils;
 public class CheckInputRules {
     private static final String TAG = CheckInputRules.class.getSimpleName();
     static public int checkPwd(String password) {
-        String tempPassword = password;
         int checkValue = 0;
         //密码为空或者长度小于8位则返回false(If password is null or length less than 8 then return false! )
         if (password == null || password.length() < 8) return -1;

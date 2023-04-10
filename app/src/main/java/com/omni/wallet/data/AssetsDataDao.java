@@ -18,7 +18,7 @@ public class AssetsDataDao {
         this.mInstance = AssetsDB.getInstance(context);
     }
 
-    void insertAssetsData(String propertyId, double price, double amount, double channelAmount, long date){
+    private void insertAssetsData(String propertyId, double price, double amount, double channelAmount, long date){
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -239,8 +239,8 @@ public class AssetsDataDao {
 
     void insertOrUpdateAssetDataByAmount(String propertyId, double amount, long date){
         boolean dataExist = checkDataExist(propertyId,date);
-        double price = 0;
-        double channelAmount = 0;
+        double price;
+        double channelAmount;
         if (dataExist){
             updateAssetDataAmount(propertyId,amount);
         }else{

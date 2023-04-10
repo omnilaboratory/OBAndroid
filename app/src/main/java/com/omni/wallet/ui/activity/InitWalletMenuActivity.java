@@ -31,8 +31,6 @@ import obdmobile.Obdmobile;
 
 public class InitWalletMenuActivity extends AppBaseActivity {
 
-    private final static String TAG = InitWalletMenuActivity.class.getSimpleName();
-
     @BindView(R.id.welcome_content)
     LinearLayout welcomeContent;
 

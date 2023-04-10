@@ -439,7 +439,9 @@ public class SplashActivity extends AppBaseActivity {
 
 
     public void startNode() {
-        NodeStart.getInstance().startWhenStopWithSubscribeState(mContext);
+        runOnUiThread(()->{
+            NodeStart.getInstance().startWhenStopWithSubscribeState(mContext);
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -508,8 +510,6 @@ public class SplashActivity extends AppBaseActivity {
     }
 
     public void subscribeWalletState() {
-        Log.d(TAG, "subscribeWalletState: " + User.getInstance().getSeedString(mContext));
-        Log.d(TAG, "do subscribe action");
         WalletState.getInstance().setWalletState(-100);
         String walletInitType = User.getInstance().getInitWalletType(mContext);
         WalletState.WalletStateCallback walletStateCallback = walletState -> {
