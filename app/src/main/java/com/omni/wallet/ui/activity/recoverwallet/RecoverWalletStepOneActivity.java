@@ -70,18 +70,6 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-        /*KeyboardStateObserver.getKeyboardStateObserver(this).
-            setKeyboardVisibilityListener(new KeyboardStateObserver.OnKeyboardVisibilityListener() {
-                @Override
-                public void onKeyboardShow() {
-                    Toast.makeText(mContext, "键盘弹出", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onKeyboardHide() {
-                    Toast.makeText(mContext, "键盘收回", Toast.LENGTH_SHORT).show();
-                }
-            });*/
         mOutView = findViewById(R.id.edit_text_Content);
         KeyboardScrollView.controlKeyboardLayout(pageContent, mOutView);
     }
@@ -164,27 +152,21 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
                     cellEditText.setNextFocusUpId(editTextIds[(row - 1)*3 + cell]);
                     int finalCell = cell;
                     int finalRow = row;
-                    TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
-                        @Override
-                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                            Log.d(TAG, "onEditorAction: " + actionId);
-                            if (actionId == EditorInfo.IME_ACTION_NEXT){
-                                findViewById(editTextIds[(finalRow - 1)*3 + finalCell]).requestFocus();
-                            }
-                            return true;
+                    TextView.OnEditorActionListener listener = (v, actionId, event) -> {
+                        Log.d(TAG, "onEditorAction: " + actionId);
+                        if (actionId == EditorInfo.IME_ACTION_NEXT){
+                            findViewById(editTextIds[(finalRow - 1)*3 + finalCell]).requestFocus();
                         }
+                        return true;
                     };
                     cellEditText.setOnEditorActionListener(listener);
                 }else{
                     cellEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
-                    TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
-                        @Override
-                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                            if (actionId == EditorInfo.IME_ACTION_DONE){
-                                clickForward();
-                            }
-                            return true;
+                    TextView.OnEditorActionListener listener = (v, actionId, event) -> {
+                        if (actionId == EditorInfo.IME_ACTION_DONE){
+                            clickForward();
                         }
+                        return true;
                     };
                     cellEditText.setOnEditorActionListener(listener);
                 }
@@ -253,18 +235,18 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
-        String seedsString = "";
+        StringBuilder seedsString = new StringBuilder();
         for (int i = 0; i < list.size(); i++) {
-            seedsString = seedsString + list.get(i).getText() + " ";
+            seedsString.append(list.get(i).getText()).append(" ");
         }
-        User.getInstance().setRecoverySeedString(mContext, seedsString);
-        /**
+        User.getInstance().setRecoverySeedString(mContext, seedsString.toString());
+        /*
          * 使用SharedPreferences 对象，在生成seeds时候将seeds备份到本地文件
          * Use SharedPreferences Class to back up seeds to local file,when create seeds.
          */
         SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
         SharedPreferences.Editor editor = secretData.edit();
-        editor.putString("seeds", seedsString);
+        editor.putString("seeds", seedsString.toString());
         User.getInstance().setInitWalletType(mContext, "recoveryStepOne");
         editor.apply();
         switchActivity(RecoverWalletStepTwoActivity.class);

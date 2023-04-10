@@ -4,24 +4,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
-import com.omni.wallet.utils.TimeFormatUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AssetsDao {
     private static AssetsDB mInstance;
-    private final static String TAG = AssetsDao.class.getSimpleName();
 
     public AssetsDao(Context context){
-        this.mInstance = AssetsDB.getInstance(context);
+        mInstance = AssetsDB.getInstance(context);
     }
 
-    public void insertAsset(String propertyId,String tokenName){
+    private void insertAsset(String propertyId, String tokenName){
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -34,7 +28,7 @@ public class AssetsDao {
 //        db.close();
     }
 
-    public void changeAssetIsUse (String propertyId,int hasBalance){
+    void changeAssetIsUse(String propertyId, int hasBalance){
         SQLiteDatabase db = mInstance.getWritableDatabase();
         if (!db.isOpen()) {
             return;
@@ -44,20 +38,19 @@ public class AssetsDao {
 //        db.close();
     }
 
-    public boolean checkAssetsExist(String propertyId,String tokenName){
+    private boolean checkAssetsExist(String propertyId, String tokenName){
         boolean isExist = false;
-        int count = 0;
+        int count;
         String sql = "select * from assets where property_id = ? and token_name = ?;";
-        SQLiteDatabase db = mInstance.getWritableDatabase();;
+        SQLiteDatabase db = mInstance.getWritableDatabase();
         Cursor cursor = db.rawQuery(sql, new String[]{propertyId,tokenName});
         count = cursor.getCount();
         cursor.close();
-//        db.close();
         if (count>0) isExist = true;
         return isExist;
     }
 
-    public void checkAndInsertAsset(String propertyId,String tokenName){
+    void checkAndInsertAsset(String propertyId, String tokenName){
         boolean isExist = checkAssetsExist(propertyId,tokenName);
         if (!isExist){
             insertAsset(propertyId,tokenName);

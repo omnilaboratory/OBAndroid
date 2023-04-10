@@ -4,10 +4,10 @@ public class AssetsDataItem {
     private String property_id;
     private double price;
     private double amount;
-    private double channel_amount = 0;
+    private double channel_amount;
     private long update_date;
 
-    public AssetsDataItem(String property_id, double price, double amount, double channel_amount, long update_date) {
+    AssetsDataItem(String property_id, double price, double amount, double channel_amount, long update_date) {
         this.property_id = property_id;
         this.price = price;
         this.amount = amount;
@@ -23,7 +23,7 @@ public class AssetsDataItem {
         this.property_id = property_id;
     }
 
-    public double getPrice() {
+    double getPrice() {
         return price;
     }
 
@@ -39,7 +39,7 @@ public class AssetsDataItem {
         this.amount = amount;
     }
 
-    public double getChannel_amount() {
+    double getChannel_amount() {
         return channel_amount;
     }
 

@@ -4,7 +4,7 @@ public class ChangeData {
     private double value;
     private double percent;
 
-    public ChangeData(double value, double percent) {
+    ChangeData(double value, double percent) {
         this.value = value;
         this.percent = percent;
     }

@@ -1,7 +1,7 @@
 package com.omni.wallet.ui.activity.createwallet;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -19,6 +19,7 @@ import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.utils.SecretAESOperator;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,9 +37,8 @@ import obdmobile.Obdmobile;
 
 public class CreateWalletStepOneActivity extends AppBaseActivity {
     private static final String TAG = CreateWalletStepOneActivity.class.getSimpleName();
-    List <String> seedArray = new ArrayList();
+    ArrayList seedArray = new ArrayList();
     String seedsString = "";
-    Context ctx = CreateWalletStepOneActivity.this;
     LoadingDialog mLoadingDialog;
 
     @BindView(R.id.seed_content)
@@ -60,10 +60,10 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-        GridView seedGridView = (GridView) findViewById(R.id.seed_grid_view);
+        GridView seedGridView = findViewById(R.id.seed_grid_view);
         EventBus.getDefault().register(this);
         mLoadingDialog = new LoadingDialog(mContext);
-        seedGridView.setAdapter(seedsAdapter = new SeedsAdapter(this,seedArray));
+        seedGridView.setAdapter(seedsAdapter = new SeedsAdapter(this, seedArray));
     }
 
     @Override
@@ -72,11 +72,11 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
     }
 
 
-    class SeedsAdapter extends BaseAdapter {
+    static class SeedsAdapter extends BaseAdapter {
         Context mContext;
         LayoutInflater mInflater;
         List <String> mDatas;
-        public SeedsAdapter(Context context,List <String> seedArray) {
+        SeedsAdapter(Context context, List<String> seedArray) {
             mInflater = LayoutInflater.from(context);
             this.mContext = context;
             this.mDatas = seedArray;
@@ -97,6 +97,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
             return position;
         }
 
+        @SuppressLint("InflateParams")
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;

@@ -1,5 +1,6 @@
 package com.omni.wallet.ui.activity.recoverwallet;
 
+import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
@@ -101,6 +102,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
      * When the value of password input changed
      */
 
+    @SuppressLint("SetTextI18n")
     @OnTextChanged(R.id.password_input)
     public void passwordChangeCheck(){
         String password = mPwdEdit.getText().toString();
@@ -175,7 +177,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
         TextView passwordViewRepeat = findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         ImageView passwordRepeatCheck = findViewById(R.id.pass_input_check_repeat);
-        if(passwordRepeatString==""){
+        if(passwordRepeatString.equals("")){
             passwordRepeatCheck.setVisibility(View.INVISIBLE);
         }else{
             if(passwordString.equals(passwordRepeatString)){
@@ -249,7 +251,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
             mLoadingDialog.show();
             String md5String = SecretAESOperator.getInstance().encrypt(password);
-            /**
+            /*
              * 使用SharedPreferences 对象，在生成密码md5字符串时候将,密码的md5字符串备份到本地文件
              * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
              */
@@ -259,12 +261,6 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
             
             Walletunlocker.InitWalletRequest.Builder initWalletRequestBuilder = Walletunlocker.InitWalletRequest.newBuilder();
             initWalletRequestBuilder.addAllCipherSeedMnemonic(Arrays.asList(seedList));
-//
-//            for (int i =0;i<seedList.length;i++){
-//                initWalletRequestBuilder.addCipherSeedMnemonic(seedList[i]);
-//                String mnemonicString = initWalletRequestBuilder.getCipherSeedMnemonic(i);
-//                Log.e("mnemonicString",mnemonicString);
-//            }
             initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
             initWalletRequestBuilder.setRecoveryWindow(2500);
             Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
@@ -275,11 +271,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                     if (e.getMessage().contains("wallet already exists")){
                         switchActivity(BackupBlockProcessActivity.class);
                     }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mLoadingDialog.dismiss();
-                        }});
+                    runOnUiThread(() -> mLoadingDialog.dismiss());
                     e.printStackTrace();
 
 
@@ -287,11 +279,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                 @Override
                 public void onResponse(byte[] bytes) {
                     if (bytes == null){
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mLoadingDialog.dismiss();
-                            }});
+                        runOnUiThread(() -> mLoadingDialog.dismiss());
                         return;
                     }
                     try {
@@ -316,7 +304,7 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
             if(strongerPwd<0){
                 checkSetPassWrongString = getResources().getString(R.string.toast_create_check_pass_wrong);
             }else if(!passwordRepeatString.equals(password)){
-                checkSetPassWrongString =  getResources().getString(R.string.toast_create_check_pass_diff);;
+                checkSetPassWrongString =  getResources().getString(R.string.toast_create_check_pass_diff);
             }
             Toast checkSetPassToast = Toast.makeText(RecoverWalletStepTwoActivity.this,checkSetPassWrongString,Toast.LENGTH_LONG);
             checkSetPassToast.setGravity(Gravity.TOP,0,30);

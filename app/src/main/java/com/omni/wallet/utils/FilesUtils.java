@@ -7,27 +7,29 @@ import com.omni.wallet.listItems.BackupFile;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.CRC32;
 
 
 public class FilesUtils {
-    private String path;
     private static final String TAG = FilesUtils.class.getSimpleName();
+
+    public FilesUtils() {
+    }
+
     public static List<BackupFile> getDirectoryAndFile(String path, Context context) {
         List<BackupFile> fileInfoList = new ArrayList<>();
         File file = new File(path);
         File[] tempList = file.listFiles();
         if(tempList.length > 0){
-            for (int i = 0; i < tempList.length; i++) {
-                String filename = tempList[i].getName();
-                long lastEdit = tempList[i].lastModified();
+            for (File value : tempList) {
+                String filename = value.getName();
+                long lastEdit = value.lastModified();
                 String lastEditTime = TimeFormatUtil.formatTimeAndDateLong(lastEdit / 1000, context);
-                BackupFile backupFile = null;
+                BackupFile backupFile;
                 if (!filename.equals("Android")) {
-                    if (tempList[i].isDirectory()) {
+                    if (value.isDirectory()) {
                         backupFile = new BackupFile(false, "directory", filename, lastEditTime, file);
                     } else {
                         if (filename.endsWith(".db")) {
@@ -53,16 +55,16 @@ public class FilesUtils {
         List<BackupFile> fileInfoList = new ArrayList<>();
         File file = new File(path);
         File[] tempList = file.listFiles();
-        for (int i = 0; i < tempList.length; i++) {
-            String filename = tempList[i].getName();
-            long lastEdit = tempList[i].lastModified();
+        for (File value : tempList) {
+            String filename = value.getName();
+            long lastEdit = value.lastModified();
             String lastEditTime = TimeFormatUtil.formatTimeAndDateLong(lastEdit / 1000, context);
             BackupFile backupFile = null;
-            int childCount = 0;
-            if (tempList[i].listFiles() != null) {
-                childCount = tempList[i].listFiles().length;
+            int childCount;
+            if (value.listFiles() != null) {
+                childCount = value.listFiles().length;
                 if (!filename.equals("Android")) {
-                    if (tempList[i].isDirectory()) {
+                    if (value.isDirectory()) {
                         backupFile = new BackupFile(false, "directory", filename, lastEditTime, file, childCount);
                     }
                     fileInfoList.add(backupFile);
@@ -80,8 +82,7 @@ public class FilesUtils {
                 Log.d(path + "is exist","false");
                 return -1;
             }else{
-                long lastModified = file.lastModified();
-                return lastModified;
+                return file.lastModified();
             }
         }catch (Exception e){
             Log.e(path + "is exist","false");
@@ -89,34 +90,30 @@ public class FilesUtils {
         }
     }
 
-    public static boolean checkFileCRC32Matched(String filePath,String fileCRC32){
+    static boolean checkFileCRC32Matched(String filePath, String fileCRC32){
         boolean isMatched;
         String fileCheckCRC32 = getFileCRC32(filePath);
-        if (fileCheckCRC32.equals(fileCRC32)){
-            isMatched = true;
-        }else{
-            isMatched = false;
-        }
+        isMatched = fileCheckCRC32.equals(fileCRC32);
         Log.d(TAG, "checkFileCRC32Matched: " + " filePath " + filePath + " fileCRC32 " + fileCRC32 + " fileCheckCRC32 " + fileCheckCRC32);
         return isMatched;
     }
 
-    public static String getFileCRC32(String filePath){
-        String fileCRC32Str = "";
+    private static String getFileCRC32(String filePath){
+        String fileCRC32Str;
         File file = new File(filePath);
         fileCRC32Str = get8FileCRC32(file);
         return fileCRC32Str;
     }
 
     // TODO: 2023/4/6 change return string for check file secret
-    public static String get8FileCRC32(File file){
-        String file8CRC32Str = "";
+    private static String get8FileCRC32(File file){
+        String file8CRC32Str;
         String fileCRC32Str = getFileCRC32(file);
         int stringLength = fileCRC32Str.length();
         if (stringLength<8){
-            String head = "";
+            StringBuilder head = new StringBuilder();
             for (int i =0 ;i< 8 -stringLength;i++){
-                head = head + "0";
+                head.append("0");
             }
             file8CRC32Str = head + fileCRC32Str;
         }else{
@@ -125,15 +122,15 @@ public class FilesUtils {
         return file8CRC32Str;
     }
 
-    public static String getFileCRC32(File file){
-        long fileCRC32 = -1;
+    private static String getFileCRC32(File file){
+        long fileCRC32;
         String fileCRC32Str = "";
         CRC32 crc32 = new CRC32();
         if (!file.isFile()) {
             return fileCRC32Str;
         }
         FileInputStream in;
-        byte buffer[] = new byte[1024];
+        byte[] buffer = new byte[1024];
         try {
             in = new FileInputStream(file);
             int len = in.read(buffer, 0, 1024);

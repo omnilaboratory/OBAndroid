@@ -4,7 +4,7 @@ public class AssetsValueDataItem {
     private double value;
     private long update_date;
 
-    public AssetsValueDataItem(double value, long update_date) {
+    AssetsValueDataItem(double value, long update_date) {
         this.value = value;
         this.update_date = update_date;
     }

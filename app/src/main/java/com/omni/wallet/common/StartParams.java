@@ -39,7 +39,6 @@ public class StartParams {
                         "--enable-upfront-shutdown " +
                         "--tlsdisableautofill " +
                         "--norest "+
-                        "--nobootstrap" +
                         "--neutrino.connect=" + BTC_HOST_ADDRESS +
                         " --omnicoreproxy.rpchost=" + OMNI_HOST_ADDRESS_PORT +
                         " --alias=";

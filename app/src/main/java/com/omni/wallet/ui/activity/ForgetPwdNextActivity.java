@@ -260,7 +260,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
             Log.d(TAG,"start change password");
-            /**
+            /*
              * 使用SharedPreferences 对象，在生成密码加密字符串时候将,密码的加密字符串备份到本地文件
              * Use SharedPreferences Class to backup password secret string to local file when create password secret string
              */

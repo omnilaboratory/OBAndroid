@@ -1,5 +1,6 @@
 package com.omni.wallet.ui.activity.createwallet;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -11,7 +12,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -38,8 +38,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 public class CreateWalletStepTwoActivity extends AppBaseActivity {
-
-    final String TAG = CreateWalletStepTwoActivity.class.getSimpleName();
     private ArrayList<EditText> list = new ArrayList<>();
 
     @BindView(R.id.seed_select_pager)
@@ -77,9 +75,9 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        seedsInputAdapter = new SeedsInputAdapter(mContext);
-        seedsSelectAdapter = new SeedsSelectAdapter(mContext);
-        seedsSelectAdapterForPageTwo = new SeedsSelectAdapterForPageTwo(mContext);
+        seedsInputAdapter = new SeedsInputAdapter();
+        seedsSelectAdapter = new SeedsSelectAdapter();
+        seedsSelectAdapterForPageTwo = new SeedsSelectAdapterForPageTwo();
         for (int i = 0; i < 24; i++) {
             seedsInputList.add("");
         }
@@ -98,14 +96,12 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     @Override
     protected void initData() { }
-
+    @SuppressLint("InflateParams")
     public void initViewPager(){
-//        View pageOne = seedSelectGridViewPageOne;
-//        View pageTwo = seedSelectGridViewPageTwo;
         LayoutInflater liOne = getLayoutInflater();
         LayoutInflater liTwo = getLayoutInflater();
-        View pageOne = liOne.inflate(R.layout.layout_item_seeds_selected_page,null);
-        View pageTwo = liTwo.inflate(R.layout.layout_item_seeds_selected_page,null);
+         View pageOne = liOne.inflate(R.layout.layout_item_seeds_selected_page,null);
+         View pageTwo = liTwo.inflate(R.layout.layout_item_seeds_selected_page,null);
         seedSelectGridViewPageOne = pageOne.findViewById(R.id.seed_select_grid_view_page);
         seedSelectGridViewPageTwo = pageTwo.findViewById(R.id.seed_select_grid_view_page);
         initSeedsSelectGridViewPageOne();
@@ -121,9 +117,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
         String seedsString = User.getInstance().getSeedString(mContext);
         gotSeedArray = seedsString.split(" ");
         List<String> gotSeedList = new ArrayList<>();
-        for (int i = 0; i < gotSeedArray.length; i++) {
-            gotSeedList.add(gotSeedArray[i]);
-        }
+        Collections.addAll(gotSeedList, gotSeedArray);
         Collections.shuffle(gotSeedList);
         for (int i = 0; i < gotSeedList.size(); i++) {
             String seed = gotSeedList.get(i);
@@ -140,69 +134,63 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     public void initSeedsSelectGridViewPageOne() {
         seedSelectGridViewPageOne.setAdapter(seedsSelectAdapter);
-        seedSelectGridViewPageOne.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int willSetIndex = 0;
-                SelectSeedItem selectSeedItem = seedListPageOne.get(position);
-                boolean isSelected = selectSeedItem.isSelected();
-                int selectInt = selectSeedItem.getSelectIndex();
-                String seedString = selectSeedItem.getSeed();
-                for (int i = 0; i<seedsInputList.size();i++){
-                    if (seedsInputList.get(i).isEmpty()){
-                        willSetIndex = i;
-                        break;
-                    }
+        seedSelectGridViewPageOne.setOnItemClickListener((parent, view, position, id) -> {
+            int willSetIndex = 0;
+            SelectSeedItem selectSeedItem = seedListPageOne.get(position);
+            boolean isSelected = selectSeedItem.isSelected();
+            int selectInt = selectSeedItem.getSelectIndex();
+            String seedString = selectSeedItem.getSeed();
+            for (int i = 0; i<seedsInputList.size();i++){
+                if (seedsInputList.get(i).isEmpty()){
+                    willSetIndex = i;
+                    break;
                 }
-                if(isSelected){
-                    selectSeedItem.setSelected(false);
-                    selectSeedItem.setSelectIndex(-1);
-                    seedsInputList.set(selectInt,"");
-                }else{
-                    selectSeedItem.setSelected(true);
-                    selectSeedItem.setSelectIndex(willSetIndex);
-                    seedsInputList.set(willSetIndex,seedString);
-                }
-                runOnUiThread(()->{
-                    seedsSelectAdapter.notifyDataSetChanged();
-                    seedsInputAdapter.notifyDataSetChanged();
-                });
-
             }
+            if(isSelected){
+                selectSeedItem.setSelected(false);
+                selectSeedItem.setSelectIndex(-1);
+                seedsInputList.set(selectInt,"");
+            }else{
+                selectSeedItem.setSelected(true);
+                selectSeedItem.setSelectIndex(willSetIndex);
+                seedsInputList.set(willSetIndex,seedString);
+            }
+            runOnUiThread(()->{
+                seedsSelectAdapter.notifyDataSetChanged();
+                seedsInputAdapter.notifyDataSetChanged();
+            });
+
         });
     }
 
     public void initSeedsSelectGridViewPageTwo() {
         seedSelectGridViewPageTwo.setAdapter(seedsSelectAdapterForPageTwo);
-        seedSelectGridViewPageTwo .setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int willSetIndex = 0;
-                SelectSeedItem selectSeedItem = seedListPageTwo.get(position);
-                boolean isSelected = selectSeedItem.isSelected();
-                int selectInt = selectSeedItem.getSelectIndex();
-                String seedString = selectSeedItem.getSeed();
-                for (int i = 0; i<seedsInputList.size();i++){
-                    if (seedsInputList.get(i).isEmpty()){
-                        willSetIndex = i;
-                        break;
-                    }
+        seedSelectGridViewPageTwo .setOnItemClickListener((parent, view, position, id) -> {
+            int willSetIndex = 0;
+            SelectSeedItem selectSeedItem = seedListPageTwo.get(position);
+            boolean isSelected = selectSeedItem.isSelected();
+            int selectInt = selectSeedItem.getSelectIndex();
+            String seedString = selectSeedItem.getSeed();
+            for (int i = 0; i<seedsInputList.size();i++){
+                if (seedsInputList.get(i).isEmpty()){
+                    willSetIndex = i;
+                    break;
                 }
-                if(isSelected){
-                    selectSeedItem.setSelected(false);
-                    selectSeedItem.setSelectIndex(-1);
-                    seedsInputList.set(selectInt,"");
-                }else{
-                    selectSeedItem.setSelected(true);
-                    selectSeedItem.setSelectIndex(willSetIndex);
-                    seedsInputList.set(willSetIndex,seedString);
-                }
-                runOnUiThread(()->{
-                    seedsSelectAdapterForPageTwo.notifyDataSetChanged();
-                    seedsInputAdapter.notifyDataSetChanged();
-                });
-
             }
+            if(isSelected){
+                selectSeedItem.setSelected(false);
+                selectSeedItem.setSelectIndex(-1);
+                seedsInputList.set(selectInt,"");
+            }else{
+                selectSeedItem.setSelected(true);
+                selectSeedItem.setSelectIndex(willSetIndex);
+                seedsInputList.set(willSetIndex,seedString);
+            }
+            runOnUiThread(()->{
+                seedsSelectAdapterForPageTwo.notifyDataSetChanged();
+                seedsInputAdapter.notifyDataSetChanged();
+            });
+
         });
     }
 
@@ -231,7 +219,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
                 checkResult = false;
                 String toastTextHead = getResources().getString(R.string.toast_check_seeds_wrong_head);
                 String toastTextEnd = getResources().getString(R.string.toast_check_seeds_wrong_end);
-                String toastText = toastTextHead + Integer.toString(j+1) + "" + toastTextEnd;
+                String toastText = toastTextHead + (j + 1) + "" + toastTextEnd;
                 Toast checkWrongToast = Toast.makeText(CreateWalletStepTwoActivity.this,toastText,Toast.LENGTH_LONG);
                 checkWrongToast.setGravity(Gravity.TOP,0,40);
                 checkWrongToast.show();
@@ -253,10 +241,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     class SeedsInputAdapter extends BaseAdapter {
 
-        private Context mContext;
-
-        public SeedsInputAdapter(Context context) {
-            this.mContext = context;
+        SeedsInputAdapter() {
         }
 
         @Override
@@ -274,6 +259,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
             return position;
         }
 
+        @SuppressLint("InflateParams")
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
@@ -306,10 +292,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     class SeedsSelectAdapter extends BaseAdapter {
 
-        private Context mContext;
-
-        public SeedsSelectAdapter(Context context) {
-            this.mContext = context;
+        SeedsSelectAdapter() {
         }
 
         @Override
@@ -357,10 +340,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
     class SeedsSelectAdapterForPageTwo extends BaseAdapter {
 
-        private Context mContext;
-
-        public SeedsSelectAdapterForPageTwo(Context context) {
-            this.mContext = context;
+        SeedsSelectAdapterForPageTwo() {
         }
 
         @Override
@@ -378,6 +358,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
             return position;
         }
 
+        @SuppressLint("InflateParams")
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
@@ -412,7 +393,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
 
         public MyPagerAdapter(){}
 
-        public MyPagerAdapter(ArrayList<View> viewLists) {
+        MyPagerAdapter(ArrayList<View> viewLists) {
             super();
             this.viewLists = viewLists;
         }
@@ -427,6 +408,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
             return view == object;
         }
 
+        @NonNull
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             container.addView(viewLists.get(position));
@@ -434,7 +416,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(ViewGroup container, int position, @NonNull Object object) {
             container.removeView(viewLists.get(position));
         }
 

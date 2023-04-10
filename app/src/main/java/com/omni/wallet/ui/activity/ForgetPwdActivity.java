@@ -41,9 +41,8 @@ import butterknife.OnClick;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 public class ForgetPwdActivity extends AppBaseActivity {
-    private ArrayList<EditText> list = new ArrayList<EditText>();
+    private ArrayList<EditText> list = new ArrayList<>();
     String[] seedList;
-    Context ctx = ForgetPwdActivity.this;
 
     @BindView(R.id.forget_pwd_content)
     LinearLayout pageContent;
@@ -52,11 +51,6 @@ public class ForgetPwdActivity extends AppBaseActivity {
     protected Drawable getWindowBackground() {
         return ContextCompat.getDrawable(mContext, R.color.color_f9f9f9);
     }
-
-//    @Override
-//    protected int titleId() {
-//        return R.string.recover_wallet;
-//    }
 
     @Override
     protected int getContentView() {
@@ -73,7 +67,7 @@ public class ForgetPwdActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-        /**
+        /*
          * 从xml文件中读取seeds
          * Get seeds form xml file
          */
@@ -82,7 +76,7 @@ public class ForgetPwdActivity extends AppBaseActivity {
         initEditViewForSeeds();
     }
 
-    /**
+    /*
      * 动态渲染24个输入框
      * Dynamically render 24 input boxes
      */
@@ -146,26 +140,20 @@ public class ForgetPwdActivity extends AppBaseActivity {
                     cellEditText.setNextFocusUpId(editTextIds[(row - 1)*3 + cell]);
                     int finalCell = cell;
                     int finalRow = row;
-                    TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
-                        @Override
-                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                            if (actionId == EditorInfo.IME_ACTION_NEXT){
-                                findViewById(editTextIds[(finalRow - 1)*3 + finalCell]).requestFocus();
-                            }
-                            return true;
+                    TextView.OnEditorActionListener listener = (v, actionId, event) -> {
+                        if (actionId == EditorInfo.IME_ACTION_NEXT){
+                            findViewById(editTextIds[(finalRow - 1)*3 + finalCell]).requestFocus();
                         }
+                        return true;
                     };
                     cellEditText.setOnEditorActionListener(listener);
                 }else{
                     cellEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
-                    TextView.OnEditorActionListener listener = new TextView.OnEditorActionListener(){
-                        @Override
-                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                            if (actionId == EditorInfo.IME_ACTION_DONE){
-                                clickForward();
-                            }
-                            return true;
+                    TextView.OnEditorActionListener listener = (v, actionId, event) -> {
+                        if (actionId == EditorInfo.IME_ACTION_DONE){
+                            clickForward();
                         }
+                        return true;
                     };
                     cellEditText.setOnEditorActionListener(listener);
                 }
@@ -239,10 +227,10 @@ public class ForgetPwdActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
-        Boolean checkResult = true;
+        boolean checkResult = true;
         for (int i = 0; i < list.size(); i++) {
             String inputItemText = list.get(i).getText().toString().trim();
-            String seed_no = "seed_" + Integer.toString(i);
+            String seed_no = "seed_" + i;
             Log.d(seed_no, seedList[i]);
             if (inputItemText.equals(seedList[i])) {
                 Log.d(Integer.toString(i), inputItemText);
@@ -250,7 +238,7 @@ public class ForgetPwdActivity extends AppBaseActivity {
                 checkResult = false;
                 String toastTextHead = getResources().getString(R.string.toast_check_seeds_wrong_head);
                 String toastTextEnd = getResources().getString(R.string.toast_check_seeds_wrong_end);
-                String toastText = toastTextHead + Integer.toString(i+1) + "" + toastTextEnd;
+                String toastText = toastTextHead + (i + 1) + "" + toastTextEnd;
                 Toast checkWrongToast = Toast.makeText(ForgetPwdActivity.this,toastText,Toast.LENGTH_LONG);
                 checkWrongToast.setGravity(Gravity.TOP,0,40);
                 checkWrongToast.show();

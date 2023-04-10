@@ -6,7 +6,7 @@ public class ChartData {
     private List<AssetsValueDataItem> chartDataList;
     private ChangeData changeData;
 
-    public ChartData(List<AssetsValueDataItem> chartDataList, ChangeData changeData) {
+    ChartData(List<AssetsValueDataItem> chartDataList, ChangeData changeData) {
         this.chartDataList = chartDataList;
         this.changeData = changeData;
     }
