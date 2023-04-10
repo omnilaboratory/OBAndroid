@@ -10,12 +10,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.omni.wallet.R;
-import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
-import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
@@ -108,6 +107,7 @@ public class MenuPopupWindow {
                     bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
                     bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
                     bundle.putString(ChannelsActivity.KEY_PUBKEY, pubKey);
+                    bundle.putString(ChannelsActivity.KEY_CHANNEL, "all");
                     Intent intent = new Intent(mContext, ChannelsActivity.class);
                     mContext.startActivity(intent, bundle);
                 }

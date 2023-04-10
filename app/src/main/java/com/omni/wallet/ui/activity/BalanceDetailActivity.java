@@ -62,7 +62,6 @@ import com.omni.wallet.view.dialog.CreateChannelTipDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.dialog.ReceiveLuckyPacketDialog;
 import com.omni.wallet.view.dialog.SendDialog;
-import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
 import com.omni.wallet.view.popupwindow.InvoiceDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.Menu1PopupWindow;
@@ -241,7 +240,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
     TransactionsDetailsChainPopupWindow mTransactionsDetailsChainPopupWindow;
     TransactionsDetailsAssetPopupWindow mTransactionsDetailsAssetPopupWindow;
     TokenInfoPopupWindow mTokenInfoPopupWindow;
-    CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     Menu1PopupWindow mMenuPopupWindow;
 
     PayInvoiceDialog mPayInvoiceDialog;
@@ -2107,9 +2105,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
         }
         if (mTokenInfoPopupWindow != null) {
             mTokenInfoPopupWindow.release();
-        }
-        if (mCreateChannelStepOnePopupWindow != null) {
-            mCreateChannelStepOnePopupWindow.release();
         }
         if (mPayInvoiceDialog != null) {
             mPayInvoiceDialog.release();

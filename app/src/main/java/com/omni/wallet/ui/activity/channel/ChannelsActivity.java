@@ -34,7 +34,6 @@ import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.dialog.SendDialog;
 import com.omni.wallet.view.popupwindow.ChannelDetailsPopupWindow;
-import com.omni.wallet.view.popupwindow.CreateChannelStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.Menu2PopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
 
@@ -77,7 +76,6 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     private List<ChannelListItem> mChannelItems = new ArrayList<>();
 
     Menu2PopupWindow mMenuPopupWindow;
-    CreateChannelStepOnePopupWindow mCreateChannelStepOnePopupWindow;
     ChannelDetailsPopupWindow mChannelDetailsPopupWindow;
     SelectNodePopupWindow mSelectNodePopupWindow;
     SendDialog mSendDialog;
@@ -510,9 +508,6 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
         EventBus.getDefault().unregister(this);
         if (mMenuPopupWindow != null) {
             mMenuPopupWindow.release();
-        }
-        if (mCreateChannelStepOnePopupWindow != null) {
-            mCreateChannelStepOnePopupWindow.release();
         }
         if (mChannelDetailsPopupWindow != null) {
             mChannelDetailsPopupWindow.release();
