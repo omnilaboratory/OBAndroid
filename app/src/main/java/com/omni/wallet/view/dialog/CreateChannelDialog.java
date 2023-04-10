@@ -11,7 +11,6 @@ import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +22,6 @@ import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
-import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.http.HttpUtils;
 import com.omni.wallet.baselibrary.http.callback.EngineCallback;
@@ -34,6 +32,7 @@ import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
 import com.omni.wallet.entity.LiquidityNodeEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
@@ -43,7 +42,7 @@ import com.omni.wallet.lightning.LightningNodeUri;
 import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.ui.activity.ScanChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
-import com.omni.wallet.utils.DecimalInputFilter;
+import com.omni.wallet.utils.DecimalInputTextWatcher;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.popupwindow.SelectAssetUnitPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
@@ -281,7 +280,14 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         mAlertDialog.findViewById(R.id.iv_help_open_channel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.INVISIBLE);
                 WhatIsChannelDialog mWhatIsChannelDialog = new WhatIsChannelDialog(mContext);
+                mWhatIsChannelDialog.setCallback(new WhatIsChannelDialog.Callback() {
+                    @Override
+                    public void onClick() {
+                        mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.VISIBLE);
+                    }
+                });
                 mWhatIsChannelDialog.show();
             }
         });
@@ -289,6 +295,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
 
     /**
      * 流动性节点列表适配器
+     *
      * @desc: Liquidity node list Adapter
      */
     private class MyAdapter extends CommonRecyclerAdapter<LiquidityNodeEntity> {
@@ -318,7 +325,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         TextView nodeNameTv = mAlertDialog.findViewById(R.id.tv_node_name);
         TextView validPubkeyTv = mAlertDialog.findViewById(R.id.tv_valid_pubkey);
         EditText channelAmountEdit = mAlertDialog.findViewById(R.id.edit_channel_amount);
-        channelAmountEdit.setFilters(new InputFilter[]{new DecimalInputFilter(8)});
+        channelAmountEdit.addTextChangedListener(new DecimalInputTextWatcher(DecimalInputTextWatcher.Type.decimal, 8));
         channelAmountTv = mAlertDialog.findViewById(R.id.tv_channel_amount);
         channelFeeTv = mAlertDialog.findViewById(R.id.tv_channel_fee);
         feePerByteTv = mAlertDialog.findViewById(R.id.tv_fee_per_byte);
@@ -532,7 +539,14 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         mAlertDialog.findViewById(R.id.iv_help_open_channel_two).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.INVISIBLE);
                 WhatIsChannelDialog mWhatIsChannelDialog = new WhatIsChannelDialog(mContext);
+                mWhatIsChannelDialog.setCallback(new WhatIsChannelDialog.Callback() {
+                    @Override
+                    public void onClick() {
+                        mAlertDialog.findViewById(R.id.layout_cancel).setVisibility(View.VISIBLE);
+                    }
+                });
                 mWhatIsChannelDialog.show();
             }
         });

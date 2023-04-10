@@ -17,6 +17,7 @@ public class WhatIsChannelDialog {
 
     private Context mContext;
     private AlertDialog mAlertDialog;
+    private Callback mCallback;
 
     public WhatIsChannelDialog(Context context) {
         this.mContext = context;
@@ -38,6 +39,9 @@ public class WhatIsChannelDialog {
         mAlertDialog.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mCallback != null) {
+                    mCallback.onClick();
+                }
                 mAlertDialog.dismiss();
             }
         });
@@ -46,6 +50,15 @@ public class WhatIsChannelDialog {
         }
         mAlertDialog.show();
     }
+
+    public void setCallback(Callback callback) {
+        this.mCallback = callback;
+    }
+
+    public interface Callback {
+        void onClick();
+    }
+
     public void release() {
         if (mAlertDialog != null) {
             mAlertDialog.dismiss();

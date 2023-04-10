@@ -336,7 +336,8 @@
                                 android:background="@null"
                                 android:textColorHint="@color/color_99_transparent"
                                 android:hint="0"
-                                android:inputType="number|numberDecimal"
+                                android:inputType="number"
+                                android:digits="1234567890."
                                 android:textColor="@color/color_99_transparent"
                                 android:textSize="@dimen/text_16"/>
 

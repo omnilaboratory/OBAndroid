@@ -403,7 +403,8 @@
                     android:paddingLeft="@dimen/main_5"
                     android:background="@drawable/bg_black_rectangle_round_0"
                     android:singleLine="true"
-                    android:inputType="number|numberDecimal"
+                    android:inputType="number"
+                    android:digits="1234567890."
                     android:textColor="@color/color_99_transparent"
                     android:textSize="@dimen/text_16"/>
 

@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -312,6 +313,17 @@ public class SendDialog implements Wallet.ScanSendListener {
             @Override
             public void afterTextChanged(Editable s) {
                 assetBalance = s.toString();
+                if (TextUtils.isEmpty(assetBalance)) {
+                    return;
+                }
+                if ((s.length() > 1) && (s.charAt(0) == '0') && s.charAt(1) != '.') {
+                    s.delete(0, 1);
+                    return;
+                }
+                if (assetBalance.equals(".")) {
+                    s.insert(0, "0");
+                    return;
+                }
                 if (!StringUtils.isEmpty(s.toString())) {
                     estimateOnChainFee((long) (Double.parseDouble(assetBalance) * 100000000), time);
                 } else {

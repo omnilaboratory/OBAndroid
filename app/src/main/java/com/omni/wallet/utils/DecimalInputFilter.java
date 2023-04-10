@@ -14,7 +14,7 @@ public class DecimalInputFilter implements InputFilter {
         this.dotLength = dotLength;
     }
 
-    int   dotLength ;
+    int dotLength;
 
     @Override
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
