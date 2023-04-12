@@ -31,6 +31,7 @@ import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
+import com.omni.wallet.utils.CalculateUtil;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.DecimalInputTextWatcher;
 import com.omni.wallet.utils.EditInputFilter;
@@ -268,7 +269,7 @@ public class CreateInvoiceStepOnePopupWindow {
                 if (mAssetId == 0) {
                     asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                             .setAssetId((int) mAssetId)
-                            .setValueMsat((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000 * 1000))
+                            .setValueMsat((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000) * 1000))
                             .setMemo(memoEdit.getText().toString())
                             .setExpiry(Long.parseLong(expiryTime)) // in seconds
                             .setPrivate(false)
@@ -276,7 +277,7 @@ public class CreateInvoiceStepOnePopupWindow {
                 } else {
                     asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
                             .setAssetId((int) mAssetId)
-                            .setAmount((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000))
+                            .setAmount((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000)))
                             .setMemo(memoEdit.getText().toString())
                             .setExpiry(Long.parseLong(expiryTime)) // in seconds
                             .setPrivate(false)

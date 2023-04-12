@@ -36,6 +36,7 @@ import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.ScanSendActivity;
+import com.omni.wallet.utils.CalculateUtil;
 import com.omni.wallet.utils.DecimalInputTextWatcher;
 import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.ValidateBitcoinAddress;
@@ -313,7 +314,7 @@ public class SendDialog implements Wallet.ScanSendListener {
             public void afterTextChanged(Editable s) {
                 assetBalance = s.toString();
                 if (!StringUtils.isEmpty(s.toString())) {
-                    estimateOnChainFee((long) (Double.parseDouble(assetBalance) * 100000000), time);
+                    estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)), time);
                 } else {
                     estimateOnChainFee(0, time);
                 }
@@ -348,7 +349,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                         }
                         assetsBalanceTv.setText(assetBalanceMax);
                         if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                            estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                            estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(amountInputView.getText().toString()), 100000000)), time);
                         }
                     }
                 });
@@ -381,21 +382,21 @@ public class SendDialog implements Wallet.ScanSendListener {
                                 speedButton.setText(R.string.slow);
                                 time = 1; // 10 Minutes
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(amountInputView.getText().toString()), 100000000)), time);
                                 }
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
                                 time = 6 * 6; // 6 Hours
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(amountInputView.getText().toString()), 100000000)), time);
                                 }
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
                                 time = 6 * 24; // 24 Hours
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
-                                    estimateOnChainFee((long) (Double.parseDouble(amountInputView.getText().toString()) * 100000000), time);
+                                    estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(amountInputView.getText().toString()), 100000000)), time);
                                 }
                                 break;
                         }
@@ -535,7 +536,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAddr(selectAddress)
                             .setFrom(User.getInstance().getWalletAddress(mContext))
-                            .setAmount((long) (Double.parseDouble(assetBalance) * 100000000))
+                            .setAmount((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)))
                             .setTargetConf(time)
                             .build();
                     Obdmobile.oB_SendCoinsFrom(sendRequest.toByteArray(), new Callback() {
@@ -635,7 +636,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                             .setAssetId((int) assetId)
                             .setAddr(selectAddress)
                             .setFrom(User.getInstance().getWalletAddress(mContext))
-                            .setAssetAmount((long) (Double.parseDouble(assetBalance) * 100000000))
+                            .setAssetAmount((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)))
                             .setTargetConf(time)
                             .build();
                     Obdmobile.oB_SendCoinsFrom(sendRequest.toByteArray(), new Callback() {

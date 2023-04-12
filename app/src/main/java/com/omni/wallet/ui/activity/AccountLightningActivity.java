@@ -108,6 +108,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock(The Recycler View Block for Assets List)
     @BindView(R.id.iv_percent_change)
     ImageView mPercentChangeView;
+    private List<ListAssetItemEntity> chainData = new ArrayList<>();
     private List<ListAssetItemEntity> blockData = new ArrayList<>();
     private List<ListAssetItemEntity> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
@@ -216,12 +217,12 @@ public class AccountLightningActivity extends AppBaseActivity {
     private void setAssetTrendChartViewShow() {
         // get data for line chart
         ChartData data = AssetsActions.getDataForChart(mContext);
-        Log.d(TAG+"setAssetTrendChartViewShow",data.toString());
+        Log.d(TAG + "setAssetTrendChartViewShow", data.toString());
         List<AssetsValueDataItem> allList;
         try {
             allList = data.getChartDataList();
             assert allList != null;
-            if (!allList.equals(allChartDataList)){
+            if (!allList.equals(allChartDataList)) {
                 List<AssetTrendEntity> list = new ArrayList<>();
                 Log.d(TAG, "allList:" + allList.toString());
                 if (allList.size() == 1) {
@@ -234,27 +235,27 @@ public class AccountLightningActivity extends AppBaseActivity {
                 for (int i = 0; i < allList.size(); i++) {
                     AssetTrendEntity entity = new AssetTrendEntity();
                     AssetsValueDataItem item = allList.get(i);
-                    String date = TimeFormatUtil.formatDateLong( item.getUpdate_date());
+                    String date = TimeFormatUtil.formatDateLong(item.getUpdate_date());
                     entity.setTime(date);
-                    entity.setAsset(Double.toString( item.getValue()));
+                    entity.setAsset(Double.toString(item.getValue()));
                     list.add(entity);
                 }
 
                 // set text for change percent and now assets value
                 ChangeData changeData = data.getChangeData();
                 assert changeData != null;
-                Log.d(TAG + "changeData",changeData.toString());
-                double percent =  changeData.getPercent();
+                Log.d(TAG + "changeData", changeData.toString());
+                double percent = changeData.getPercent();
                 @SuppressLint("DefaultLocale") String percentString = String.format("%.2f", percent) + "%";
                 Log.d(TAG, "setAssetTrendChartViewShow: " + percentString);
                 double value = changeData.getValue();
                 @SuppressLint("DefaultLocale") String valueString = "$ " + String.format("%.2f", value);
                 mPriceChangeTv.setText(percentString);
-                if (percent>0){
-                    mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_06d78f));
+                if (percent > 0) {
+                    mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext, R.color.color_06d78f));
                     mPercentChangeView.setImageResource(R.mipmap.icon_arrow_up_green);
-                }else{
-                    mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext,R.color.color_F13A3A));
+                } else {
+                    mPriceChangeTv.setTextColor(GetResourceUtil.getColorId(mContext, R.color.color_F13A3A));
                     mPercentChangeView.setImageResource(R.mipmap.icon_arrow_down_red);
                 }
                 mBalanceValueTv.setText(valueString);
@@ -309,6 +310,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     private void getAssetAndBtcData() {
         allData.clear();
+        chainData.clear();
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
                 .setAddress(User.getInstance().getWalletAddress(mContext))
                 .build();
@@ -348,6 +350,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                         entity.setPropertyid(0);
                         entity.setType(1);
                         blockData.add(entity);
+                        chainData.addAll(blockData);
                         allData.addAll(blockData);
                         runOnUiThread(() -> mAdapter.notifyDataSetChanged());
                         if (mRefreshLayout != null) {
@@ -365,11 +368,13 @@ public class AccountLightningActivity extends AppBaseActivity {
                         @Override
                         public void onError(Exception e) {
                             LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
+                            setDefaultData();
                         }
 
                         @Override
                         public void onResponse(byte[] bytes) {
                             if (bytes == null) {
+                                setDefaultData();
                                 return;
                             }
                             try {
@@ -384,6 +389,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     blockData.add(entity);
                                     getChannelBalance(resp.getListList().get(i).getPropertyid());
                                 }
+                                chainData.addAll(blockData);
                                 allData.addAll(blockData);
                                 runOnUiThread(() -> mAdapter.notifyDataSetChanged());
                                 getBtcChannelBalance(0);
@@ -397,6 +403,20 @@ public class AccountLightningActivity extends AppBaseActivity {
                 }
             }
         });
+    }
+
+    private void setDefaultData() {
+        blockData.clear();
+        ListAssetItemEntity entity = new ListAssetItemEntity();
+        entity.setAmount(0);
+        entity.setPropertyid(Long.parseLong("2147485160"));
+        entity.setType(1);
+        blockData.add(entity);
+        chainData.addAll(blockData);
+        allData.addAll(blockData);
+        runOnUiThread(() -> mAdapter.notifyDataSetChanged());
+        getBtcChannelBalance(0);
+        getChannelBalance(Long.parseLong("2147485160"));
     }
 
     /**
@@ -550,7 +570,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final int position, final ListAssetItemEntity item) {
-            if (position == blockData.size() && item.getType() == 1) {
+            if (position == chainData.size() - 1 && item.getType() == 1) {
                 LinearLayout lvContent = holder.getView(R.id.lv_item_content);
                 lvContent.setPadding(0, 0, 0, 100);
             } else {
@@ -936,7 +956,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateAssetsDataOver(UpdateAssetsDataEvent event) {
         Runnable runnable = () -> AssetsActions.initOrUpdateAction(mContext);
-        handler.postDelayed(runnable,60000);
+        handler.postDelayed(runnable, 60000);
 
     }
 

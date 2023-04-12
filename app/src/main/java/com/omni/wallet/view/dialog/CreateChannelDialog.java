@@ -42,6 +42,7 @@ import com.omni.wallet.lightning.LightningNodeUri;
 import com.omni.wallet.lightning.LightningParser;
 import com.omni.wallet.ui.activity.ScanChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
+import com.omni.wallet.utils.CalculateUtil;
 import com.omni.wallet.utils.DecimalInputTextWatcher;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.popupwindow.SelectAssetUnitPopupWindow;
@@ -375,7 +376,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 if (!StringUtils.isEmpty(s.toString())) {
                     DecimalFormat df1 = new DecimalFormat("0.00");
                     if (assetId == 0) {
-                        estimateOnChainFee((long) (Double.parseDouble(s.toString()) * 100000000), time);
+                        estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(s.toString()), 100000000)), time);
                         channelAmountTv.setText(df1.format(Double.parseDouble(s.toString()) * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                     } else {
                         estimateOnChainFee(20000, time);
@@ -400,7 +401,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                                 time = 1; // 10 Minutes
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                                     if (assetId == 0) {
-                                        estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
+                                        estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(channelAmountEdit.getText().toString()), 100000000)), time);
                                     } else {
                                         estimateOnChainFee(20000, time);
                                     }
@@ -411,7 +412,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                                 time = 6 * 6; // 6 Hours
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                                     if (assetId == 0) {
-                                        estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
+                                        estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(channelAmountEdit.getText().toString()), 100000000)), time);
                                     } else {
                                         estimateOnChainFee(20000, time);
                                     }
@@ -422,7 +423,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                                 time = 6 * 24; // 24 Hours
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                                     if (assetId == 0) {
-                                        estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
+                                        estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(channelAmountEdit.getText().toString()), 100000000)), time);
                                     } else {
                                         estimateOnChainFee(20000, time);
                                     }
@@ -460,7 +461,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                         channelAmountTv.setText("0");
                         if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                             if (assetId == 0) {
-                                estimateOnChainFee((long) (Double.parseDouble(channelAmountEdit.getText().toString()) * 100000000), time);
+                                estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(channelAmountEdit.getText().toString()), 100000000)), time);
                             } else {
                                 estimateOnChainFee(20000, time);
                             }
@@ -565,8 +566,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
                     .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
                     .setPrivate(false)
-                    .setLocalFundingBtcAmount((long) (Double.parseDouble(assetBalance) * 100000000))
-                    .setPushBtcSat((long) ((Double.parseDouble(assetBalance) * 100000000) / 2))
+                    .setLocalFundingBtcAmount((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)))
+                    .setPushBtcSat((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000) / 2))
                     .setAssetId((int) assetId)
                     .build();
         } else {
@@ -576,8 +577,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
                     .setPrivate(false)
                     .setLocalFundingBtcAmount(20000)
-                    .setLocalFundingAssetAmount((long) (Double.parseDouble(assetBalance) * 100000000))
-                    .setPushAssetSat((long) ((Double.parseDouble(assetBalance) * 100000000) / 2))
+                    .setLocalFundingAssetAmount((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)))
+                    .setPushAssetSat((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000) / 2))
                     .setAssetId((int) assetId)
                     .build();
         }

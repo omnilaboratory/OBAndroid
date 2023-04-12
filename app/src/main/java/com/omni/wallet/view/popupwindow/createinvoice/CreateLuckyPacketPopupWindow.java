@@ -38,6 +38,7 @@ import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.RedCodeUtils;
+import com.omni.wallet.utils.CalculateUtil;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.DecimalInputTextWatcher;
 import com.omni.wallet.utils.EditInputFilter;
@@ -300,14 +301,14 @@ public class CreateLuckyPacketPopupWindow {
                         if (mAssetId == 0) {
                             payRequest = LuckPkOuterClass.LuckPk.newBuilder()
                                     .setAssetId(mAssetId)
-                                    .setAmt((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000))
+                                    .setAmt((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000)))
                                     .setParts(Long.parseLong(numberInput))
                                     .setErrorCreateMsg(addressTv.getText().toString())
                                     .build();
                         } else {
                             payRequest = LuckPkOuterClass.LuckPk.newBuilder()
                                     .setAssetId(mAssetId)
-                                    .setAmt((long) (Double.parseDouble(amountEdit.getText().toString()) * 100000000))
+                                    .setAmt((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000)))
                                     .setParts(Long.parseLong(numberInput))
                                     .setErrorCreateMsg(addressTv.getText().toString())
                                     .build();
