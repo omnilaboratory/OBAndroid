@@ -150,15 +150,22 @@ public class WalletServiceUtil {
         String assetsIds = "";
         Map<String, Object> propertyMap = new HashMap<>();
         for (int i = 0; i < usingAssetsList.size(); i++) {
+            String tokenName = usingAssetsList.get(i).getToken_name();
+            if (tokenName.equals("TetherUS")){
+                tokenName = "Tether";
+            }else if(tokenName.equals("btc")){
+                tokenName = "bitcoin";
+            }
+            String usingName = tokenName.toLowerCase();
             if (i == 0) {
-                assetsIds = assetsIds + usingAssetsList.get(i).getToken_name();
+                assetsIds = assetsIds + usingName;
             } else {
-                assetsIds = assetsIds + "," + usingAssetsList.get(i).getToken_name();
+                assetsIds = assetsIds + "," + usingName;
             }
             propertyMap.put(usingAssetsList.get(i).getToken_name(), usingAssetsList.get(i).getProperty_id());
         }
-//        String reqString = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids="+assetsIds+"&order=market_cap_desc&per_page="+usingAssetsList.size()+"&page=1&sparkline=false";
-        String reqString = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,tether,usd-coin&order=market_cap_desc&per_page=100&page=1&sparkline=false";
+        String reqString = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids="+assetsIds+"&order=market_cap_desc&per_page="+usingAssetsList.size()+"&page=1&sparkline=false";
+//        String reqString = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,tether,usd-coin&order=market_cap_desc&per_page=100&page=1&sparkline=false";
 
         HttpUtils.with(context)
                 .get()

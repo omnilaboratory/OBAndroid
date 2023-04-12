@@ -195,6 +195,9 @@ public class AssetsActions {
                             propertyId = (String) propertyMap.get("ftoken");
                             if (propertyId==null){
                                 propertyId = (String) propertyMap.get("Usd");
+                                if (propertyId==null){
+                                    propertyId = (String) propertyMap.get("TetherUS");
+                                }
                             }
                             updateAssetsPriceS(context, propertyId, price);
                             break;
@@ -242,9 +245,13 @@ public class AssetsActions {
                         break;
                     case "ftoken":
                     case "Usd":
+                    case "TetherUS":
                         propertyId = (String) propertyMap.get("ftoken");
                         if (propertyId == null){
                             propertyId = (String) propertyMap.get("Usd");
+                            if (propertyId == null){
+                                propertyId = (String) propertyMap.get("TetherUS");
+                            }
                         }
                         list = assetsDataDao.queryAssetLastDataByPropertyId(propertyId);
                         AssetsDataItem mapT = list.get(0);
