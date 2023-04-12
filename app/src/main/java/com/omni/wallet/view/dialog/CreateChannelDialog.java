@@ -398,7 +398,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                         switch (view.getId()) {
                             case R.id.tv_slow:
                                 speedButton.setText(R.string.slow);
-                                time = 1; // 10 Minutes
+//                                time = 6 * 24; // 24 Hours
+                                time = 24;
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                                     if (assetId == 0) {
                                         estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(channelAmountEdit.getText().toString()), 100000000)), time);
@@ -409,7 +410,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
-                                time = 6 * 6; // 6 Hours
+//                                time = 6 * 6; // 6 Hours
+                                time = 12; // 6 Hours
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                                     if (assetId == 0) {
                                         estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(channelAmountEdit.getText().toString()), 100000000)), time);
@@ -420,7 +422,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
-                                time = 6 * 24; // 24 Hours
+//                                time = 1; // 10 Minutes
+                                time = 1;
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                                     if (assetId == 0) {
                                         estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(channelAmountEdit.getText().toString()), 100000000)), time);
@@ -564,7 +567,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
             LogUtils.e(TAG, "==========33333==========");
             openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
                     .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
-                    .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
+                    .setTargetConf(time)
                     .setPrivate(false)
                     .setLocalFundingBtcAmount((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)))
                     .setPushBtcSat((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000) / 2))
@@ -574,7 +577,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
             LogUtils.e(TAG, "==========44444==========");
             openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
                     .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
-                    .setTargetConf(Integer.parseInt(channelFeeTv.getText().toString()))
+                    .setTargetConf(time)
                     .setPrivate(false)
                     .setLocalFundingBtcAmount(20000)
                     .setLocalFundingAssetAmount((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)))
@@ -783,7 +786,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         }
         // let LND estimate fee
         LightningOuterClass.EstimateFeeRequest asyncEstimateFeeRequest = LightningOuterClass.EstimateFeeRequest.newBuilder()
-                .putAddrToAmount(mWalletAddress, amount)
+                .putAddrToAmount(address, amount)
                 .setTargetConf(targetConf)
                 .build();
         Obdmobile.estimateFee(asyncEstimateFeeRequest.toByteArray(), new Callback() {

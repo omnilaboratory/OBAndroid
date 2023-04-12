@@ -134,11 +134,13 @@ public class SelectChannelBalancePopupWindow {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
+                setDefaultData();
             }
 
             @Override
             public void onResponse(byte[] bytes) {
                 if (bytes == null) {
+                    setDefaultData();
                     return;
                 }
                 try {
@@ -204,6 +206,16 @@ public class SelectChannelBalancePopupWindow {
                 }
             }
         });
+    }
+
+    private void setDefaultData() {
+        if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+            getChannelBalance(Long.parseLong("2147485160"));
+        } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+            getChannelBalance(Long.parseLong("2147483651"));
+        } else { //mainnet
+            getChannelBalance(Long.parseLong("31"));
+        }
     }
 
     /**

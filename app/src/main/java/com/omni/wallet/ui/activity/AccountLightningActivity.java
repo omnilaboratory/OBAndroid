@@ -409,14 +409,26 @@ public class AccountLightningActivity extends AppBaseActivity {
         blockData.clear();
         ListAssetItemEntity entity = new ListAssetItemEntity();
         entity.setAmount(0);
-        entity.setPropertyid(Long.parseLong("2147485160"));
+        if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+            entity.setPropertyid(Long.parseLong("2147485160"));
+        } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+            entity.setPropertyid(Long.parseLong("2147483651"));
+        } else { //mainnet
+            entity.setPropertyid(Long.parseLong("31"));
+        }
         entity.setType(1);
         blockData.add(entity);
         chainData.addAll(blockData);
         allData.addAll(blockData);
         runOnUiThread(() -> mAdapter.notifyDataSetChanged());
         getBtcChannelBalance(0);
-        getChannelBalance(Long.parseLong("2147485160"));
+        if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+            getChannelBalance(Long.parseLong("2147485160"));
+        } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+            getChannelBalance(Long.parseLong("2147483651"));
+        } else { //mainnet
+            getChannelBalance(Long.parseLong("31"));
+        }
     }
 
     /**

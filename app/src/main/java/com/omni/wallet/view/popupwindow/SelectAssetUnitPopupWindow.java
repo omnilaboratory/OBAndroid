@@ -126,11 +126,13 @@ public class SelectAssetUnitPopupWindow {
             @Override
             public void onError(Exception e) {
                 LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
+                setDefaultData();
             }
 
             @Override
             public void onResponse(byte[] bytes) {
                 if (bytes == null) {
+                    setDefaultData();
                     return;
                 }
                 try {
@@ -154,6 +156,28 @@ public class SelectAssetUnitPopupWindow {
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+    }
+
+    private void setDefaultData() {
+        lightningData.clear();
+        ListAssetItemEntity entity = new ListAssetItemEntity();
+        entity.setAmount(0);
+        if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+            entity.setPropertyid(Long.parseLong("2147485160"));
+        } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+            entity.setPropertyid(Long.parseLong("2147483651"));
+        } else { //mainnet
+            entity.setPropertyid(Long.parseLong("31"));
+        }
+        entity.setType(2);
+        lightningData.add(entity);
+        allData.addAll(lightningData);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
             }
         });
     }

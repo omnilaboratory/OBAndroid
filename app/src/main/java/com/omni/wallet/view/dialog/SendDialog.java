@@ -380,21 +380,24 @@ public class SendDialog implements Wallet.ScanSendListener {
                         switch (view.getId()) {
                             case R.id.tv_slow:
                                 speedButton.setText(R.string.slow);
-                                time = 1; // 10 Minutes
+//                                time = 6 * 24; // 24 Hours
+                                time = 24;
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
                                     estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(amountInputView.getText().toString()), 100000000)), time);
                                 }
                                 break;
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
-                                time = 6 * 6; // 6 Hours
+//                                time = 6 * 6; // 6 Hours
+                                time = 12; // 6 Hours
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
                                     estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(amountInputView.getText().toString()), 100000000)), time);
                                 }
                                 break;
                             case R.id.tv_fast:
                                 speedButton.setText(R.string.fast);
-                                time = 6 * 24; // 24 Hours
+//                                time = 1; // 10 Minutes
+                                time = 1;
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
                                     estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(amountInputView.getText().toString()), 100000000)), time);
                                 }
