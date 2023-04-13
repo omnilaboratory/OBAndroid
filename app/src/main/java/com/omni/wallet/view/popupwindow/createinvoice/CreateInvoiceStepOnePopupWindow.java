@@ -36,6 +36,7 @@ import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.DecimalInputTextWatcher;
 import com.omni.wallet.utils.EditInputFilter;
 import com.omni.wallet.utils.GetRequestHeader;
+import com.omni.wallet.utils.PreventContinuousClicksUtil;
 import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.dialog.CreateNewChannelTipDialog;
@@ -229,128 +230,128 @@ public class CreateInvoiceStepOnePopupWindow {
         rootView.findViewById(R.id.layout_next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                amountInput = amountEdit.getText().toString();
-                timeInput = amountTimeEdit.getText().toString();
-                timeType = timeButton.getText().toString();
-                if (StringUtils.isEmpty(amountInput)) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
-                    return;
-                }
-                if (amountInput.equals("0")) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
-                    return;
-                }
-                // TODO: 2022/11/23 最大值最小值的判断需要完善一下
-                if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canReceive) * 100000000) > 0) {
-//                    ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
-                    CreateNewChannelTipDialog mCreateNewChannelTipDialog = new CreateNewChannelTipDialog(mContext);
-                    mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
-                        @Override
-                        public void onClick() {
-                            mBasePopWindow.dismiss();
-                        }
-                    });
-                    mCreateNewChannelTipDialog.show();
-                    return;
-                }
-                if (StringUtils.isEmpty(timeInput)) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
-                    return;
-                }
-                if (timeType.equals("Minutes")) {
-                    expiryTime = String.valueOf(Integer.parseInt(timeInput) * 60);
-                } else if (timeType.equals("Hours")) {
-                    expiryTime = String.valueOf(Integer.parseInt(timeInput) * 3600);
-                } else if (timeType.equals("Days")) {
-                    expiryTime = String.valueOf(Integer.parseInt(timeInput) * 86400);
-                }
-                mLoadingDialog.show();
-                LightningOuterClass.Invoice asyncInvoiceRequest;
-                if (mAssetId == 0) {
-                    asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
-                            .setAssetId((int) mAssetId)
-                            .setValueMsat((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000) * 1000))
-                            .setMemo(memoEdit.getText().toString())
-                            .setExpiry(Long.parseLong(expiryTime)) // in seconds
-                            .setPrivate(false)
-                            .build();
-                } else {
-                    asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
-                            .setAssetId((int) mAssetId)
-                            .setAmount((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000)))
-                            .setMemo(memoEdit.getText().toString())
-                            .setExpiry(Long.parseLong(expiryTime)) // in seconds
-                            .setPrivate(false)
-                            .build();
-                }
-                Obdmobile.oB_AddInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
-                    @Override
-                    public void onError(Exception e) {
-                        LogUtils.e(TAG, "------------------addInvoiceOnError------------------" + e.getMessage());
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                if (PreventContinuousClicksUtil.isNotFastClick()) {
+                    amountInput = amountEdit.getText().toString();
+                    timeInput = amountTimeEdit.getText().toString();
+                    timeType = timeButton.getText().toString();
+                    if (StringUtils.isEmpty(amountInput)) {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
+                        return;
+                    }
+                    if (amountInput.equals("0")) {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
+                        return;
+                    }
+                    // TODO: 2022/11/23 最大值最小值的判断需要完善一下
+                    if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canReceive) * 100000000) > 0) {
+                        CreateNewChannelTipDialog mCreateNewChannelTipDialog = new CreateNewChannelTipDialog(mContext);
+                        mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
                             @Override
-                            public void run() {
-                                mLoadingDialog.dismiss();
-                                rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.GONE);
-                                rootView.findViewById(R.id.lv_create_invoice_failed).setVisibility(View.VISIBLE);
-                                rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-                                rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                showStepFailed(rootView, e.getMessage());
+                            public void onClick() {
+                                mBasePopWindow.dismiss();
                             }
                         });
+                        mCreateNewChannelTipDialog.show();
+                        return;
                     }
-
-                    @Override
-                    public void onResponse(byte[] bytes) {
-                        if (bytes == null) {
-                            return;
-                        }
-                        try {
-                            LightningOuterClass.AddInvoiceResponse resp = LightningOuterClass.AddInvoiceResponse.parseFrom(bytes);
-                            LogUtils.e(TAG, "------------------addInvoiceOnResponse-----------------" + resp);
+                    if (StringUtils.isEmpty(timeInput)) {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
+                        return;
+                    }
+                    if (timeType.equals("Minutes")) {
+                        expiryTime = String.valueOf(Integer.parseInt(timeInput) * 60);
+                    } else if (timeType.equals("Hours")) {
+                        expiryTime = String.valueOf(Integer.parseInt(timeInput) * 3600);
+                    } else if (timeType.equals("Days")) {
+                        expiryTime = String.valueOf(Integer.parseInt(timeInput) * 86400);
+                    }
+                    mLoadingDialog.show();
+                    LightningOuterClass.Invoice asyncInvoiceRequest;
+                    if (mAssetId == 0) {
+                        asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
+                                .setAssetId((int) mAssetId)
+                                .setValueMsat((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000) * 1000))
+                                .setMemo(memoEdit.getText().toString())
+                                .setExpiry(Long.parseLong(expiryTime)) // in seconds
+                                .setPrivate(false)
+                                .build();
+                    } else {
+                        asyncInvoiceRequest = LightningOuterClass.Invoice.newBuilder()
+                                .setAssetId((int) mAssetId)
+                                .setAmount((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000)))
+                                .setMemo(memoEdit.getText().toString())
+                                .setExpiry(Long.parseLong(expiryTime)) // in seconds
+                                .setPrivate(false)
+                                .build();
+                    }
+                    Obdmobile.oB_AddInvoice(asyncInvoiceRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "------------------addInvoiceOnError------------------" + e.getMessage());
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    GetRequestHeader getRequestHeader = new GetRequestHeader(mContext);
-                                    String tslString = getRequestHeader.getTLSString();
-                                    String keyString = getRequestHeader.getTLSKeyString();
-                                    Log.e(TAG + " tslString", tslString);
-                                    Log.e(TAG + " keyString", keyString);
-                                    // Method of collecting invoices on behalf
-                                    try {
-                                        LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
-                                        try {
-                                            LuckPkOuterClass.spay payRequest = LuckPkOuterClass.spay.newBuilder().setUserInvoice(resp.getPaymentRequest()).build();
-                                            try {
-                                                LuckPkOuterClass.spay payResponse = client.blockingStub.createSpay(payRequest);
-                                                LogUtils.e(TAG + "payResponse.getServInvoice()", payResponse.getServInvoice());
-                                                EventBus.getDefault().post(new CreateInvoiceEvent());
-                                                qrCodeUrl = UriUtil.generateLightningUri(payResponse.getServInvoice());
-                                                mLoadingDialog.dismiss();
-                                                rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.GONE);
-                                                rootView.findViewById(R.id.lv_create_invoice_success).setVisibility(View.VISIBLE);
-                                                rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
-                                                rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
-                                                showStepSuccess(rootView);
-                                            } catch (StatusRuntimeException e) {
-                                                e.printStackTrace();
-                                                LogUtils.e(TAG, e.getMessage());
-                                                return;
-                                            }
-                                        } finally {
-                                            client.shutdown();
-                                        }
-                                    } catch (SSLException | InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
+                                    mLoadingDialog.dismiss();
+                                    rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.GONE);
+                                    rootView.findViewById(R.id.lv_create_invoice_failed).setVisibility(View.VISIBLE);
+                                    rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                    rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                    showStepFailed(rootView, e.getMessage());
                                 }
                             });
-                        } catch (InvalidProtocolBufferException e) {
-                            e.printStackTrace();
                         }
-                    }
-                });
 
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
+                            try {
+                                LightningOuterClass.AddInvoiceResponse resp = LightningOuterClass.AddInvoiceResponse.parseFrom(bytes);
+                                LogUtils.e(TAG, "------------------addInvoiceOnResponse-----------------" + resp);
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        GetRequestHeader getRequestHeader = new GetRequestHeader(mContext);
+                                        String tslString = getRequestHeader.getTLSString();
+                                        String keyString = getRequestHeader.getTLSKeyString();
+                                        Log.e(TAG + " tslString", tslString);
+                                        Log.e(TAG + " keyString", keyString);
+                                        // Method of collecting invoices on behalf
+                                        try {
+                                            LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
+                                            try {
+                                                LuckPkOuterClass.spay payRequest = LuckPkOuterClass.spay.newBuilder().setUserInvoice(resp.getPaymentRequest()).build();
+                                                try {
+                                                    LuckPkOuterClass.spay payResponse = client.blockingStub.createSpay(payRequest);
+                                                    LogUtils.e(TAG + "payResponse.getServInvoice()", payResponse.getServInvoice());
+                                                    EventBus.getDefault().post(new CreateInvoiceEvent());
+                                                    qrCodeUrl = UriUtil.generateLightningUri(payResponse.getServInvoice());
+                                                    mLoadingDialog.dismiss();
+                                                    rootView.findViewById(R.id.lv_create_invoice_step_one).setVisibility(View.GONE);
+                                                    rootView.findViewById(R.id.lv_create_invoice_success).setVisibility(View.VISIBLE);
+                                                    rootView.findViewById(R.id.layout_cancel).setVisibility(View.GONE);
+                                                    rootView.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
+                                                    showStepSuccess(rootView);
+                                                } catch (StatusRuntimeException e) {
+                                                    e.printStackTrace();
+                                                    LogUtils.e(TAG, e.getMessage());
+                                                    return;
+                                                }
+                                            } finally {
+                                                client.shutdown();
+                                            }
+                                        } catch (SSLException | InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
             }
         });
     }
