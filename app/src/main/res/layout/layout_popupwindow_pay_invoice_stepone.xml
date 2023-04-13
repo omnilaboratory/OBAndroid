@@ -341,7 +341,7 @@
                 android:textColor="@color/color_80p_transparent"
                 android:textSize="@dimen/text_16"/>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_28"
@@ -359,13 +359,14 @@
 
                 <TextView
                     android:id="@+id/tv_to_node_name_1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="@dimen/main_10"
+                    android:gravity="right"
                     android:text="Bob"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
-            </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -654,7 +655,7 @@
                 android:textColor="@color/color_80p_transparent"
                 android:textSize="@dimen/text_16"/>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_29"
@@ -672,13 +673,14 @@
 
                 <TextView
                     android:id="@+id/tv_to_node_name_2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="@dimen/main_10"
+                    android:gravity="right"
                     android:text="Bob"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_16"/>
-            </RelativeLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
