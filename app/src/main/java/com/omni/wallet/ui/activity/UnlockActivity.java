@@ -61,7 +61,7 @@ public class UnlockActivity extends AppBaseActivity {
     public EditText mPwdEdit;
     @BindView(R.id.pass_switch)
     public ImageView mPwdEyeIv;
-    private boolean mCanClick = true;
+    private boolean mCanClick = false;
     @BindView(R.id.bottom_btn_group)
     public RelativeLayout bottomBtnGroup;
 
@@ -96,7 +96,7 @@ public class UnlockActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-
+        mPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
         localSeed = User.getInstance().getSeedString(mContext);
         isCreated = User.getInstance().getCreated(mContext);
         isSynced = User.getInstance().getSynced(mContext);

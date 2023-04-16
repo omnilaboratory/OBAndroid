@@ -128,7 +128,7 @@
                         android:id="@+id/pass_switch"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        app:srcCompat="@mipmap/icon_eye_open"
+                        app:srcCompat="@mipmap/icon_eye_close"
                         android:layout_marginEnd="20dp"
                         />
                     <ImageView
@@ -260,7 +260,7 @@
                         android:id="@+id/pass_switch_repeat"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        app:srcCompat="@mipmap/icon_eye_open"
+                        app:srcCompat="@mipmap/icon_eye_close"
                         android:layout_marginEnd="20dp"
                         />
                     <ImageView

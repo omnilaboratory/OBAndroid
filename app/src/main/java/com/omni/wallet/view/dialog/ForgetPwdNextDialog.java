@@ -26,8 +26,8 @@ public class ForgetPwdNextDialog {
     public static final String TAG = ForgetPwdNextDialog.class.getSimpleName();
     private Context mContext;
     private AlertDialog mAlertDialog;
-    private boolean mCanClick = true;
-    private boolean mConfirmCanClick = true;
+    private boolean mCanClick = false;
+    private boolean mConfirmCanClick = false;
     private AlertDialog mForgetPwdDialog;
     private AlertDialog mUnlockDialog;
     private LoadingDialog mLoadingDialog;
@@ -93,7 +93,10 @@ public class ForgetPwdNextDialog {
                 passwordRepeatChangeCheck();
             }
         });
-
+        @SuppressLint("CutPasteId") EditText mPwdEdit =  mAlertDialog.findViewById(R.id.password_input);
+        @SuppressLint("CutPasteId") EditText mConfirmPwdEdit = mAlertDialog.findViewById(R.id.password_input_repeat);
+        mPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        mConfirmPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
         mAlertDialog.findViewById(R.id.pass_switch).setOnClickListener(v -> clickPwdEye());
 
         mAlertDialog.findViewById(R.id.pass_switch_repeat).setOnClickListener(v -> clickConfirmPwdEye());

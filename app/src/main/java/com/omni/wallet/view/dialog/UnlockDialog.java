@@ -18,7 +18,7 @@ public class UnlockDialog {
 
     private Context mContext;
     private AlertDialog mAlertDialog;
-    private boolean mCanClick = true;
+    private boolean mCanClick = false;
 
     public UnlockDialog(Context context){
         this.mContext = context;
@@ -36,9 +36,10 @@ public class UnlockDialog {
                     .fullHeight()
                     .create();
         }
+        EditText mPwdEdit = mAlertDialog.findViewById(R.id.password_input);
+        mPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
         mAlertDialog.findViewById(R.id.btn_unlock).setOnClickListener(v -> unlockWallet());
         mAlertDialog.findViewById(R.id.pass_switch).setOnClickListener(v -> {
-            EditText mPwdEdit = mAlertDialog.findViewById(R.id.password_input);
             ImageView mPwdEyeIv = mAlertDialog.findViewById(R.id.pass_switch);
             if (mCanClick) {
                 mCanClick = false;

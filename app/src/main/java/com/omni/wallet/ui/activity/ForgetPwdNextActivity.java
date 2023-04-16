@@ -52,8 +52,8 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
     public EditText mConfirmPwdEdit;
     @BindView(R.id.pass_switch_repeat)
     public ImageView mConfirmPwdEyeIv;
-    private boolean mCanClick = true;
-    private boolean mConfirmCanClick = true;
+    private boolean mCanClick = false;
+    private boolean mConfirmCanClick = false;
     LoadingDialog mLoadingDialog;
 
     @Override
@@ -75,6 +75,8 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
         PasswordFilter passwordFilter = new PasswordFilter();
         mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
         mConfirmPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
+        mPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        mConfirmPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
         TextView.OnEditorActionListener listener = (v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE){
                 clickForward();
