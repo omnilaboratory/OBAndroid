@@ -76,7 +76,7 @@
             android:layout_width="@dimen/main_320"
             android:layout_height="@dimen/main_500"
             android:gravity="center_horizontal"
-            android:background="@drawable/bg_white_rectangle_round_20"
+            android:background="@color/color_transparent"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -86,7 +86,7 @@
                 android:layout_marginTop="@dimen/main_45"
                 android:letterSpacing="0.25"
                 android:text="@string/lucky_packet_upper"
-                android:textColor="@color/color_black"
+                android:textColor="@color/color_white"
                 android:textSize="@dimen/text_18" />
 
             <LinearLayout
@@ -113,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_7"
                     android:text="@string/received_first_upper"
-                    android:textColor="@color/color_4A92FF"
+                    android:textColor="@color/color_white"
                     android:textSize="@dimen/text_16"/>
             </LinearLayout>
 

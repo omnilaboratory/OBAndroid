@@ -42,6 +42,7 @@ import com.omni.wallet.utils.CalculateUtil;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.DecimalInputTextWatcher;
 import com.omni.wallet.utils.EditInputFilter;
+import com.omni.wallet.utils.PreventContinuousClicksUtil;
 import com.omni.wallet.utils.RefConstants;
 import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.UriUtil;
@@ -256,218 +257,219 @@ public class CreateLuckyPacketPopupWindow {
         rootView.findViewById(R.id.layout_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                amountInput = amountEdit.getText().toString();
-                timeInput = amountTimeEdit.getText().toString();
-                numberInput = numberEdit.getText().toString();
-                timeType = timeButton.getText().toString();
-                if (StringUtils.isEmpty(amountInput)) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
-                    return;
-                }
-                if (amountInput.equals("0")) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
-                    return;
-                }
-                // TODO: 2022/11/23 最大值最小值的判断需要完善一下
-                if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canSend) * 100000000) > 0) {
-//                    ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
-                    CreateNewChannelTipDialog mCreateNewChannelTipDialog = new CreateNewChannelTipDialog(mContext);
-                    mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
-                        @Override
-                        public void onClick() {
-                            mBasePopWindow.dismiss();
-                        }
-                    });
-                    mCreateNewChannelTipDialog.show();
-                    return;
-                }
-                if (StringUtils.isEmpty(numberInput)) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_number));
-                    return;
-                }
-                if (Integer.parseInt(numberInput) > 20) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.num_exceeds));
-                    return;
-                }
-                if (StringUtils.isEmpty(timeInput)) {
-                    ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
-                    return;
-                }
-                mLoadingDialog.show();
-                try {
-                    LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
+                if (PreventContinuousClicksUtil.isNotFastClick()) {
+                    amountInput = amountEdit.getText().toString();
+                    timeInput = amountTimeEdit.getText().toString();
+                    numberInput = numberEdit.getText().toString();
+                    timeType = timeButton.getText().toString();
+                    if (StringUtils.isEmpty(amountInput)) {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
+                        return;
+                    }
+                    if (amountInput.equals("0")) {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
+                        return;
+                    }
+                    // TODO: 2022/11/23 最大值最小值的判断需要完善一下
+                    if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canSend) * 100000000) > 0) {
+                        CreateNewChannelTipDialog mCreateNewChannelTipDialog = new CreateNewChannelTipDialog(mContext);
+                        mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
+                            @Override
+                            public void onClick() {
+                                mBasePopWindow.dismiss();
+                            }
+                        });
+                        mCreateNewChannelTipDialog.show();
+                        return;
+                    }
+                    if (StringUtils.isEmpty(numberInput)) {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_number));
+                        return;
+                    }
+                    if (Integer.parseInt(numberInput) > 20) {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.num_exceeds));
+                        return;
+                    }
+                    if (StringUtils.isEmpty(timeInput)) {
+                        ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
+                        return;
+                    }
+                    mLoadingDialog.show();
                     try {
-                        LuckPkOuterClass.LuckPk payRequest;
-                        if (mAssetId == 0) {
-                            payRequest = LuckPkOuterClass.LuckPk.newBuilder()
-                                    .setAssetId(mAssetId)
-                                    .setAmt((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000)))
-                                    .setParts(Long.parseLong(numberInput))
-                                    .setErrorCreateMsg(addressTv.getText().toString())
-                                    .build();
-                        } else {
-                            payRequest = LuckPkOuterClass.LuckPk.newBuilder()
-                                    .setAssetId(mAssetId)
-                                    .setAmt((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000)))
-                                    .setParts(Long.parseLong(numberInput))
-                                    .setErrorCreateMsg(addressTv.getText().toString())
-                                    .build();
-                        }
+                        LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
                         try {
-                            LuckPkOuterClass.LuckPk payResponse = client.blockingStub.createLuckPk(payRequest);
-                            LogUtils.e(TAG + "payResponse.getServInvoice()", payResponse.getInvoice());
-                            LogUtils.e(TAG + "payResponse.getServInvoice()", payResponse.toString());
-                            JSONObject jsonObject = new JSONObject();
+                            LuckPkOuterClass.LuckPk payRequest;
+                            if (mAssetId == 0) {
+                                payRequest = LuckPkOuterClass.LuckPk.newBuilder()
+                                        .setAssetId(mAssetId)
+                                        .setAmt((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000)))
+                                        .setParts(Long.parseLong(numberInput))
+                                        .setErrorCreateMsg(addressTv.getText().toString())
+                                        .build();
+                            } else {
+                                payRequest = LuckPkOuterClass.LuckPk.newBuilder()
+                                        .setAssetId(mAssetId)
+                                        .setAmt((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000)))
+                                        .setParts(Long.parseLong(numberInput))
+                                        .setErrorCreateMsg(addressTv.getText().toString())
+                                        .build();
+                            }
                             try {
-                                jsonObject.put("amt", payResponse.getAmt());
-                                jsonObject.put("id", payResponse.getId());
-                                jsonObject.put("asstId", payResponse.getAssetId());
-                                jsonObject.put("time", payResponse.getCreatedAt());
-                                jsonObject.put("totalNum", payResponse.getParts());
-                                jsonObject.put("giveNum", payResponse.getGives());
-                                jsonObject.put("bestWishes", payResponse.getErrorCreateMsg());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            qrCodeUrl = UriUtil.generateLuckyPacketUri(payResponse.getInvoice());
-                            qrCodeCotent = jsonObject.toString();
-                            String data = payResponse.getInvoice();
-                            // Avoid index out of bounds. An Request with less than 11 characters isn't valid.
-                            if (data.length() < 11) {
-                                ToastUtils.showToast(mContext, "Length is greater than 11 characters");
-                                return;
-                            }
-                            // convert to lower case
-                            lnInvoice = data.toLowerCase();
-                            // Remove the "lightning:" uri scheme if it is present, LND needs it without uri scheme
-                            lnInvoice = UriUtil.removeURI(lnInvoice);
-                            LightningOuterClass.PayReqString decodePaymentRequest = LightningOuterClass.PayReqString.newBuilder()
-                                    .setPayReq(lnInvoice)
-                                    .build();
-                            Obdmobile.decodePayReq(decodePaymentRequest.toByteArray(), new Callback() {
-                                @Override
-                                public void onError(Exception e) {
-                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ToastUtils.showToast(mContext, e.getMessage());
-                                            mLoadingDialog.dismiss();
-                                        }
-                                    });
-                                    LogUtils.e(TAG, "------------------decodePaymentOnError------------------" + e.getMessage());
+                                LuckPkOuterClass.LuckPk payResponse = client.blockingStub.createLuckPk(payRequest);
+                                LogUtils.e(TAG + "payResponse.getServInvoice()", payResponse.getInvoice());
+                                LogUtils.e(TAG + "payResponse.getServInvoice()", payResponse.toString());
+                                JSONObject jsonObject = new JSONObject();
+                                try {
+                                    jsonObject.put("amt", payResponse.getAmt());
+                                    jsonObject.put("id", payResponse.getId());
+                                    jsonObject.put("asstId", payResponse.getAssetId());
+                                    jsonObject.put("time", payResponse.getCreatedAt());
+                                    jsonObject.put("totalNum", payResponse.getParts());
+                                    jsonObject.put("giveNum", payResponse.getGives());
+                                    jsonObject.put("bestWishes", payResponse.getErrorCreateMsg());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-
-                                @Override
-                                public void onResponse(byte[] bytes) {
-                                    if (bytes == null) {
-                                        return;
-                                    }
-                                    try {
-                                        LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
-                                        LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
-                                        if (resp == null) {
-                                            ToastUtils.showToast(mContext, "Probe send request was null");
-                                            return;
-                                        }
-                                        /**
-                                         * @备注： 存储未支付的发票
-                                         * @description: Store Unpaid Invoices
-                                         */
-                                        saveInvoiceList(resp);
-                                        RouterOuterClass.SendPaymentRequest probeRequest;
-                                        if (mAssetId == 0) {
-                                            probeRequest = prepareBtcPaymentProbe(resp);
-                                        } else {
-                                            probeRequest = preparePaymentProbe(resp);
-                                        }
-                                        Obdmobile.routerOB_SendPaymentV2(probeRequest.toByteArray(), new RecvStream() {
+                                qrCodeUrl = UriUtil.generateLuckyPacketUri(payResponse.getInvoice());
+                                qrCodeCotent = jsonObject.toString();
+                                String data = payResponse.getInvoice();
+                                // Avoid index out of bounds. An Request with less than 11 characters isn't valid.
+                                if (data.length() < 11) {
+                                    ToastUtils.showToast(mContext, "Length is greater than 11 characters");
+                                    return;
+                                }
+                                // convert to lower case
+                                lnInvoice = data.toLowerCase();
+                                // Remove the "lightning:" uri scheme if it is present, LND needs it without uri scheme
+                                lnInvoice = UriUtil.removeURI(lnInvoice);
+                                LightningOuterClass.PayReqString decodePaymentRequest = LightningOuterClass.PayReqString.newBuilder()
+                                        .setPayReq(lnInvoice)
+                                        .build();
+                                Obdmobile.decodePayReq(decodePaymentRequest.toByteArray(), new Callback() {
+                                    @Override
+                                    public void onError(Exception e) {
+                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
                                             @Override
-                                            public void onError(Exception e) {
-                                                if (e.getMessage().equals("EOF")) {
-                                                    return;
-                                                }
-                                                LogUtils.e(TAG, "-------------routerSendPaymentV2OnError-----------" + e.getMessage());
-                                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (e.getMessage().contains("self-payments not allowed")) {
-                                                            updateInvoiceList();
-                                                        }
-                                                        EventBus.getDefault().post(new PayInvoiceFailedEvent());
-                                                        ToastUtils.showToast(mContext, e.getMessage());
-                                                        mLoadingDialog.dismiss();
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onResponse(byte[] bytes) {
-                                                try {
-                                                    LightningOuterClass.Payment payment = LightningOuterClass.Payment.parseFrom(bytes);
-                                                    LogUtils.e(TAG, "-------------routerSendPaymentV2OnResponse-----------" + payment.toString());
-                                                    switch (payment.getFailureReason()) {
-                                                        case FAILURE_REASON_INCORRECT_PAYMENT_DETAILS:
-                                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    route = payment.getHtlcs(0).getRoute();
-                                                                    paymentHash = payment.getPaymentHash();
-                                                                    if (mAssetId == 0) {
-                                                                        payAmount = resp.getAmtMsat();
-                                                                    } else {
-                                                                        payAmount = resp.getAmount();
-                                                                    }
-                                                                    showStepPay(rootView);
-                                                                    deletePaymentProbe(payment.getPaymentHash());
-                                                                }
-                                                            });
-                                                            break;
-                                                        case FAILURE_REASON_NO_ROUTE:
-                                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    paymentHash = payment.getPaymentHash();
-                                                                    if (mAssetId == 0) {
-                                                                        payAmount = resp.getAmtMsat();
-                                                                    } else {
-                                                                        payAmount = resp.getAmount();
-                                                                    }
-                                                                    showStepPay(rootView);
-                                                                    deletePaymentProbe(payment.getPaymentHash());
-                                                                }
-                                                            });
-                                                            break;
-                                                        default:
-                                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    mLoadingDialog.dismiss();
-                                                                    deletePaymentProbe(payment.getPaymentHash());
-                                                                    CreateChannelTipDialog mCreateChannelTipDialog = new CreateChannelTipDialog(mContext);
-                                                                    mCreateChannelTipDialog.show();
-                                                                }
-                                                            });
-                                                    }
-                                                } catch (InvalidProtocolBufferException e) {
-                                                    e.printStackTrace();
-                                                }
+                                            public void run() {
+                                                ToastUtils.showToast(mContext, e.getMessage());
+                                                mLoadingDialog.dismiss();
                                             }
                                         });
-                                    } catch (InvalidProtocolBufferException e) {
-                                        e.printStackTrace();
+                                        LogUtils.e(TAG, "------------------decodePaymentOnError------------------" + e.getMessage());
                                     }
-                                }
-                            });
-                        } catch (StatusRuntimeException e) {
-                            e.printStackTrace();
-                            LogUtils.e(TAG, e.getMessage());
-                            return;
+
+                                    @Override
+                                    public void onResponse(byte[] bytes) {
+                                        if (bytes == null) {
+                                            return;
+                                        }
+                                        try {
+                                            LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
+                                            LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
+                                            if (resp == null) {
+                                                ToastUtils.showToast(mContext, "Probe send request was null");
+                                                return;
+                                            }
+                                            /**
+                                             * @备注： 存储未支付的发票
+                                             * @description: Store Unpaid Invoices
+                                             */
+                                            saveInvoiceList(resp);
+                                            RouterOuterClass.SendPaymentRequest probeRequest;
+                                            if (mAssetId == 0) {
+                                                probeRequest = prepareBtcPaymentProbe(resp);
+                                            } else {
+                                                probeRequest = preparePaymentProbe(resp);
+                                            }
+                                            Obdmobile.routerOB_SendPaymentV2(probeRequest.toByteArray(), new RecvStream() {
+                                                @Override
+                                                public void onError(Exception e) {
+                                                    if (e.getMessage().equals("EOF")) {
+                                                        return;
+                                                    }
+                                                    LogUtils.e(TAG, "-------------routerSendPaymentV2OnError-----------" + e.getMessage());
+                                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (e.getMessage().contains("self-payments not allowed")) {
+                                                                updateInvoiceList();
+                                                            }
+                                                            EventBus.getDefault().post(new PayInvoiceFailedEvent());
+                                                            ToastUtils.showToast(mContext, e.getMessage());
+                                                            mLoadingDialog.dismiss();
+                                                        }
+                                                    });
+                                                }
+
+                                                @Override
+                                                public void onResponse(byte[] bytes) {
+                                                    try {
+                                                        LightningOuterClass.Payment payment = LightningOuterClass.Payment.parseFrom(bytes);
+                                                        LogUtils.e(TAG, "-------------routerSendPaymentV2OnResponse-----------" + payment.toString());
+                                                        switch (payment.getFailureReason()) {
+                                                            case FAILURE_REASON_INCORRECT_PAYMENT_DETAILS:
+                                                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        route = payment.getHtlcs(0).getRoute();
+                                                                        paymentHash = payment.getPaymentHash();
+                                                                        if (mAssetId == 0) {
+                                                                            payAmount = resp.getAmtMsat();
+                                                                        } else {
+                                                                            payAmount = resp.getAmount();
+                                                                        }
+                                                                        showStepPay(rootView);
+                                                                        deletePaymentProbe(payment.getPaymentHash());
+                                                                    }
+                                                                });
+                                                                break;
+                                                            case FAILURE_REASON_NO_ROUTE:
+                                                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        paymentHash = payment.getPaymentHash();
+                                                                        if (mAssetId == 0) {
+                                                                            payAmount = resp.getAmtMsat();
+                                                                        } else {
+                                                                            payAmount = resp.getAmount();
+                                                                        }
+                                                                        showStepPay(rootView);
+                                                                        deletePaymentProbe(payment.getPaymentHash());
+                                                                    }
+                                                                });
+                                                                break;
+                                                            default:
+                                                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        mLoadingDialog.dismiss();
+                                                                        deletePaymentProbe(payment.getPaymentHash());
+                                                                        CreateChannelTipDialog mCreateChannelTipDialog = new CreateChannelTipDialog(mContext);
+                                                                        mCreateChannelTipDialog.show();
+                                                                    }
+                                                                });
+                                                        }
+                                                    } catch (InvalidProtocolBufferException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            });
+                                        } catch (InvalidProtocolBufferException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                            } catch (StatusRuntimeException e) {
+                                e.printStackTrace();
+                                LogUtils.e(TAG, e.getMessage());
+                                return;
+                            }
+                        } finally {
+                            client.shutdown();
                         }
-                    } finally {
-                        client.shutdown();
+                    } catch (SSLException | InterruptedException e) {
+                        e.printStackTrace();
                     }
-                } catch (SSLException | InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         });

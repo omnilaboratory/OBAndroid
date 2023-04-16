@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/color_D1123A50">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/layout_son"
         android:layout_width="@dimen/main_320"
         android:layout_height="@dimen/main_460"
@@ -17,31 +17,39 @@
             android:id="@+id/iv_tip"
             android:layout_width="@dimen/main_36"
             android:layout_height="@dimen/main_36"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/main_30"
             android:src="@mipmap/icon_failed_green" />
 
-        <TextView
-            android:id="@+id/tv_tip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/iv_tip"
-            android:layout_centerHorizontal="true"
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1000"
             android:layout_marginLeft="@dimen/main_25"
             android:layout_marginRight="@dimen/main_25"
-            android:layout_marginTop="@dimen/main_20"
-            android:gravity="center"
-            android:text="@string/create_channel_tip"
-            android:textColor="@color/color_99_transparent"
-            android:textSize="@dimen/text_23" />
+            android:layout_marginTop="@dimen/main_15"
+            android:scrollbars="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_tip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/create_channel_tip"
+                    android:textColor="@color/color_99_transparent"
+                    android:textSize="@dimen/text_23" />
+            </RelativeLayout>
+        </android.support.v4.widget.NestedScrollView>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/main_110"
             android:layout_marginLeft="@dimen/main_50"
             android:layout_marginRight="@dimen/main_50"
-            android:layout_marginBottom="@dimen/main_20"
-            android:layout_alignParentBottom="true">
+            android:layout_marginBottom="@dimen/main_20">
 
             <LinearLayout
                 android:id="@+id/layout_back"
@@ -96,7 +104,7 @@
                     android:textSize="@dimen/text_16" />
             </LinearLayout>
         </RelativeLayout>
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_cancel"
