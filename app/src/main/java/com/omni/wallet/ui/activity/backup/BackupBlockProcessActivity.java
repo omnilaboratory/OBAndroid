@@ -131,7 +131,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     protected void initView() {
         User user = User.getInstance();
         constantInOB = new ConstantInOB(mContext);
-        String fileLocal = constantInOB.getBasePath() + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLogPath();
+        String fileLocal = mContext.getExternalFilesDir(null) + "/obd/" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLogPath();
         obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
         blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
         isSynced = user.getSynced(mContext);
@@ -361,7 +361,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
     
     public void startOBMobile(){
-        String lndDir = getApplicationContext().getExternalCacheDir().toString();
+        String lndDir = getApplicationContext().getExternalFilesDir(null).toString() + "/obd";
         String startParams = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getStartParams();
         Obdmobile.start("--lnddir=" + lndDir + startParams + User.getInstance().getAlias(mContext), new Callback() {
             @Override

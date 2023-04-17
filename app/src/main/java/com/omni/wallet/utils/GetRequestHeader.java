@@ -21,7 +21,7 @@ public class GetRequestHeader {
     public GetRequestHeader(Context context) {
         String network = User.getInstance().getNetwork(context);
         Log.d(TAG + "network: ", network);
-        String basePath = context.getExternalCacheDir() + "";
+        String basePath = context.getExternalFilesDir(null) + "/obd";
         this.BASE_PATH = basePath;
         this.TLS_PATH = basePath + "/tls.cert";
         this.TLS_KEY_PATH = basePath + "/tls.key.pcks8";

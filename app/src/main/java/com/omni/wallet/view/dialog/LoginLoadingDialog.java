@@ -39,7 +39,7 @@ public class LoginLoadingDialog {
     public LoginLoadingDialog(Context context) {
         this.mContext = context;
         this.constantInOB = new ConstantInOB(context);
-        String fileLocal = constantInOB.getBasePath() + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLogPath();
+        String fileLocal = mContext.getExternalFilesDir(null) + "/obd/" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLogPath();
         this.obdLogFileObserver = new ObdLogFileObserver(fileLocal, context);
         this.blockData = context.getSharedPreferences("blockData", MODE_PRIVATE);
         this.totalBlock = User.getInstance().getTotalBlock(context);

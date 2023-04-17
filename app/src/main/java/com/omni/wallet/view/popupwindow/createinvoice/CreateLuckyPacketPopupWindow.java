@@ -296,7 +296,7 @@ public class CreateLuckyPacketPopupWindow {
                     }
                     mLoadingDialog.show();
                     try {
-                        LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 38332, mContext.getApplicationContext().getExternalCacheDir() + "/tls.cert", mContext.getApplicationContext().getExternalCacheDir() + "/tls.key.pcks8");
+                        LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 38332, mContext.getApplicationContext().getExternalFilesDir(null) + "/obd/tls.cert", mContext.getApplicationContext().getExternalFilesDir(null) + "/obd" + "/tls.key.pcks8");
                         try {
                             LuckPkOuterClass.LuckPk payRequest;
                             if (mAssetId == 0) {

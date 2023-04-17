@@ -113,6 +113,7 @@ public class AppApplication extends BaseApplication {
          */
         LogUtils.e(TAG, "------------------getFilesDir------------------" + getApplicationContext().getFilesDir());
         LogUtils.e(TAG, "------------------getExternalCacheDir------------------" + getApplicationContext().getExternalCacheDir());
+        LogUtils.e(TAG, "------------------getExternalFilesDir------------------" + getApplicationContext().getExternalFilesDir(null));
         PRDownloaderConfig config = PRDownloaderConfig.newBuilder()
                 .setConnectTimeout(30000)
                 .setReadTimeout(30000)

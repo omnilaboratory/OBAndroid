@@ -193,7 +193,7 @@ public class Menu1PopupWindow {
     }
 
     public void startNode() {
-        String lndDir = mContext.getApplicationContext().getExternalCacheDir().toString();
+        String lndDir = mContext.getApplicationContext().getExternalFilesDir(null).toString() + "/obd";
         String startParams = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getStartParams();
         Obdmobile.start("--lnddir=" + lndDir + startParams + User.getInstance().getAlias(mContext), new Callback() {
             @Override
