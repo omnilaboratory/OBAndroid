@@ -447,7 +447,7 @@ public class PayInvoiceDialog {
         } else {
             amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
             amountPayExchangeTv.setText("$" + df1.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
-            amountPayFeeTv.setText("$" + df1.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            amountPayFeeTv.setText("$" + df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
         /**
          * @备注： 点击back显示invoice step one
@@ -763,7 +763,7 @@ public class PayInvoiceDialog {
         } else {
             amountPay1Tv.setText(df.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000));
             amountPayExchange1Tv.setText("$" + df1.format(Double.parseDouble(String.valueOf(payAmount)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
-            amountPayFee1Tv.setText("$" + df1.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            amountPayFee1Tv.setText("$" + df.format(Double.parseDouble(String.valueOf(feeSats)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
     }
 
