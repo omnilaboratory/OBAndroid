@@ -1,0 +1,38 @@
+{
+  "testnet": [
+    {
+      "assetId": "0",
+      "name": "BTC",
+      "imgUrl": ""
+    },
+    {
+      "assetId": "2147485160",
+      "name": "dollar",
+      "imgUrl": ""
+    }
+  ],
+  "regtest": [
+    {
+      "assetId": "0",
+      "name": "BTC",
+      "imgUrl": ""
+    },
+    {
+      "assetId": "2147483651",
+      "name": "dollar",
+      "imgUrl": ""
+    }
+  ],
+  "mainnet": [
+    {
+      "assetId": "0",
+      "name": "BTC",
+      "imgUrl": ""
+    },
+    {
+      "assetId": "31",
+      "name": "USDT",
+      "imgUrl": ""
+    }
+  ]
+}
