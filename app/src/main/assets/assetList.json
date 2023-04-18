@@ -3,36 +3,36 @@
     {
       "assetId": "0",
       "name": "BTC",
-      "imgUrl": ""
+      "imgUrl": "https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/icon_btc_logo.png"
     },
     {
       "assetId": "2147485160",
       "name": "dollar",
-      "imgUrl": ""
+      "imgUrl": "https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/icon_usdt_logo.png"
     }
   ],
   "regtest": [
     {
       "assetId": "0",
       "name": "BTC",
-      "imgUrl": ""
+      "imgUrl": "https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/icon_btc_logo.png"
     },
     {
       "assetId": "2147483651",
       "name": "dollar",
-      "imgUrl": ""
+      "imgUrl": "https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/icon_usdt_logo.png"
     }
   ],
   "mainnet": [
     {
       "assetId": "0",
       "name": "BTC",
-      "imgUrl": ""
+      "imgUrl": "https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/icon_btc_logo.png"
     },
     {
       "assetId": "31",
       "name": "USDT",
-      "imgUrl": ""
+      "imgUrl": "https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/icon_usdt_logo.png"
     }
   ]
 }
