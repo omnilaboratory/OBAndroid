@@ -46,6 +46,7 @@ import com.omni.wallet.utils.CalculateUtil;
 import com.omni.wallet.utils.DecimalInputTextWatcher;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.popupwindow.SelectAssetUnitPopupWindow;
+import com.omni.wallet.view.popupwindow.SelectBlocksPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
@@ -81,9 +82,11 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     TextView feePerByteTv;
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetUnitPopupWindow mSelectAssetUnitPopupWindow;
+    SelectBlocksPopupWindow mSelectBlocksPopupWindow;
     String nodePubkey;
     long assetId = 0;
-    int time;
+    int time = 1;
+    String type = "FAST";
     long feeStr;
     String assetBalance;
     String assetBalanceMax;
@@ -332,6 +335,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         feePerByteTv = mAlertDialog.findViewById(R.id.tv_fee_per_byte);
         Button amountUnitButton = mAlertDialog.findViewById(R.id.btn_amount_unit);
         Button speedButton = mAlertDialog.findViewById(R.id.btn_speed);
+        Button blocksButton = mAlertDialog.findViewById(R.id.btn_blocks);
+        TextView minutesTv = mAlertDialog.findViewById(R.id.tv_minutes);
 
         vaildPubkeyEdit.setText(nodePubkey);
         vaildPubkeyEdit.addTextChangedListener(new TextWatcher() {
@@ -399,7 +404,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             case R.id.tv_slow:
                                 speedButton.setText(R.string.slow);
 //                                time = 6 * 24; // 24 Hours
-                                time = 24;
+                                time = 31;
+                                type = "SLOW";
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                                     if (assetId == 0) {
                                         estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(channelAmountEdit.getText().toString()), 100000000)), time);
@@ -411,7 +417,8 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
 //                                time = 6 * 6; // 6 Hours
-                                time = 12; // 6 Hours
+                                time = 11;
+                                type = "MEDIUM";
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                                     if (assetId == 0) {
                                         estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(channelAmountEdit.getText().toString()), 100000000)), time);
@@ -424,6 +431,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                                 speedButton.setText(R.string.fast);
 //                                time = 1; // 10 Minutes
                                 time = 1;
+                                type = "FAST";
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                                     if (assetId == 0) {
                                         estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(channelAmountEdit.getText().toString()), 100000000)), time);
@@ -433,9 +441,33 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                                 }
                                 break;
                         }
+                        blocksButton.setText(time + "");
+                        minutesTv.setText(time * 10 + "");
                     }
                 });
                 mSelectSpeedPopupWindow.show(v);
+            }
+        });
+        blocksButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelectBlocksPopupWindow = new SelectBlocksPopupWindow(mContext);
+                mSelectBlocksPopupWindow.setOnItemClickCallback(new SelectBlocksPopupWindow.ItemCleckListener() {
+                    @Override
+                    public void onItemClick(View view, Integer item) {
+                        time = item;
+                        blocksButton.setText(time + "");
+                        minutesTv.setText(time * 10 + "");
+                        if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
+                            if (assetId == 0) {
+                                estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(channelAmountEdit.getText().toString()), 100000000)), time);
+                            } else {
+                                estimateOnChainFee(20000, time);
+                            }
+                        }
+                    }
+                });
+                mSelectBlocksPopupWindow.show(v, type);
             }
         });
         amountUnitButton.setOnClickListener(new View.OnClickListener() {

@@ -157,7 +157,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_20"
                 android:layout_marginRight="@dimen/main_20"
-                android:layout_marginTop="@dimen/main_25"
+                android:layout_marginTop="@dimen/main_20"
                 android:background="@drawable/bg_black_rectangle_round_0_thin"
                 android:orientation="vertical">
 
@@ -206,7 +206,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/main_0.2"
-                android:layout_marginTop="@dimen/main_17"
+                android:layout_marginTop="@dimen/main_15"
                 android:background="@color/color_black"/>
 
             <RelativeLayout
@@ -214,7 +214,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_20"
                 android:layout_marginRight="@dimen/main_20"
-                android:layout_marginTop="@dimen/main_15">
+                android:layout_marginTop="@dimen/main_10">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -306,7 +306,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_20"
                 android:layout_marginRight="@dimen/main_20"
-                android:layout_marginTop="@dimen/main_20">
+                android:layout_marginTop="@dimen/main_10">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -373,7 +373,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_20"
                 android:layout_marginRight="@dimen/main_20"
-                android:layout_marginTop="@dimen/main_15">
+                android:layout_marginTop="@dimen/main_10">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -412,7 +412,7 @@
                         android:gravity="center"
                         android:paddingLeft="@dimen/main_2"
                         android:paddingRight="@dimen/main_2"
-                        android:text="@string/slow"
+                        android:text="@string/fast"
                         android:textColor="@color/color_99_transparent"
                         android:textSize="@dimen/text_12"/>
 
@@ -441,6 +441,76 @@
                             android:textSize="@dimen/text_16"/>
                     </LinearLayout>
                 </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_20"
+                android:layout_marginRight="@dimen/main_20"
+                android:layout_marginTop="@dimen/main_10"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_blocks"
+                        android:layout_width="@dimen/main_50"
+                        android:layout_height="@dimen/main_26"
+                        android:background="@drawable/bg_black_rectangle_round_0"
+                        android:drawableRight="@mipmap/icon_arrow_down_black_one"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/main_2"
+                        android:paddingRight="@dimen/main_2"
+                        android:text="1"
+                        android:textColor="@color/color_99_transparent"
+                        android:textSize="@dimen/text_12"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" blocks"
+                        android:textColor="@color/color_80p_transparent"
+                        android:textSize="@dimen/text_16" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="about"
+                        android:textColor="@color/color_80p_transparent"
+                        android:textSize="@dimen/text_16"/>
+
+                    <TextView
+                        android:id="@+id/tv_minutes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_5"
+                        android:text="10"
+                        android:textColor="@color/color_80p_transparent"
+                        android:textSize="@dimen/text_16"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_5"
+                        android:text="minutes"
+                        android:textColor="@color/color_80p_transparent"
+                        android:textSize="@dimen/text_16"/>
+                </LinearLayout>
             </RelativeLayout>
 
             <RelativeLayout
@@ -877,12 +947,14 @@
                         android:layout_height="wrap_content"
                         android:text="@string/aets"
                         android:textColor="@color/color_80p_transparent"
-                        android:textSize="@dimen/text_16"/>
+                        android:textSize="@dimen/text_16"
+                        android:visibility="gone"/>
 
                     <TextView
                         android:id="@+id/tv_send_gas_fee_amount_value"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/main_120"
                         android:layout_height="wrap_content"
+                        android:gravity="right"
                         android:text="0"
                         android:textColor="@color/color_80p_transparent"
                         android:textSize="@dimen/text_16"/>
@@ -893,7 +965,8 @@
                         android:layout_marginLeft="@dimen/main_5"
                         android:text="USD"
                         android:textColor="@color/color_80p_transparent"
-                        android:textSize="@dimen/text_16"/>
+                        android:textSize="@dimen/text_16"
+                        android:visibility="gone"/>
                 </LinearLayout>
             </RelativeLayout>
 

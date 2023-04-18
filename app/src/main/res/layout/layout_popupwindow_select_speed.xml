@@ -8,12 +8,12 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/tv_slow"
+        android:id="@+id/tv_fast"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/main_10"
         android:gravity="center"
-        android:text="@string/slow"
+        android:text="@string/fast"
         android:textColor="@color/color_99_transparent"
         android:textSize="@dimen/text_16"/>
 
@@ -28,13 +28,13 @@
         android:textSize="@dimen/text_16"/>
 
     <TextView
-        android:id="@+id/tv_fast"
+        android:id="@+id/tv_slow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/main_10"
         android:layout_marginTop="@dimen/main_10"
+        android:layout_marginBottom="@dimen/main_10"
         android:gravity="center"
-        android:text="@string/fast"
+        android:text="@string/slow"
         android:textColor="@color/color_99_transparent"
         android:textSize="@dimen/text_16"/>
 </LinearLayout>

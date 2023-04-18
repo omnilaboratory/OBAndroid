@@ -18,7 +18,8 @@
             android:layout_height="@dimen/main_540"
             android:background="@drawable/bg_white_rectangle_round_20"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -285,7 +286,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/main_30"
+                android:layout_marginTop="@dimen/main_25"
                 android:orientation="horizontal">
 
                 <TextView
@@ -311,7 +312,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/main_10"
                 android:layout_marginRight="@dimen/main_10"
-                android:layout_marginTop="@dimen/main_20"
+                android:layout_marginTop="@dimen/main_10"
                 android:gravity="center"
                 android:letterSpacing="0.05"
                 android:text="@string/open_a_channel_txt"
@@ -322,7 +323,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/main_0.5"
-                android:layout_marginTop="@dimen/main_14"
+                android:layout_marginTop="@dimen/main_10"
                 android:background="@color/color_80p_transparent"></View>
 
             <EditText
@@ -342,7 +343,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_15"
-                android:layout_marginTop="@dimen/main_25"
+                android:layout_marginTop="@dimen/main_15"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -375,14 +376,14 @@
                 android:layout_height="@dimen/main_0.5"
                 android:layout_marginLeft="@dimen/main_40"
                 android:layout_marginRight="@dimen/main_40"
-                android:layout_marginTop="@dimen/main_20"
+                android:layout_marginTop="@dimen/main_15"
                 android:background="@color/color_80p_transparent"></View>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_16"
-                android:layout_marginTop="@dimen/main_19"
+                android:layout_marginTop="@dimen/main_15"
                 android:text="@string/amount"
                 android:textColor="@color/color_80p_transparent"
                 android:textSize="@dimen/text_16"/>
@@ -475,6 +476,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
@@ -494,7 +496,7 @@
                         android:gravity="center"
                         android:paddingLeft="@dimen/main_2"
                         android:paddingRight="@dimen/main_2"
-                        android:text="@string/slow"
+                        android:text="@string/fast"
                         android:textColor="@color/color_99_transparent"
                         android:textSize="@dimen/text_12"/>
                 </LinearLayout>
@@ -522,6 +524,86 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_5"
                         android:text="@string/satoshi_per_byte"
+                        android:textColor="@color/color_80p_transparent"
+                        android:textSize="@dimen/text_16"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_10"
+                android:layout_marginRight="@dimen/main_10"
+                android:layout_marginTop="@dimen/main_10"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fee"
+                        android:textColor="@color/color_80p_transparent"
+                        android:textSize="@dimen/text_16"
+                        android:visibility="invisible"/>
+
+                    <Button
+                        android:id="@+id/btn_blocks"
+                        android:layout_width="@dimen/main_50"
+                        android:layout_height="@dimen/main_26"
+                        android:layout_marginLeft="@dimen/main_10"
+                        android:background="@drawable/bg_black_rectangle_round_0"
+                        android:drawableRight="@mipmap/icon_arrow_down_black_one"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/main_2"
+                        android:paddingRight="@dimen/main_2"
+                        android:text="1"
+                        android:textColor="@color/color_99_transparent"
+                        android:textSize="@dimen/text_12"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" blocks"
+                        android:textColor="@color/color_80p_transparent"
+                        android:textSize="@dimen/text_16" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/main_10"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="about"
+                        android:textColor="@color/color_80p_transparent"
+                        android:textSize="@dimen/text_16"/>
+
+                    <TextView
+                        android:id="@+id/tv_minutes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_5"
+                        android:text="10"
+                        android:textColor="@color/color_80p_transparent"
+                        android:textSize="@dimen/text_16"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_5"
+                        android:text="minutes"
                         android:textColor="@color/color_80p_transparent"
                         android:textSize="@dimen/text_16"/>
                 </LinearLayout>

@@ -6,7 +6,7 @@
     android:background="@drawable/bg_black_rectangle_round_0">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_asset_list"
+        android:id="@+id/recycler_blocks_list"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/main_150"/>
+        android:layout_height="@dimen/main_100"/>
 </RelativeLayout>

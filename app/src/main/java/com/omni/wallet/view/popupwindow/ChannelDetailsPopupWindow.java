@@ -1,6 +1,8 @@
 package com.omni.wallet.view.popupwindow;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -13,10 +15,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.ui.activity.channel.ChannelListItem;
@@ -31,6 +36,8 @@ import com.omni.wallet.view.dialog.SendSuccessDialog;
 import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Obdmobile;
@@ -77,6 +84,7 @@ public class ChannelDetailsPopupWindow {
     CreateChannelDialog mCreateChannelDialog;
 
     private String mChannelPoint;
+    private List<String> txidList;
 
     public ChannelDetailsPopupWindow(Context context) {
         this.mContext = context;
@@ -383,6 +391,29 @@ public class ChannelDetailsPopupWindow {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if (assetId != 0) {
+                                        // 存储txid
+                                        SharedPreferences txidSp = mContext.getSharedPreferences("SP_TXID_LIST", Activity.MODE_PRIVATE);
+                                        String txidListJson = txidSp.getString("txidListKey", "");
+                                        if (StringUtils.isEmpty(txidListJson)) {
+                                            txidList = new ArrayList<>();
+                                            txidList.add(resp.getClosePending().getTxidStr());
+                                            Gson gson = new Gson();
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
+                                            editor.commit();
+                                        } else {
+                                            Gson gson = new Gson();
+                                            txidList = gson.fromJson(txidListJson, new TypeToken<List<String>>() {
+                                            }.getType());
+                                            txidList.add(resp.getClosePending().getTxidStr());
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
+                                            editor.commit();
+                                        }
+                                    }
                                     EventBus.getDefault().post(new CloseChannelEvent());
                                     if (mBasePopWindow != null) {
                                         mBasePopWindow.dismiss();
@@ -436,6 +467,29 @@ public class ChannelDetailsPopupWindow {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if (assetId != 0) {
+                                        // 存储txid
+                                        SharedPreferences txidSp = mContext.getSharedPreferences("SP_TXID_LIST", Activity.MODE_PRIVATE);
+                                        String txidListJson = txidSp.getString("txidListKey", "");
+                                        if (StringUtils.isEmpty(txidListJson)) {
+                                            txidList = new ArrayList<>();
+                                            txidList.add(resp.getClosePending().getTxidStr());
+                                            Gson gson = new Gson();
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
+                                            editor.commit();
+                                        } else {
+                                            Gson gson = new Gson();
+                                            txidList = gson.fromJson(txidListJson, new TypeToken<List<String>>() {
+                                            }.getType());
+                                            txidList.add(resp.getClosePending().getTxidStr());
+                                            String jsonStr = gson.toJson(txidList);
+                                            SharedPreferences.Editor editor = txidSp.edit();
+                                            editor.putString("txidListKey", jsonStr);
+                                            editor.commit();
+                                        }
+                                    }
                                     EventBus.getDefault().post(new CloseChannelEvent());
                                     if (mBasePopWindow != null) {
                                         mBasePopWindow.dismiss();

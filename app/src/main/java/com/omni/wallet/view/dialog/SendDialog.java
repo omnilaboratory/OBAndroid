@@ -42,6 +42,7 @@ import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.ValidateBitcoinAddress;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.popupwindow.SelectAssetPopupWindow;
+import com.omni.wallet.view.popupwindow.SelectBlocksPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectSpeedPopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
@@ -78,6 +79,7 @@ public class SendDialog implements Wallet.ScanSendListener {
     private MyAdapter mAdapter;
     String selectAddress;
     int time = 1;
+    String type = "FAST";
     long feeStr;
     long assetId = 0;
     String assetBalance = "0";
@@ -87,6 +89,7 @@ public class SendDialog implements Wallet.ScanSendListener {
     String toFriendName = "unname";
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
     SelectAssetPopupWindow mSelectAssetPopupWindow;
+    SelectBlocksPopupWindow mSelectBlocksPopupWindow;
     SendSuccessDialog mSendSuccessDialog;
 
     public SendDialog(Context context) {
@@ -102,6 +105,8 @@ public class SendDialog implements Wallet.ScanSendListener {
                     .fullHeight()
                     .create();
         }
+        assetsBalanceTv = mAlertDialog.findViewById(R.id.tv_asset_balance);
+        fetchWalletBalance();
         Wallet.getInstance().registerScanSendListener(this);
         mLoadingDialog = new LoadingDialog(mContext);
         SharedPreferences sp = mContext.getSharedPreferences("SP_ADDR_LIST", Activity.MODE_PRIVATE);
@@ -281,7 +286,6 @@ public class SendDialog implements Wallet.ScanSendListener {
         ImageView assetTypeIv = mAlertDialog.findViewById(R.id.iv_asset_type);
         TextView assetTypeTv = mAlertDialog.findViewById(R.id.tv_asset_type);
         TextView amountTypeTv = mAlertDialog.findViewById(R.id.tv_amount_type);
-        assetsBalanceTv = mAlertDialog.findViewById(R.id.tv_asset_balance);
         sendFeeTv = mAlertDialog.findViewById(R.id.tv_send_fee);
         TextView sendFeeUnitTv = mAlertDialog.findViewById(R.id.tv_send_fee_unit);
         sendFeeExchangeTv = mAlertDialog.findViewById(R.id.tv_send_fee_exchange);
@@ -296,7 +300,6 @@ public class SendDialog implements Wallet.ScanSendListener {
             amountTypeTv.setText("dollar");
             sendFeeUnitTv.setText("satoshis");
         }
-        fetchWalletBalance();
         final EditText amountInputView = mAlertDialog.findViewById(R.id.etv_send_amount);
         amountInputView.addTextChangedListener(new DecimalInputTextWatcher(DecimalInputTextWatcher.Type.decimal, 8));
         amountInputView.addTextChangedListener(new TextWatcher() {
@@ -370,6 +373,8 @@ public class SendDialog implements Wallet.ScanSendListener {
             }
         });
         Button speedButton = mAlertDialog.findViewById(R.id.btn_speed);
+        Button blocksButton = mAlertDialog.findViewById(R.id.btn_blocks);
+        TextView minutesTv = mAlertDialog.findViewById(R.id.tv_minutes);
         speedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -381,7 +386,8 @@ public class SendDialog implements Wallet.ScanSendListener {
                             case R.id.tv_slow:
                                 speedButton.setText(R.string.slow);
 //                                time = 6 * 24; // 24 Hours
-                                time = 24;
+                                time = 31;
+                                type = "SLOW";
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
                                     estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(amountInputView.getText().toString()), 100000000)), time);
                                 }
@@ -389,7 +395,8 @@ public class SendDialog implements Wallet.ScanSendListener {
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
 //                                time = 6 * 6; // 6 Hours
-                                time = 12; // 6 Hours
+                                time = 11;
+                                type = "MEDIUM";
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
                                     estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(amountInputView.getText().toString()), 100000000)), time);
                                 }
@@ -398,14 +405,35 @@ public class SendDialog implements Wallet.ScanSendListener {
                                 speedButton.setText(R.string.fast);
 //                                time = 1; // 10 Minutes
                                 time = 1;
+                                type = "FAST";
                                 if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
                                     estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(amountInputView.getText().toString()), 100000000)), time);
                                 }
                                 break;
                         }
+                        blocksButton.setText(time + "");
+                        minutesTv.setText(time * 10 + "");
                     }
                 });
                 mSelectSpeedPopupWindow.show(v);
+            }
+        });
+        blocksButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelectBlocksPopupWindow = new SelectBlocksPopupWindow(mContext);
+                mSelectBlocksPopupWindow.setOnItemClickCallback(new SelectBlocksPopupWindow.ItemCleckListener() {
+                    @Override
+                    public void onItemClick(View view, Integer item) {
+                        time = item;
+                        blocksButton.setText(time + "");
+                        minutesTv.setText(time * 10 + "");
+                        if (!StringUtils.isEmpty(amountInputView.getText().toString())) {
+                            estimateOnChainFee((long) (CalculateUtil.mul(Double.parseDouble(amountInputView.getText().toString()), 100000000)), time);
+                        }
+                    }
+                });
+                mSelectBlocksPopupWindow.show(v, type);
             }
         });
         /**
@@ -497,17 +525,18 @@ public class SendDialog implements Wallet.ScanSendListener {
             tokenTypeView2.setText("BTC");
             feeUnitView.setText("satoshis");
             sendAmountValueView.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
-            feeAmountValueView.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+            feeAmountValueView.setText("≈" + df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))) + " USD");
             String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
             sendUsedValueView.setText(df.format(Double.parseDouble(sendUsedValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
             DecimalFormat df = new DecimalFormat("0.00");
+            DecimalFormat df1 = new DecimalFormat("0.00######");
             tokenImage.setImageResource(R.mipmap.icon_usdt_logo_small);
             tokenTypeView.setText("dollar");
             tokenTypeView2.setText("dollar");
             feeUnitView.setText("satoshis");
             sendAmountValueView.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
-            feeAmountValueView.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+            feeAmountValueView.setText("≈" + df1.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))) + " USD");
             String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
             sendUsedValueView.setText(df.format(Double.parseDouble(sendUsedValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
         }
@@ -1014,10 +1043,11 @@ public class SendDialog implements Wallet.ScanSendListener {
                         public void run() {
                             feeStr = resp.getFeeSat();
                             sendFeeTv.setText(feeStr + "");
-                            DecimalFormat df = new DecimalFormat("0.00");
                             if (assetId == 0) {
+                                DecimalFormat df = new DecimalFormat("0.00");
                                 sendFeeExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                             } else {
+                                DecimalFormat df = new DecimalFormat("0.00######");
                                 sendFeeExchangeTv.setText(df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                             }
                         }
