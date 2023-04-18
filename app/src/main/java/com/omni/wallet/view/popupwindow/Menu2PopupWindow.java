@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
@@ -56,6 +57,9 @@ public class Menu2PopupWindow {
             ImageView testnetIv = rootView.findViewById(R.id.iv_network_testnet);
             ImageView vectorRegtestIv = rootView.findViewById(R.id.iv_network_vector_regtest);
             ImageView regtestIv = rootView.findViewById(R.id.iv_network_regtest);
+            RelativeLayout mainnetLayout = rootView.findViewById(R.id.layout_network_mainnet);
+            RelativeLayout testnetLayout = rootView.findViewById(R.id.layout_network_testnet);
+            RelativeLayout regtestLayout = rootView.findViewById(R.id.layout_network_regtest);
 
             // 网络类型
             // Network type
@@ -66,6 +70,9 @@ public class Menu2PopupWindow {
                 testnetIv.setImageResource(R.drawable.bg_btn_round_06d78f_25);
                 vectorRegtestIv.setVisibility(View.INVISIBLE);
                 regtestIv.setImageResource(R.drawable.bg_btn_round_d9d9d9_25);
+                mainnetLayout.setVisibility(View.GONE);
+                testnetLayout.setVisibility(View.VISIBLE);
+                regtestLayout.setVisibility(View.GONE);
             } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
                 vectorMainnetIv.setVisibility(View.INVISIBLE);
                 mainnetIv.setImageResource(R.drawable.bg_btn_round_d9d9d9_25);
@@ -73,6 +80,9 @@ public class Menu2PopupWindow {
                 testnetIv.setImageResource(R.drawable.bg_btn_round_d9d9d9_25);
                 vectorRegtestIv.setVisibility(View.VISIBLE);
                 regtestIv.setImageResource(R.drawable.bg_btn_round_06d78f_25);
+                mainnetLayout.setVisibility(View.GONE);
+                testnetLayout.setVisibility(View.GONE);
+                regtestLayout.setVisibility(View.VISIBLE);
             } else if (User.getInstance().getNetwork(mContext).equals("mainnet")) {
                 vectorMainnetIv.setVisibility(View.VISIBLE);
                 mainnetIv.setImageResource(R.drawable.bg_btn_round_06d78f_25);
@@ -80,6 +90,9 @@ public class Menu2PopupWindow {
                 testnetIv.setImageResource(R.drawable.bg_btn_round_d9d9d9_25);
                 vectorRegtestIv.setVisibility(View.INVISIBLE);
                 regtestIv.setImageResource(R.drawable.bg_btn_round_d9d9d9_25);
+                mainnetLayout.setVisibility(View.VISIBLE);
+                testnetLayout.setVisibility(View.GONE);
+                regtestLayout.setVisibility(View.GONE);
             }
 
             rootView.findViewById(R.id.layout_parent).setOnClickListener(new View.OnClickListener() {
@@ -111,7 +124,8 @@ public class Menu2PopupWindow {
                     bundle.putString(ChannelsActivity.KEY_PUBKEY, pubKey);
                     bundle.putString(ChannelsActivity.KEY_CHANNEL, "all");
                     Intent intent = new Intent(mContext, ChannelsActivity.class);
-                    mContext.startActivity(intent, bundle);
+                    intent.putExtras(bundle);
+                    mContext.startActivity(intent);
                 }
             });
             // profile

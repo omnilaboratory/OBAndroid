@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/layout_son"
         android:layout_width="@dimen/main_260"
-        android:layout_height="@dimen/main_600"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/main_10"
         android:layout_marginTop="@dimen/main_10"
@@ -34,7 +34,6 @@
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/main_15"
             android:scrollbars="vertical">
 
             <LinearLayout
@@ -43,10 +42,12 @@
                 android:orientation="vertical">
 
                 <RelativeLayout
+                    android:id="@+id/layout_network_mainnet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_37"
-                    android:layout_marginRight="@dimen/main_17">
+                    android:layout_marginRight="@dimen/main_17"
+                    android:layout_marginTop="@dimen/main_15">
 
                     <ImageView
                         android:id="@+id/iv_network_vector_mainnet"
@@ -78,11 +79,12 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/layout_network_testnet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_37"
                     android:layout_marginRight="@dimen/main_17"
-                    android:layout_marginTop="@dimen/main_10">
+                    android:layout_marginTop="@dimen/main_15">
 
                     <ImageView
                         android:id="@+id/iv_network_vector_testnet"
@@ -114,11 +116,12 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/layout_network_regtest"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_37"
                     android:layout_marginRight="@dimen/main_17"
-                    android:layout_marginTop="@dimen/main_10">
+                    android:layout_marginTop="@dimen/main_15">
 
                     <ImageView
                         android:id="@+id/iv_network_vector_regtest"
@@ -276,7 +279,7 @@
                         android:layout_height="@dimen/main_24"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:src="@mipmap/icon_menu_setting"/>
+                        android:src="@mipmap/icon_menu_backup"/>
                 </RelativeLayout>
 
                 <RelativeLayout
