@@ -404,7 +404,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             case R.id.tv_slow:
                                 speedButton.setText(R.string.slow);
 //                                time = 6 * 24; // 24 Hours
-                                time = 31;
+                                time = 11;
                                 type = "SLOW";
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                                     if (assetId == 0) {
@@ -417,7 +417,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             case R.id.tv_medium:
                                 speedButton.setText(R.string.medium);
 //                                time = 6 * 6; // 6 Hours
-                                time = 11;
+                                time = 6;
                                 type = "MEDIUM";
                                 if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
                                     if (assetId == 0) {

@@ -342,6 +342,7 @@ public class PayInvoiceDialog {
                 entity.setDate(resp.getTimestamp());
                 entity.setAmount(resp.getAmtMsat());
                 entity.setInvoice(lnInvoice);
+                entity.setExpiry(resp.getExpiry());
                 btcList.add(entity);
                 removeDuplicateInvoice(btcList);
                 Gson gson = new Gson();
@@ -358,6 +359,7 @@ public class PayInvoiceDialog {
                 entity.setDate(resp.getTimestamp());
                 entity.setAmount(resp.getAmtMsat());
                 entity.setInvoice(lnInvoice);
+                entity.setExpiry(resp.getExpiry());
                 btcList.add(entity);
                 removeDuplicateInvoice(btcList);
                 String jsonStr = gson.toJson(btcList);
@@ -375,6 +377,7 @@ public class PayInvoiceDialog {
                 entity.setDate(resp.getTimestamp());
                 entity.setAmount(resp.getAmount());
                 entity.setInvoice(lnInvoice);
+                entity.setExpiry(resp.getExpiry());
                 list.add(entity);
                 removeDuplicateInvoice(list);
                 Gson gson = new Gson();
@@ -391,6 +394,7 @@ public class PayInvoiceDialog {
                 entity.setDate(resp.getTimestamp());
                 entity.setAmount(resp.getAmount());
                 entity.setInvoice(lnInvoice);
+                entity.setExpiry(resp.getExpiry());
                 list.add(entity);
                 removeDuplicateInvoice(list);
                 String jsonStr = gson.toJson(list);

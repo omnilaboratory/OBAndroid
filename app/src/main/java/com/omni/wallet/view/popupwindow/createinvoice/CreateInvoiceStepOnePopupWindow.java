@@ -243,7 +243,7 @@ public class CreateInvoiceStepOnePopupWindow {
                         return;
                     }
                     // TODO: 2022/11/23 最大值最小值的判断需要完善一下
-                    if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canReceive) * 100000000) >= 0) {
+                    if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canReceive) * 100000000) > 0) {
                         CreateNewChannelTipDialog mCreateNewChannelTipDialog = new CreateNewChannelTipDialog(mContext);
                         mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
                             @Override

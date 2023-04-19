@@ -1218,6 +1218,21 @@ public class BalanceDetailActivity extends AppBaseActivity {
             } else {
                 holder.setText(R.id.tv_receiver, "unknown");
             }
+            if (isToBePaidExpired(item)) {
+                holder.setImageResource(R.id.iv_state, R.mipmap.icon_failed_red);
+                holder.getView(R.id.layout_to_be_paid_list).setOnClickListener(null);
+            } else {
+                holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_green);
+                holder.getView(R.id.layout_to_be_paid_list).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (PreventContinuousClicksUtil.isNotFastClick()) {
+                            mPayInvoiceDialog = new PayInvoiceDialog(mContext);
+                            mPayInvoiceDialog.show(pubkey, assetId, UriUtil.generateLightningUri(item.getInvoice()));
+                        }
+                    }
+                });
+            }
             final SwipeMenuLayout menuLayout = holder.getView(R.id.layout_to_be_paid_list_swipe_menu);
             menuLayout.setSwipeMenuStateListener(new SwipeMenuStateListener() {
                 @Override
@@ -1279,16 +1294,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     holder.getView(R.id.layout_to_be_paid_delete).setVisibility(View.GONE);
                 }
             });
-            holder.getView(R.id.layout_to_be_paid_list).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (PreventContinuousClicksUtil.isNotFastClick()) {
-                        mPayInvoiceDialog = new PayInvoiceDialog(mContext);
-                        mPayInvoiceDialog.show(pubkey, assetId, UriUtil.generateLightningUri(item.getInvoice()));
-                    }
-                }
-            });
         }
+    }
+
+    public boolean isToBePaidExpired(InvoiceEntity entity) {
+        return entity.getDate() + entity.getExpiry() < System.currentTimeMillis() / 1000;
     }
 
     // ByteString values when using for example "paymentRequest.getDescriptionBytes()" can for some reason not directly be used as they are double in length

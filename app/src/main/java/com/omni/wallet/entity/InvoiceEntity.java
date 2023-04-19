@@ -11,6 +11,7 @@ public class InvoiceEntity {
     private long date;
     private long amount;
     private String invoice;
+    private long expiry;
 
     public long getAssetId() {
         return assetId;
@@ -42,5 +43,13 @@ public class InvoiceEntity {
 
     public void setInvoice(String invoice) {
         this.invoice = invoice;
+    }
+
+    public long getExpiry() {
+        return expiry;
+    }
+
+    public void setExpiry(long expiry) {
+        this.expiry = expiry;
     }
 }
