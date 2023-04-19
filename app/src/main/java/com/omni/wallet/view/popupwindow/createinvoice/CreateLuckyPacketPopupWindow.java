@@ -6,7 +6,9 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -169,6 +171,31 @@ public class CreateLuckyPacketPopupWindow {
         TextView amountMaxTv = rootView.findViewById(R.id.tv_amount_max);
         EditText amountEdit = rootView.findViewById(R.id.edit_amount);
         amountEdit.addTextChangedListener(new DecimalInputTextWatcher(DecimalInputTextWatcher.Type.decimal, 8));
+        amountEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!StringUtils.isEmpty(s.toString())) {
+                    if (Double.parseDouble(s.toString()) - (Double.parseDouble(canSend) - (Double.parseDouble(assetBalanceMax) * 0.01)) > 0) {
+                        if (Double.parseDouble(canSend) - (Double.parseDouble(assetBalanceMax) * 0.01) == 0) {
+                            amountEdit.setText("0");
+                        } else {
+                            DecimalFormat df = new DecimalFormat("0.00######");
+                            amountEdit.setText(df.format(Double.parseDouble(canSend) - (Double.parseDouble(assetBalanceMax) * 0.01)));
+                        }
+                    }
+                }
+            }
+        });
         TextView amountUnitTv = rootView.findViewById(R.id.tv_amount_unit);
         Button timeButton = rootView.findViewById(R.id.btn_time);
         EditText amountTimeEdit = rootView.findViewById(R.id.edit_time);
@@ -270,7 +297,6 @@ public class CreateLuckyPacketPopupWindow {
                         ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
                         return;
                     }
-                    // TODO: 2022/11/23 最大值最小值的判断需要完善一下
                     if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canSend) * 100000000) > 0) {
                         CreateNewChannelTipDialog mCreateNewChannelTipDialog = new CreateNewChannelTipDialog(mContext);
                         mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
