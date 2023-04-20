@@ -172,12 +172,12 @@ public class CreateInvoiceStepOnePopupWindow {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!StringUtils.isEmpty(s.toString())) {
-                    if (Double.parseDouble(s.toString()) - (Double.parseDouble(canReceive) - (Double.parseDouble(assetBalanceMax) * 0.01)) > 0) {
-                        if (Double.parseDouble(canReceive) - (Double.parseDouble(assetBalanceMax) * 0.01) == 0) {
-                            amountEdit.setText("0");
-                        } else {
+                    if (Double.parseDouble(s.toString()) - Double.parseDouble(canUseReceive) > 0) {
+//                        if (Double.parseDouble(canReceive) - (Double.parseDouble(assetBalanceMax) * 0.01) == 0) {
+//                            amountEdit.setText("0");
+//                        } else {
                             amountEdit.setText(canUseReceive);
-                        }
+//                        }
                     }
                 }
             }
@@ -286,7 +286,7 @@ public class CreateInvoiceStepOnePopupWindow {
                         ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
                         return;
                     }
-                    if ((Double.parseDouble(amountInput) * 100000000) - ((Double.parseDouble(canReceive) * 100000000)) > 0) {
+                    if ((Double.parseDouble(amountInput) * 100000000) - ((Double.parseDouble(canUseReceive) * 100000000)) > 0) {
                         CreateNewChannelTipDialog mCreateNewChannelTipDialog = new CreateNewChannelTipDialog(mContext);
                         mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
                             @Override
