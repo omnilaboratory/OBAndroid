@@ -92,6 +92,9 @@ public class CreateLuckyPacketPopupWindow {
     TextView assetMaxTv;
     TextView mCanSendTv;
     TextView mCanReceiveTv;
+    TextView channelReserveTv;
+    TextView channelCapacityLocalTv;
+    TextView channelCapacityRemoteTv;
     ProgressBar mProgressBar;
     SelectChannelBalancePopupWindow mSelectChannelBalancePopupWindow;
     SelectTimePopupWindow mSelectTimePopupWindow;
@@ -100,6 +103,7 @@ public class CreateLuckyPacketPopupWindow {
     String assetBalanceMax;
     String canReceive;
     String canSend;
+    String canUseSend;
     String amountInput;
     String timeInput;
     String timeType;
@@ -168,6 +172,9 @@ public class CreateLuckyPacketPopupWindow {
         ImageView assetTypeIv = rootView.findViewById(R.id.iv_asset_type);
         TextView assetTypeTv = rootView.findViewById(R.id.tv_asset_type);
         assetMaxTv = rootView.findViewById(R.id.tv_asset_max);
+        channelReserveTv = rootView.findViewById(R.id.tv_channel_reserve);
+        channelCapacityLocalTv = rootView.findViewById(R.id.tv_channel_capatity_local);
+        channelCapacityRemoteTv = rootView.findViewById(R.id.tv_channel_capatity_remote);
         mCanSendTv = rootView.findViewById(R.id.tv_can_send);
         mCanReceiveTv = rootView.findViewById(R.id.tv_can_receive);
         mProgressBar = rootView.findViewById(R.id.progressbar);
@@ -188,13 +195,12 @@ public class CreateLuckyPacketPopupWindow {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!StringUtils.isEmpty(s.toString())) {
-                    if (Double.parseDouble(s.toString()) - (Double.parseDouble(canSend) - (Double.parseDouble(assetBalanceMax) * 0.01)) > 0) {
-                        if (Double.parseDouble(canSend) - (Double.parseDouble(assetBalanceMax) * 0.01) == 0) {
-                            amountEdit.setText("0");
-                        } else {
-                            DecimalFormat df = new DecimalFormat("0.00######");
-                            amountEdit.setText(df.format(Double.parseDouble(canSend) - (Double.parseDouble(assetBalanceMax) * 0.01)));
-                        }
+                    if (Double.parseDouble(s.toString()) - (Double.parseDouble(canUseSend)) > 0) {
+//                        if (Double.parseDouble(canSend) - (Double.parseDouble(assetBalanceMax) * 0.01) == 0) {
+//                            amountEdit.setText("0");
+//                        } else {
+                            amountEdit.setText(canUseSend);
+//                        }
                     }
                 }
             }
@@ -247,7 +253,7 @@ public class CreateLuckyPacketPopupWindow {
         amountMaxTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                amountEdit.setText(canSend);
+                amountEdit.setText(canUseSend);
             }
         });
         timeButton.setOnClickListener(new View.OnClickListener() {
@@ -303,7 +309,7 @@ public class CreateLuckyPacketPopupWindow {
                         ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
                         return;
                     }
-                    if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canSend) * 100000000) > 0) {
+                    if ((Double.parseDouble(amountInput) * 100000000) - (Double.parseDouble(canUseSend) * 100000000) > 0) {
                         CreateNewChannelTipDialog mCreateNewChannelTipDialog = new CreateNewChannelTipDialog(mContext);
                         mCreateNewChannelTipDialog.setCallback(new CreateNewChannelTipDialog.Callback() {
                             @Override
@@ -866,7 +872,6 @@ public class CreateLuckyPacketPopupWindow {
                                     DecimalFormat df = new DecimalFormat("0.00######");
                                     canSend = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() / 1000)) / 100000000);
                                 }
-                                mCanSendTv.setText(canSend);
                                 if (resp.getRemoteBalance().getMsat() == 0) {
                                     DecimalFormat df = new DecimalFormat("0.00");
                                     canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
@@ -874,7 +879,6 @@ public class CreateLuckyPacketPopupWindow {
                                     DecimalFormat df = new DecimalFormat("0.00######");
                                     canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
                                 }
-                                mCanReceiveTv.setText(canReceive);
                                 if (resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat() == 0) {
                                     DecimalFormat df = new DecimalFormat("0.00");
                                     assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() / 1000 + resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
@@ -883,6 +887,13 @@ public class CreateLuckyPacketPopupWindow {
                                     assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() / 1000 + resp.getRemoteBalance().getMsat() / 1000)) / 100000000);
                                 }
                                 assetMaxTv.setText(assetBalanceMax);
+                                DecimalFormat df = new DecimalFormat("0.00######");
+                                channelReserveTv.setText(df.format(Double.parseDouble(assetBalanceMax) * 0.01) + " = " + assetBalanceMax + "*1%");
+                                channelCapacityLocalTv.setText(canSend);
+                                channelCapacityRemoteTv.setText(canReceive);
+                                canUseSend = df.format(Double.parseDouble(canSend) - (Double.parseDouble(assetBalanceMax) * 0.01));
+                                mCanSendTv.setText(canUseSend);
+                                mCanReceiveTv.setText(df.format(Double.parseDouble(canReceive) - (Double.parseDouble(assetBalanceMax) * 0.01)));
                             } else {
                                 if (resp.getLocalBalance().getMsat() == 0) {
                                     DecimalFormat df = new DecimalFormat("0.00");
@@ -891,7 +902,6 @@ public class CreateLuckyPacketPopupWindow {
                                     DecimalFormat df = new DecimalFormat("0.00######");
                                     canSend = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat())) / 100000000);
                                 }
-                                mCanSendTv.setText(canSend);
                                 if (resp.getRemoteBalance().getMsat() == 0) {
                                     DecimalFormat df = new DecimalFormat("0.00");
                                     canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
@@ -899,7 +909,6 @@ public class CreateLuckyPacketPopupWindow {
                                     DecimalFormat df = new DecimalFormat("0.00######");
                                     canReceive = df.format(Double.parseDouble(String.valueOf(resp.getRemoteBalance().getMsat())) / 100000000);
                                 }
-                                mCanReceiveTv.setText(canReceive);
                                 if (resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat() == 0) {
                                     DecimalFormat df = new DecimalFormat("0.00");
                                     assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat())) / 100000000);
@@ -908,6 +917,13 @@ public class CreateLuckyPacketPopupWindow {
                                     assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getLocalBalance().getMsat() + resp.getRemoteBalance().getMsat())) / 100000000);
                                 }
                                 assetMaxTv.setText(assetBalanceMax);
+                                DecimalFormat df = new DecimalFormat("0.00######");
+                                channelReserveTv.setText(df.format(Double.parseDouble(assetBalanceMax) * 0.01) + " = " + assetBalanceMax + "*1%");
+                                channelCapacityLocalTv.setText(canSend);
+                                channelCapacityRemoteTv.setText(canReceive);
+                                canUseSend = df.format(Double.parseDouble(canSend) - (Double.parseDouble(assetBalanceMax) * 0.01));
+                                mCanSendTv.setText(canUseSend);
+                                mCanReceiveTv.setText(df.format(Double.parseDouble(canReceive) - (Double.parseDouble(assetBalanceMax) * 0.01)));
                             }
                             /**
                              * @描述： 设置进度条

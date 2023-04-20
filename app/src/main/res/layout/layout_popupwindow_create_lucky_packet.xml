@@ -57,8 +57,9 @@
             <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/main_15"
-                android:layout_weight="10000">
+                android:layout_marginTop="@dimen/main_10"
+                android:layout_weight="10000"
+                android:scrollbars="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -76,8 +77,8 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/main_9"
-                            android:layout_marginTop="@dimen/main_7"
+                            android:layout_marginLeft="@dimen/main_4"
+                            android:layout_marginTop="@dimen/main_3"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
@@ -99,9 +100,8 @@
                             android:id="@+id/tv_address"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingBottom="@dimen/main_15"
-                            android:layout_marginLeft="@dimen/main_45"
-                            android:paddingTop="@dimen/main_5"
+                            android:paddingBottom="@dimen/main_5"
+                            android:layout_marginLeft="@dimen/main_40"
                             android:text="Wish you good health"
                             android:textColor="@color/color_black"
                             android:textSize="@dimen/text_16"
@@ -111,7 +111,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/main_0.2"
-                        android:layout_marginTop="@dimen/main_10"
+                        android:layout_marginTop="@dimen/main_9"
                         android:background="@color/color_black"/>
 
                     <RelativeLayout
@@ -119,7 +119,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_20"
                         android:layout_marginRight="@dimen/main_20"
-                        android:layout_marginTop="@dimen/main_5">
+                        android:layout_marginTop="@dimen/main_7">
 
                         <TextView
                             android:layout_marginTop="@dimen/main_10"
@@ -205,6 +205,85 @@
                                 </LinearLayout>
                             </LinearLayout>
                         </RelativeLayout>
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_20"
+                        android:layout_marginRight="@dimen/main_20"
+                        android:layout_marginTop="@dimen/main_10"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/channel_reserve"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_14"/>
+
+                        <TextView
+                            android:id="@+id/tv_channel_reserve"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1000"
+                            android:gravity="right"
+                            android:text="0"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_14"/>
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_20"
+                        android:layout_marginRight="@dimen/main_20"
+                        android:layout_marginTop="@dimen/main_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/local"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_14"/>
+
+                        <TextView
+                            android:id="@+id/tv_channel_capatity_local"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:text="0"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_14"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_20"
+                        android:layout_marginRight="@dimen/main_20"
+                        android:layout_marginTop="@dimen/main_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/remote"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_14"/>
+
+                        <TextView
+                            android:id="@+id/tv_channel_capatity_remote"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:text="0"
+                            android:textColor="@color/color_99_transparent"
+                            android:textSize="@dimen/text_14"/>
                     </RelativeLayout>
 
                     <LinearLayout
@@ -376,7 +455,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_20"
                         android:layout_marginRight="@dimen/main_20"
-                        android:layout_marginTop="@dimen/main_20">
+                        android:layout_marginTop="@dimen/main_10">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -407,7 +486,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/main_20"
                         android:layout_marginRight="@dimen/main_20"
-                        android:layout_marginTop="@dimen/main_15">
+                        android:layout_marginTop="@dimen/main_10">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
