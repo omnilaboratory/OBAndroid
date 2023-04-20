@@ -21,6 +21,8 @@ import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
+import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
@@ -69,6 +71,7 @@ public class PayInvoiceDialog {
     LoadingDialog mLoadingDialog;
     private List<InvoiceEntity> list;
     private List<InvoiceEntity> btcList;
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public PayInvoiceDialog(Context context) {
         this.mContext = context;
@@ -430,10 +433,14 @@ public class PayInvoiceDialog {
         TextView amountPayTv = mAlertDialog.findViewById(R.id.tv_amount_pay);
         TextView amountPayExchangeTv = mAlertDialog.findViewById(R.id.tv_amount_pay_exchange);
         TextView amountPayFeeTv = mAlertDialog.findViewById(R.id.tv_amount_pay_fee);
-        if (mAssetId == 0) {
-            amountLogoTv.setImageResource(R.mipmap.icon_btc_logo_small);
-        } else {
-            amountLogoTv.setImageResource(R.mipmap.icon_usdt_logo_small);
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), amountLogoTv);
+            }
         }
         fromNodeAddress1Tv.setText(StringUtils.encodePubkey(mAddress));
         toNodeAddress1Tv.setText(StringUtils.encodePubkey(toNodeAddress));
@@ -746,10 +753,14 @@ public class PayInvoiceDialog {
         TextView amountPay1Tv = mAlertDialog.findViewById(R.id.tv_amount_pay_1);
         TextView amountPayExchange1Tv = mAlertDialog.findViewById(R.id.tv_amount_pay_exchange_1);
         TextView amountPayFee1Tv = mAlertDialog.findViewById(R.id.tv_amount_pay_fee_1);
-        if (mAssetId == 0) {
-            amountLogo1Tv.setImageResource(R.mipmap.icon_btc_logo_small);
-        } else {
-            amountLogo1Tv.setImageResource(R.mipmap.icon_usdt_logo_small);
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), amountLogo1Tv);
+            }
         }
         fromNodeAddress2Tv.setText(StringUtils.encodePubkey(mAddress));
         toNodeAddress2Tv.setText(StringUtils.encodePubkey(toNodeAddress));
@@ -781,14 +792,16 @@ public class PayInvoiceDialog {
         TextView payTimeTv = mAlertDialog.findViewById(R.id.tv_pay_time);
         TextView payTimeUnitTv = mAlertDialog.findViewById(R.id.tv_pay_time_unit);
         TextView failedMessageTv = mAlertDialog.findViewById(R.id.tv_failed_message);
-        if (mAssetId == 0) {
-            amountLogo2Tv.setImageResource(R.mipmap.icon_btc_logo_small);
-            amountUnitTv.setText("BTC");
-            amountUnit1Tv.setText("BTC");
-        } else {
-            amountLogo2Tv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            amountUnitTv.setText("dollar");
-            amountUnit1Tv.setText("dollar");
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), amountLogo2Tv);
+                amountUnitTv.setText(entity.getName());
+                amountUnit1Tv.setText(entity.getName());
+            }
         }
         toNodeAddress3Tv.setText(toNodeAddress);
         DecimalFormat df = new DecimalFormat("0.00######");

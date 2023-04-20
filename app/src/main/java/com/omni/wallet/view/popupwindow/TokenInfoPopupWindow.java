@@ -10,14 +10,21 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.entity.AssetEntity;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CopyUtil;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -34,6 +41,7 @@ public class TokenInfoPopupWindow {
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public TokenInfoPopupWindow(Context context) {
         this.mContext = context;
@@ -57,12 +65,15 @@ public class TokenInfoPopupWindow {
             TextView dateTv = rootView.findViewById(R.id.tv_token_date);
             TextView tokenUrlTv = rootView.findViewById(R.id.tv_token_url);
             TextView divisibleTv = rootView.findViewById(R.id.tv_token_divisible);
-            if (assetId == 0) {
-                tokenLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
-                tokenTypeTv.setText("BTC");
-            } else {
-                tokenLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-                tokenTypeTv.setText("dollar");
+            mAssetData.clear();
+            Gson gson = new Gson();
+            mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+            }.getType());
+            for (AssetEntity entity : mAssetData) {
+                if (Long.parseLong(entity.getAssetId()) == assetId) {
+                    ImageUtils.showImage(mContext, entity.getImgUrl(), tokenLogoIv);
+                    tokenTypeTv.setText(entity.getName());
+                }
             }
             tokenIdTv.setText(assetId + "");
 

@@ -7,12 +7,18 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.StringUtils;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.framelibrary.entity.User;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import lnrpc.LightningOuterClass;
 
@@ -27,12 +33,13 @@ public class TransactionsDetailsChainPopupWindow {
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public TransactionsDetailsChainPopupWindow(Context context) {
         this.mContext = context;
     }
 
-    public void show(final View view, LightningOuterClass.Transaction item) {
+    public void show(final View view, LightningOuterClass.Transaction item, long assetId) {
         if (mBasePopWindow == null) {
             mBasePopWindow = new BasePopWindow(mContext);
             View rootView = mBasePopWindow.setContentView(R.layout.layout_popupwindow_transactions_details);
@@ -99,9 +106,17 @@ public class TransactionsDetailsChainPopupWindow {
                 toAddressTv.setText(User.getInstance().getWalletAddress(mContext));
             }
             txIdTv.setText(item.getTxHash());
-            assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            assetTypeTv.setText("BTC");
-            amountTypeTv.setText("BTC");
+            mAssetData.clear();
+            Gson gson = new Gson();
+            mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+            }.getType());
+            for (AssetEntity entity : mAssetData) {
+                if (Long.parseLong(entity.getAssetId()) == assetId) {
+                    ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeIv);
+                    assetTypeTv.setText(entity.getName());
+                    amountTypeTv.setText(entity.getName());
+                }
+            }
             feeTv.setText(item.getTotalFees() + "");
             feeTypeTv.setText("satoshis");
 

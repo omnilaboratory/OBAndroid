@@ -34,6 +34,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_FROM_PUBKEY = "fromPubKeyKey";// Save the key of the pubKey of its own node(自身节点pubkey的Key)
     private static final String KEY_BALANCE_AMOUNT = "balanceAmountKey";// Save the key of the balance amount(账户余额的Key)
     private static final String KEY_NEW_PASS_MD5_STRING = "newPassMd5Key";
+    private static final String KEY_ASSET_LIST_STRING = "assetListStringkey";
 
 
     private static final String INIT_WALLET_TYPE = "initWalletType";
@@ -522,5 +523,23 @@ public class PreferencesUtils extends BasePreferencesUtils {
 
     public static boolean getNeutrinoDbChecked(Context context) {
         return getBoolean(SETTINGS,context,KEY_NEUTRINO_DB_CHECKED);
+    }
+
+    /**
+     * getAssetListStringFromLocal
+     *
+     * 获取本地保存的资产列表
+     */
+    public static String getAssetListStringFromLocal(Context context) {
+        return getString(SETTINGS, context, KEY_ASSET_LIST_STRING);
+    }
+
+    /**
+     * saveAssetListStringToLocal
+     *
+     * 资产列表本地化
+     */
+    public static void saveAssetListStringToLocal(Context context, String value) {
+        putString(SETTINGS, context, KEY_ASSET_LIST_STRING, value);
     }
 }

@@ -22,8 +22,11 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.event.CloseChannelEvent;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelListItem;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UtilFunctions;
@@ -85,6 +88,7 @@ public class ChannelDetailsPopupWindow {
 
     private String mChannelPoint;
     private List<String> txidList;
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public ChannelDetailsPopupWindow(Context context) {
         this.mContext = context;
@@ -184,11 +188,21 @@ public class ChannelDetailsPopupWindow {
         LightningOuterClass.Channel channel = LightningOuterClass.Channel.parseFrom(channelString);
         mRemoteName.setText(Wallet.getInstance().getNodeAliasFromPubKey(channel.getRemotePubkey(), mContext));
         mRemotePubkey.setText(channel.getRemotePubkey());
+        int assetId = channel.getAssetId();
+        long mAssetId = assetId & 0xffffffffL;
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), mAssetLogo);
+                mAssetUnit.setText(entity.getName());
+                mLocalBalanceUnit.setText(entity.getName());
+                mRemoteBalanceUnit.setText(entity.getName());
+            }
+        }
         if (channel.getAssetId() == 0) {
-            mAssetLogo.setImageResource(R.mipmap.icon_btc_logo_small);
-            mAssetUnit.setText("BTC");
-            mLocalBalanceUnit.setText("BTC");
-            mRemoteBalanceUnit.setText("BTC");
             long availableCapacity = channel.getBtcCapacity() - channel.getCommitFee();
             setBalances(channel.getLocalBalance(), channel.getRemoteBalance(), availableCapacity);
             // activity
@@ -199,10 +213,6 @@ public class ChannelDetailsPopupWindow {
             // remote reserve amount
             mTotalReceived.setText(channel.getRemoteConstraints().getChanReserveSat() + " sat");
         } else {
-            mAssetLogo.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetUnit.setText("dollar");
-            mLocalBalanceUnit.setText("dollar");
-            mRemoteBalanceUnit.setText("dollar");
             long availableCapacity = channel.getAssetCapacity() - channel.getCommitFee();
             setBalances(channel.getLocalAssetBalance(), channel.getRemoteAssetBalance(), availableCapacity);
             // activity
@@ -289,16 +299,18 @@ public class ChannelDetailsPopupWindow {
     private void setBasicInformation(@NonNull int assetId, @NonNull String remoteNodePublicKey, @NonNull String remotePubKey, @NonNull String channelPoint) {
         mRemoteName.setText(Wallet.getInstance().getNodeAliasFromPubKey(remoteNodePublicKey, mContext));
         mRemotePubkey.setText(remotePubKey);
-        if (assetId == 0) {
-            mAssetLogo.setImageResource(R.mipmap.icon_btc_logo_small);
-            mAssetUnit.setText("BTC");
-            mLocalBalanceUnit.setText("BTC");
-            mRemoteBalanceUnit.setText("BTC");
-        } else {
-            mAssetLogo.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetUnit.setText("dollar");
-            mLocalBalanceUnit.setText("dollar");
-            mRemoteBalanceUnit.setText("dollar");
+        long mAssetId = assetId & 0xffffffffL;
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), mAssetLogo);
+                mAssetUnit.setText(entity.getName());
+                mLocalBalanceUnit.setText(entity.getName());
+                mRemoteBalanceUnit.setText(entity.getName());
+            }
         }
         mFundingTransaction.setText(channelPoint.substring(0, channelPoint.indexOf(':')));
     }

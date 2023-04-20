@@ -9,11 +9,18 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
+import com.omni.wallet.entity.AssetEntity;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.OnSingleClickListener;
 import com.omni.wallet.utils.Wallet;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChannelViewHolder extends RecyclerView.ViewHolder {
 
@@ -28,6 +35,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
     private TextView mRemoteBalance;
     private ProgressBar mProgressBar;
     private ChannelSelectListener mChannelSelectListener;
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     ChannelViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -50,12 +58,16 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setLogo(int assetId) {
-        if (assetId == 0) {
-            mAssetLogo.setImageResource(R.mipmap.icon_btc_logo_small);
-            mAssetUnit.setText("BTC");
-        } else {
-            mAssetLogo.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetUnit.setText("dollar");
+        long mAssetId = assetId & 0xffffffffL;
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), mAssetLogo);
+                mAssetUnit.setText(entity.getName());
+            }
         }
     }
 

@@ -106,6 +106,8 @@ public class User {
 
     private boolean neutrinoDbChecked;
 
+    private String assetListString;
+
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
         return token;
@@ -530,6 +532,16 @@ public class User {
     public void setNeutrinoDbChecked(Context context, boolean neutrinoDbChecked) {
         PreferencesUtils.saveNeutrinoDbChecked(context, neutrinoDbChecked);
         this.neutrinoDbChecked = neutrinoDbChecked;
+    }
+
+    public String getAssetListString(Context context) {
+        assetListString = PreferencesUtils.getAssetListStringFromLocal(context);
+        return assetListString;
+    }
+
+    public void setAssetListString(Context context, String assetListString) {
+        PreferencesUtils.saveAssetListStringToLocal(context, assetListString);
+        this.assetListString = assetListString;
     }
 
     /**

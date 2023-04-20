@@ -31,6 +31,7 @@ import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
@@ -223,12 +224,16 @@ public class BalanceDetailActivity extends AppBaseActivity {
     public static final String KEY_BALANCE_ACCOUNT = "balanceAccountKey";
     public static final String KEY_ASSET_ID = "assetIdKey";
     public static final String KEY_NETWORK = "networkKey";
+    public static final String KEY_NAME = "nameKey";
+    public static final String KEY_IMAGE_URL = "imgUrlKey";
     long balanceAmount;
     long balanceAccount;
     long assetId;
     String walletAddress;
     String network;
     private String pubkey;
+    private String name;
+    private String imgUrl;
     private List<String> txidList;
     String filterTime;
 
@@ -255,6 +260,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
         assetId = bundle.getLong(KEY_ASSET_ID);
         network = bundle.getString(KEY_NETWORK);
         pubkey = bundle.getString(KEY_PUBKEY);
+        name = bundle.getString(KEY_NAME);
+        imgUrl = bundle.getString(KEY_IMAGE_URL);
     }
 
     @Override
@@ -276,19 +283,11 @@ public class BalanceDetailActivity extends AppBaseActivity {
     protected void initView() {
         if (network.equals("lightning")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_vector);
-            if (assetId == 0) {
-                mNetworkTypeTv.setText("BTC lightning network");
-                mNetworkTv.setText("BTC lightning network");
-                mNetwork1Tv.setText("BTC lightning network");
-                mNetwork2Tv.setText("BTC lightning network");
-                mNetwork3Tv.setText("BTC lightning network");
-            } else {
-                mNetworkTypeTv.setText("dollar lightning network");
-                mNetworkTv.setText("dollar lightning network");
-                mNetwork1Tv.setText("dollar lightning network");
-                mNetwork2Tv.setText("dollar lightning network");
-                mNetwork3Tv.setText("dollar lightning network");
-            }
+            mNetworkTypeTv.setText(name + " lightning network");
+            mNetworkTv.setText(name + " lightning network");
+            mNetwork1Tv.setText(name + " lightning network");
+            mNetwork2Tv.setText(name + " lightning network");
+            mNetwork3Tv.setText(name + " lightning network");
             mLightningNetworkLayout.setVisibility(View.VISIBLE);
             mLinkNetworkLayout.setVisibility(View.GONE);
             mChannelActivitiesTv.setText(R.string.channel_activities);
@@ -301,46 +300,24 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mRootMyInvoicesLayout.setVisibility(View.VISIBLE);
         } else if (network.equals("link")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_link_black);
-            if (assetId == 0) {
-                if (User.getInstance().getNetwork(mContext).equals("testnet")) {
-                    mNetworkTypeTv.setText("BTC Testnet");
-                    mNetworkTv.setText("BTC Testnet");
-                    mNetwork1Tv.setText("BTC Testnet");
-                    mNetwork2Tv.setText("BTC Testnet");
-                    mNetwork3Tv.setText("BTC Testnet");
-                } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
-                    mNetworkTypeTv.setText("BTC Regtest");
-                    mNetworkTv.setText("BTC Regtest");
-                    mNetwork1Tv.setText("BTC Regtest");
-                    mNetwork2Tv.setText("BTC Regtest");
-                    mNetwork3Tv.setText("BTC Regtest");
-                } else { //mainnet
-                    mNetworkTypeTv.setText("BTC Mainnet");
-                    mNetworkTv.setText("BTC Mainnet");
-                    mNetwork1Tv.setText("BTC Mainnet");
-                    mNetwork2Tv.setText("BTC Mainnet");
-                    mNetwork3Tv.setText("BTC Mainnet");
-                }
-            } else {
-                if (User.getInstance().getNetwork(mContext).equals("testnet")) {
-                    mNetworkTypeTv.setText("Omnilayer Testnet");
-                    mNetworkTv.setText("Omnilayer Testnet");
-                    mNetwork1Tv.setText("Omnilayer Testnet");
-                    mNetwork2Tv.setText("Omnilayer Testnet");
-                    mNetwork3Tv.setText("Omnilayer Testnet");
-                } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
-                    mNetworkTypeTv.setText("Omnilayer Regtest");
-                    mNetworkTv.setText("Omnilayer Regtest");
-                    mNetwork1Tv.setText("Omnilayer Regtest");
-                    mNetwork2Tv.setText("Omnilayer Regtest");
-                    mNetwork3Tv.setText("Omnilayer Regtest");
-                } else { //mainnet
-                    mNetworkTypeTv.setText("Omnilayer Mainnet");
-                    mNetworkTv.setText("Omnilayer Mainnet");
-                    mNetwork1Tv.setText("Omnilayer Mainnet");
-                    mNetwork2Tv.setText("Omnilayer Mainnet");
-                    mNetwork3Tv.setText("Omnilayer Mainnet");
-                }
+            if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+                mNetworkTypeTv.setText(name + " Testnet");
+                mNetworkTv.setText(name + " Testnet");
+                mNetwork1Tv.setText(name + " Testnet");
+                mNetwork2Tv.setText(name + " Testnet");
+                mNetwork3Tv.setText(name + " Testnet");
+            } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+                mNetworkTypeTv.setText(name + " Regtest");
+                mNetworkTv.setText(name + " Regtest");
+                mNetwork1Tv.setText(name + " Regtest");
+                mNetwork2Tv.setText(name + " Regtest");
+                mNetwork3Tv.setText(name + " Regtest");
+            } else { //mainnet
+                mNetworkTypeTv.setText(name + " Mainnet");
+                mNetworkTv.setText(name + " Mainnet");
+                mNetwork1Tv.setText(name + " Mainnet");
+                mNetwork2Tv.setText(name + " Mainnet");
+                mNetwork3Tv.setText(name + " Mainnet");
             }
             mLightningNetworkLayout.setVisibility(View.GONE);
             mLinkNetworkLayout.setVisibility(View.VISIBLE);
@@ -353,23 +330,16 @@ public class BalanceDetailActivity extends AppBaseActivity {
             mLineView.setVisibility(View.GONE);
             mRootMyInvoicesLayout.setVisibility(View.GONE);
         }
+        ImageUtils.showImage(mContext, imgUrl, mAssetLogoIv);
+        ImageUtils.showImage(mContext, imgUrl, mAssetLogo1Iv);
+        mAssetNameTv.setText(name);
+        mBalanceUnitTv.setText(name);
+        mBalanceUnit1Tv.setText(name);
+        mBalanceUnit2Tv.setText(name);
+        mBalanceUnit3Tv.setText(name);
         if (assetId == 0) {
-            mAssetLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            mAssetLogo1Iv.setImageResource(R.mipmap.icon_btc_logo_small);
-            mAssetNameTv.setText("BTC");
-            mBalanceUnitTv.setText("BTC");
-            mBalanceUnit1Tv.setText("BTC");
-            mBalanceUnit2Tv.setText("BTC");
-            mBalanceUnit3Tv.setText("BTC");
             mTokenInfoTv.setVisibility(View.GONE);
         } else {
-            mAssetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetLogo1Iv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            mAssetNameTv.setText("dollar");
-            mBalanceUnitTv.setText("dollar");
-            mBalanceUnit1Tv.setText("dollar");
-            mBalanceUnit2Tv.setText("dollar");
-            mBalanceUnit3Tv.setText("dollar");
             mTokenInfoTv.setVisibility(View.VISIBLE);
         }
         if (balanceAmount == 0) {
@@ -1112,7 +1082,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 @Override
                 public void onClickItem(LightningOuterClass.Transaction item) {
                     mTransactionsDetailsChainPopupWindow = new TransactionsDetailsChainPopupWindow(mContext);
-                    mTransactionsDetailsChainPopupWindow.show(mParentLayout, item);
+                    mTransactionsDetailsChainPopupWindow.show(mParentLayout, item, assetId);
                 }
             });
         }
@@ -1150,7 +1120,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 @Override
                 public void onClickItem(LightningOuterClass.AssetTx item) {
                     mTransactionsDetailsAssetPopupWindow = new TransactionsDetailsAssetPopupWindow(mContext);
-                    mTransactionsDetailsAssetPopupWindow.show(mParentLayout, item);
+                    mTransactionsDetailsAssetPopupWindow.show(mParentLayout, item, assetId);
                 }
             });
         }
@@ -1692,11 +1662,8 @@ public class BalanceDetailActivity extends AppBaseActivity {
         bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
         bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
         bundle.putString(ChannelsActivity.KEY_PUBKEY, pubkey);
-        if (assetId == 0) {
-            bundle.putString(ChannelsActivity.KEY_CHANNEL, "btc");
-        } else {
-            bundle.putString(ChannelsActivity.KEY_CHANNEL, "asset");
-        }
+        bundle.putString(ChannelsActivity.KEY_CHANNEL, "asset");
+        bundle.putLong(ChannelsActivity.KEY_ASSET_ID, assetId);
         switchActivity(ChannelsActivity.class, bundle);
     }
 

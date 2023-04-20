@@ -30,10 +30,12 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.utils.image.BitmapUtils;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.client.LuckPkClient;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
@@ -113,6 +115,7 @@ public class CreateLuckyPacketPopupWindow {
     private List<InvoiceEntity> list;
     private List<InvoiceEntity> btcList;
     private static final int PAYMENT_HASH_BYTE_LENGTH = 32;
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public CreateLuckyPacketPopupWindow(Context context) {
         this.mContext = context;
@@ -202,14 +205,16 @@ public class CreateLuckyPacketPopupWindow {
         amountTimeEdit.addTextChangedListener(new DecimalInputTextWatcher());
         EditText numberEdit = rootView.findViewById(R.id.edit_number);
         numberEdit.addTextChangedListener(new DecimalInputTextWatcher());
-        if (mAssetId == 0) {
-            assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            assetTypeTv.setText("BTC");
-            amountUnitTv.setText("BTC");
-        } else {
-            assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeTv.setText("dollar");
-            amountUnitTv.setText("dollar");
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeIv);
+                assetTypeTv.setText(entity.getName());
+                amountUnitTv.setText(entity.getName());
+            }
         }
         getChannelBalance(mAssetId);
         RelativeLayout selectAssetLayout = rootView.findViewById(R.id.layout_select_asset);
@@ -220,16 +225,17 @@ public class CreateLuckyPacketPopupWindow {
                 mSelectChannelBalancePopupWindow.setOnItemClickCallback(new SelectChannelBalancePopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
-                        if (item.getPropertyid() == 0) {
-                            assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
-                            assetTypeTv.setText("BTC");
-                            amountUnitTv.setText("BTC");
-                            amountEdit.setText("0");
-                        } else {
-                            assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-                            assetTypeTv.setText("dollar");
-                            amountUnitTv.setText("dollar");
-                            amountEdit.setText("0");
+                        mAssetData.clear();
+                        Gson gson = new Gson();
+                        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+                        }.getType());
+                        for (AssetEntity entity : mAssetData) {
+                            if (Long.parseLong(entity.getAssetId()) == item.getPropertyid()) {
+                                ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeIv);
+                                assetTypeTv.setText(entity.getName());
+                                amountUnitTv.setText(entity.getName());
+                                amountEdit.setText("0");
+                            }
                         }
                         mAssetId = item.getPropertyid();
                         getChannelBalance(mAssetId);
@@ -723,14 +729,16 @@ public class CreateLuckyPacketPopupWindow {
         ImageView qrCodeIv = rootView.findViewById(R.id.iv_success_qrcode);
         TextView paymentSuccessTv = rootView.findViewById(R.id.tv_success_payment);
         ImageView copyIv = rootView.findViewById(R.id.iv_success_copy);
-        if (mAssetId == 0) {
-            assetTypeSuccessIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            assetTypeSuccessTv.setText("BTC");
-            amountUnitSuccessTv.setText("BTC");
-        } else {
-            assetTypeSuccessIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeSuccessTv.setText("dollar");
-            amountUnitSuccessTv.setText("dollar");
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeSuccessIv);
+                assetTypeSuccessTv.setText(entity.getName());
+                amountUnitSuccessTv.setText(entity.getName());
+            }
         }
         amountSuccessTv.setText(amountInput);
         numberSuccessTv.setText(numberInput);

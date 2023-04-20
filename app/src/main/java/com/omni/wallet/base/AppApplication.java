@@ -24,7 +24,6 @@ import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.framelibrary.http.HttpRequestUtils;
 
 import org.conscrypt.Conscrypt;
 import org.greenrobot.eventbus.EventBus;
@@ -119,18 +118,18 @@ public class AppApplication extends BaseApplication {
                 .setReadTimeout(30000)
                 .setDatabaseEnabled(true)
                 .build();
-        PRDownloader.initialize(mContext,config);
+        PRDownloader.initialize(mContext, config);
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 String btcPrice = User.getInstance().getBtcPrice(mContext);
-                if(btcPrice==null){
-                    User.getInstance().setBtcPrice(mContext,"16000");
-                    User.getInstance().setBtcPriceChange(mContext,"0");
+                if (btcPrice == null) {
+                    User.getInstance().setBtcPrice(mContext, "16000");
+                    User.getInstance().setBtcPriceChange(mContext, "0");
                 }
                 String usdtPrice = User.getInstance().getUsdtPrice(mContext);
-                if(usdtPrice==null){
-                    User.getInstance().setUsdtPrice(mContext,"1");
+                if (usdtPrice == null) {
+                    User.getInstance().setUsdtPrice(mContext, "1");
                 }
                 getBtcPrice();
                 // 在此处添加执行的代码
@@ -151,18 +150,18 @@ public class AppApplication extends BaseApplication {
             }
         };
         balanceHandler.postDelayed(balanceRunnable, 0);// 打开定时器立即执行
+        getAssetList();
     }
 
-    public void getTotalBlock(){
-        String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
-        HttpUtils httpRequestUtils = HttpUtils.with(mContext);
-        if(ConstantInOB.networkType.equals(NetworkType.MAIN)){
-            httpRequestUtils.get();
-        }else {
-            httpRequestUtils.postString().addContent(jsonStr);
-        }
-        httpRequestUtils.url(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getGetBlockHeightUrl());
-        httpRequestUtils.execute(new EngineCallback() {
+    /**
+     * get asset list
+     * 获取资产列表数据
+     */
+    private void getAssetList() {
+        HttpUtils.with(mContext)
+                .get()
+                .url("https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/assetList.json")
+                .execute(new EngineCallback() {
                     @Override
                     public void onPreExecute(Context context, Map<String, Object> params) {
 
@@ -175,23 +174,23 @@ public class AppApplication extends BaseApplication {
 
                     @Override
                     public void onError(Context context, String errorCode, String errorMsg) {
-                        Log.d(TAG, "getTotalBlock onError: " + errorMsg);
+                        LogUtils.e(TAG, "getAssetListError:" + errorMsg);
                     }
 
                     @Override
                     public void onSuccess(Context context, String result) {
+                        LogUtils.e(TAG, "---------------getAssetList---------------------" + result.toString());
                         try {
-                            if(ConstantInOB.networkType.equals(NetworkType.MAIN)){
-                                JSONObject jsonObject = new JSONObject(result);
-                                String block = jsonObject.getString("height");
-                                Log.e(TAG,"Total block:"+block);
-                                User.getInstance().setTotalBlock(mContext,Long.parseLong(block));
-                            }else {
-                                JSONObject jsonObject = new JSONObject(result);
-                                JSONObject jsonObject1 = new JSONObject(jsonObject.getString("result"));
-                                String block = jsonObject1.getString("block");
-                                Log.e(TAG,"Total block:"+block);
-                                User.getInstance().setTotalBlock(mContext,Long.parseLong(block));
+                            JSONObject jsonObject = new JSONObject(result);
+                            if (ConstantInOB.networkType == NetworkType.TEST) {
+                                LogUtils.e(TAG, "---------------testnet---------------------");
+                                User.getInstance().setAssetListString(mContext, jsonObject.getString("testnet"));
+                            } else if (ConstantInOB.networkType == NetworkType.REG) {
+                                LogUtils.e(TAG, "---------------regtest---------------------");
+                                User.getInstance().setAssetListString(mContext, jsonObject.getString("regtest"));
+                            } else if (ConstantInOB.networkType == NetworkType.MAIN) {
+                                LogUtils.e(TAG, "---------------mainnet---------------------");
+                                User.getInstance().setAssetListString(mContext, jsonObject.getString("mainnet"));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -215,6 +214,68 @@ public class AppApplication extends BaseApplication {
                 });
     }
 
+    public void getTotalBlock() {
+        String jsonStr = "{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", \"method\": \"omni_getinfo\", \"params\": []}";
+        HttpUtils httpRequestUtils = HttpUtils.with(mContext);
+        if (ConstantInOB.networkType.equals(NetworkType.MAIN)) {
+            httpRequestUtils.get();
+        } else {
+            httpRequestUtils.postString().addContent(jsonStr);
+        }
+        httpRequestUtils.url(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getGetBlockHeightUrl());
+        httpRequestUtils.execute(new EngineCallback() {
+            @Override
+            public void onPreExecute(Context context, Map<String, Object> params) {
+
+            }
+
+            @Override
+            public void onCancel(Context context) {
+
+            }
+
+            @Override
+            public void onError(Context context, String errorCode, String errorMsg) {
+                Log.d(TAG, "getTotalBlock onError: " + errorMsg);
+            }
+
+            @Override
+            public void onSuccess(Context context, String result) {
+                try {
+                    if (ConstantInOB.networkType.equals(NetworkType.MAIN)) {
+                        JSONObject jsonObject = new JSONObject(result);
+                        String block = jsonObject.getString("height");
+                        Log.e(TAG, "Total block:" + block);
+                        User.getInstance().setTotalBlock(mContext, Long.parseLong(block));
+                    } else {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONObject jsonObject1 = new JSONObject(jsonObject.getString("result"));
+                        String block = jsonObject1.getString("block");
+                        Log.e(TAG, "Total block:" + block);
+                        User.getInstance().setTotalBlock(mContext, Long.parseLong(block));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onSuccess(Context context, byte[] result) {
+
+            }
+
+            @Override
+            public void onProgressInThread(Context context, Progress progress) {
+
+            }
+
+            @Override
+            public void onFileSuccess(Context context, String filePath) {
+
+            }
+        });
+    }
+
     /**
      * Get BTC price related information
      * 获取btc价格相关信息
@@ -235,8 +296,8 @@ public class AppApplication extends BaseApplication {
                     }
 
                     @Override
-                    public void onError(Context context, String errorCode, String errorMsg)  {
-                        Log.e(TAG,"getBTCPriceError:"+ errorMsg);
+                    public void onError(Context context, String errorCode, String errorMsg) {
+                        Log.e(TAG, "getBTCPriceError:" + errorMsg);
                         /*try {
                             BTCData btcData = new BTCData(mContext);
                             if(btcData.checkDataIsEmpty()){
@@ -256,8 +317,8 @@ public class AppApplication extends BaseApplication {
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
                             String btcPrice = jsonObject.getString("current_price");
                             String priceChange24h = jsonObject.getString("price_change_percentage_24h");
-                            User.getInstance().setBtcPrice(mContext,btcPrice);
-                            User.getInstance().setBtcPriceChange(mContext,priceChange24h);
+                            User.getInstance().setBtcPrice(mContext, btcPrice);
+                            User.getInstance().setBtcPriceChange(mContext, priceChange24h);
                             /*BTCData btcData = new BTCData(mContext);
                             if(btcData.checkDataIsEmpty()){
                                 btcData.insert(0,Double.parseDouble(btcPrice));
@@ -309,7 +370,7 @@ public class AppApplication extends BaseApplication {
 
                     @Override
                     public void onError(Context context, String errorCode, String errorMsg) {
-                        Log.e(TAG,"getUsdtPriceError:"+ errorMsg);
+                        Log.e(TAG, "getUsdtPriceError:" + errorMsg);
                         /*try {
                             DollarData dollarData = new DollarData(mContext);
                             if(dollarData.checkDataIsEmpty()){
@@ -327,7 +388,7 @@ public class AppApplication extends BaseApplication {
                             JSONArray jsonArray = new JSONArray(result);
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
                             String usdtPrice = jsonObject.getString("current_price");
-                            User.getInstance().setUsdtPrice(mContext,usdtPrice);
+                            User.getInstance().setUsdtPrice(mContext, usdtPrice);
                             /*DollarData dollarData = new DollarData(mContext);
                             if(dollarData.checkDataIsEmpty()){
                                 dollarData.insert(0,Double.parseDouble(usdtPrice));
@@ -361,8 +422,8 @@ public class AppApplication extends BaseApplication {
      * @描述： 解决放法数量超过65536
      * @desc: The number of solutions exceeds 65536
      */
-    
-    
+
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

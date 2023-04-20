@@ -29,9 +29,11 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.entity.AddressEntity;
+import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
@@ -91,6 +93,7 @@ public class SendDialog implements Wallet.ScanSendListener {
     SelectAssetPopupWindow mSelectAssetPopupWindow;
     SelectBlocksPopupWindow mSelectBlocksPopupWindow;
     SendSuccessDialog mSendSuccessDialog;
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public SendDialog(Context context) {
         this.mContext = context;
@@ -289,17 +292,18 @@ public class SendDialog implements Wallet.ScanSendListener {
         sendFeeTv = mAlertDialog.findViewById(R.id.tv_send_fee);
         TextView sendFeeUnitTv = mAlertDialog.findViewById(R.id.tv_send_fee_unit);
         sendFeeExchangeTv = mAlertDialog.findViewById(R.id.tv_send_fee_exchange);
-        if (assetId == 0) {
-            assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            assetTypeTv.setText("BTC");
-            amountTypeTv.setText("BTC");
-            sendFeeUnitTv.setText("satoshis");
-        } else {
-            assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeTv.setText("dollar");
-            amountTypeTv.setText("dollar");
-            sendFeeUnitTv.setText("satoshis");
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == assetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeIv);
+                assetTypeTv.setText(entity.getName());
+                amountTypeTv.setText(entity.getName());
+            }
         }
+        sendFeeUnitTv.setText("satoshis");
         final EditText amountInputView = mAlertDialog.findViewById(R.id.etv_send_amount);
         amountInputView.addTextChangedListener(new DecimalInputTextWatcher(DecimalInputTextWatcher.Type.decimal, 8));
         amountInputView.addTextChangedListener(new TextWatcher() {
@@ -331,16 +335,17 @@ public class SendDialog implements Wallet.ScanSendListener {
                 mSelectAssetPopupWindow.setOnItemClickCallback(new SelectAssetPopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
-                        if (item.getPropertyid() == 0) {
-                            assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
-                            assetTypeTv.setText("BTC");
-                            amountTypeTv.setText("BTC");
-                            sendFeeUnitTv.setText("satoshis");
-                        } else {
-                            assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-                            assetTypeTv.setText("dollar");
-                            amountTypeTv.setText("dollar");
-                            sendFeeUnitTv.setText("satoshis");
+                        mAssetData.clear();
+                        Gson gson = new Gson();
+                        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+                        }.getType());
+                        for (AssetEntity entity : mAssetData) {
+                            if (Long.parseLong(entity.getAssetId()) == item.getPropertyid()) {
+                                ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeIv);
+                                assetTypeTv.setText(entity.getName());
+                                amountTypeTv.setText(entity.getName());
+                                sendFeeUnitTv.setText("satoshis");
+                            }
                         }
                         assetId = item.getPropertyid();
                         if (item.getAmount() == 0) {
@@ -518,11 +523,19 @@ public class SendDialog implements Wallet.ScanSendListener {
         TextView feeUnitView = mAlertDialog.findViewById(R.id.tv_send_gas_fee_unit);
         TextView feeAmountValueView = mAlertDialog.findViewById(R.id.tv_send_gas_fee_amount_value);
         TextView sendUsedValueView = mAlertDialog.findViewById(R.id.tv_send_used_value);
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == assetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), tokenImage);
+                tokenTypeView.setText(entity.getName());
+                tokenTypeView2.setText(entity.getName());
+            }
+        }
         if (assetId == 0) {
             DecimalFormat df = new DecimalFormat("0.00");
-            tokenImage.setImageResource(R.mipmap.icon_btc_logo_small);
-            tokenTypeView.setText("BTC");
-            tokenTypeView2.setText("BTC");
             feeUnitView.setText("satoshis");
             sendAmountValueView.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
             feeAmountValueView.setText("≈" + df.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))) + " USD");
@@ -531,9 +544,6 @@ public class SendDialog implements Wallet.ScanSendListener {
         } else {
             DecimalFormat df = new DecimalFormat("0.00");
             DecimalFormat df1 = new DecimalFormat("0.00######");
-            tokenImage.setImageResource(R.mipmap.icon_usdt_logo_small);
-            tokenTypeView.setText("dollar");
-            tokenTypeView2.setText("dollar");
             feeUnitView.setText("satoshis");
             sendAmountValueView.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
             feeAmountValueView.setText("≈" + df1.format(Double.parseDouble(String.valueOf(feeStr)) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))) + " USD");
@@ -788,20 +798,25 @@ public class SendDialog implements Wallet.ScanSendListener {
         successAddressTv.setText(selectAddress);
         successAmountTv.setText(assetBalance);
         gasFeeAmountTv.setText(feeStr + "");
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == assetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), successTokenImageIv);
+                successTokenTypeTv.setText(entity.getName());
+                successAmountUnitTv.setText(entity.getName());
+            }
+        }
         if (assetId == 0) {
             DecimalFormat df = new DecimalFormat("0.00");
-            successTokenImageIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            successTokenTypeTv.setText("BTC");
-            successAmountUnitTv.setText("BTC");
             gasFeeAmountUnitTv.setText("satoshis");
             successAmountValueTv.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
             String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
             successTotalValueTv.setText(df.format(Double.parseDouble(sendUsedValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
             DecimalFormat df = new DecimalFormat("0.00");
-            successTokenImageIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            successTokenTypeTv.setText("dollar");
-            successAmountUnitTv.setText("dollar");
             gasFeeAmountUnitTv.setText("satoshis");
             successAmountValueTv.setText(df.format(Double.parseDouble(assetBalance) * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
             String sendUsedValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
@@ -902,18 +917,23 @@ public class SendDialog implements Wallet.ScanSendListener {
         TextView failedTotalValueTv = mAlertDialog.findViewById(R.id.tv_failed_total_value);
         TextView failedMessageTv = mAlertDialog.findViewById(R.id.tv_failed_message);
         failedMessageTv.setText(message);
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == assetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), assetLogoIv);
+                assetUnitTv.setText(entity.getName());
+                failedAmountUnitTv.setText(entity.getName());
+            }
+        }
         if (assetId == 0) {
-            assetLogoIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            assetUnitTv.setText("BTC");
-            failedAmountUnitTv.setText("BTC");
             failedGasFeeUnitTv.setText("satoshis");
             DecimalFormat df = new DecimalFormat("0.00");
             String totalValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";
             failedTotalValueTv.setText(df.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
         } else {
-            assetLogoIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetUnitTv.setText("dollar");
-            failedAmountUnitTv.setText("dollar");
             failedGasFeeUnitTv.setText("satoshis");
             DecimalFormat df = new DecimalFormat("0.00");
             String totalValue = (long) (Double.parseDouble(assetBalance) * 100000000) + feeStr + "";

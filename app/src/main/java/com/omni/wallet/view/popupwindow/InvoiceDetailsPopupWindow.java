@@ -8,15 +8,22 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.StringUtils;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.entity.AssetEntity;
+import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.thirdsupport.zxing.util.CodeUtils;
 import com.omni.wallet.utils.UriUtil;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import lnrpc.LightningOuterClass;
 
@@ -31,6 +38,7 @@ public class InvoiceDetailsPopupWindow {
 
     private Context mContext;
     private BasePopWindow mBasePopWindow;
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public InvoiceDetailsPopupWindow(Context context) {
         this.mContext = context;
@@ -55,14 +63,16 @@ public class InvoiceDetailsPopupWindow {
             TextView statusTv = rootView.findViewById(R.id.tv_status);
             TextView payerTv = rootView.findViewById(R.id.tv_payer);
             ImageView qrcodeIv = rootView.findViewById(R.id.iv_qrcode);
-            if (item.getAssetId() == 0) {
-                assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
-                assetTypeTv.setText("BTC");
-                amountTypeTv.setText("BTC");
-            } else {
-                assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-                assetTypeTv.setText("dollar");
-                amountTypeTv.setText("dollar");
+            mAssetData.clear();
+            Gson gson = new Gson();
+            mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+            }.getType());
+            for (AssetEntity entity : mAssetData) {
+                if (Long.parseLong(entity.getAssetId()) == item.getAssetId()) {
+                    ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeIv);
+                    assetTypeTv.setText(entity.getName());
+                    amountTypeTv.setText(entity.getName());
+                }
             }
             if (item.getExpiry() < 3600) {
                 DecimalFormat df = new DecimalFormat("0.0##");

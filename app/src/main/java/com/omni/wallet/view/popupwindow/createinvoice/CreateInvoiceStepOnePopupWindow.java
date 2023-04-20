@@ -18,6 +18,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
@@ -25,10 +27,12 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.utils.image.BitmapUtils;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.client.LuckPkClient;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.framelibrary.entity.User;
@@ -50,6 +54,8 @@ import com.omni.wallet.view.popupwindow.SelectTimePopupWindow;
 import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.SSLException;
 
@@ -86,6 +92,7 @@ public class CreateInvoiceStepOnePopupWindow {
     String qrCodeUrl;
     LoadingDialog mLoadingDialog;
     String expiryTime = "86400";
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public CreateInvoiceStepOnePopupWindow(Context context) {
         this.mContext = context;
@@ -175,14 +182,16 @@ public class CreateInvoiceStepOnePopupWindow {
         EditText memoEdit = rootView.findViewById(R.id.edit_memo);
         InputFilter[] filters = {new EditInputFilter(36)};
         memoEdit.setFilters(filters);
-        if (mAssetId == 0) {
-            assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            assetTypeTv.setText("BTC");
-            amountUnitTv.setText("BTC");
-        } else {
-            assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeTv.setText("dollar");
-            amountUnitTv.setText("dollar");
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeIv);
+                assetTypeTv.setText(entity.getName());
+                amountUnitTv.setText(entity.getName());
+            }
         }
         getChannelBalance(mAssetId);
         RelativeLayout selectAssetLayout = rootView.findViewById(R.id.layout_select_asset);
@@ -193,16 +202,17 @@ public class CreateInvoiceStepOnePopupWindow {
                 mSelectChannelBalancePopupWindow.setOnItemClickCallback(new SelectChannelBalancePopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
-                        if (item.getPropertyid() == 0) {
-                            assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
-                            assetTypeTv.setText("BTC");
-                            amountUnitTv.setText("BTC");
-                            amountEdit.setText("0");
-                        } else {
-                            assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-                            assetTypeTv.setText("dollar");
-                            amountUnitTv.setText("dollar");
-                            amountEdit.setText("0");
+                        mAssetData.clear();
+                        Gson gson = new Gson();
+                        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+                        }.getType());
+                        for (AssetEntity entity : mAssetData) {
+                            if (Long.parseLong(entity.getAssetId()) == item.getPropertyid()) {
+                                ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeIv);
+                                assetTypeTv.setText(entity.getName());
+                                amountUnitTv.setText(entity.getName());
+                                amountEdit.setText("0");
+                            }
                         }
                         mAssetId = item.getPropertyid();
                         getChannelBalance(mAssetId);
@@ -392,14 +402,16 @@ public class CreateInvoiceStepOnePopupWindow {
         ImageView qrCodeIv = rootView.findViewById(R.id.iv_success_qrcode);
         TextView paymentSuccessTv = rootView.findViewById(R.id.tv_success_payment);
         ImageView copyIv = rootView.findViewById(R.id.iv_success_copy);
-        if (mAssetId == 0) {
-            assetTypeSuccessIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            assetTypeSuccessTv.setText("BTC");
-            amountUnitSuccessTv.setText("BTC");
-        } else {
-            assetTypeSuccessIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeSuccessTv.setText("dollar");
-            amountUnitSuccessTv.setText("dollar");
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeSuccessIv);
+                assetTypeSuccessTv.setText(entity.getName());
+                amountUnitSuccessTv.setText(entity.getName());
+            }
         }
         amountSuccessTv.setText(amountInput);
         timeSuccessTv.setText(timeInput);
@@ -504,14 +516,16 @@ public class CreateInvoiceStepOnePopupWindow {
         TextView amountUnitFailedTv = rootView.findViewById(R.id.tv_amount_unit_failed);
         TextView timeFailedTv = rootView.findViewById(R.id.tv_time_failed);
         TextView timeUnitFailedTv = rootView.findViewById(R.id.tv_time_unit_failed);
-        if (mAssetId == 0) {
-            assetTypeFailedIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            assetTypeFailedTv.setText("BTC");
-            amountUnitFailedTv.setText("BTC");
-        } else {
-            assetTypeFailedIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeFailedTv.setText("dollar");
-            amountUnitFailedTv.setText("dollar");
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeFailedIv);
+                assetTypeFailedTv.setText(entity.getName());
+                amountUnitFailedTv.setText(entity.getName());
+            }
         }
         amountFailedTv.setText(amountInput);
         timeFailedTv.setText(timeInput);

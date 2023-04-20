@@ -8,12 +8,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.framelibrary.entity.User;
 
@@ -42,6 +45,7 @@ public class SelectAssetUnitPopupWindow {
     public List<ListAssetItemEntity> lightningData = new ArrayList<>();
     public List<ListAssetItemEntity> allData = new ArrayList<>();
     private MyAdapter mAdapter;
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public SelectAssetUnitPopupWindow(Context context) {
         this.mContext = context;
@@ -194,10 +198,14 @@ public class SelectAssetUnitPopupWindow {
 
         @Override
         public void convert(ViewHolder holder, final int position, final ListAssetItemEntity item) {
-            if (item.getPropertyid() == 0) {
-                holder.setText(R.id.tv_amount_unit, "BTC");
-            } else {
-                holder.setText(R.id.tv_amount_unit, "dollar");
+            mAssetData.clear();
+            Gson gson = new Gson();
+            mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+            }.getType());
+            for (AssetEntity entity : mAssetData) {
+                if (Long.parseLong(entity.getAssetId()) == item.getPropertyid()) {
+                    holder.setText(R.id.tv_amount_unit, entity.getName());
+                }
             }
             holder.setOnItemClickListener(new View.OnClickListener() {
                 @Override

@@ -7,8 +7,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.DateUtils;
@@ -16,13 +19,17 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.client.LuckPkClient;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
+import com.omni.wallet.framelibrary.entity.User;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.net.ssl.SSLException;
@@ -53,6 +60,7 @@ public class ReceiveLuckyPacketDialog {
     String besyWishes;
     String canReceive;
     LoadingDialog mLoadingDialog;
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public ReceiveLuckyPacketDialog(Context context) {
         this.mContext = context;
@@ -215,15 +223,17 @@ public class ReceiveLuckyPacketDialog {
         TextView payDateTv = mAlertDialog.findViewById(R.id.tv_date_success);
         TextView bestWishesTv = mAlertDialog.findViewById(R.id.tv_best_wishes);
         DecimalFormat df = new DecimalFormat("0.00######");
-        if (mAssetId == 0) {
-            assetTypeIv.setImageResource(R.mipmap.icon_btc_logo_small);
-            assetTypeTv.setText("BTC");
-            amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(randAmount)) / 100000000));
-        } else {
-            assetTypeIv.setImageResource(R.mipmap.icon_usdt_logo_small);
-            assetTypeTv.setText("dollar");
-            amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(randAmount)) / 100000000));
+        mAssetData.clear();
+        Gson gson = new Gson();
+        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+        }.getType());
+        for (AssetEntity entity : mAssetData) {
+            if (Long.parseLong(entity.getAssetId()) == mAssetId) {
+                ImageUtils.showImage(mContext, entity.getImgUrl(), assetTypeIv);
+                assetTypeTv.setText(entity.getName());
+            }
         }
+        amountPayTv.setText(df.format(Double.parseDouble(String.valueOf(randAmount)) / 100000000));
         payTimeTv.setText(DateUtils.Hourmin(timestamp));
         payDateTv.setText(DateUtils.MonthDay(timestamp));
         bestWishesTv.setText(besyWishes);

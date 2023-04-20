@@ -15,12 +15,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.refreshView.RefreshLayout;
@@ -29,6 +32,7 @@ import com.omni.wallet.data.AssetsActions;
 import com.omni.wallet.data.AssetsValueDataItem;
 import com.omni.wallet.data.ChangeData;
 import com.omni.wallet.data.ChartData;
+import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
@@ -114,7 +118,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     private MyAdapter mAdapter;
     private List<ListAssetItemEntity> allData = new ArrayList<>();
     List<AssetsValueDataItem> allChartDataList;
-
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     MenuPopupWindow mMenuPopupWindow;
     FundPopupWindow mFundPopupWindow;
@@ -589,11 +593,15 @@ public class AccountLightningActivity extends AppBaseActivity {
                 LinearLayout lvContent = holder.getView(R.id.lv_item_content);
                 lvContent.setPadding(0, 0, 0, 0);
             }
-            // TODO: 2022/11/14 暂定待修改与完善
-            if (item.getPropertyid() == 0) {
-                holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_btc_logo_small);
-            } else {
-                holder.setImageResource(R.id.iv_asset_logo, R.mipmap.icon_usdt_logo_small);
+            ImageView imageView = holder.getView(R.id.iv_asset_logo);
+            mAssetData.clear();
+            Gson gson = new Gson();
+            mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+            }.getType());
+            for (AssetEntity entity : mAssetData) {
+                if (Long.parseLong(entity.getAssetId()) == item.getPropertyid()) {
+                    ImageUtils.showImage(mContext, entity.getImgUrl(), imageView);
+                }
             }
             if (item.getAmount() == 0) {
                 holder.setText(R.id.tv_asset_amount, "0.00");
@@ -621,6 +629,12 @@ public class AccountLightningActivity extends AppBaseActivity {
                         bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT, item.getAmount());
                         bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID, item.getPropertyid());
                         bundle.putString(BalanceDetailActivity.KEY_NETWORK, "link");
+                        for (AssetEntity entity : mAssetData) {
+                            if (Long.parseLong(entity.getAssetId()) == item.getPropertyid()) {
+                                bundle.putString(BalanceDetailActivity.KEY_NAME, entity.getName());
+                                bundle.putString(BalanceDetailActivity.KEY_IMAGE_URL, entity.getImgUrl());
+                            }
+                        }
                         switchActivity(BalanceDetailActivity.class, bundle);
                     }
                 });
@@ -636,6 +650,12 @@ public class AccountLightningActivity extends AppBaseActivity {
                         bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT, item.getAmount());
                         bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID, item.getPropertyid());
                         bundle.putString(BalanceDetailActivity.KEY_NETWORK, "lightning");
+                        for (AssetEntity entity : mAssetData) {
+                            if (Long.parseLong(entity.getAssetId()) == item.getPropertyid()) {
+                                bundle.putString(BalanceDetailActivity.KEY_NAME, entity.getName());
+                                bundle.putString(BalanceDetailActivity.KEY_IMAGE_URL, entity.getImgUrl());
+                            }
+                        }
                         switchActivity(BalanceDetailActivity.class, bundle);
                     }
                 });

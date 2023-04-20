@@ -7,13 +7,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.framelibrary.entity.User;
 
@@ -43,6 +48,7 @@ public class SelectChannelBalancePopupWindow {
     public List<ListAssetItemEntity> lightningData = new ArrayList<>();
     public List<ListAssetItemEntity> allData = new ArrayList<>();
     private MyAdapter mAdapter;
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public SelectChannelBalancePopupWindow(Context context) {
         this.mContext = context;
@@ -230,12 +236,16 @@ public class SelectChannelBalancePopupWindow {
 
         @Override
         public void convert(ViewHolder holder, final int position, final ListAssetItemEntity item) {
-            if (item.getPropertyid() == 0) {
-                holder.setImageResource(R.id.iv_logo, R.mipmap.icon_btc_logo_small);
-                holder.setText(R.id.tv_asset, "BTC");
-            } else {
-                holder.setImageResource(R.id.iv_logo, R.mipmap.icon_usdt_logo_small);
-                holder.setText(R.id.tv_asset, "dollar");
+            ImageView imageView = holder.getView(R.id.iv_logo);
+            mAssetData.clear();
+            Gson gson = new Gson();
+            mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+            }.getType());
+            for (AssetEntity entity : mAssetData) {
+                if (Long.parseLong(entity.getAssetId()) == item.getPropertyid()) {
+                    ImageUtils.showImage(mContext, entity.getImgUrl(), imageView);
+                    holder.setText(R.id.tv_asset, entity.getName());
+                }
             }
             if (item.getAmount() == 0) {
                 DecimalFormat df = new DecimalFormat("0.00");
