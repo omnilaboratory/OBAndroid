@@ -293,6 +293,7 @@
     <string name="payer_first_upper">Payer</string>
     <string name="new_version_found">NEW VERSION\nFOUND</string>
     <string name="update_upper">UPDATE</string>
+    <string name="channel_reserve">Channel Reserve</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>
