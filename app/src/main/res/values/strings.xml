@@ -345,7 +345,7 @@
     <string name="block_of">of</string>
     <string name="commit_filter">Commitment Filter</string>
     <string name="last_edit">Last Edit:</string>
-    
+
     <!--restore page-->
     <string name="restore_desc">Select your channel database file to restore your lightning node</string>
 
