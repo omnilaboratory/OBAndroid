@@ -34,6 +34,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.LiquidityNodeEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.entity.event.OpenChannelEvent;
@@ -96,6 +97,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     LoadingDialog mLoadingDialog;
     private List<String> txidList;
     private List<LiquidityNodeEntity> mData = new ArrayList<>();
+    private List<AssetEntity> mAssetData = new ArrayList<>();
 
     public CreateChannelDialog(Context context) {
         this.mContext = context;
@@ -477,11 +479,18 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                 mSelectAssetUnitPopupWindow.setOnItemClickCallback(new SelectAssetUnitPopupWindow.ItemCleckListener() {
                     @Override
                     public void onItemClick(View view, ListAssetItemEntity item) {
+                        mAssetData.clear();
+                        Gson gson = new Gson();
+                        mAssetData = gson.fromJson(User.getInstance().getAssetListString(mContext), new TypeToken<List<AssetEntity>>() {
+                        }.getType());
+                        for (AssetEntity entity : mAssetData) {
+                            if (Long.parseLong(entity.getAssetId()) == item.getPropertyid()) {
+                                amountUnitButton.setText(entity.getName());
+                            }
+                        }
                         if (item.getPropertyid() == 0) {
-                            amountUnitButton.setText("BTC");
                             feePerByteTv.setText(R.string.satoshi_per_byte);
                         } else {
-                            amountUnitButton.setText("dollar");
                             feePerByteTv.setText(R.string.unit_per_byte);
                         }
                         assetId = item.getPropertyid();
