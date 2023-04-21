@@ -34,7 +34,7 @@ public class LoginLoadingDialog {
     private ConstantInOB constantInOB = null;
     private ObdLogFileObserver obdLogFileObserver = null;
     private SharedPreferences blockData = null;
-    private double totalBlock = 0;
+    private long totalBlock = 0;
 
     public LoginLoadingDialog(Context context) {
         this.mContext = context;
@@ -50,7 +50,7 @@ public class LoginLoadingDialog {
         double totalHeight = totalBlock;
         double currentHeight = syncedHeight;
         if (syncedHeight > totalBlock) {
-            syncedHeight = Long.parseLong(String.valueOf(totalBlock));
+            syncedHeight = totalBlock;
             currentHeight = totalHeight;
         }
         double percent = (currentHeight / totalHeight * 100);
@@ -100,7 +100,7 @@ public class LoginLoadingDialog {
         long syncedHeight = blockData.getInt("currentBlockHeight",0);
         updateSyncDataView(mAlertDialog,syncedHeight);
         TextView blockNumSyncTextView = mAlertDialog.getViewById(R.id.block_num_sync);
-        blockNumSyncTextView.setText(String.format("%.0f", totalBlock));
+        blockNumSyncTextView.setText(String.valueOf(totalBlock));
         new Thread(() -> {
             obdLogFileObserver.startWatching();
         }).run();
