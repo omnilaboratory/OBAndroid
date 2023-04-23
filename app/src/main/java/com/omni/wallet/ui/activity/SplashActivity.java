@@ -44,6 +44,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.omni.wallet.utils.MoveCacheFileToFileObd.copyDirectiory;
+import static com.omni.wallet.utils.MoveCacheFileToFileObd.deleteDirectory;
+
 /**
  * The page for initial
  * 启动页
@@ -446,6 +449,20 @@ public class SplashActivity extends AppBaseActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void actionAfterPromise() {
+        String sourceDir = mContext.getExternalCacheDir() + "/";
+        String targetDir = mContext.getExternalFilesDir(null).toString() + "/obd";
+        File fileDirectory = new File(sourceDir);
+        if(fileDirectory.exists()){
+            copyDirectiory(sourceDir,targetDir);
+            deleteDirectory(sourceDir);
+            downloadFiles();
+        }else{
+            downloadFiles();
+        }
+//        startNode();
+    }
+
+    public void downloadFiles(){
         isDownloading = true;
         boolean isHeaderBinChecked = User.getInstance().isHeaderBinChecked(mContext);
         boolean isFilterHeaderBinChecked = User.getInstance().isFilterHeaderBinChecked(mContext);
@@ -475,7 +492,6 @@ public class SplashActivity extends AppBaseActivity {
         } else {
             getManifest();
         }
-//        startNode();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
