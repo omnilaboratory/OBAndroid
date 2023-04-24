@@ -24,6 +24,7 @@ import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.utils.RequestAppConfig;
 
 import org.conscrypt.Conscrypt;
 import org.greenrobot.eventbus.EventBus;
@@ -44,6 +45,7 @@ public class AppApplication extends BaseApplication {
     private static AppApplication mContext;
     Handler handler = new Handler();
     Handler balanceHandler = new Handler();
+    Handler nodeHandler = new Handler();
 
     public AppApplication() {
         mContext = this;
@@ -150,6 +152,15 @@ public class AppApplication extends BaseApplication {
             }
         };
         balanceHandler.postDelayed(balanceRunnable, 0);// 打开定时器立即执行
+
+        Runnable nodeRunnable = new Runnable() {
+            @Override
+            public void run() {
+                RequestAppConfig.getNodes(mContext);
+                nodeHandler.postDelayed(this, 3600000);
+            }
+        };
+        nodeHandler.postDelayed(nodeRunnable, 0);
         getAssetList();
     }
 
