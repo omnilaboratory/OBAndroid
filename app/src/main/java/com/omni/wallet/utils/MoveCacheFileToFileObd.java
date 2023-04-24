@@ -17,14 +17,17 @@ public class MoveCacheFileToFileObd {
             BufferedInputStream inBuff = new BufferedInputStream(input);
             BufferedOutputStream outBuff = new BufferedOutputStream(output);
             // 缓冲数组
+            // buffer array
             byte[] b = new byte[1024 * 5];
             int len;
             while ((len = inBuff.read(b)) != -1) {
                 outBuff.write(b, 0, len);
             }
             // 刷新此缓冲的输出流
+            // Flushes this buffered output stream
             outBuff.flush();
             //关闭流
+            // close stream
             inBuff.close();
             outBuff.close();
             output.close();
