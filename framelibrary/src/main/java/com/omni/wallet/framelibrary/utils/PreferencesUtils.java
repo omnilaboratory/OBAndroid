@@ -60,6 +60,8 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_HEADER_BIN_CHECKED = "headerBinChecked";
     private static final String KEY_FILTER_HEADER_BIN_CHECKED = "filterBinChecked";
     private static final String KEY_NEUTRINO_DB_CHECKED = "neutrinoDbChecked";
+    private static final String WALLET_INFO_MOVED = "walletInfoMoved";
+    private static final String SEED_STRING_SECRETED = "seedStringSecreted";
 
 
     /**
@@ -541,5 +543,21 @@ public class PreferencesUtils extends BasePreferencesUtils {
      */
     public static void saveAssetListStringToLocal(Context context, String value) {
         putString(SETTINGS, context, KEY_ASSET_LIST_STRING, value);
+    }
+
+    public static void saveWalletInfoMoved(Context context, boolean value) {
+        putBoolean(SETTINGS,context,WALLET_INFO_MOVED,value);
+    }
+
+    public static boolean getWalletInfoMoved(Context context) {
+        return getBoolean(SETTINGS,context,WALLET_INFO_MOVED);
+    }
+
+    public static void saveSeedStringSecreted(Context context, boolean value) {
+        putBoolean(SETTINGS,context,SEED_STRING_SECRETED,value);
+    }
+
+    public static boolean getSeedStringSecreted(Context context) {
+        return getBoolean(SETTINGS,context,SEED_STRING_SECRETED);
     }
 }

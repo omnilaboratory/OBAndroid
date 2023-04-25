@@ -108,6 +108,10 @@ public class User {
 
     private String assetListString;
 
+    private boolean isWalletDataMoved;
+
+    private boolean isSeedStringSecreted;
+
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
         return token;
@@ -575,5 +579,23 @@ public class User {
     }
 
 
+    public void setWalletInfoMoved(Context context, boolean isMoved) {
+        PreferencesUtils.saveWalletInfoMoved(context, isMoved);
+        this.isWalletDataMoved = isMoved;
+    }
 
+    public boolean getWalletInfoMoved(Context context) {
+        isWalletDataMoved = PreferencesUtils.getWalletInfoMoved(context);
+        return isWalletDataMoved;
+    }
+
+    public void setSeedSecreted(Context context, boolean isSecreted) {
+        PreferencesUtils.saveSeedStringSecreted(context, isSecreted);
+        this.isSeedStringSecreted = isSecreted;
+    }
+
+    public boolean getSeedSecreted(Context context) {
+        isSeedStringSecreted = PreferencesUtils.getSeedStringSecreted(context);
+        return isSeedStringSecreted;
+    }
 }

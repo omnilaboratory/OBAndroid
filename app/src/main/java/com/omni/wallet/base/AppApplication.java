@@ -24,6 +24,7 @@ import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.utils.MoveDataAboutWalletInfoSP;
 import com.omni.wallet.utils.RequestAppConfig;
 
 import org.conscrypt.Conscrypt;
@@ -84,6 +85,7 @@ public class AppApplication extends BaseApplication {
          * @描述： 初始化网络引擎(使用OKHttp)
          * @desc: Initialize the network engine (using OKHttp)
          */
+        MoveDataAboutWalletInfoSP.moveData(mContext);
         OkHttpEngine okHttpEngine = new OkHttpEngine();
 
 //        // 设置数据加密的拦截器（设置在Log拦截器之前，打印的时候才会打印加密之后的数据）
