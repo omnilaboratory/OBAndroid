@@ -58,6 +58,7 @@ import com.omni.wallet.utils.GetResourceUtil;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.AssetTrendChartView;
+import com.omni.wallet.view.MyScrollView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
@@ -98,6 +99,8 @@ public class AccountLightningActivity extends AppBaseActivity {
     ImageView mMenuIv;
     @BindView(R.id.refresh_layout_account_lightning)
     public RefreshLayout mRefreshLayout;
+    @BindView(R.id.my_scrollview)
+    public MyScrollView myScrollView;
     @BindView(R.id.tv_balance_value)
     TextView mBalanceValueTv;
     @BindView(R.id.tv_price_change)
@@ -151,12 +154,21 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-        // Initialize pull-down refresh
-        // 初始化下拉刷新
+        // 初始化下拉刷新(Initialize pull-down refresh)
         mRefreshLayout.setRefreshListener(new MyRefreshListener());
         mRefreshLayout.addRefreshHeader(new LayoutRefreshView());
 //        mRefreshLayout.autoRefresh();
-        //
+        //解决RefreshLayout与ScrollView滑动冲突(Resolve sliding conflicts between RefreshLayout and ScrollView)
+        myScrollView.setScrollViewListener(new MyScrollView.ScrollViewListener() {
+            @Override
+            public void onScrollChanged(MyScrollView scrollView, int x, int y, int oldx, int oldy) {
+                if (y <= 0) {
+                    mRefreshLayout.setEnabled(true);
+                } else {
+                    mRefreshLayout.setEnabled(false);
+                }
+            }
+        });
         EventBus.getDefault().post(new CloseUselessActivityEvent());
         mLoadingDialog = new LoadingDialog(mContext);
         mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
@@ -214,6 +226,28 @@ public class AccountLightningActivity extends AppBaseActivity {
         mRecyclerViewBlock.setAdapter(mAdapter);
         mRecyclerViewBlock.setHasFixedSize(true);
         mRecyclerViewBlock.setNestedScrollingEnabled(false);
+        mRecyclerViewBlock.setFocusable(false);
+        mRecyclerViewBlock.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            View firstChild;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                // 方法一(Method One)
+                if (recyclerView != null && recyclerView.getChildCount() > 0) {
+                    firstChild = recyclerView.getChildAt(0);
+                }
+                int firstChildPosition = firstChild == null ? 0 : recyclerView.getChildAdapterPosition(firstChild);
+                mRefreshLayout.setEnabled(firstChildPosition == 0 && firstChild.getTop() >= 0);
+                /*// 方法二(Method Two)
+                int position = (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
+                mRefreshLayout.setEnabled(position >= 0 && recyclerView != null && !recyclerView.canScrollVertically(-1));*/
+            }
+        });
     }
 
     // TODO: 2023/1/12 待完善

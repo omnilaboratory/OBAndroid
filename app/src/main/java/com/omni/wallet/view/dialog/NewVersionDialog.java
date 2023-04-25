@@ -1,5 +1,6 @@
 package com.omni.wallet.view.dialog;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,6 +21,7 @@ import com.omni.wallet.utils.UpdateUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,11 +41,13 @@ public class NewVersionDialog {
         this.mContext = context;
     }
 
-    public void show() {
+    public void show(boolean force) {
         if (mAlertDialog == null) {
             mAlertDialog = new AlertDialog.Builder(mContext, R.style.dialog_translucent_theme)
                     .setContentView(R.layout.layout_dialog_new_version)
                     .setAnimation(R.style.popup_anim_style)
+                    .setCanceledOnTouchOutside(false)
+                    .setCancelable(false)
                     .fullWidth()
                     .fullHeight()
                     .create();
@@ -143,13 +147,36 @@ public class NewVersionDialog {
         mAlertDialog.findViewById(R.id.layout_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAlertDialog.dismiss();
+                if (force) {
+                    killAppProcess();
+                } else {
+                    mAlertDialog.dismiss();
+                }
             }
         });
         if (mAlertDialog.isShowing()) {
             mAlertDialog.dismiss();
         }
         mAlertDialog.show();
+    }
+
+    /**
+     * 注意：不能先杀掉主进程，否则逻辑代码无法继续执行，需先杀掉相关进程最后杀掉主进程
+     * Note: You cannot kill the main process first, otherwise the logic code cannot continue to execute. You need to kill the related process first and then kill the main process
+     */
+    public void killAppProcess() {
+        LogUtils.e(TAG, "killAppProcess");
+        ActivityManager mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> processInfos = mActivityManager.getRunningAppProcesses();
+        // 先杀掉相关进程，最后再杀掉主进程(Kill the related process first, and then the main process)
+        for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : processInfos) {
+            if (runningAppProcessInfo.pid != android.os.Process.myPid()) {
+                android.os.Process.killProcess(runningAppProcessInfo.pid);
+            }
+        }
+        android.os.Process.killProcess(android.os.Process.myPid());
+        // 正常退出程序，也就是结束当前正在运行的java虚拟机(Exit the program normally, that is, end the currently running java virtual machine)
+        System.exit(0);
     }
 
     public void release() {

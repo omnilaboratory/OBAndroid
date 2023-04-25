@@ -338,6 +338,34 @@
                         android:src="@mipmap/icon_menu_unlock"/>
                 </RelativeLayout>
 
+                <RelativeLayout
+                    android:id="@+id/layout_new_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_40"
+                    android:layout_marginRight="@dimen/main_17"
+                    android:layout_marginTop="@dimen/main_15">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/main_38"
+                        android:letterSpacing="0.05"
+                        android:gravity="right"
+                        android:text="New Version"
+                        android:textColor="@color/color_black"
+                        android:textSize="@dimen/text_16"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/main_24"
+                        android:layout_height="@dimen/main_24"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@mipmap/icon_menu_setting"/>
+                </RelativeLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/main_1"

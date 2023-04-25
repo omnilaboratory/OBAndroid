@@ -1,8 +1,10 @@
 package com.omni.wallet.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
 import android.text.method.HideReturnsTransformationMethod;
@@ -22,22 +24,32 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.common.ConstantInOB;
+import com.omni.wallet.baselibrary.http.HttpUtils;
+import com.omni.wallet.baselibrary.http.callback.EngineCallback;
+import com.omni.wallet.baselibrary.http.progress.entity.Progress;
+import com.omni.wallet.baselibrary.utils.AppUtils;
+import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.obdMethods.WalletState;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
 import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
 import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
-import com.omni.wallet.obdMethods.WalletState;
 import com.omni.wallet.utils.SecretAESOperator;
 import com.omni.wallet.view.dialog.LoginLoadingDialog;
+import com.omni.wallet.view.dialog.NewVersionDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -80,9 +92,9 @@ public class UnlockActivity extends AppBaseActivity {
     protected void initView() {
         mLoadingDialog = new LoginLoadingDialog(mContext);
         PasswordFilter passwordFilter = new PasswordFilter();
-        mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16),passwordFilter});
+        mPwdEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16), passwordFilter});
         TextView.OnEditorActionListener listener = (v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE){
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
                 clickUnlock();
             }
             return true;
@@ -105,8 +117,68 @@ public class UnlockActivity extends AppBaseActivity {
         initWalletType = User.getInstance().getInitWalletType(mContext);
         isStartCreate = User.getInstance().getStartCreate(mContext);
         changePassword();
+        // 检查更新(Check for updates)
+        checkUpdate();
+    }
 
+    private void checkUpdate() {
+        HttpUtils.with(mContext)
+                .get()
+                .url("https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/newVersion.json")
+                .execute(new EngineCallback() {
+                    @Override
+                    public void onPreExecute(Context context, Map<String, Object> params) {
 
+                    }
+
+                    @Override
+                    public void onCancel(Context context) {
+
+                    }
+
+                    @Override
+                    public void onError(Context context, String errorCode, String errorMsg) {
+                        LogUtils.e(TAG, "newVersionError:" + errorMsg);
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, String result) {
+                        LogUtils.e(TAG, "---------------newVersion---------------------" + result.toString());
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                try {
+                                    if (!AppUtils.getAppVersionName(mContext).equals(jsonObject.getString("version"))) {
+                                        boolean force = jsonObject.getBoolean("force");
+                                        if (force) {
+                                            NewVersionDialog mNewVersionDialog = new NewVersionDialog(mContext);
+                                            mNewVersionDialog.show(force);
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(Context context, byte[] result) {
+
+                    }
+
+                    @Override
+                    public void onProgressInThread(Context context, Progress progress) {
+
+                    }
+
+                    @Override
+                    public void onFileSuccess(Context context, String filePath) {
+
+                    }
+                });
     }
 
     @Override
@@ -143,9 +215,10 @@ public class UnlockActivity extends AppBaseActivity {
     @OnClick(R.id.tv_pass_text)
     public void clickToForgetPassword() {
         Intent intent = new Intent();
-        intent.setClass(mContext,ForgetPwdActivity.class);
+        intent.setClass(mContext, ForgetPwdActivity.class);
         startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
+
     public void unlockWallet(String passMd5) {
         Stateservice.GetStateRequest getStateRequest = Stateservice.GetStateRequest.newBuilder().build();
         Obdmobile.getState(getStateRequest.toByteArray(), new Callback() {
@@ -158,19 +231,19 @@ public class UnlockActivity extends AppBaseActivity {
 
             @Override
             public void onResponse(byte[] bytes) {
-                if (bytes == null){
+                if (bytes == null) {
                     return;
                 }
                 try {
                     Stateservice.GetStateResponse getStateResponse = Stateservice.GetStateResponse.parseFrom(bytes);
                     int walletState = getStateResponse.getStateValue();
-                    if (walletState == 4){
-                        runOnUiThread(()->{
+                    if (walletState == 4) {
+                        runOnUiThread(() -> {
                             PublicUtils.closeLoading(mLoadingDialog);
                             switchActivityFinish(AccountLightningActivity.class);
                         });
-                    }else {
-                        runOnUiThread(()-> subscribeState());
+                    } else {
+                        runOnUiThread(() -> subscribeState());
                         Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
                         Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
                             @Override
@@ -179,17 +252,18 @@ public class UnlockActivity extends AppBaseActivity {
                                 runOnUiThread(
                                         () -> {
                                             PublicUtils.closeLoading(mLoadingDialog);
-                                            if(e.getMessage().contains("wallet already unlocked")){
+                                            if (e.getMessage().contains("wallet already unlocked")) {
                                                 switchActivityFinish(AccountLightningActivity.class);
-                                            } else if(e.getMessage().contains("wallet not found")){
-                                                ToastUtils.showToast(mContext,"wallet not found,please contact administrator");
-                                            } else{
-                                                ToastUtils.showToast(mContext,e.getMessage());
+                                            } else if (e.getMessage().contains("wallet not found")) {
+                                                ToastUtils.showToast(mContext, "wallet not found,please contact administrator");
+                                            } else {
+                                                ToastUtils.showToast(mContext, e.getMessage());
                                             }
                                         }
                                 );
                                 e.printStackTrace();
                             }
+
                             @Override
                             public void onResponse(byte[] bytes) {
                             }
@@ -205,32 +279,32 @@ public class UnlockActivity extends AppBaseActivity {
 
     }
 
-    public void changePassword(){
+    public void changePassword() {
         mLoadingDialog.show();
         String newPasswordStr = User.getInstance().getNewPasswordMd5(mContext);
         Log.d(TAG, "changePassword newPasswordStr: " + newPasswordStr);
-        if (!newPasswordStr.equals("")){
+        if (!newPasswordStr.equals("")) {
             Log.d(TAG, "changePassword : will be change");
             Handler handler = new Handler();
             runOnUiThread(this::subscribeStateForChangePass);
-            handler.postDelayed(this::changePasswordAction,10000);
-        }else {
+            handler.postDelayed(this::changePasswordAction, 10000);
+        } else {
             mLoadingDialog.dismiss();
         }
     }
 
-    public void changePasswordAction(){
+    public void changePasswordAction() {
         String currentPasswordStr = User.getInstance().getPasswordMd5(mContext);
         String newPasswordStr = User.getInstance().getNewPasswordMd5(mContext);
         Walletunlocker.ChangePasswordRequest changePasswordRequest = Walletunlocker.ChangePasswordRequest.newBuilder()
                 .setCurrentPassword(ByteString.copyFromUtf8(currentPasswordStr))
                 .setNewPassword(ByteString.copyFromUtf8(newPasswordStr))
                 .build();
-        Obdmobile.changePassword(changePasswordRequest.toByteArray(),new Callback() {
+        Obdmobile.changePassword(changePasswordRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
                 Log.e(TAG, "changePassword onError: " + e.getMessage());
-                runOnUiThread(()-> ToastUtils.showToast(mContext,e.getMessage()));
+                runOnUiThread(() -> ToastUtils.showToast(mContext, e.getMessage()));
 
                 e.printStackTrace();
             }
@@ -240,9 +314,9 @@ public class UnlockActivity extends AppBaseActivity {
                 try {
                     Walletunlocker.ChangePasswordResponse changePasswordResponse = Walletunlocker.ChangePasswordResponse.parseFrom(bytes);
                     String macaroon = changePasswordResponse.getAdminMacaroon().toString();
-                    User.getInstance().setMacaroonString(mContext,macaroon);
-                    User.getInstance().setPasswordMd5(mContext,newPasswordStr);
-                    User.getInstance().setNewPasswordMd5(mContext,"");
+                    User.getInstance().setMacaroonString(mContext, macaroon);
+                    User.getInstance().setPasswordMd5(mContext, newPasswordStr);
+                    User.getInstance().setNewPasswordMd5(mContext, "");
                     Log.d(TAG, "changePassword onResponse: changeOver");
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
@@ -251,7 +325,7 @@ public class UnlockActivity extends AppBaseActivity {
         });
     }
 
-    public boolean checkedPassMatched(String inputPass){
+    public boolean checkedPassMatched(String inputPass) {
         boolean isMatched;
         String localPass = User.getInstance().getPasswordMd5(mContext);
         isMatched = inputPass.equals(localPass);
@@ -269,19 +343,19 @@ public class UnlockActivity extends AppBaseActivity {
         String newSecretString = SecretAESOperator.getInstance().encrypt(passwordString);
         boolean passIsMatched = checkedPassMatched(newSecretString);
         PublicUtils.showLoading(mLoadingDialog);
-        if (passIsMatched){
+        if (passIsMatched) {
             unlockWallet(newSecretString);
-        }else{
+        } else {
             PublicUtils.closeLoading(mLoadingDialog);
             String toastString = getResources().getString(R.string.toast_unlock_error);
             Toast checkPassToast = Toast.makeText(UnlockActivity.this, toastString, Toast.LENGTH_LONG);
             checkPassToast.setGravity(Gravity.TOP, 0, 20);
             checkPassToast.show();
         }
-}
+    }
 
     public void subscribeState() {
-        WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
+        WalletState.WalletStateCallback walletStateCallback = (int walletState) -> {
             if (walletState == 4) {
                 runOnUiThread(() -> {
                     PublicUtils.closeLoading(mLoadingDialog);
@@ -293,7 +367,7 @@ public class UnlockActivity extends AppBaseActivity {
     }
 
     public void subscribeStateForChangePass() {
-        WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
+        WalletState.WalletStateCallback walletStateCallback = (int walletState) -> {
             Log.d(TAG, "subscribeStateForChangePass: " + walletState);
             if (walletState == 4) {
                 runOnUiThread(() -> PublicUtils.closeLoading(mLoadingDialog));
@@ -310,7 +384,7 @@ public class UnlockActivity extends AppBaseActivity {
     public void clickCreate() {
         User.getInstance().setInitWalletType(mContext, "create");
         Intent intent = new Intent();
-        intent.setClass(mContext,CreateWalletStepOneActivity.class);
+        intent.setClass(mContext, CreateWalletStepOneActivity.class);
         startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
 
@@ -322,7 +396,7 @@ public class UnlockActivity extends AppBaseActivity {
     public void clickRecover() {
         User.getInstance().setInitWalletType(mContext, "recovery");
         Intent intent = new Intent();
-        intent.setClass(mContext,RecoverWalletStepOneActivity.class);
+        intent.setClass(mContext, RecoverWalletStepOneActivity.class);
         startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
 
@@ -333,9 +407,10 @@ public class UnlockActivity extends AppBaseActivity {
     @OnClick(R.id.btv_forget_button)
     public void clickForgetPass() {
         Intent intent = new Intent();
-        intent.setClass(mContext,ForgetPwdActivity.class);
+        intent.setClass(mContext, ForgetPwdActivity.class);
         startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
         finish();

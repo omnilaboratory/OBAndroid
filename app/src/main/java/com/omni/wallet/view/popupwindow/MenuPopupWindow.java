@@ -11,6 +11,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.http.HttpUtils;
+import com.omni.wallet.baselibrary.http.callback.EngineCallback;
+import com.omni.wallet.baselibrary.http.progress.entity.Progress;
+import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
@@ -20,7 +24,13 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.view.dialog.LoadingDialog;
+import com.omni.wallet.view.dialog.NewVersionDialog;
 import com.omni.wallet.view.dialog.UnlockDialog;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
@@ -195,6 +205,74 @@ public class MenuPopupWindow {
                     mMenuPopWindow.dismiss();
                     UnlockDialog mUnlockDialog = new UnlockDialog(mContext);
                     mUnlockDialog.show();
+                }
+            });
+            // new version
+            rootView.findViewById(R.id.layout_new_version).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mLoadingDialog.show();
+                    HttpUtils.with(mContext)
+                            .get()
+                            .url("https://omnilaboratory.github.io/OBAndroid/app/src/main/assets/newVersion.json")
+                            .execute(new EngineCallback() {
+                                @Override
+                                public void onPreExecute(Context context, Map<String, Object> params) {
+
+                                }
+
+                                @Override
+                                public void onCancel(Context context) {
+
+                                }
+
+                                @Override
+                                public void onError(Context context, String errorCode, String errorMsg) {
+                                    LogUtils.e(TAG, "newVersionError:" + errorMsg);
+                                }
+
+                                @Override
+                                public void onSuccess(Context context, String result) {
+                                    LogUtils.e(TAG, "---------------newVersion---------------------" + result.toString());
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(result);
+                                        new Handler(Looper.getMainLooper()).post(() -> {
+                                            try {
+                                                if (AppUtils.getAppVersionName(mContext).equals(jsonObject.getString("version"))) {
+                                                    mLoadingDialog.dismiss();
+                                                    mMenuPopWindow.dismiss();
+                                                    ToastUtils.showToast(mContext, "It is currently the latest version.");
+                                                } else {
+                                                    mLoadingDialog.dismiss();
+                                                    mMenuPopWindow.dismiss();
+                                                    boolean force = jsonObject.getBoolean("force");
+                                                    NewVersionDialog mNewVersionDialog = new NewVersionDialog(mContext);
+                                                    mNewVersionDialog.show(force);
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        });
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                @Override
+                                public void onSuccess(Context context, byte[] result) {
+
+                                }
+
+                                @Override
+                                public void onProgressInThread(Context context, Progress progress) {
+
+                                }
+
+                                @Override
+                                public void onFileSuccess(Context context, String filePath) {
+
+                                }
+                            });
                 }
             });
             if (mMenuPopWindow.isShowing()) {

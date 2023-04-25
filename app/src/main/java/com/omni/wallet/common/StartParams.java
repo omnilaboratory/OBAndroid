@@ -24,7 +24,6 @@ public class StartParams {
                         "--nobootstrap" +
                         "--neutrino.connect=" + BTC_HOST_ADDRESS +
                         " --omnicoreproxy.rpchost=" + OMNI_HOST_ADDRESS_PORT +
-                        " --spayurl=" + "43.138.107.248:38332" +
                         " --alias=";
                 break;
             case TEST:
@@ -42,7 +41,6 @@ public class StartParams {
                         "--norest "+
                         "--neutrino.connect=" + BTC_HOST_ADDRESS +
                         " --omnicoreproxy.rpchost=" + OMNI_HOST_ADDRESS_PORT +
-                        " --spayurl=" + "192.144.199.67:38332" +
                         " --alias=";
                 break;
             case MAIN:
@@ -66,7 +64,6 @@ public class StartParams {
                         " --neutrino.addpeer=mainnet3-btcd.zaphq.io" +
                         " --neutrino.addpeer=mainnet4-btcd.zaphq.io" +
                         " --omnicoreproxy.rpchost=" + OMNI_HOST_ADDRESS_PORT +
-                        " --spayurl=" + "54.187.22.125:38332" +
                         " --alias=";
                 break;
         }
