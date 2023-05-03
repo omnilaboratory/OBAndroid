@@ -8,6 +8,7 @@ import android.util.Log;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.baselibrary.base.BaseApplication;
 import com.omni.wallet.baselibrary.common.Constants;
 import com.omni.wallet.baselibrary.http.HttpUtils;
@@ -85,7 +86,7 @@ public class AppApplication extends BaseApplication {
          * @描述： 初始化网络引擎(使用OKHttp)
          * @desc: Initialize the network engine (using OKHttp)
          */
-        MoveDataAboutWalletInfoSP.moveData(mContext);
+//        MoveDataAboutWalletInfoSP.moveData(mContext);
         OkHttpEngine okHttpEngine = new OkHttpEngine();
 
 //        // 设置数据加密的拦截器（设置在Log拦截器之前，打印的时候才会打印加密之后的数据）
@@ -154,11 +155,18 @@ public class AppApplication extends BaseApplication {
             }
         };
         balanceHandler.postDelayed(balanceRunnable, 0);// 打开定时器立即执行
+        RequestAppConfig.GetAppConfigJsonSuccessCallback successCallback = startParams -> {
+
+        };
+
+        RequestAppConfig.GetAppConfigJsonFailedCallback failedCallback = () -> {
+
+        };
 
         Runnable nodeRunnable = new Runnable() {
             @Override
             public void run() {
-                RequestAppConfig.getNodes(mContext);
+                RequestAppConfig.getAppConfigJson(mContext,successCallback,failedCallback);
                 nodeHandler.postDelayed(this, 3600000);
             }
         };
@@ -259,13 +267,13 @@ public class AppApplication extends BaseApplication {
                         JSONObject jsonObject = new JSONObject(result);
                         String block = jsonObject.getString("height");
                         Log.e(TAG, "Total block:" + block);
-                        User.getInstance().setTotalBlock(mContext, Long.parseLong(block));
+                        WalletInfo.getInstance().setTotalBlock(mContext, Long.parseLong(block),ConstantInOB.networkType);
                     } else {
                         JSONObject jsonObject = new JSONObject(result);
                         JSONObject jsonObject1 = new JSONObject(jsonObject.getString("result"));
                         String block = jsonObject1.getString("block");
                         Log.e(TAG, "Total block:" + block);
-                        User.getInstance().setTotalBlock(mContext, Long.parseLong(block));
+                        WalletInfo.getInstance().setTotalBlock(mContext, Long.parseLong(block),ConstantInOB.networkType);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
@@ -81,7 +82,7 @@ public class NodeInfoPopupWindow {
             TextView zmqpubrawblockTv = rootView.findViewById(R.id.tv_node_zmqpubrawblock);
             TextView zmqpubrawtxTv = rootView.findViewById(R.id.tv_node_zmqpubrawtx);
             getNodeInfo(pubKey);
-            versionTv.setText(User.getInstance().getNodeVersion(mContext).substring(0, User.getInstance().getNodeVersion(mContext).indexOf(" ")));
+            versionTv.setText(WalletInfo.getInstance().getNodeVersion(mContext,ConstantInOB.networkType).substring(0, WalletInfo.getInstance().getNodeVersion(mContext,ConstantInOB.networkType).indexOf(" ")));
             backendTv.setText("omnicoreproxy");
             modeTv.setText("SeedBackup");
             netWorkTv.setText(User.getInstance().getNetwork(mContext));
@@ -188,7 +189,7 @@ public class NodeInfoPopupWindow {
     }
 
     public void startNode() {
-        String lndDir = mContext.getApplicationContext().getExternalFilesDir(null).toString() + "/obd";
+        String lndDir = mContext.getApplicationContext().getExternalFilesDir(null).toString() + "/ObdMobile/" + ConstantInOB.networkType;
         String startParams = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getStartParams();
         Obdmobile.start("--lnddir=" + lndDir + startParams + User.getInstance().getAlias(mContext), new Callback() {
             @Override

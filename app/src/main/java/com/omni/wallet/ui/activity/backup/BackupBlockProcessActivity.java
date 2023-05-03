@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
@@ -37,6 +38,7 @@ import com.omni.wallet.utils.NetworkChangeReceiver;
 import com.omni.wallet.utils.ObdLogFileObserver;
 import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.obdMethods.WalletState;
+import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -109,13 +111,13 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
 
     WalletState.WalletStateCallback walletStateCallback = (int walletState)->{
-        Log.e(TAG,User.getInstance().getWalletAddress(mContext));
+        Log.e(TAG, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType));
         switch (walletState){
             case 1:
                 unlockWallet();
                 break;
             case 4:
-                if(User.getInstance().getWalletAddress(mContext).isEmpty()){
+                if(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType).isEmpty()){
                     newAddressToWallet();
                 }
                 break;
@@ -129,21 +131,19 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void initView() {
-        User user = User.getInstance();
+        WalletInfo user = WalletInfo.getInstance();
         constantInOB = new ConstantInOB(mContext);
-        String fileLocal = mContext.getExternalFilesDir(null) + "/obd/" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLogPath();
+        String fileLocal = mContext.getExternalFilesDir(null).toString() + "/ObdMobile/" + ConstantInOB.networkType + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLogPath();
         obdLogFileObserver = new ObdLogFileObserver(fileLocal,ctx);
         blockData = ctx.getSharedPreferences("blockData",MODE_PRIVATE);
-        isSynced = user.getSynced(mContext);
-        isCreated = user.getCreated(mContext);
-        walletAddress = user.getWalletAddress(mContext);
+        walletAddress = user.getWalletAddress(mContext,ConstantInOB.networkType);
         mLoadingDialog = new LoadingDialog(mContext);
-        String passwordMd5 = user.getPasswordMd5(mContext);
+        String passwordMd5 = user.getPasswordSecret(mContext,ConstantInOB.networkType);
         connectivityManager = getSystemService(ConnectivityManager.class);
         Log.d("password",passwordMd5);
-        initWalletType = user.getInitWalletType(mContext);
+        initWalletType = user.getInitWalletType(mContext,ConstantInOB.networkType);
         Log.d(TAG, "initView: initWalletType" + initWalletType);
-        totalBlock = user.getTotalBlock(mContext);
+        totalBlock = user.getTotalBlock(mContext,ConstantInOB.networkType);
         commitNumSyncView.setText(String.valueOf(totalBlock));
         syncBlockNumView.setText(String.valueOf(totalBlock));
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
@@ -254,7 +254,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
 
     public void newAddressToWallet (){
         Log.d(TAG,"new Address count");
-        String createType = User.getInstance().getInitWalletType(mContext);
+        String createType = WalletInfo.getInstance().getInitWalletType(mContext, ConstantInOB.networkType);
         if(createType.equals("recoveryStepTwo")){
             getOldAddress();
         }else{
@@ -286,15 +286,15 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                         qrAddressTv.setText(address);
                         qrAddressIv.setImageBitmap(mQRBitmap);
                         obdLogFileObserver.stopWatching();
-                        User.getInstance().setWalletAddress(mContext,address);
+                        WalletInfo.getInstance().setWalletAddress(mContext,address,ConstantInOB.networkType);
                         if(initWalletType.equals("recoveryStepTwo")){
 //                            User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
 //                            initWalletType = "toBeRestoreChannel";
-                            User.getInstance().setInitWalletType(mContext,"initialed");
+                            WalletInfo.getInstance().setInitWalletType(mContext, "initialed", ConstantInOB.networkType);
                             initWalletType = "initialed";
                             updateSyncDataView(totalBlock);
                         }else{
-                            User.getInstance().setInitWalletType(mContext,"initialed");
+                            WalletInfo.getInstance().setInitWalletType(mContext, "initialed", ConstantInOB.networkType);
                             initWalletType = "initialed";
                             updateSyncDataView(totalBlock);
                         }
@@ -337,12 +337,12 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
                     runOnUiThread(() -> {
 //                        User.getInstance().setInitWalletType(mContext,"toBeRestoreChannel");
 //                        initWalletType = "toBeRestoreChannel";
-                        User.getInstance().setInitWalletType(mContext,"initialed");
+                        WalletInfo.getInstance().setInitWalletType(mContext, "initialed", ConstantInOB.networkType);
                         initWalletType = "initialed";
                         qrAddressTv.setText(address);
                         qrAddressIv.setImageBitmap(mQRBitmap);
                         obdLogFileObserver.stopWatching();
-                        User.getInstance().setWalletAddress(mContext,address);
+                        WalletInfo.getInstance().setWalletAddress(mContext,address,ConstantInOB.networkType);
                         updateSyncDataView(totalBlock);
                     });
 
@@ -361,7 +361,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
     
     public void startOBMobile(){
-        String lndDir = getApplicationContext().getExternalFilesDir(null).toString() + "/obd";
+        String lndDir = getApplicationContext().getExternalFilesDir(null).toString() + "/ObdMobile/" + ConstantInOB.networkType;
         String startParams = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getStartParams();
         Obdmobile.start("--lnddir=" + lndDir + startParams + User.getInstance().getAlias(mContext), new Callback() {
             @Override
@@ -377,7 +377,7 @@ public class BackupBlockProcessActivity extends AppBaseActivity {
     }
     
     public void unlockWallet(){
-        String passwordMd5 = User.getInstance().getPasswordMd5(mContext);
+        String passwordMd5 = WalletInfo.getInstance().getPasswordSecret(mContext,ConstantInOB.networkType);
         Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passwordMd5)).build();
         Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
             @Override

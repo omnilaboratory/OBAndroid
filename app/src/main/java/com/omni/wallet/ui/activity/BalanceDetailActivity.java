@@ -26,6 +26,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
@@ -36,6 +37,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuStateListener;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.PaymentEntity;
 import com.omni.wallet.entity.TransactionAssetEntity;
@@ -586,7 +588,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
     private void oBListTransactions() {
         LightningOuterClass.ListTranscationsRequest listTranscationsRequest = LightningOuterClass.ListTranscationsRequest.newBuilder()
-                .addAddrs(User.getInstance().getWalletAddress(mContext))
+                .addAddrs(WalletInfo.getInstance().getWalletAddress(mContext, ConstantInOB.networkType))
                 .build();
         Obdmobile.oB_ListTranscations(listTranscationsRequest.toByteArray(), new Callback() {
             @Override
@@ -863,7 +865,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
      */
     private void getPendingTxsAsset() {
 //        LightningOuterClass.ListTranscationsRequest listTranscationsRequest = LightningOuterClass.ListTranscationsRequest.newBuilder()
-//                .addAddrs(User.getInstance().getWalletAddress(mContext))
+//                .addAddrs(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
 //                .build();
 //        Obdmobile.oB_ListTranscations(listTranscationsRequest.toByteArray(), new Callback() {
 //            @Override
@@ -1337,7 +1339,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_left_green_small);
                 }
             } else if (item.getType().equals("Send To Many")) {
-                if (item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                if (item.getSendingaddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                     holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getTotalamount())));
                     if (StringUtils.isEmpty(String.valueOf(item.getConfirmations())) || item.getConfirmations() < 3) {
                         holder.setText(R.id.tv_receiver, "PENDING");
@@ -1346,18 +1348,18 @@ public class BalanceDetailActivity extends AppBaseActivity {
                         holder.setText(R.id.tv_receiver, "SENT");
                         holder.setImageResource(R.id.iv_state, R.mipmap.icon_arrow_right_blue);
                     }
-                } else if (!item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                } else if (!item.getSendingaddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                     if (item.getReceiversList() != null) {
                         if (item.getReceiversList().size() == 1) {
-                            if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                            if (item.getReceivers(0).getAddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                                 holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
                             }
                         } else if (item.getReceiversList().size() == 2) {
-                            if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
-                                    & !item.getReceivers(1).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                            if (item.getReceivers(0).getAddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
+                                    & !item.getReceivers(1).getAddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                                 holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
-                            } else if (!item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
-                                    & item.getReceivers(1).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                            } else if (!item.getReceivers(0).getAddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
+                                    & item.getReceivers(1).getAddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                                 holder.setText(R.id.tv_amount, df.format(Double.parseDouble(item.getReceivers(1).getAmount())));
                             }
                         }
@@ -1582,7 +1584,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.layout_more)
     public void clickMore() {
         mMenuPopupWindow = new Menu1PopupWindow(mContext);
-        mMenuPopupWindow.show(mMoreIv, balanceAmount, User.getInstance().getWalletAddress(mContext), pubkey);
+        mMenuPopupWindow.show(mMoreIv, balanceAmount, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType), pubkey);
     }
 
     /**
@@ -1612,7 +1614,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.iv_qrcode)
     public void copyQRCode() {
         FundPopupWindow mFundPopupWindow = new FundPopupWindow(mContext);
-        mFundPopupWindow.show(mParentLayout, User.getInstance().getWalletAddress(mContext));
+        mFundPopupWindow.show(mParentLayout, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType));
     }
 
     /**

@@ -17,10 +17,12 @@ import android.widget.Toast;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.listItems.BackupFile;
@@ -344,13 +346,13 @@ public class RestoreChannelActivity extends AppBaseActivity {
             }else{
                 PublicUtils.closeLoading(mLoadingDialog);
                 User.getInstance().setRestoredChannel(mContext,true);
-                User.getInstance().setInitWalletType(mContext,"initialed");
+                WalletInfo.getInstance().setInitWalletType(mContext, "initialed", ConstantInOB.networkType);
                 switchActivityFinish(AccountLightningActivity.class);
             }
         }else{
             PublicUtils.closeLoading(mLoadingDialog);
             User.getInstance().setRestoredChannel(mContext,true);
-            User.getInstance().setInitWalletType(mContext,"initialed");
+            WalletInfo.getInstance().setInitWalletType(mContext, "initialed", ConstantInOB.networkType);
             switchActivityFinish(AccountLightningActivity.class);
         }
         
@@ -394,7 +396,7 @@ public class RestoreChannelActivity extends AppBaseActivity {
                             PublicUtils.closeLoading(mLoadingDialog);
                             ToastUtils.showToast(mContext,"The channels are recover successfully!");
                             User.getInstance().setRestoredChannel(mContext,true);
-                            User.getInstance().setInitWalletType(mContext,"initialed");
+                            WalletInfo.getInstance().setInitWalletType(mContext, "initialed", ConstantInOB.networkType);
                             switchActivityFinish(AccountLightningActivity.class);
                         });
                     }

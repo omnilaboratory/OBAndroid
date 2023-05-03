@@ -175,7 +175,7 @@ public class ReceiveLuckyPacketDialog {
                         @Override
                         public void run() {
                             try {
-                                LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 38332, mContext.getApplicationContext().getExternalFilesDir(null) + "/obd" + "/tls.cert", mContext.getApplicationContext().getExternalFilesDir(null) + "/obd" + "/tls.key.pcks8");
+                                LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 38332, mContext.getApplicationContext().getExternalFilesDir(null).toString() + "/ObdMobile/" + ConstantInOB.networkType + "/tls.cert", mContext.getApplicationContext().getExternalFilesDir(null) + "/obd" + "/tls.key.pcks8");
                                 try {
                                     LuckPkOuterClass.GiveLuckPkReq payRequest = LuckPkOuterClass.GiveLuckPkReq.newBuilder()
                                             .setId(id)

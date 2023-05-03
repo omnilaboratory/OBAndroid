@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.base.PermissionConfig;
@@ -327,9 +328,9 @@ public class SplashActivity extends AppBaseActivity {
     public void getManifest() {
         PreFilesUtils.DownloadCallback downloadCallback = () -> {
             preFilesUtils.readManifestFile();
-            if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
+            if (ConstantInOB.networkType.equals(NetworkType.MAIN)) {
                 getPeerFile();
-            }else {
+            } else {
                 getHeaderBinFile();
             }
 
@@ -344,11 +345,11 @@ public class SplashActivity extends AppBaseActivity {
             long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
             if (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS) {
                 preFilesUtils.downloadManifest(downloadView, downloadCallback);
-            }else{
+            } else {
                 preFilesUtils.readManifestFile();
-                if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
+                if (ConstantInOB.networkType.equals(NetworkType.MAIN)) {
                     getPeerFile();
-                }else {
+                } else {
                     getHeaderBinFile();
                 }
             }
@@ -363,11 +364,11 @@ public class SplashActivity extends AppBaseActivity {
         String filePath = downloadDirectoryPath + ConstantInOB.peerJson;
         PreFilesUtils.DownloadCallback downloadCallback = this::getHeaderBinFile;
         boolean isExist = preFilesUtils.checkPeerJsonFileExist();
-        if (isExist){
+        if (isExist) {
             File file = new File(filePath);
             file.deleteOnExit();
         }
-        preFilesUtils.downloadPeerFile(downloadView,downloadCallback);
+        preFilesUtils.downloadPeerFile(downloadView, downloadCallback);
     }
 
     public void getHeaderBinFile() {
@@ -442,27 +443,38 @@ public class SplashActivity extends AppBaseActivity {
 
 
     public void startNode() {
-        runOnUiThread(()->{
+        runOnUiThread(() -> {
             NodeStart.getInstance().startWhenStopWithSubscribeState(mContext);
         });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void actionAfterPromise() {
-        String sourceDir = mContext.getExternalCacheDir() + "/";
-        String targetDir = mContext.getExternalFilesDir(null).toString() + "/obd";
-        File fileDirectory = new File(sourceDir);
-        if(fileDirectory.exists()){
-            copyDirectiory(sourceDir,targetDir);
-            deleteDirectory(sourceDir);
+        String sourceDir1 = mContext.getExternalCacheDir() + "";
+        String sourceOneTestFile = sourceDir1 + "/tls.cert";
+        String sourceDir2 = mContext.getExternalFilesDir(null).toString() + "/obd";
+        String sourceTwoTestFile = sourceDir2 + "/tls.cert";
+        String targetDir = mContext.getExternalFilesDir(null).toString() + "/ObdMobile/" + ConstantInOB.networkType;
+        File source1TestFile = new File(sourceOneTestFile);
+        File source2TestFile = new File(sourceTwoTestFile);
+        if (source1TestFile.exists()) {
+            copyDirectiory(sourceDir1, targetDir);
+            deleteDirectory(sourceDir1);
             downloadFiles();
-        }else{
-            downloadFiles();
+        } else {
+            if (source2TestFile.exists()) {
+                copyDirectiory(sourceDir2, targetDir);
+                deleteDirectory(sourceDir2);
+                downloadFiles();
+            } else {
+                downloadFiles();
+            }
         }
+
 //        startNode();
     }
 
-    public void downloadFiles(){
+    public void downloadFiles() {
         isDownloading = true;
         boolean isHeaderBinChecked = User.getInstance().isHeaderBinChecked(mContext);
         boolean isFilterHeaderBinChecked = User.getInstance().isFilterHeaderBinChecked(mContext);
@@ -527,7 +539,7 @@ public class SplashActivity extends AppBaseActivity {
 
     public void subscribeWalletState() {
         WalletState.getInstance().setWalletState(-100);
-        String walletInitType = User.getInstance().getInitWalletType(mContext);
+        String walletInitType = WalletInfo.getInstance().getInitWalletType(mContext, ConstantInOB.networkType);
         WalletState.WalletStateCallback walletStateCallback = walletState -> {
             Log.d(TAG, "walletState:" + walletState);
             switch (walletState) {

@@ -625,7 +625,7 @@ public class CreateChannelStepOnePopupWindow implements Wallet.ScanChannelListen
      */
     public void fetchWalletBalance() {
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                .setAddress(User.getInstance().getWalletAddress(mContext))
+                .setAddress(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                 .build();
         Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override

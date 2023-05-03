@@ -20,13 +20,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.template.DisablePasteEditText;
 import com.omni.wallet.utils.CheckRules;
 import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.NumberFormatter;
+import com.omni.wallet.utils.SecretAESOperator;
 import com.omni.wallet.utils.SeedFilter;
 
 import org.greenrobot.eventbus.EventBus;
@@ -71,8 +74,9 @@ public class ForgetPwdActivity extends AppBaseActivity {
          * 从xml文件中读取seeds
          * Get seeds form xml file
          */
-        String seedsString = User.getInstance().getSeedString(mContext);
-        seedList = seedsString.split(" ");
+        String seedsString = WalletInfo.getInstance().getSeedString(mContext, ConstantInOB.networkType);
+        String newSeedsString = SecretAESOperator.getInstance().decrypt(seedsString);
+        seedList = newSeedsString.split(" ");
         initEditViewForSeeds();
     }
 

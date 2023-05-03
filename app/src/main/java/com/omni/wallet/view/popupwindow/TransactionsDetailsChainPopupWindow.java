@@ -10,9 +10,11 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.framelibrary.entity.User;
 
@@ -79,10 +81,10 @@ public class TransactionsDetailsChainPopupWindow {
                     typeIv.setImageResource(R.mipmap.icon_failed_green);
                     statusTv.setText("Confirmed");
                 }
-                fromAddressTv.setText(User.getInstance().getWalletAddress(mContext));
-                if (item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & !item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                fromAddressTv.setText(WalletInfo.getInstance().getWalletAddress(mContext, ConstantInOB.networkType));
+                if (item.getDestAddresses(0).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType)) & !item.getDestAddresses(1).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                     toAddressTv.setText(item.getDestAddresses(1));
-                } else if (!item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                } else if (!item.getDestAddresses(0).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType)) & item.getDestAddresses(1).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                     toAddressTv.setText(item.getDestAddresses(0));
                 }
             } else if (item.getAmount() > 0) {
@@ -98,12 +100,12 @@ public class TransactionsDetailsChainPopupWindow {
                     typeIv.setImageResource(R.mipmap.icon_failed_green);
                     statusTv.setText("Confirmed");
                 }
-                if (item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & !item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                if (item.getDestAddresses(0).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType)) & !item.getDestAddresses(1).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                     fromAddressTv.setText(item.getDestAddresses(1));
-                } else if (!item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                } else if (!item.getDestAddresses(0).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType)) & item.getDestAddresses(1).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                     fromAddressTv.setText(item.getDestAddresses(0));
                 }
-                toAddressTv.setText(User.getInstance().getWalletAddress(mContext));
+                toAddressTv.setText(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType));
             }
             txIdTv.setText(item.getTxHash());
             mAssetData.clear();

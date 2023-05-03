@@ -228,9 +228,9 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            if (resp.getTransactions(0).getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext))) {
+                            if (resp.getTransactions(0).getDestAddresses(0).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                                 recentsAddressTv.setText(resp.getTransactions(0).getDestAddresses(1));
-                            } else if (resp.getTransactions(0).getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                            } else if (resp.getTransactions(0).getDestAddresses(1).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                                 recentsAddressTv.setText(resp.getTransactions(0).getDestAddresses(0));
                             }
                             mData.clear();
@@ -488,7 +488,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                 if (assetId == 0) {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAddr(selectAddress)
-                            .setFrom(User.getInstance().getWalletAddress(mContext))
+                            .setFrom(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                             .setAmount((long) (Double.parseDouble(assetBalance) * 100000000))
                             .setTargetConf(time)
                             .build();
@@ -524,7 +524,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAssetId((int) assetId)
                             .setAddr(selectAddress)
-                            .setFrom(User.getInstance().getWalletAddress(mContext))
+                            .setFrom(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                             .setAssetAmount((long) (Double.parseDouble(assetBalance) * 100000000))
                             .setTargetConf(time)
                             .build();
@@ -605,7 +605,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                 if (assetId == 0) {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAddr(selectAddress)
-                            .setFrom(User.getInstance().getWalletAddress(mContext))
+                            .setFrom(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                             .setAmount((long) (Double.parseDouble(assetBalance) * 100000000))
                             .setTargetConf(time)
                             .build();
@@ -641,7 +641,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAssetId((int) assetId)
                             .setAddr(selectAddress)
-                            .setFrom(User.getInstance().getWalletAddress(mContext))
+                            .setFrom(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                             .setAssetAmount(Long.parseLong(assetBalance))
                             .setTargetConf(time)
                             .build();
@@ -753,17 +753,17 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
                 public void onClick(View v) {
                     mBasePopWindow.getContentView().findViewById(R.id.lv_step_one_content).setVisibility(View.GONE);
                     mBasePopWindow.getContentView().findViewById(R.id.lv_step_two_content).setVisibility(View.VISIBLE);
-                    if (item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext))) {
+                    if (item.getDestAddresses(0).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                         selectAddress = item.getDestAddresses(1);
-                    } else if (item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                    } else if (item.getDestAddresses(1).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                         selectAddress = item.getDestAddresses(0);
                     }
                     showStepTwo(rootView);
                 }
             });
-            if (item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext))) {
+            if (item.getDestAddresses(0).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                 holder.setText(R.id.tv_send_list_address, item.getDestAddresses(1));
-            } else if (item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+            } else if (item.getDestAddresses(1).equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                 holder.setText(R.id.tv_send_list_address, item.getDestAddresses(0));
             }
         }
@@ -826,7 +826,7 @@ public class SendStepOnePopupWindow implements Wallet.ScanSendListener {
      */
     public void fetchWalletBalance() {
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                .setAddress(User.getInstance().getWalletAddress(mContext))
+                .setAddress(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                 .build();
         Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override

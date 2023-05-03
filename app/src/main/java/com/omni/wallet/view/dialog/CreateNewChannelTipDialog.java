@@ -61,7 +61,7 @@ public class CreateNewChannelTipDialog {
                     mCallback.onClick();
                 }
                 CreateChannelDialog mCreateChannelDialog = new CreateChannelDialog(mContext);
-                mCreateChannelDialog.show(User.getInstance().getBalanceAmount(mContext), User.getInstance().getWalletAddress(mContext), "");
+                mCreateChannelDialog.show(User.getInstance().getBalanceAmount(mContext), WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType), "");
             }
         });
         /**

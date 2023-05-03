@@ -3,6 +3,7 @@ package com.omni.wallet.utils;
 import android.content.Context;
 import android.util.Log;
 
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.framelibrary.entity.User;
 
 import java.io.BufferedReader;
@@ -21,7 +22,7 @@ public class GetRequestHeader {
     public GetRequestHeader(Context context) {
         String network = User.getInstance().getNetwork(context);
         Log.d(TAG + "network: ", network);
-        String basePath = context.getExternalFilesDir(null) + "/obd";
+        String basePath = context.getExternalFilesDir(null).toString() + "/ObdMobile/" + ConstantInOB.networkType;
         this.BASE_PATH = basePath;
         this.TLS_PATH = basePath + "/tls.cert";
         this.TLS_KEY_PATH = basePath + "/tls.key.pcks8";

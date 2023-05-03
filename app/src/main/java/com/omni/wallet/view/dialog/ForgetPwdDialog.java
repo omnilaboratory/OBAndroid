@@ -20,12 +20,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.template.DisablePasteEditText;
 import com.omni.wallet.utils.CheckRules;
 import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.NumberFormatter;
+import com.omni.wallet.utils.SecretAESOperator;
 import com.omni.wallet.utils.SeedFilter;
 
 import java.util.ArrayList;
@@ -213,7 +216,9 @@ public class ForgetPwdDialog {
     }
 
     public void clickForward() {
-        String[] seedList = User.getInstance().getSeedString(mContext).split(" ");
+        String newSeedsString = WalletInfo.getInstance().getSeedString(mContext, ConstantInOB.networkType);
+        String seedsString = SecretAESOperator.getInstance().decrypt(newSeedsString);
+        String[] seedList = seedsString.split(" ");
         Boolean checkResult = true;
         for (int i = 0; i < list.size(); i++) {
             String inputItemText = list.get(i).getText().toString().trim();

@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
@@ -159,7 +160,9 @@ public class AccountLightningActivity extends AppBaseActivity {
         //
         EventBus.getDefault().post(new CloseUselessActivityEvent());
         mLoadingDialog = new LoadingDialog(mContext);
-        mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
+        String walletAddress = WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType);
+        mWalletAddressTv.setText(walletAddress);
+
         initRecyclerView();
     }
 
@@ -298,8 +301,8 @@ public class AccountLightningActivity extends AppBaseActivity {
                         pubkey = resp.getIdentityPubkey();
                         mNetworkTypeTv.setText(resp.getChains(0).getNetwork());
                         User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
-                        User.getInstance().setNodeVersion(mContext, resp.getVersion());
-                        User.getInstance().setFromPubKey(mContext, resp.getIdentityPubkey());
+                        WalletInfo.getInstance().setNodeVersion(mContext,resp.getVersion(),ConstantInOB.networkType);
+                        WalletInfo.getInstance().setNodeVersion(mContext,resp.getIdentityPubkey(),ConstantInOB.networkType);
                     });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
@@ -316,7 +319,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         allData.clear();
         chainData.clear();
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                .setAddress(User.getInstance().getWalletAddress(mContext))
+                .setAddress(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                 .build();
         Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override
@@ -366,7 +369,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                       请求各资产余额列表的接口
                      */
                     LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
-                            .setAddress(User.getInstance().getWalletAddress(mContext))
+                            .setAddress(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                             .build();
                     Obdmobile.oB_AssetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
                         @Override
@@ -550,7 +553,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     private void setDefaultAddress() {
         LightningOuterClass.SetDefaultAddressRequest setDefaultAddressRequest = LightningOuterClass.SetDefaultAddressRequest.newBuilder()
-                .setAddress(User.getInstance().getWalletAddress(mContext))
+                .setAddress(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                 .build();
         Obdmobile.oB_SetDefaultAddress(setDefaultAddressRequest.toByteArray(), new Callback() {
             @Override
@@ -624,7 +627,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     public void onClick(View v) {
                         Bundle bundle = new Bundle();
                         bundle.putLong(BalanceDetailActivity.KEY_BALANCE_AMOUNT, balanceAmount);
-                        bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS, User.getInstance().getWalletAddress(mContext));
+                        bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType));
                         bundle.putString(BalanceDetailActivity.KEY_PUBKEY, pubkey);
                         bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT, item.getAmount());
                         bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID, item.getPropertyid());
@@ -645,7 +648,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     public void onClick(View v) {
                         Bundle bundle = new Bundle();
                         bundle.putLong(BalanceDetailActivity.KEY_BALANCE_AMOUNT, balanceAmount);
-                        bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS, User.getInstance().getWalletAddress(mContext));
+                        bundle.putString(BalanceDetailActivity.KEY_WALLET_ADDRESS, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType));
                         bundle.putString(BalanceDetailActivity.KEY_PUBKEY, pubkey);
                         bundle.putLong(BalanceDetailActivity.KEY_BALANCE_ACCOUNT, item.getAmount());
                         bundle.putLong(BalanceDetailActivity.KEY_ASSET_ID, item.getPropertyid());
@@ -700,7 +703,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @OnClick(R.id.iv_fund)
     public void clickFund() {
         mFundPopupWindow = new FundPopupWindow(mContext);
-        mFundPopupWindow.show(mParentLayout, User.getInstance().getWalletAddress(mContext));
+        mFundPopupWindow.show(mParentLayout, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType));
     }
 
     /**
@@ -739,7 +742,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     public void clickChannelList() {
         Bundle bundle = new Bundle();
         bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
-        bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, User.getInstance().getWalletAddress(mContext));
+        bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType));
         bundle.putString(ChannelsActivity.KEY_PUBKEY, pubkey);
         bundle.putString(ChannelsActivity.KEY_CHANNEL, "all");
         switchActivity(ChannelsActivity.class, bundle);
@@ -778,7 +781,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @OnClick(R.id.iv_menu)
     public void clickMemu() {
         mMenuPopupWindow = new MenuPopupWindow(mContext);
-        mMenuPopupWindow.show(mMenuIv, balanceAmount, User.getInstance().getWalletAddress(mContext), pubkey);
+        mMenuPopupWindow.show(mMenuIv, balanceAmount, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType), pubkey);
     }
 
     /**
@@ -788,9 +791,9 @@ public class AccountLightningActivity extends AppBaseActivity {
     @OnClick(R.id.layout_create_channel)
     public void clickCreateChannel() {
         mCreateChannelDialog = new CreateChannelDialog(mContext);
-        mCreateChannelDialog.show(balanceAmount, User.getInstance().getWalletAddress(mContext), "");
+        mCreateChannelDialog.show(balanceAmount, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType), "");
 //        mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-//        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, User.getInstance().getWalletAddress(mContext), "");
+//        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType), "");
     }
 
     /**
@@ -838,9 +841,9 @@ public class AccountLightningActivity extends AppBaseActivity {
                 mReceiveLuckyPacketDialog.show(event.getData());
             } else if (event.getType().equals("openChannel")) {
                 mCreateChannelDialog = new CreateChannelDialog(mContext);
-                mCreateChannelDialog.show(balanceAmount, User.getInstance().getWalletAddress(mContext), event.getData());
+                mCreateChannelDialog.show(balanceAmount, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType), event.getData());
 //                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-//                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, User.getInstance().getWalletAddress(mContext), event.getData());
+//                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType), event.getData());
             } else if (event.getType().equals("send")) {
                 mSendDialog = new SendDialog(mContext);
                 mSendDialog.show(event.getData());
@@ -857,7 +860,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         if (event == null) {
             return;
         }
-        User.getInstance().setWalletAddress(mContext, event.getAddress());
+        WalletInfo.getInstance().setWalletAddress(mContext,event.getAddress(),ConstantInOB.networkType);
         getInfo();
         getAssetAndBtcData();
         setDefaultAddress();

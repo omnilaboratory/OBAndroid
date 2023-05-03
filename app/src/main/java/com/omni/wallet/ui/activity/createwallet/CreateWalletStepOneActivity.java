@@ -15,8 +15,10 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.SecretAESOperator;
@@ -152,7 +154,8 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
                         seedsString = seedsString + seedArray.get(idx)+ " ";
                     }
                     Log.d(TAG, "onResponse seedsString: " + seedsString);
-                    User.getInstance().setSeedString(mContext,seedsString);
+                    String SecretSeedString = SecretAESOperator.getInstance().encrypt(seedsString);
+                    WalletInfo.getInstance().setSeedString(mContext,SecretSeedString,ConstantInOB.networkType);
                     runOnUiThread(() -> {
                         seedsAdapter.notifyDataSetChanged();
                         mLoadingDialog.dismiss();
@@ -181,7 +184,7 @@ public class CreateWalletStepOneActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
-        User.getInstance().setInitWalletType(mContext,"createStepOne");
+        WalletInfo.getInstance().setInitWalletType(mContext, "createStepOne", ConstantInOB.networkType);
         switchActivity(CreateWalletStepTwoActivity.class);
     }
 

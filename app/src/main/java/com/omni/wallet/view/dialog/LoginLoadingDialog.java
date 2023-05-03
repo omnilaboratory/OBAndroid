@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.common.ConstantWithNetwork;
@@ -39,10 +40,10 @@ public class LoginLoadingDialog {
     public LoginLoadingDialog(Context context) {
         this.mContext = context;
         this.constantInOB = new ConstantInOB(context);
-        String fileLocal = mContext.getExternalFilesDir(null) + "/obd/" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLogPath();
+        String fileLocal = mContext.getExternalFilesDir(null).toString() + "/ObdMobile/" + ConstantInOB.networkType + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getLogPath();
         this.obdLogFileObserver = new ObdLogFileObserver(fileLocal, context);
         this.blockData = context.getSharedPreferences("blockData", MODE_PRIVATE);
-        this.totalBlock = User.getInstance().getTotalBlock(context);
+        this.totalBlock = WalletInfo.getInstance().getTotalBlock(context,ConstantInOB.networkType);
     }
 
     @SuppressLint("SetTextI18n")

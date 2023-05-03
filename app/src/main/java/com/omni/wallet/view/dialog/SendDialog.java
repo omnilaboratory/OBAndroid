@@ -577,7 +577,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                 if (assetId == 0) {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAddr(selectAddress)
-                            .setFrom(User.getInstance().getWalletAddress(mContext))
+                            .setFrom(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                             .setAmount((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)))
                             .setTargetConf(time)
                             .build();
@@ -677,7 +677,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                     LightningOuterClass.SendCoinsFromRequest sendRequest = LightningOuterClass.SendCoinsFromRequest.newBuilder()
                             .setAssetId((int) assetId)
                             .setAddr(selectAddress)
-                            .setFrom(User.getInstance().getWalletAddress(mContext))
+                            .setFrom(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                             .setAssetAmount((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)))
                             .setTargetConf(time)
                             .build();
@@ -1023,7 +1023,7 @@ public class SendDialog implements Wallet.ScanSendListener {
         if (assetId == 0) {
             asyncEstimateFeeRequest = LightningOuterClass.ObEstimateFeeRequest.newBuilder()
                     .setAddr(selectAddress)
-                    .setFrom(User.getInstance().getWalletAddress(mContext))
+                    .setFrom(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                     .setAmount(amount)
                     .setTargetConf(targetConf)
                     .build();
@@ -1031,7 +1031,7 @@ public class SendDialog implements Wallet.ScanSendListener {
             asyncEstimateFeeRequest = LightningOuterClass.ObEstimateFeeRequest.newBuilder()
                     .setAssetId((int) assetId)
                     .setAddr(selectAddress)
-                    .setFrom(User.getInstance().getWalletAddress(mContext))
+                    .setFrom(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                     .setAssetAmount(amount)
                     .setTargetConf(targetConf)
                     .build();
@@ -1085,7 +1085,7 @@ public class SendDialog implements Wallet.ScanSendListener {
      */
     public void fetchWalletBalance() {
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                .setAddress(User.getInstance().getWalletAddress(mContext))
+                .setAddress(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                 .build();
         Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override

@@ -22,6 +22,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.http.HttpUtils;
 import com.omni.wallet.baselibrary.http.callback.EngineCallback;
@@ -687,7 +688,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             Bundle bundle = new Bundle();
                             bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
                             bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, walletAddress);
-                            bundle.putString(ChannelsActivity.KEY_PUBKEY, User.getInstance().getFromPubKey(mContext));
+                            bundle.putString(ChannelsActivity.KEY_PUBKEY, WalletInfo.getInstance().getFromPubKey(mContext,ConstantInOB.networkType));
                             bundle.putString(ChannelsActivity.KEY_CHANNEL, "all");
                             Intent intent = new Intent(mContext, ChannelsActivity.class);
                             intent.putExtras(bundle);
@@ -871,7 +872,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
      */
     public void fetchWalletBalance() {
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                .setAddress(User.getInstance().getWalletAddress(mContext))
+                .setAddress(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
                 .build();
         Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override

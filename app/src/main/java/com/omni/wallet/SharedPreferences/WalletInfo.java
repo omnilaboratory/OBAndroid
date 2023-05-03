@@ -53,9 +53,12 @@ public class WalletInfo {
 
     private String newPassSecret;
 
-    public void setInitWalletType(Context context, String value){
+    private String nodeVersion;
+
+    private String startParams;
+
+    public void setInitWalletType(Context context, String value, NetworkType networkType){
         initWalletType = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveInitWalletType(context,value);
@@ -69,8 +72,7 @@ public class WalletInfo {
         }
     }
 
-    public String getInitWalletType(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public String getInitWalletType(Context context, NetworkType networkType){
         String temp;
         switch (networkType) {
             case MAIN:
@@ -89,9 +91,8 @@ public class WalletInfo {
         return initWalletType;
     }
 
-    public void setMacaroonString(Context context, String value){
+    public void setMacaroonString(Context context, String value, NetworkType networkType){
         macaroonString = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveMacaroonString(context,value);
@@ -105,8 +106,7 @@ public class WalletInfo {
         }
     }
 
-    public String getMacaroonString(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public String getMacaroonString(Context context, NetworkType networkType){
         String temp;
         switch (networkType) {
             case MAIN:
@@ -125,9 +125,8 @@ public class WalletInfo {
         return macaroonString;
     }
 
-    public void setSeedString(Context context, String value){
+    public void setSeedString(Context context, String value, NetworkType networkType){
         seedString = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveSeedString(context,value);
@@ -141,8 +140,7 @@ public class WalletInfo {
         }
     }
 
-    public String getSeedString(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public String getSeedString(Context context, NetworkType networkType){
         String temp;
         switch (networkType) {
             case MAIN:
@@ -161,9 +159,8 @@ public class WalletInfo {
         return seedString;
     }
 
-    public void setRecoverySeedString(Context context, String value){
+    public void setRecoverySeedString(Context context, String value, NetworkType networkType){
         recoverySeedString = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveRecoverySeedString(context,value);
@@ -177,8 +174,7 @@ public class WalletInfo {
         }
     }
 
-    public String getRecoverySeedString(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public String getRecoverySeedString(Context context, NetworkType networkType){
         String temp;
         switch (networkType) {
             case MAIN:
@@ -197,9 +193,8 @@ public class WalletInfo {
         return recoverySeedString;
     }
 
-    public void setHeaderBinChecked(Context context, boolean value){
+    public void setHeaderBinChecked(Context context, boolean value, NetworkType networkType){
         headerBinChecked = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveHeaderBinChecked(context,value);
@@ -213,8 +208,7 @@ public class WalletInfo {
         }
     }
 
-    public boolean getHeaderBinChecked(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public boolean getHeaderBinChecked(Context context, NetworkType networkType){
         boolean temp;
         switch (networkType) {
             case MAIN:
@@ -233,9 +227,7 @@ public class WalletInfo {
         return headerBinChecked;
     }
 
-    public void setFilterHeaderBinChecked(Context context, boolean value){
-        filterHeaderBinChecked = value;
-        NetworkType networkType = ConstantInOB.networkType;
+    public void setFilterHeaderBinChecked(Context context, boolean value, NetworkType networkType){
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveFilterHeaderBinChecked(context,value);
@@ -249,8 +241,7 @@ public class WalletInfo {
         }
     }
 
-    public boolean getFilterHeaderBinChecked(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public boolean getFilterHeaderBinChecked(Context context, NetworkType networkType){
         boolean temp;
         switch (networkType) {
             case MAIN:
@@ -269,9 +260,8 @@ public class WalletInfo {
         return filterHeaderBinChecked;
     }
 
-    public void setNeutrinoDbChecked(Context context, boolean value){
+    public void setNeutrinoDbChecked(Context context, boolean value, NetworkType networkType){
         neutrinoDbChecked = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveNeutrinoDbChecked(context,value);
@@ -285,8 +275,7 @@ public class WalletInfo {
         }
     }
 
-    public boolean getNeutrinoDbChecked(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public boolean getNeutrinoDbChecked(Context context, NetworkType networkType){
         boolean temp;
         switch (networkType) {
             case MAIN:
@@ -305,9 +294,8 @@ public class WalletInfo {
         return neutrinoDbChecked;
     }
 
-    public void setAlias(Context context, String value){
+    public void setAlias(Context context, String value, NetworkType networkType){
         alias = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveAlias(context,value);
@@ -321,8 +309,7 @@ public class WalletInfo {
         }
     }
 
-    public String getAlias(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public String getAlias(Context context, NetworkType networkType){
         String temp;
         switch (networkType) {
             case MAIN:
@@ -341,9 +328,8 @@ public class WalletInfo {
         return alias;
     }
 
-    public void setWalletAddress(Context context, String value){
+    public void setWalletAddress(Context context, String value, NetworkType networkType){
         walletAddress = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveWalletAddress(context,value);
@@ -357,8 +343,7 @@ public class WalletInfo {
         }
     }
 
-    public String getWalletAddress(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public String getWalletAddress(Context context, NetworkType networkType){
         String temp;
         switch (networkType) {
             case MAIN:
@@ -378,9 +363,8 @@ public class WalletInfo {
     }
 
 
-    public void setFromPubKey(Context context, String value){
+    public void setFromPubKey(Context context, String value, NetworkType networkType){
         fromPubKey = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveFromPubKey(context,value);
@@ -394,8 +378,7 @@ public class WalletInfo {
         }
     }
 
-    public String getFromPubKey(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public String getFromPubKey(Context context, NetworkType networkType){
         String temp;
         switch (networkType) {
             case MAIN:
@@ -414,9 +397,8 @@ public class WalletInfo {
         return fromPubKey;
     }
 
-    public void setTotalBlock(Context context, long value){
+    public void setTotalBlock(Context context, long value, NetworkType networkType){
         totalBlock = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveTotalBlock(context,value);
@@ -430,8 +412,7 @@ public class WalletInfo {
         }
     }
 
-    public long getTotalBlock(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public long getTotalBlock(Context context, NetworkType networkType){
         long temp;
         switch (networkType) {
             case MAIN:
@@ -450,9 +431,8 @@ public class WalletInfo {
         return totalBlock;
     }
 
-    public void setAssetsCount(Context context, int value){
+    public void setAssetsCount(Context context, int value, NetworkType networkType){
         assetsCount = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveAssetCount(context,value);
@@ -466,8 +446,7 @@ public class WalletInfo {
         }
     }
 
-    public int getAssetsCount(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public int getAssetsCount(Context context, NetworkType networkType){
         int temp;
         switch (networkType) {
             case MAIN:
@@ -486,9 +465,8 @@ public class WalletInfo {
         return assetsCount;
     }
 
-    public void setAssetListString(Context context, String value){
+    public void setAssetListString(Context context, String value, NetworkType networkType){
         assetListString = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveAssetListString(context,value);
@@ -502,8 +480,7 @@ public class WalletInfo {
         }
     }
 
-    public String getAssetListString(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public String getAssetListString(Context context, NetworkType networkType){
         String temp;
         switch (networkType) {
             case MAIN:
@@ -522,9 +499,8 @@ public class WalletInfo {
         return assetListString;
     }
 
-    public void setPasswordSecret(Context context, String value){
+    public void setPasswordSecret(Context context, String value, NetworkType networkType){
         passwordSecret = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.savePasswordSecret(context,value);
@@ -538,8 +514,7 @@ public class WalletInfo {
         }
     }
 
-    public String getPasswordSecret(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public String getPasswordSecret(Context context, NetworkType networkType){
         String temp;
         switch (networkType) {
             case MAIN:
@@ -558,9 +533,8 @@ public class WalletInfo {
         return passwordSecret;
     }
 
-    public void setNewPassSecret(Context context, String value){
+    public void setNewPassSecret(Context context, String value, NetworkType networkType){
         newPassSecret = value;
-        NetworkType networkType = ConstantInOB.networkType;
         switch (networkType) {
             case MAIN:
                 MainWalletInfo.saveNewPasswordSecret(context,value);
@@ -574,8 +548,7 @@ public class WalletInfo {
         }
     }
 
-    public String getNewPassSecret(Context context){
-        NetworkType networkType = ConstantInOB.networkType;
+    public String getNewPassSecret(Context context, NetworkType networkType){
         String temp;
         switch (networkType) {
             case MAIN:
@@ -592,5 +565,73 @@ public class WalletInfo {
         }
         newPassSecret = temp;
         return newPassSecret;
+    }
+
+    public void setNodeVersion(Context context, String value, NetworkType networkType){
+        nodeVersion = value;
+        switch (networkType) {
+            case MAIN:
+                MainWalletInfo.saveNodeVersion(context,value);
+                break;
+            case TEST:
+                TestWalletInfo.saveNodeVersion(context,value);
+                break;
+            case REG:
+                RegWalletInfo.saveNodeVersion(context,value);
+                break;
+        }
+    }
+
+    public String getNodeVersion(Context context, NetworkType networkType){
+        String temp;
+        switch (networkType) {
+            case MAIN:
+                temp = MainWalletInfo.getNodeVersion(context);
+                break;
+            case TEST:
+                temp = TestWalletInfo.getNodeVersion(context);
+                break;
+            case REG:
+                temp = RegWalletInfo.getNodeVersion(context);
+                break;
+            default:
+                throw new IllegalStateException(TAG + "Unexpected value: " + networkType);
+        }
+        nodeVersion = temp;
+        return nodeVersion;
+    }
+
+    public void setStartParams(Context context, String value, NetworkType networkType){
+        nodeVersion = value;
+        switch (networkType) {
+            case MAIN:
+                MainWalletInfo.saveStartParams(context,value);
+                break;
+            case TEST:
+                TestWalletInfo.saveStartParams(context,value);
+                break;
+            case REG:
+                RegWalletInfo.saveStartParams(context,value);
+                break;
+        }
+    }
+
+    public String getStartParams(Context context, NetworkType networkType){
+        String temp;
+        switch (networkType) {
+            case MAIN:
+                temp = MainWalletInfo.getStartParams(context);
+                break;
+            case TEST:
+                temp = TestWalletInfo.getStartParams(context);
+                break;
+            case REG:
+                temp = RegWalletInfo.getStartParams(context);
+                break;
+            default:
+                throw new IllegalStateException(TAG + "Unexpected value: " + networkType);
+        }
+        startParams = temp;
+        return startParams;
     }
 }

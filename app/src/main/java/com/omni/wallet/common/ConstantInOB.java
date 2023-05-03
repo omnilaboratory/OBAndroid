@@ -13,7 +13,7 @@ public class ConstantInOB {
     public static String regFilterHeader = "reg_filter_headers";
     public static String peer = "peers";
     public static String peerJson = "peers.json";
-    public static NetworkType networkType = NetworkType.TEST;
+    public static NetworkType networkType = NetworkType.MAIN;
 
     static String regTestLogPath = "/logs/bitcoin/regtest/lnd.log";
     static String testLogPath = "/logs/bitcoin/testnet/lnd.log";
@@ -45,9 +45,8 @@ public class ConstantInOB {
     public static final long DAY_MILLIS = 24 * HOUR_MILLIS;
     public static final long WEEK_MILLIS = 7 * DAY_MILLIS;
 
-
     public ConstantInOB(Context context) {
-        basePath = context.getExternalFilesDir(null) + "/obd" + "";
+        basePath = context.getExternalFilesDir(null).toString() + "/ObdMobile/" + ConstantInOB.networkType;
     }
 
     public String getBasePath() {

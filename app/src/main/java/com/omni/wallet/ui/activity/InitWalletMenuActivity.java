@@ -6,7 +6,9 @@ import android.widget.LinearLayout;
 
 import com.google.protobuf.ByteString;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
@@ -53,7 +55,7 @@ public class InitWalletMenuActivity extends AppBaseActivity {
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
         EventBus.getDefault().register(this);
-        walletType = User.getInstance().getInitWalletType(mContext);
+        walletType = WalletInfo.getInstance().getInitWalletType(mContext, ConstantInOB.networkType);
         if(walletType.equals("createStepOne")||walletType.equals("createStepTwo")||walletType.equals("createStepThree")){
             welcomeContent.setVisibility(View.GONE);
             continueToCreateBtn.setVisibility(View.VISIBLE);
@@ -127,7 +129,7 @@ public class InitWalletMenuActivity extends AppBaseActivity {
 
     public void unlockWalletToRestoreChannel(){
         mLoadingDialog.show();
-        String passMd5 = User.getInstance().getPasswordMd5(mContext);
+        String passMd5 = WalletInfo.getInstance().getPasswordSecret(mContext,ConstantInOB.networkType);
         Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
         Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
             @Override
@@ -155,7 +157,7 @@ public class InitWalletMenuActivity extends AppBaseActivity {
 
     public void unlockWalletToBackupBlockProcess(){
         mLoadingDialog.show();
-        String passMd5 = User.getInstance().getPasswordMd5(mContext);
+        String passMd5 = WalletInfo.getInstance().getPasswordSecret(mContext,ConstantInOB.networkType);
         Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
         Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
             @Override

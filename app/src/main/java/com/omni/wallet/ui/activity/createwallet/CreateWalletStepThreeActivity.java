@@ -20,7 +20,9 @@ import android.widget.Toast;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
@@ -266,8 +268,9 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
             mLoadingDialog.show();
             String md5String = SecretAESOperator.getInstance().encrypt(password);
             System.out.println(md5String);
-            User.getInstance().setPasswordMd5(mContext,md5String);
-            String seedsString = User.getInstance().getSeedString(mContext);
+            WalletInfo.getInstance().setPasswordSecret(mContext,md5String,ConstantInOB.networkType);
+            String newSeedsString = WalletInfo.getInstance().getSeedString(mContext, ConstantInOB.networkType);
+            String seedsString = SecretAESOperator.getInstance().decrypt(newSeedsString);
             String[] seedList = seedsString.split(" ");
             Walletunlocker.InitWalletRequest.Builder initWalletRequestBuilder = Walletunlocker.InitWalletRequest.newBuilder();
             List newSeedList = initWalletRequestBuilder.getCipherSeedMnemonicList();
@@ -302,9 +305,9 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
                     try {
                         Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
                         ByteString macaroon = initWalletResponse.getAdminMacaroon();
-                        User.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8());
+                        WalletInfo.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8(), ConstantInOB.networkType);
                         User.getInstance().setCreated(mContext,true);
-                        User.getInstance().setInitWalletType(mContext,"createStepThree");
+                        WalletInfo.getInstance().setInitWalletType(mContext, "createStepThree", ConstantInOB.networkType);
                         runOnUiThread(() -> mLoadingDialog.dismiss());
                         switchActivity(BackupBlockProcessActivity.class);
                     } catch (InvalidProtocolBufferException e) {

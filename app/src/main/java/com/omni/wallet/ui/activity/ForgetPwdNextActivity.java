@@ -20,7 +20,9 @@ import android.widget.Toast;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.CheckInputRules;
@@ -267,7 +269,7 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
              * Use SharedPreferences Class to backup password secret string to local file when create password secret string
              */
             String newPassMd5String = SecretAESOperator.getInstance().encrypt(password);
-            String oldPassMd5String = User.getInstance().getPasswordMd5(mContext);
+            String oldPassMd5String = WalletInfo.getInstance().getPasswordSecret(mContext,ConstantInOB.networkType);
             Walletunlocker.ChangePasswordRequest changePasswordRequest = Walletunlocker.ChangePasswordRequest.newBuilder()
                     .setCurrentPassword(ByteString.copyFromUtf8(oldPassMd5String))
                     .setNewPassword(ByteString.copyFromUtf8(newPassMd5String))
@@ -294,8 +296,8 @@ public class ForgetPwdNextActivity extends AppBaseActivity {
                         Walletunlocker.ChangePasswordResponse changePasswordResponse = Walletunlocker.ChangePasswordResponse.parseFrom(bytes);
                         String macaroon = changePasswordResponse.getAdminMacaroon().toString();
                         Log.d("macaroon",macaroon);
-                        User.getInstance().setPasswordMd5(mContext,newPassMd5String);
-                        User.getInstance().setMacaroonString(mContext,macaroon);
+                        WalletInfo.getInstance().setPasswordSecret(mContext,newPassMd5String,ConstantInOB.networkType);
+                        WalletInfo.getInstance().setMacaroonString(mContext,macaroon, ConstantInOB.networkType);
 
                     } catch (InvalidProtocolBufferException e) {
                         runOnUiThread(() -> PublicUtils.closeLoading(mLoadingDialog));

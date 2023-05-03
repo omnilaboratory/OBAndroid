@@ -28,6 +28,8 @@ public class MainWalletInfo extends BasePreferencesUtils {
     private static final String ASSET_LIST_STRING = "assetListString";
     private static final String PASSWORD_SECRET = "passwordSecret";
     private static final String NEW_PASSWORD_SECRET_STRING = "newPassSecret";
+    private static final String NODE_VERSION = "nodeVersion";
+    private static final String START_PARAMS = "startParams";
 
     public static void saveInitWalletType(Context context, String value) {
         putString(MAIN_WALLET_INFO, context, INIT_WALLET_TYPE, value);
@@ -147,5 +149,21 @@ public class MainWalletInfo extends BasePreferencesUtils {
 
     public static String getNewPasswordSecret(Context context) {
         return getString(MAIN_WALLET_INFO, context, NEW_PASSWORD_SECRET_STRING);
+    }
+
+    public static void saveNodeVersion(Context context, String value) {
+        putString(MAIN_WALLET_INFO, context, NODE_VERSION, value);
+    }
+
+    public static String getNodeVersion(Context context) {
+        return getString(MAIN_WALLET_INFO, context, NODE_VERSION);
+    }
+
+    public static void saveStartParams(Context context, String value) {
+        putString(MAIN_WALLET_INFO, context, START_PARAMS, value);
+    }
+
+    public static String getStartParams(Context context) {
+        return getString(MAIN_WALLET_INFO, context, START_PARAMS);
     }
 }

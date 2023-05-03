@@ -73,7 +73,7 @@ public class User {
     private String channelBackupPathArray;
 
     private String seedString;
-
+    //TODO 2023-04-26 Start with
     private String passwordMd5;
 
     private String recoverySeedString;
@@ -167,7 +167,6 @@ public class User {
         userJob = PreferencesUtils.getUserJobFromLocal(context);
         return userJob;
     }
-
     public void setUserJob(Context context, String userJob) {
         PreferencesUtils.saveUserJobToLocal(context, userJob);
         this.userJob = userJob;

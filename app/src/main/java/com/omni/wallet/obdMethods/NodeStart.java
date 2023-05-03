@@ -53,7 +53,7 @@ public class NodeStart {
             alias = User.getInstance().getAlias(context);
         }
         LogUtils.e("================", alias);
-        String lndDir = context.getApplicationContext().getExternalFilesDir(null).toString() + "/obd";
+        String lndDir = context.getExternalFilesDir(null).toString() + "/ObdMobile/" + ConstantInOB.networkType;
         String startParams = ConstantWithNetwork.getInstance(ConstantInOB.networkType).getStartParams();
         Log.d(TAG, "startNode startParams: " + startParams + alias);
         LogUtils.e("================", startParams + alias);

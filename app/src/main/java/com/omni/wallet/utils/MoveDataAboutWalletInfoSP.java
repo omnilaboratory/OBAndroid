@@ -3,6 +3,8 @@ package com.omni.wallet.utils;
 import android.content.Context;
 
 import com.omni.wallet.SharedPreferences.WalletInfo;
+import com.omni.wallet.common.ConstantInOB;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.framelibrary.entity.User;
 
 public class MoveDataAboutWalletInfoSP {
@@ -10,6 +12,8 @@ public class MoveDataAboutWalletInfoSP {
         boolean isMoved = User.getInstance().getWalletInfoMoved(context);
 
         boolean isSecreted = User.getInstance().getSeedSecreted(context);
+
+        NetworkType networkType = ConstantInOB.networkType;
 
         if (!isMoved){
             String initWalletType = User.getInstance().getInitWalletType(context);
@@ -42,47 +46,50 @@ public class MoveDataAboutWalletInfoSP {
 
             String newPassSecret = User.getInstance().getNewPasswordMd5(context);
 
-            WalletInfo.getInstance().setInitWalletType(context,initWalletType);
+            String nodeVersion = User.getInstance().getNodeVersion(context);
 
-            WalletInfo.getInstance().setMacaroonString(context,macaroonString);
+            WalletInfo.getInstance().setInitWalletType(context,initWalletType,networkType);
+
+            WalletInfo.getInstance().setMacaroonString(context,macaroonString,networkType);
 
             if (!isSecreted){
                 String newSeedString = SecretAESOperator.getInstance().encrypt(seedString);
 
-                WalletInfo.getInstance().setSeedString(context,newSeedString);
+                WalletInfo.getInstance().setSeedString(context,newSeedString,networkType);
 
                 String newRecoverySeedString = SecretAESOperator.getInstance().encrypt(recoverySeedString);
 
-                WalletInfo.getInstance().setRecoverySeedString(context,newRecoverySeedString);
+                WalletInfo.getInstance().setRecoverySeedString(context,newRecoverySeedString,networkType);
             }
 
-            WalletInfo.getInstance().setHeaderBinChecked(context,headerBinChecked);
+            WalletInfo.getInstance().setHeaderBinChecked(context,headerBinChecked,networkType);
 
-            WalletInfo.getInstance().setFilterHeaderBinChecked(context,filterHeaderBinChecked);
+            WalletInfo.getInstance().setFilterHeaderBinChecked(context,filterHeaderBinChecked,networkType);
 
-            WalletInfo.getInstance().setNeutrinoDbChecked(context,neutrinoDbChecked);
+            WalletInfo.getInstance().setNeutrinoDbChecked(context,neutrinoDbChecked,networkType);
 
-            WalletInfo.getInstance().setAlias(context,alias);
+            WalletInfo.getInstance().setAlias(context,alias,networkType);
 
-            WalletInfo.getInstance().setWalletAddress(context,walletAddress);
+            WalletInfo.getInstance().setWalletAddress(context,walletAddress,networkType);
 
-            WalletInfo.getInstance().setFromPubKey(context,fromPubKey);
+            WalletInfo.getInstance().setFromPubKey(context,fromPubKey,networkType);
 
-            WalletInfo.getInstance().setTotalBlock(context,totalBlock);
+            WalletInfo.getInstance().setTotalBlock(context,totalBlock,networkType);
 
-            WalletInfo.getInstance().setAssetsCount(context,assetsCount);
+            WalletInfo.getInstance().setAssetsCount(context,assetsCount,networkType);
 
-            WalletInfo.getInstance().setAssetListString(context,assetListString);
+            WalletInfo.getInstance().setAssetListString(context,assetListString,networkType);
 
-            WalletInfo.getInstance().setPasswordSecret(context,passwordSecret);
+            WalletInfo.getInstance().setPasswordSecret(context,passwordSecret,networkType);
 
-            WalletInfo.getInstance().setNewPassSecret(context,newPassSecret);
+            WalletInfo.getInstance().setNewPassSecret(context,newPassSecret,networkType);
+
+            WalletInfo.getInstance().setNodeVersion(context,nodeVersion,networkType);
 
             User.getInstance().setWalletInfoMoved(context,true);
 
             User.getInstance().setSeedSecreted(context,true);
         }
-
 
     }
 }

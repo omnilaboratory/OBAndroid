@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
@@ -97,12 +98,13 @@ public class UnlockActivity extends AppBaseActivity {
     protected void initData() {
         EventBus.getDefault().register(this);
         mPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
-        localSeed = User.getInstance().getSeedString(mContext);
+        String newLocalSeed = WalletInfo.getInstance().getSeedString(mContext, ConstantInOB.networkType);
+        localSeed = SecretAESOperator.getInstance().decrypt(newLocalSeed);
         isCreated = User.getInstance().getCreated(mContext);
         isSynced = User.getInstance().getSynced(mContext);
         seedChecked = User.getInstance().getSeedChecked(mContext);
-        walletAddress = User.getInstance().getWalletAddress(mContext);
-        initWalletType = User.getInstance().getInitWalletType(mContext);
+        walletAddress = WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType);
+        initWalletType = WalletInfo.getInstance().getInitWalletType(mContext, ConstantInOB.networkType);
         isStartCreate = User.getInstance().getStartCreate(mContext);
         changePassword();
 
@@ -220,7 +222,7 @@ public class UnlockActivity extends AppBaseActivity {
     }
 
     public void changePasswordAction(){
-        String currentPasswordStr = User.getInstance().getPasswordMd5(mContext);
+        String currentPasswordStr = WalletInfo.getInstance().getPasswordSecret(mContext,ConstantInOB.networkType);
         String newPasswordStr = User.getInstance().getNewPasswordMd5(mContext);
         Walletunlocker.ChangePasswordRequest changePasswordRequest = Walletunlocker.ChangePasswordRequest.newBuilder()
                 .setCurrentPassword(ByteString.copyFromUtf8(currentPasswordStr))
@@ -240,8 +242,8 @@ public class UnlockActivity extends AppBaseActivity {
                 try {
                     Walletunlocker.ChangePasswordResponse changePasswordResponse = Walletunlocker.ChangePasswordResponse.parseFrom(bytes);
                     String macaroon = changePasswordResponse.getAdminMacaroon().toString();
-                    User.getInstance().setMacaroonString(mContext,macaroon);
-                    User.getInstance().setPasswordMd5(mContext,newPasswordStr);
+                    WalletInfo.getInstance().setMacaroonString(mContext,macaroon, ConstantInOB.networkType);
+                    WalletInfo.getInstance().setPasswordSecret(mContext,newPasswordStr,ConstantInOB.networkType);
                     User.getInstance().setNewPasswordMd5(mContext,"");
                     Log.d(TAG, "changePassword onResponse: changeOver");
                 } catch (InvalidProtocolBufferException e) {
@@ -253,7 +255,7 @@ public class UnlockActivity extends AppBaseActivity {
 
     public boolean checkedPassMatched(String inputPass){
         boolean isMatched;
-        String localPass = User.getInstance().getPasswordMd5(mContext);
+        String localPass = WalletInfo.getInstance().getPasswordSecret(mContext,ConstantInOB.networkType);
         isMatched = inputPass.equals(localPass);
         return isMatched;
     }
@@ -308,7 +310,7 @@ public class UnlockActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_create)
     public void clickCreate() {
-        User.getInstance().setInitWalletType(mContext, "create");
+        WalletInfo.getInstance().setInitWalletType(mContext, "create", ConstantInOB.networkType);
         Intent intent = new Intent();
         intent.setClass(mContext,CreateWalletStepOneActivity.class);
         startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
@@ -320,7 +322,7 @@ public class UnlockActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_recover)
     public void clickRecover() {
-        User.getInstance().setInitWalletType(mContext, "recovery");
+        WalletInfo.getInstance().setInitWalletType(mContext, "recovery", ConstantInOB.networkType);
         Intent intent = new Intent();
         intent.setClass(mContext,RecoverWalletStepOneActivity.class);
         startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);

@@ -3,10 +3,12 @@ package com.omni.wallet.utils;
 import android.content.Context;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.baselibrary.http.HttpUtils;
 import com.omni.wallet.baselibrary.http.callback.EngineCallback;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.data.AssetsDao;
 import com.omni.wallet.data.AssetsItem;
 import com.omni.wallet.framelibrary.entity.User;
@@ -91,7 +93,7 @@ public class WalletServiceUtil {
 
     public static void getBtcBalance(Context context, GetBtcBalanceCallback callback, GetBtcBalanceErrorCallback error) {
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
-                .setAddress(User.getInstance().getWalletAddress(context))
+                .setAddress(WalletInfo.getInstance().getWalletAddress(context, ConstantInOB.networkType))
                 .build();
         Obdmobile.oB_WalletBalanceByAddress(walletBalanceByAddressRequest.toByteArray(), new Callback() {
             @Override
@@ -120,7 +122,7 @@ public class WalletServiceUtil {
 
     public static void getAssetsBalance(Context context, GetAssetsBalanceCallback callback, GetAssetsBalanceErrorCallback error) {
         LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
-                .setAddress(User.getInstance().getWalletAddress(context))
+                .setAddress(WalletInfo.getInstance().getWalletAddress(context,ConstantInOB.networkType))
                 .build();
         Obdmobile.oB_AssetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
             @Override

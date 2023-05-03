@@ -20,13 +20,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.template.DisablePasteEditText;
 import com.omni.wallet.utils.CheckRules;
 import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.NumberFormatter;
+import com.omni.wallet.utils.SecretAESOperator;
 import com.omni.wallet.utils.SeedFilter;
 
 import org.greenrobot.eventbus.EventBus;
@@ -239,7 +242,8 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
         for (int i = 0; i < list.size(); i++) {
             seedsString.append(list.get(i).getText()).append(" ");
         }
-        User.getInstance().setRecoverySeedString(mContext, seedsString.toString());
+        String secretSeed =  SecretAESOperator.getInstance().encrypt(seedsString.toString());
+        WalletInfo.getInstance().setRecoverySeedString(mContext,secretSeed,ConstantInOB.networkType);
         /*
          * 使用SharedPreferences 对象，在生成seeds时候将seeds备份到本地文件
          * Use SharedPreferences Class to back up seeds to local file,when create seeds.
@@ -247,7 +251,7 @@ public class RecoverWalletStepOneActivity extends AppBaseActivity {
         SharedPreferences secretData = ctx.getSharedPreferences("secretData", MODE_PRIVATE);
         SharedPreferences.Editor editor = secretData.edit();
         editor.putString("seeds", seedsString.toString());
-        User.getInstance().setInitWalletType(mContext, "recoveryStepOne");
+        WalletInfo.getInstance().setInitWalletType(mContext, "recoveryStepOne", ConstantInOB.networkType);
         editor.apply();
         switchActivity(RecoverWalletStepTwoActivity.class);
 //        switchActivity(RestoreChannelActivity.class);

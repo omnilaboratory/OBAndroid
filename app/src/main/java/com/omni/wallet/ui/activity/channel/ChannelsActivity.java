@@ -98,7 +98,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     protected void getBundleData(Bundle bundle) {
         balanceAmount = bundle.getLong(KEY_BALANCE_AMOUNT);
 //        walletAddress = bundle.getString(KEY_WALLET_ADDRESS);
-        walletAddress = User.getInstance().getWalletAddress(mContext);
+        walletAddress = WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType);
         pubkey = bundle.getString(KEY_PUBKEY);
         channelKey = bundle.getString(KEY_CHANNEL);
         assetIdFilter = bundle.getLong(KEY_ASSET_ID);

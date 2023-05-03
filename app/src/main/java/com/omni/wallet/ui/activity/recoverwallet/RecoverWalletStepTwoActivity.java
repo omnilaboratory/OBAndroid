@@ -20,7 +20,9 @@ import android.widget.Toast;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
@@ -258,8 +260,9 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
              * Use SharedPreferences Class to backup password md5 string to local file when create password md5 string
              */
             
-            String seedsString = User.getInstance().getRecoverySeedString(mContext);
-            String[] seedList = seedsString.split(" ");
+            String seedsString = WalletInfo.getInstance().getRecoverySeedString(mContext,ConstantInOB.networkType);
+            String useSeedsString = SecretAESOperator.getInstance().decrypt(seedsString);
+            String[] seedList = useSeedsString.split(" ");
             
             Walletunlocker.InitWalletRequest.Builder initWalletRequestBuilder = Walletunlocker.InitWalletRequest.newBuilder();
             initWalletRequestBuilder.addAllCipherSeedMnemonic(Arrays.asList(seedList));
@@ -287,12 +290,13 @@ public class RecoverWalletStepTwoActivity extends AppBaseActivity {
                     try {
                         Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
                         ByteString macaroon = initWalletResponse.getAdminMacaroon();
-                        User.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8());
-                        User.getInstance().setInitWalletType(mContext,"recoveryStepTwo");
+                        WalletInfo.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8(), ConstantInOB.networkType);
+                        WalletInfo.getInstance().setInitWalletType(mContext, "recoveryStepTwo", ConstantInOB.networkType);
                         User.getInstance().setCreated(mContext,true);
                         User.getInstance().setSeedChecked(mContext,true);
-                        User.getInstance().setSeedString(mContext,seedsString);
-                        User.getInstance().setPasswordMd5(mContext,md5String);
+                        String SecretSeedString = SecretAESOperator.getInstance().encrypt(seedsString);
+                        WalletInfo.getInstance().setSeedString(mContext,SecretSeedString,ConstantInOB.networkType);
+                        WalletInfo.getInstance().setPasswordSecret(mContext,md5String,ConstantInOB.networkType);
                         switchActivity(BackupBlockProcessActivity.class);
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();

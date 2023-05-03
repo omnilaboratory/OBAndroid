@@ -8,8 +8,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.utils.SecretAESOperator;
 
@@ -58,7 +60,7 @@ public class UnlockDialog {
     }
 
     private void unlockWallet(){
-        String passwordMd5 = User.getInstance().getPasswordMd5(mContext);
+        String passwordMd5 = WalletInfo.getInstance().getPasswordSecret(mContext, ConstantInOB.networkType);
         String newPasswordMd5 = User.getInstance().getNewPasswordMd5(mContext);
         EditText textView = mAlertDialog.findViewById(R.id.password_input);
         String passwordInput = textView.getText().toString();

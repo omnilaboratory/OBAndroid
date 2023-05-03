@@ -20,11 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.listItems.SelectSeedItem;
+import com.omni.wallet.utils.SecretAESOperator;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -114,7 +117,8 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
     }
 
     public void initSeedArray(){
-        String seedsString = User.getInstance().getSeedString(mContext);
+        String newSeedsString = WalletInfo.getInstance().getSeedString(mContext, ConstantInOB.networkType);
+        String seedsString = SecretAESOperator.getInstance().decrypt(newSeedsString);
         gotSeedArray = seedsString.split(" ");
         List<String> gotSeedList = new ArrayList<>();
         Collections.addAll(gotSeedList, gotSeedArray);
@@ -227,7 +231,7 @@ public class CreateWalletStepTwoActivity extends AppBaseActivity {
             }
         }
         if(checkResult){
-            User.getInstance().setInitWalletType(mContext,"createStepTwo");
+            WalletInfo.getInstance().setInitWalletType(mContext, "createStepTwo", ConstantInOB.networkType);
             switchActivity(CreateWalletStepThreeActivity.class);
         }
     }

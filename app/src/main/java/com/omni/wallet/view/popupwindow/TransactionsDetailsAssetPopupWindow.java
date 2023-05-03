@@ -10,9 +10,11 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.omni.wallet.R;
+import com.omni.wallet.SharedPreferences.WalletInfo;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.framelibrary.entity.User;
 
@@ -81,7 +83,7 @@ public class TransactionsDetailsAssetPopupWindow {
                     statusTv.setText("Confirmed");
                 }
             } else if (item.getType().equals("Send To Many")) {
-                if (item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                if (item.getSendingaddress().equals(WalletInfo.getInstance().getWalletAddress(mContext, ConstantInOB.networkType))) {
                     amountTv.setText(df.format(Double.parseDouble(item.getTotalamount())));
                     if (item.getReceiversList() != null) {
                         if (item.getReceiversList().size() == 1) {
@@ -99,24 +101,24 @@ public class TransactionsDetailsAssetPopupWindow {
                         typeIv.setImageResource(R.mipmap.icon_failed_green);
                         statusTv.setText("Confirmed");
                     }
-                } else if (!item.getSendingaddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                } else if (!item.getSendingaddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                     if (item.getReceiversList() != null) {
                         if (item.getReceiversList().size() == 1) {
-                            if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                            if (item.getReceivers(0).getAddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                                 amountTv.setText(df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
                                 toAddressTv.setText(item.getReceivers(0).getAddress());
                                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getReceivers(0).getAmount())) * 100000000) + (long) (Double.parseDouble(String.valueOf(item.getFee())) * 100000000) + "";
                                 totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                             }
                         } else if (item.getReceiversList().size() == 2) {
-                            if (item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
-                                    & !item.getReceivers(1).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                            if (item.getReceivers(0).getAddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
+                                    & !item.getReceivers(1).getAddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                                 amountTv.setText(df.format(Double.parseDouble(item.getReceivers(0).getAmount())));
                                 toAddressTv.setText(item.getReceivers(0).getAddress());
                                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getReceivers(0).getAmount())) * 100000000) + (long) (Double.parseDouble(String.valueOf(item.getFee())) * 100000000) + "";
                                 totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
-                            } else if (!item.getReceivers(0).getAddress().equals(User.getInstance().getWalletAddress(mContext))
-                                    & item.getReceivers(1).getAddress().equals(User.getInstance().getWalletAddress(mContext))) {
+                            } else if (!item.getReceivers(0).getAddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))
+                                    & item.getReceivers(1).getAddress().equals(WalletInfo.getInstance().getWalletAddress(mContext,ConstantInOB.networkType))) {
                                 amountTv.setText(df.format(Double.parseDouble(item.getReceivers(1).getAmount())));
                                 toAddressTv.setText(item.getReceivers(1).getAddress());
                                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getReceivers(1).getAmount())) * 100000000) + (long) (Double.parseDouble(String.valueOf(item.getFee())) * 100000000) + "";
