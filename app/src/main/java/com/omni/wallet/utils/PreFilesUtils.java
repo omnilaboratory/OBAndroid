@@ -92,7 +92,12 @@ public class PreFilesUtils {
     public boolean checkManifestFileExist() {
         String filePath = downloadDictionaryPath + MANIFEST_FILE_NAME;
         File file = new File(filePath);
-        return file.exists();
+        long fileLength = file.length();
+        if (fileLength == 0) {
+            return false;
+        }else {
+            return file.exists();
+        }
     }
 
     public boolean checkHeaderBinFileExist() {
@@ -418,7 +423,7 @@ public class PreFilesUtils {
                 sb.append(line);
                 sb.append("\n");
                 String[] readingLineArray = oldLine.split("\\t");
-                String readingFileName = readingLineArray[lineArray.length - 1];
+                String readingFileName = readingLineArray[readingLineArray.length - 1];
                 Log.d(TAG, "readManifestFile manifestInfo line: " + line);
                 if (readingFileName.endsWith(BLOCK_HEADER_FILE_NAME)) {
                     manifestInfo.put(BLOCK_HEADER_FILE_NAME, readingLineArray[0].trim().toLowerCase());
