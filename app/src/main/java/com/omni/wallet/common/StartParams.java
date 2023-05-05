@@ -21,6 +21,8 @@ public class StartParams {
                         "--enable-upfront-shutdown " +
                         "--tlsdisableautofill " +
                         "--norest "+
+                        "--accept-keysend "+
+                        "--spay-url=192.144.199.67:38332 "+
                         "--nobootstrap" +
                         "--neutrino.connect=" + BTC_HOST_ADDRESS +
                         " --omnicoreproxy.rpchost=" + OMNI_HOST_ADDRESS_PORT +
@@ -39,6 +41,8 @@ public class StartParams {
                         "--enable-upfront-shutdown " +
                         "--tlsdisableautofill " +
                         "--norest "+
+                        "--accept-keysend "+
+                        "--spay-url=192.144.199.67:38332 "+
                         "--neutrino.connect=" + BTC_HOST_ADDRESS +
                         " --omnicoreproxy.rpchost=" + OMNI_HOST_ADDRESS_PORT +
                         " --alias=";
@@ -56,6 +60,8 @@ public class StartParams {
                         "--enable-upfront-shutdown " +
                         "--tlsdisableautofill " +
                         "--norest "+
+                        "--accept-keysend "+
+                        "--spay-url=192.144.199.67:38332 "+
                         "--neutrino.feeurl=https://nodes.lightning.computer/fees/v1/btc-fee-estimates.json " +
                         "--nobootstrap" +
                         " --neutrino.addpeer=btcd-mainnet.lightning.computer" +
