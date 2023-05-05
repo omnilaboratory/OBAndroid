@@ -1,14 +1,15 @@
 package com.omni.wallet.obdMethods;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
-import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
-import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.framelibrary.entity.User;
 
 import java.util.Random;
@@ -61,12 +62,17 @@ public class NodeStart {
         Obdmobile.start("--lnddir=" + lndDir + startParams + alias, new Callback() {
             @Override
             public void onError(Exception e) {
-                 if (e.getMessage().contains("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
-                    ToastUtils.showToast(context, "unable to unpack single backups that message authentication failed");
-                } else if (e.getMessage().contains("error creating wallet config: unable to initialize neutrino backend: unable to create neutrino database: cannot allocate memory")) {
-                    ToastUtils.showToast(context, "Failed to start, please check your cache is sufficient. After confirming that the cache is sufficient, please restart the App.");
-                }
-
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (e.getMessage().contains("unable to start server: unable to unpack single backups: chacha20poly1305: message authentication failed")) {
+                            ToastUtils.showToast(context, "unable to unpack single backups that message authentication failed");
+                        } else if (e.getMessage().contains("error creating wallet config: unable to initialize neutrino backend: unable to create neutrino database: cannot allocate memory")) {
+                            ToastUtils.showToast(context, "Failed to start, please check your cache is sufficient. After confirming that the cache is sufficient, please restart the App.");
+                        }
+                    }
+                });
+                
                 LogUtils.e(TAG, "------------------startonError------------------" + e.getMessage());
             }
 
