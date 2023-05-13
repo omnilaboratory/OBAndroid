@@ -47,8 +47,8 @@
 
         <ImageView
             android:id="@+id/iv_scan"
-            android:layout_width="@dimen/main_18"
-            android:layout_height="@dimen/main_18"
+            android:layout_width="@dimen/main_24"
+            android:layout_height="@dimen/main_24"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/main_70"
@@ -177,7 +177,7 @@
                                         android:ellipsize="middle"
                                         android:layout_width="@dimen/main_115"
                                         android:layout_height="wrap_content"
-                                        android:text="01234e*****bg453123"
+                                        android:text="**********"
                                         android:textColor="@color/color_A6_transparent"
                                         android:textSize="@dimen/text_12"/>
                                 </LinearLayout>
@@ -197,7 +197,33 @@
                             android:layout_width="@dimen/main_18"
                             android:layout_height="@dimen/main_18"
                             android:layout_alignParentRight="true"
-                            android:src="@mipmap/icon_arrow_down_black"/>
+                            android:src="@mipmap/icon_arrow_down_black"
+                            android:visibility="gone"/>
+
+                        <LinearLayout
+                            android:id="@+id/download_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:id="@+id/sync_percent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/main_8"
+                                android:text="@string/sync_block_percent"
+                                android:textSize="@dimen/text_16"
+                                android:textColor="#7F06D78F"/>
+
+                            <ProgressBar
+                                android:id="@+id/progressbar"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="@dimen/main_36"
+                                android:layout_height="@dimen/main_8"
+                                android:progressDrawable="@drawable/download_progress_bar"/>
+                        </LinearLayout>
                     </RelativeLayout>
 
                     <com.omni.wallet.view.AssetTrendChartView

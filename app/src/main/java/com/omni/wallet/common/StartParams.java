@@ -11,7 +11,7 @@ public class StartParams {
             case REG:
                 this.OMNI_HOST_ADDRESS_PORT = ConstantInOB.OMNIHostAddressPortRegTest;
                 this.BTC_HOST_ADDRESS = ConstantInOB.BTCHostAddressRegTest;
-                this.startParams = "--trickledelay=5000 " +
+                this.startParams = "--noseedbackup --trickledelay=5000 " +
                         "--debuglevel=debug \n" +
                         "--autopilot.active " +
                         "--maxpendingchannels=100 " +
@@ -31,7 +31,7 @@ public class StartParams {
             case TEST:
                 this.OMNI_HOST_ADDRESS_PORT = ConstantInOB.TEST_NET_OMNI_HOST_ADDRESS_PORT;
                 this.BTC_HOST_ADDRESS = ConstantInOB.TEST_NET_BTC_HOST_ADDRESS;
-                this.startParams = "--trickledelay=5000 " +
+                this.startParams = "--noseedbackup --trickledelay=5000 " +
                         "--debuglevel=debug \n" +
                         "--autopilot.active " +
                         "--maxpendingchannels=100 " +
@@ -50,7 +50,7 @@ public class StartParams {
             case MAIN:
                 this.OMNI_HOST_ADDRESS_PORT = ConstantInOB.MAIN_NET_OMNI_HOST_ADDRESS_PORT;
                 this.BTC_HOST_ADDRESS = ConstantInOB.MAIN_NET_BTC_HOST_ADDRESS;
-                this.startParams = "--trickledelay=5000 " +
+                this.startParams = "--noseedbackup --trickledelay=5000 " +
                         "--debuglevel=debug \n" +
                         "--autopilot.active " +
                         "--maxpendingchannels=100 " +

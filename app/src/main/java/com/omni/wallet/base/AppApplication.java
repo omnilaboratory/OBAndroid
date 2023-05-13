@@ -1,7 +1,10 @@
 package com.omni.wallet.base;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.RequiresApi;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
@@ -24,7 +27,10 @@ import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.obdMethods.NodeStart;
+import com.omni.wallet.utils.FilesUtils;
 import com.omni.wallet.utils.MoveDataAboutWalletInfoSP;
+import com.omni.wallet.utils.PreFilesUtils;
 import com.omni.wallet.utils.RequestAppConfig;
 
 import org.conscrypt.Conscrypt;
@@ -33,10 +39,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.security.Security;
+import java.util.Calendar;
 import java.util.Map;
 
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
+
+import static com.omni.wallet.utils.MoveCacheFileToFileObd.copyDirectiory;
+import static com.omni.wallet.utils.MoveCacheFileToFileObd.deleteDirectory;
 
 /**
  * Application
@@ -47,6 +58,10 @@ public class AppApplication extends BaseApplication {
     Handler handler = new Handler();
     Handler balanceHandler = new Handler();
     Handler nodeHandler = new Handler();
+
+    ConstantInOB constantInOB = null;
+    PreFilesUtils preFilesUtils;
+    boolean isDownloading = false;
 
     public AppApplication() {
         mContext = this;
@@ -64,8 +79,11 @@ public class AppApplication extends BaseApplication {
         return mContext;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void init() {
+        constantInOB = new ConstantInOB(mContext);
+        preFilesUtils = PreFilesUtils.getInstance(mContext);
         /**
          * @描述： grpc相关：在使用前必须“安装”Conscrypt
          * @desc: Bundling Conscrypt,you must still "install" Conscrypt before use.
@@ -164,6 +182,212 @@ public class AppApplication extends BaseApplication {
         };
         nodeHandler.postDelayed(nodeRunnable, 0);
         getAssetList();
+        /**
+         * Background download each file
+         * 后台下载各个文件
+         */
+        if (!isDownloading) {
+            actionAfterPromise();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void actionAfterPromise() {
+        String sourceDir = mContext.getExternalCacheDir() + "/";
+        String targetDir = mContext.getExternalFilesDir(null).toString() + "/obd";
+        File fileDirectory = new File(sourceDir);
+        if(fileDirectory.exists()){
+            copyDirectiory(sourceDir,targetDir);
+            deleteDirectory(sourceDir);
+            downloadFiles();
+        }else{
+            downloadFiles();
+        }
+    }
+
+    /**
+     * Background download files
+     * 后台下载文件
+     */
+    public void downloadFiles(){
+        isDownloading = true;
+        boolean isHeaderBinChecked = User.getInstance().isHeaderBinChecked(mContext);
+        boolean isFilterHeaderBinChecked = User.getInstance().isFilterHeaderBinChecked(mContext);
+        boolean isNeutrinoDbChecked = User.getInstance().isNeutrinoDbChecked(mContext);
+
+        if (isHeaderBinChecked) {
+            if (isFilterHeaderBinChecked) {
+                if (isNeutrinoDbChecked) {
+                    long nowMillis = Calendar.getInstance().getTimeInMillis();
+                    String downloadDirectoryPath = constantInOB.getBasePath()
+                            + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
+                    long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
+                    if (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS) {
+                        Log.d(TAG, "actionAfterPromise: is7Days" + (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS));
+                        getManifest();
+                    } else {
+                        startNode();
+                    }
+                } else {
+                    preFilesUtils.readManifestFile();
+                    getNeutrinoFile();
+                }
+            } else {
+                preFilesUtils.readManifestFile();
+                getRegHeadersFile();
+            }
+        } else {
+            getManifest();
+        }
+    }
+
+    /**
+     * Background download manifest-crc32.txt file
+     * 后台下载manifest-crc32.txt
+     */
+    public void getManifest() {
+        PreFilesUtils.DownloadCallback downloadCallback = () -> {
+            preFilesUtils.readManifestFile();
+            if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
+                getPeerFile();
+            }else {
+                getHeaderBinFile();
+            }
+
+        };
+        String downloadDirectoryPath = constantInOB.getBasePath()
+                + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
+        String filePath = downloadDirectoryPath + preFilesUtils.MANIFEST_FILE_NAME;
+        File file = new File(filePath);
+        Log.d(TAG, "getManifest: manifest exist" + file.exists());
+        if (file.exists()) {
+            long nowMillis = Calendar.getInstance().getTimeInMillis();
+            long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
+            if (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS) {
+                preFilesUtils.downloadManifest(null, downloadCallback);
+            }else{
+                preFilesUtils.readManifestFile();
+                if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
+                    getPeerFile();
+                }else {
+                    getHeaderBinFile();
+                }
+            }
+        } else {
+            preFilesUtils.downloadManifest(null, downloadCallback);
+        }
+    }
+
+    /**
+     * Background download peers.json file
+     * 后台下载peers.json
+     */
+    public void getPeerFile() {
+        String downloadDirectoryPath = constantInOB.getBasePath()
+                + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
+        String filePath = downloadDirectoryPath + ConstantInOB.peerJson;
+        PreFilesUtils.DownloadCallback downloadCallback = this::getHeaderBinFile;
+        boolean isExist = preFilesUtils.checkPeerJsonFileExist();
+        if (isExist){
+            File file = new File(filePath);
+            file.deleteOnExit();
+        }
+        preFilesUtils.downloadPeerFile(null,downloadCallback);
+    }
+
+    /**
+     * Background download block_headers.bin
+     * 后台下载block_headers.bin
+     */
+    public void getHeaderBinFile() {
+        PreFilesUtils.DownloadCallback downloadCallback = () -> {
+            String downloadDirectoryPath = constantInOB.getBasePath()
+                    + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
+            String filePath = downloadDirectoryPath + ConstantInOB.blockHeaderBin;
+            if (preFilesUtils.checkBlockHeaderMd5Matched()) {
+                User.getInstance().setHeaderBinChecked(mContext, true);
+                getRegHeadersFile();
+            } else {
+                File file = new File(filePath);
+                file.deleteOnExit();
+                getHeaderBinFile();
+            }
+        };
+        boolean isExist = preFilesUtils.checkHeaderBinFileExist();
+        boolean isMatched = preFilesUtils.checkBlockHeaderMd5Matched();
+        Log.d(TAG, "getHeaderBinFile isMatched: " + isMatched);
+        if (!(isExist && isMatched)) {
+            preFilesUtils.downloadBlockHeader(null, downloadCallback);
+        } else {
+            getRegHeadersFile();
+        }
+    }
+
+    /**
+     * Background download reg_filter_headers.bin
+     * 后台下载reg_filter_headers.bin
+     */
+    public void getRegHeadersFile() {
+        PreFilesUtils.DownloadCallback downloadCallback = () -> {
+            String downloadDirectoryPath = constantInOB.getBasePath()
+                    + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
+            String filePath = downloadDirectoryPath + ConstantInOB.regFilterHeaderBin;
+            if (preFilesUtils.checkFilterHeaderMd5Matched()) {
+                User.getInstance().setFilterHeaderBinChecked(mContext, true);
+                getNeutrinoFile();
+            } else {
+                File file = new File(filePath);
+                file.deleteOnExit();
+                getRegHeadersFile();
+            }
+        };
+        boolean isExist = preFilesUtils.checkFilterHeaderBinFileExist();
+        boolean isMatched = preFilesUtils.checkFilterHeaderMd5Matched();
+        if (!(isExist && isMatched)) {
+            preFilesUtils.downloadFilterHeader(null, downloadCallback);
+        } else {
+            getNeutrinoFile();
+        }
+    }
+
+    /**
+     * Background download neutrino.db
+     * 后台下载neutrino.db
+     */
+    public void getNeutrinoFile() {
+        PreFilesUtils.DownloadCallback downloadCallback = () -> {
+            String downloadDirectoryPath = constantInOB.getBasePath()
+                    + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
+            String filePath = downloadDirectoryPath + ConstantInOB.neutrinoDB;
+            if (preFilesUtils.checkNeutrinoMd5Matched()) {
+                User.getInstance().setNeutrinoDbChecked(mContext, true);
+                startNode();
+            } else {
+                File file = new File(filePath);
+                file.deleteOnExit();
+                getNeutrinoFile();
+            }
+        };
+        boolean isExist = preFilesUtils.checkNeutrinoFileExist();
+        boolean isMatched = preFilesUtils.checkNeutrinoMd5Matched();
+        if (!(isExist && isMatched)) {
+            preFilesUtils.downloadNeutrino(null, downloadCallback);
+        } else {
+            startNode();
+        }
+    }
+
+    /**
+     * Start node
+     * 启动节点
+     */
+    public void startNode() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                NodeStart.getInstance().startWhenStopWithSubscribeState(mContext);
+            }
+        });
     }
 
     /**
@@ -435,8 +659,6 @@ public class AppApplication extends BaseApplication {
      * @描述： 解决放法数量超过65536
      * @desc: The number of solutions exceeds 65536
      */
-
-
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

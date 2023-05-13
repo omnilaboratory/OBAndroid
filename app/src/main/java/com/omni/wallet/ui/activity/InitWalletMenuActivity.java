@@ -1,22 +1,14 @@
 package com.omni.wallet.ui.activity;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.google.protobuf.ByteString;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
 import com.omni.wallet.ui.activity.backup.RestoreChannelActivity;
-import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
-import com.omni.wallet.ui.activity.createwallet.CreateWalletStepTwoActivity;
-import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
-import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepTwoActivity;
-import com.omni.wallet.utils.PublicUtils;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -25,9 +17,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import lnrpc.Walletunlocker;
-import obdmobile.Callback;
-import obdmobile.Obdmobile;
 
 public class InitWalletMenuActivity extends AppBaseActivity {
 
@@ -53,20 +42,6 @@ public class InitWalletMenuActivity extends AppBaseActivity {
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
         EventBus.getDefault().register(this);
-        walletType = User.getInstance().getInitWalletType(mContext);
-        if(walletType.equals("createStepOne")||walletType.equals("createStepTwo")||walletType.equals("createStepThree")){
-            welcomeContent.setVisibility(View.GONE);
-            continueToCreateBtn.setVisibility(View.VISIBLE);
-            continueToRecoveryBtn.setVisibility(View.GONE);
-        }else if(walletType.equals("recoveryStepOne")||walletType.equals("recoveryStepTwo")||walletType.equals("toBeRestoreChannel")){
-            welcomeContent.setVisibility(View.GONE);
-            continueToCreateBtn.setVisibility(View.GONE);
-            continueToRecoveryBtn.setVisibility(View.VISIBLE);
-        }else{
-            welcomeContent.setVisibility(View.VISIBLE);
-            continueToCreateBtn.setVisibility(View.GONE);
-            continueToRecoveryBtn.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -75,114 +50,44 @@ public class InitWalletMenuActivity extends AppBaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        walletType = User.getInstance().getInitWalletType(mContext);
+        if(walletType.equals("create")){
+            welcomeContent.setVisibility(View.GONE);
+            continueToCreateBtn.setVisibility(View.VISIBLE);
+            continueToRecoveryBtn.setVisibility(View.GONE);
+        }else if(walletType.equals("recovery")){
+            welcomeContent.setVisibility(View.GONE);
+            continueToCreateBtn.setVisibility(View.GONE);
+            continueToRecoveryBtn.setVisibility(View.VISIBLE);
+        }else{
+            welcomeContent.setVisibility(View.VISIBLE);
+            continueToCreateBtn.setVisibility(View.GONE);
+            continueToRecoveryBtn.setVisibility(View.GONE);
+        }
+        super.onResume();
+    }
+
+    @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
-    @OnClick(R.id.btn_create)
+    @OnClick({R.id.btn_create,R.id.continue_to_create_btn})
     public void clickCreate(){
-        switchActivity(CreateWalletStepOneActivity.class);
+        User.getInstance().setInitWalletType(mContext, "create");
+        switchActivity(CreateWalletStepThreeActivity.class);
     }
 
-    @OnClick(R.id.btn_recover)
+    @OnClick({R.id.btn_recover,R.id.continue_to_recovery_btn})
     public void clickRecover(){
-        switchActivity(RecoverWalletStepOneActivity.class);
-    }
-
-    @OnClick(R.id.continue_to_create_btn)
-    public void clickContinueToCreate(){
-        switch (walletType){
-            case "createStepOne" :
-                switchActivity(CreateWalletStepTwoActivity.class);
-                break;
-            case "createStepTwo" :
-                switchActivity(CreateWalletStepThreeActivity.class);
-                break;
-            case "createStepThree" :
-                unlockWalletToBackupBlockProcess();
-                break;
-            default:
-                break;
-
-        }
-    }
-
-    @OnClick(R.id.continue_to_recovery_btn)
-    public void clickContinueToRecovery(){
-        switch (walletType){
-            case "recoveryStepOne" :
-                switchActivity(RecoverWalletStepTwoActivity.class);
-                break;
-            case "recoveryStepTwo" :
-                unlockWalletToBackupBlockProcess();
-                break;
-            case "toBeRestoreChannel":
-                unlockWalletToRestoreChannel();
-                break;
-            default:
-                break;
-        }
-    }
-
-    public void unlockWalletToRestoreChannel(){
-        mLoadingDialog.show();
-        String passMd5 = User.getInstance().getPasswordMd5(mContext);
-        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
-        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                Log.e("unlock failed", e.getMessage());
-                runOnUiThread(
-                        () -> {
-                            PublicUtils.closeLoading(mLoadingDialog);
-                            if(e.getMessage().equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
-                                switchActivity(RestoreChannelActivity.class);
-                            }
-                        }
-                );
-
-                e.printStackTrace();
-
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                switchActivity(RestoreChannelActivity.class);
-            }
-        });
-    }
-
-    public void unlockWalletToBackupBlockProcess(){
-        mLoadingDialog.show();
-        String passMd5 = User.getInstance().getPasswordMd5(mContext);
-        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
-        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                Log.e("unlock failed", e.getMessage());
-                runOnUiThread(
-                        () -> {
-                            PublicUtils.closeLoading(mLoadingDialog);
-                            if(e.getMessage().equals("rpc error: code = Unknown desc = wallet already unlocked, WalletUnlocker service is no longer available")){
-                                switchActivity(BackupBlockProcessActivity.class);
-                            }
-                        }
-                );
-
-                e.printStackTrace();
-
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                switchActivity(BackupBlockProcessActivity.class);
-            }
-        });
+        User.getInstance().setInitWalletType(mContext, "recovery");
+        switchActivity(RestoreChannelActivity.class);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-        public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+    public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
             finish();
         }
 }

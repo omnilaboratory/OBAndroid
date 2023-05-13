@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.omni.wallet.baselibrary.utils.LogUtils;
 
 import lnrpc.Stateservice;
 import obdmobile.Callback;
@@ -70,7 +71,7 @@ public class WalletState {
         Obdmobile.getState(getStateRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-                Log.e(TAG,e.getMessage());
+                LogUtils.e(TAG,e.getMessage());
                 e.printStackTrace();
             }
 
@@ -88,7 +89,7 @@ public class WalletState {
                     Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
                     int walletState = subscribeStateResponse.getStateValue();
                     if (walletState != WALLET_STATE){
-                        Log.d(TAG,String.valueOf(walletState));
+                        LogUtils.e(TAG,String.valueOf(walletState));
                         WALLET_STATE = walletState;
                         if (WALLET_STATE == 4){
                             BackupUtils.getInstance().backupChannelToFile(mContext);

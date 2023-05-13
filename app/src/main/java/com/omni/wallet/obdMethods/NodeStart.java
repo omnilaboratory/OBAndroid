@@ -10,7 +10,10 @@ import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.entity.event.StartNodeEvent;
 import com.omni.wallet.framelibrary.entity.User;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Random;
 
@@ -80,6 +83,7 @@ public class NodeStart {
             public void onResponse(byte[] bytes) {
                 setIsStart(true);
                 LogUtils.e(TAG, "------------------startonSuccess------------------");
+                EventBus.getDefault().post(new StartNodeEvent());
             }
         });
     }
@@ -90,7 +94,6 @@ public class NodeStart {
         }
     }
     public void startWhenStopWithSubscribeState (Context context){
-        WalletState.getInstance().subscribeWalletState(context);
         startWhenStop(context);
     }
 }

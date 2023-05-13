@@ -1,7 +1,6 @@
 package com.omni.wallet.ui.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
@@ -20,8 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.http.HttpUtils;
@@ -29,13 +25,9 @@ import com.omni.wallet.baselibrary.http.callback.EngineCallback;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
-import com.omni.wallet.baselibrary.utils.ToastUtils;
-import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.obdMethods.WalletState;
-import com.omni.wallet.ui.activity.createwallet.CreateWalletStepOneActivity;
-import com.omni.wallet.ui.activity.recoverwallet.RecoverWalletStepOneActivity;
+import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
 import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.PasswordFilter;
 import com.omni.wallet.utils.PublicUtils;
@@ -53,21 +45,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import lnrpc.Stateservice;
-import lnrpc.Walletunlocker;
-import obdmobile.Callback;
-import obdmobile.Obdmobile;
 
 public class UnlockActivity extends AppBaseActivity {
     String TAG = UnlockActivity.class.getSimpleName();
-    String localSeed = "";
-    LoginLoadingDialog mLoadingDialog;
-    boolean isCreated = false;
-    boolean isSynced = false;
-    boolean seedChecked = false;
-    boolean isStartCreate = false;
-    String walletAddress = "";
-    String initWalletType = "";
 
     @BindView(R.id.password_input)
     public EditText mPwdEdit;
@@ -77,6 +57,7 @@ public class UnlockActivity extends AppBaseActivity {
     @BindView(R.id.bottom_btn_group)
     public RelativeLayout bottomBtnGroup;
 
+    LoginLoadingDialog mLoadingDialog;
 
     @Override
     protected Drawable getWindowBackground() {
@@ -109,14 +90,6 @@ public class UnlockActivity extends AppBaseActivity {
     protected void initData() {
         EventBus.getDefault().register(this);
         mPwdEdit.setTransformationMethod(PasswordTransformationMethod.getInstance());
-        localSeed = User.getInstance().getSeedString(mContext);
-        isCreated = User.getInstance().getCreated(mContext);
-        isSynced = User.getInstance().getSynced(mContext);
-        seedChecked = User.getInstance().getSeedChecked(mContext);
-        walletAddress = User.getInstance().getWalletAddress(mContext);
-        initWalletType = User.getInstance().getInitWalletType(mContext);
-        isStartCreate = User.getInstance().getStartCreate(mContext);
-        changePassword();
         // 检查更新(Check for updates)
         checkUpdate();
     }
@@ -192,7 +165,6 @@ public class UnlockActivity extends AppBaseActivity {
         EventBus.getDefault().unregister(this);
     }
 
-
     /**
      * click eye icon
      * 点击眼睛
@@ -212,127 +184,6 @@ public class UnlockActivity extends AppBaseActivity {
         }
     }
 
-    @OnClick(R.id.tv_pass_text)
-    public void clickToForgetPassword() {
-        Intent intent = new Intent();
-        intent.setClass(mContext, ForgetPwdActivity.class);
-        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
-    }
-
-    public void unlockWallet(String passMd5) {
-        Stateservice.GetStateRequest getStateRequest = Stateservice.GetStateRequest.newBuilder().build();
-        Obdmobile.getState(getStateRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                ToastUtils.showToast(mContext, e.getMessage());
-                runOnUiThread(() -> mLoadingDialog.dismiss());
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                if (bytes == null) {
-                    return;
-                }
-                try {
-                    Stateservice.GetStateResponse getStateResponse = Stateservice.GetStateResponse.parseFrom(bytes);
-                    int walletState = getStateResponse.getStateValue();
-                    if (walletState == 4) {
-                        runOnUiThread(() -> {
-                            PublicUtils.closeLoading(mLoadingDialog);
-                            switchActivityFinish(AccountLightningActivity.class);
-                        });
-                    } else {
-                        runOnUiThread(() -> subscribeState());
-                        Walletunlocker.UnlockWalletRequest unlockWalletRequest = Walletunlocker.UnlockWalletRequest.newBuilder().setWalletPassword(ByteString.copyFromUtf8(passMd5)).build();
-                        Obdmobile.unlockWallet(unlockWalletRequest.toByteArray(), new Callback() {
-                            @Override
-                            public void onError(Exception e) {
-                                Log.e("unlock failed", "unlock failed");
-                                runOnUiThread(
-                                        () -> {
-                                            PublicUtils.closeLoading(mLoadingDialog);
-                                            if (e.getMessage().contains("wallet already unlocked")) {
-                                                switchActivityFinish(AccountLightningActivity.class);
-                                            } else if (e.getMessage().contains("wallet not found")) {
-                                                ToastUtils.showToast(mContext, "wallet not found,please contact administrator");
-                                            } else {
-                                                ToastUtils.showToast(mContext, e.getMessage());
-                                            }
-                                        }
-                                );
-                                e.printStackTrace();
-                            }
-
-                            @Override
-                            public void onResponse(byte[] bytes) {
-                            }
-                        });
-                    }
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-
-    }
-
-    public void changePassword() {
-        mLoadingDialog.show();
-        String newPasswordStr = User.getInstance().getNewPasswordMd5(mContext);
-        Log.d(TAG, "changePassword newPasswordStr: " + newPasswordStr);
-        if (!newPasswordStr.equals("")) {
-            Log.d(TAG, "changePassword : will be change");
-            Handler handler = new Handler();
-            runOnUiThread(this::subscribeStateForChangePass);
-            handler.postDelayed(this::changePasswordAction, 10000);
-        } else {
-            mLoadingDialog.dismiss();
-        }
-    }
-
-    public void changePasswordAction() {
-        String currentPasswordStr = User.getInstance().getPasswordMd5(mContext);
-        String newPasswordStr = User.getInstance().getNewPasswordMd5(mContext);
-        Walletunlocker.ChangePasswordRequest changePasswordRequest = Walletunlocker.ChangePasswordRequest.newBuilder()
-                .setCurrentPassword(ByteString.copyFromUtf8(currentPasswordStr))
-                .setNewPassword(ByteString.copyFromUtf8(newPasswordStr))
-                .build();
-        Obdmobile.changePassword(changePasswordRequest.toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                Log.e(TAG, "changePassword onError: " + e.getMessage());
-                runOnUiThread(() -> ToastUtils.showToast(mContext, e.getMessage()));
-
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                try {
-                    Walletunlocker.ChangePasswordResponse changePasswordResponse = Walletunlocker.ChangePasswordResponse.parseFrom(bytes);
-                    String macaroon = changePasswordResponse.getAdminMacaroon().toString();
-                    User.getInstance().setMacaroonString(mContext, macaroon);
-                    User.getInstance().setPasswordMd5(mContext, newPasswordStr);
-                    User.getInstance().setNewPasswordMd5(mContext, "");
-                    Log.d(TAG, "changePassword onResponse: changeOver");
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    public boolean checkedPassMatched(String inputPass) {
-        boolean isMatched;
-        String localPass = User.getInstance().getPasswordMd5(mContext);
-        isMatched = inputPass.equals(localPass);
-        return isMatched;
-    }
-
-
     /**
      * click unlock button
      * 点击Unlock
@@ -344,7 +195,8 @@ public class UnlockActivity extends AppBaseActivity {
         boolean passIsMatched = checkedPassMatched(newSecretString);
         PublicUtils.showLoading(mLoadingDialog);
         if (passIsMatched) {
-            unlockWallet(newSecretString);
+            PublicUtils.closeLoading(mLoadingDialog);
+            switchActivityFinish(AccountLightningActivity.class);
         } else {
             PublicUtils.closeLoading(mLoadingDialog);
             String toastString = getResources().getString(R.string.toast_unlock_error);
@@ -354,61 +206,20 @@ public class UnlockActivity extends AppBaseActivity {
         }
     }
 
-    public void subscribeState() {
-        WalletState.WalletStateCallback walletStateCallback = (int walletState) -> {
-            if (walletState == 4) {
-                runOnUiThread(() -> {
-                    PublicUtils.closeLoading(mLoadingDialog);
-                    switchActivityFinish(AccountLightningActivity.class);
-                });
-            }
-        };
-        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
-    }
-
-    public void subscribeStateForChangePass() {
-        WalletState.WalletStateCallback walletStateCallback = (int walletState) -> {
-            Log.d(TAG, "subscribeStateForChangePass: " + walletState);
-            if (walletState == 4) {
-                runOnUiThread(() -> PublicUtils.closeLoading(mLoadingDialog));
-            }
-        };
-        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
-    }
-
-    /**
-     * click create button
-     * 点击Create
-     */
-    @OnClick(R.id.btn_create)
-    public void clickCreate() {
-        User.getInstance().setInitWalletType(mContext, "create");
-        Intent intent = new Intent();
-        intent.setClass(mContext, CreateWalletStepOneActivity.class);
-        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
-    }
-
-    /**
-     * click recover button
-     * 点击Recover
-     */
-    @OnClick(R.id.btn_recover)
-    public void clickRecover() {
-        User.getInstance().setInitWalletType(mContext, "recovery");
-        Intent intent = new Intent();
-        intent.setClass(mContext, RecoverWalletStepOneActivity.class);
-        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
+    public boolean checkedPassMatched(String inputPass) {
+        boolean isMatched;
+        String localPass = User.getInstance().getPasswordMd5(mContext);
+        isMatched = inputPass.equals(localPass);
+        return isMatched;
     }
 
     /**
      * click forgot password
      * 点击忘记密码
      */
-    @OnClick(R.id.btv_forget_button)
+    @OnClick({R.id.btv_forget_button,R.id.tv_pass_text})
     public void clickForgetPass() {
-        Intent intent = new Intent();
-        intent.setClass(mContext, ForgetPwdActivity.class);
-        startActivityForResult(intent, ConstantInOB.beforeHomePageRequestCode);
+        switchActivity(CreateWalletStepThreeActivity.class);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

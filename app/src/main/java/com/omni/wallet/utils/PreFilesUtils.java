@@ -5,7 +5,6 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.downloader.Error;
@@ -13,10 +12,12 @@ import com.downloader.OnDownloadListener;
 import com.downloader.PRDownloader;
 import com.downloader.request.DownloadRequest;
 import com.omni.wallet.R;
-import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
-import com.omni.wallet.common.NetworkType;
+import com.omni.wallet.entity.event.DownloadEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,6 +40,7 @@ public class PreFilesUtils {
     private String downloadDictionaryPath;
     private String downloadVersion;
     public int downloadingId;
+    public String downloadingFile;
     private DownloadRequest downloadingRequest;
     private Map<String, String> manifestInfo = new HashMap<>();
 
@@ -161,16 +163,16 @@ public class PreFilesUtils {
                             : (double) downloadingRequest.getTotalBytes() / 1024 / 1024;
                     switch (fileName) {
                         case BLOCK_HEADER_FILE_NAME:
-                            setStartViewText(view, total, mContext.getString(R.string.download_header), fileName);
+//                            setStartViewText(view, total, mContext.getString(R.string.download_header), fileName);
                             break;
                         case REG_FILTER_HEADER_FILE_NAME:
-                            setStartViewText(view, total, mContext.getString(R.string.download_filter_header), fileName);
+//                            setStartViewText(view, total, mContext.getString(R.string.download_filter_header), fileName);
                             break;
                         case NEUTRINO_FILE_NAME:
-                            setStartViewText(view, total, mContext.getString(R.string.download_db), fileName);
+//                            setStartViewText(view, total, mContext.getString(R.string.download_db), fileName);
                             break;
                         case MANIFEST_FILE_NAME:
-                            setStartViewText(view, total, mContext.getString(R.string.download_manifest), fileName);
+//                            setStartViewText(view, total, mContext.getString(R.string.download_manifest), fileName);
                             break;
                         case PEER_FILE_NAME:
 //                            setStartViewText(view, total, mContext.getString(R.string.download_peers), fileName);
@@ -228,7 +230,7 @@ public class PreFilesUtils {
 
             @Override
             public void onError(Error error) {
-                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
+//                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
                 if (error.isServerError()) {
                     ToastUtils.showToast(mContext, fileName + "server occur error!");
                 } else if (error.isConnectionError()) {
@@ -260,7 +262,7 @@ public class PreFilesUtils {
 
             @Override
             public void onError(Error error) {
-                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
+//                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
                 if (error.isServerError()) {
                     ToastUtils.showToast(mContext, fileName + "server occur error!");
                 } else if (error.isConnectionError()) {
@@ -291,7 +293,7 @@ public class PreFilesUtils {
 
             @Override
             public void onError(Error error) {
-                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
+//                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
                 if (error.isServerError()) {
                     ToastUtils.showToast(mContext, fileName + "server occur error!");
                 } else if (error.isConnectionError()) {
@@ -322,7 +324,7 @@ public class PreFilesUtils {
 
             @Override
             public void onError(Error error) {
-                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
+//                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
                 if (error.isServerError()) {
                     ToastUtils.showToast(mContext, fileName + "server occur error!");
                 } else if (error.isConnectionError()) {
@@ -357,7 +359,7 @@ public class PreFilesUtils {
 
             @Override
             public void onError(Error error) {
-                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
+//                view.findViewById(R.id.refresh_btn).setVisibility(View.VISIBLE);
                 if (error.isServerError()) {
                     ToastUtils.showToast(mContext, fileName + "server occur error!");
                 } else if (error.isConnectionError()) {
@@ -391,22 +393,44 @@ public class PreFilesUtils {
 
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
     private void setProgressViewText(View view, double total, double current, String fileName) {
-        boolean b = fileName.equals(MANIFEST_FILE_NAME) || fileName.equals(PEER_FILE_NAME);
-        LinearLayout downloadView = view.findViewById(R.id.download_view);
-        downloadView.findViewById(R.id.refresh_btn).setVisibility(View.INVISIBLE);
-        RelativeLayout rvProcessInner = downloadView.findViewById(R.id.process_inner);
-        RelativeLayout rvMyProcessOuter = downloadView.findViewById(R.id.progress_bar_outer);
-        double percent = (current / total * 100);
-        double totalWidth = rvMyProcessOuter.getWidth();
-        int innerHeight = rvMyProcessOuter.getHeight() - 2;
-        int innerWidth = (int) (totalWidth * percent / 100);
-        TextView syncPercentView = downloadView.findViewById(R.id.sync_percent);
-        String percentString = String.format("%.2f", percent) + "%";
-        syncPercentView.setText(percentString);
-        RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth, innerHeight);
-        rvProcessInner.setLayoutParams(rlInnerParam);
-        TextView syncedBlockNumView = downloadView.findViewById(R.id.block_num_synced);
-        syncedBlockNumView.setText(String.format("%.2f", current) + (b ? "KB" : "MB"));
+//        boolean b = fileName.equals(MANIFEST_FILE_NAME) || fileName.equals(PEER_FILE_NAME);
+//        LinearLayout downloadView = view.findViewById(R.id.download_view);
+//        downloadView.findViewById(R.id.refresh_btn).setVisibility(View.INVISIBLE);
+//        RelativeLayout rvProcessInner = downloadView.findViewById(R.id.process_inner);
+//        RelativeLayout rvMyProcessOuter = downloadView.findViewById(R.id.progress_bar_outer);
+//        double percent = (current / total * 100);
+//        double totalWidth = rvMyProcessOuter.getWidth();
+//        int innerHeight = rvMyProcessOuter.getHeight() - 2;
+//        int innerWidth = (int) (totalWidth * percent / 100);
+//        TextView syncPercentView = downloadView.findViewById(R.id.sync_percent);
+//        String percentString = String.format("%.2f", percent) + "%";
+//        syncPercentView.setText(percentString);
+//        RelativeLayout.LayoutParams rlInnerParam = new RelativeLayout.LayoutParams(innerWidth, innerHeight);
+//        rvProcessInner.setLayoutParams(rlInnerParam);
+//        TextView syncedBlockNumView = downloadView.findViewById(R.id.block_num_synced);
+//        syncedBlockNumView.setText(String.format("%.2f", current) + (b ? "KB" : "MB"));
+        switch (fileName) {
+            case MANIFEST_FILE_NAME:
+                downloadingFile = mContext.getString(R.string.download_manifest);
+                break;
+            case BLOCK_HEADER_FILE_NAME:
+                downloadingFile = mContext.getString(R.string.download_header);
+                break;
+            case REG_FILTER_HEADER_FILE_NAME:
+                downloadingFile = mContext.getString(R.string.download_filter_header);
+                break;
+            case NEUTRINO_FILE_NAME:
+                downloadingFile = mContext.getString(R.string.download_db);
+                break;
+            case PEER_FILE_NAME:
+                downloadingFile = mContext.getString(R.string.download_peers);
+                break;
+        }
+        DownloadEvent event = new DownloadEvent();
+        event.setTotal(total);
+        event.setCurrent(current);
+        event.setFileName(downloadingFile);
+        EventBus.getDefault().post(event);
     }
 
     public void readManifestFile() {

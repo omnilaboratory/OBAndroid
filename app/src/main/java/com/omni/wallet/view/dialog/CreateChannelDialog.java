@@ -204,21 +204,23 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                         try {
                             JSONObject jsonObject = new JSONObject(result);
                             JSONArray jsonArray = null;
-                            if (User.getInstance().getNetwork(mContext).equals("testnet")) {
-                                jsonArray = jsonObject.getJSONArray("testnet");
-                            } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
-                                jsonArray = jsonObject.getJSONArray("regtest");
-                            } else { //mainnet
-                                jsonArray = jsonObject.getJSONArray("mainnet");
+                            if (!StringUtils.isEmpty(User.getInstance().getNetwork(mContext))) {
+                                if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+                                    jsonArray = jsonObject.getJSONArray("testnet");
+                                } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+                                    jsonArray = jsonObject.getJSONArray("regtest");
+                                } else { //mainnet
+                                    jsonArray = jsonObject.getJSONArray("mainnet");
+                                }
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    LiquidityNodeEntity entity = new LiquidityNodeEntity();
+                                    entity.setAddress(String.valueOf(jsonArray.get(i)));
+                                    mData.add(entity);
+                                }
+                                new Handler(Looper.getMainLooper()).post(() -> {
+                                    mAdapter.notifyDataSetChanged();
+                                });
                             }
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                LiquidityNodeEntity entity = new LiquidityNodeEntity();
-                                entity.setAddress(String.valueOf(jsonArray.get(i)));
-                                mData.add(entity);
-                            }
-                            new Handler(Looper.getMainLooper()).post(() -> {
-                                mAdapter.notifyDataSetChanged();
-                            });
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

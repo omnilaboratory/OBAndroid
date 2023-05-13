@@ -17,13 +17,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.ui.activity.backup.BackupBlockProcessActivity;
+import com.omni.wallet.ui.activity.AccountLightningActivity;
 import com.omni.wallet.utils.CheckInputRules;
 import com.omni.wallet.utils.KeyboardScrollView;
 import com.omni.wallet.utils.PasswordFilter;
@@ -34,14 +32,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
-import lnrpc.Walletunlocker;
-import obdmobile.Callback;
-import obdmobile.Obdmobile;
 
 public class CreateWalletStepThreeActivity extends AppBaseActivity {
     public static final String TAG = CreateWalletStepThreeActivity.class.getSimpleName();
@@ -257,63 +250,16 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
      */
     @OnClick(R.id.btn_forward)
     public void clickForward() {
+        mLoadingDialog.show();
         Log.d("initWallet response","start");
         String password = mPwdEdit.getText().toString();
         int strongerPwd = CheckInputRules.checkPwd(password);
         TextView passwordViewRepeat = findViewById(R.id.password_input_repeat);
         String passwordRepeatString = passwordViewRepeat.getText().toString();
         if(strongerPwd>0 && passwordRepeatString.equals(password)){
-            mLoadingDialog.show();
-            String md5String = SecretAESOperator.getInstance().encrypt(password);
-            System.out.println(md5String);
-            User.getInstance().setPasswordMd5(mContext,md5String);
-            String seedsString = User.getInstance().getSeedString(mContext);
-            String[] seedList = seedsString.split(" ");
-            Walletunlocker.InitWalletRequest.Builder initWalletRequestBuilder = Walletunlocker.InitWalletRequest.newBuilder();
-            List newSeedList = initWalletRequestBuilder.getCipherSeedMnemonicList();
-            Log.d("newSeedList",newSeedList.toString());
-            for (int i =0;i<seedList.length;i++){
-                initWalletRequestBuilder.addCipherSeedMnemonic(seedList[i]);
-                String mnemonicString = initWalletRequestBuilder.getCipherSeedMnemonic(i);
-                Log.d("mnemonicString",mnemonicString);
-            }
-            initWalletRequestBuilder.setWalletPassword(ByteString.copyFromUtf8(md5String));
-
-            Walletunlocker.InitWalletRequest initWalletRequest = initWalletRequestBuilder.build();
-            User.getInstance().setStartCreate(mContext,true);
-
-            Obdmobile.initWallet(initWalletRequest.toByteArray(), new Callback() {
-                @Override
-                public void onError(Exception e) {
-                    Log.e("initWallet Error",e.toString());
-                    if (e.getMessage().contains("wallet already exists")){
-                        switchActivity(BackupBlockProcessActivity.class);
-                    }
-                    runOnUiThread(() -> mLoadingDialog.dismiss());
-                    e.printStackTrace();
-
-                }
-                @Override
-                public void onResponse(byte[] bytes) {
-                    if (bytes == null){
-                        runOnUiThread(() -> mLoadingDialog.dismiss());
-                        return;
-                    }
-                    try {
-                        Walletunlocker.InitWalletResponse initWalletResponse = Walletunlocker.InitWalletResponse.parseFrom(bytes);
-                        ByteString macaroon = initWalletResponse.getAdminMacaroon();
-                        User.getInstance().setMacaroonString(mContext,macaroon.toStringUtf8());
-                        User.getInstance().setCreated(mContext,true);
-                        User.getInstance().setInitWalletType(mContext,"createStepThree");
-                        runOnUiThread(() -> mLoadingDialog.dismiss());
-                        switchActivity(BackupBlockProcessActivity.class);
-                    } catch (InvalidProtocolBufferException e) {
-                        runOnUiThread(() -> mLoadingDialog.dismiss());
-                        e.printStackTrace();
-                    }
-                }
-            });
-//
+            runOnUiThread(() -> mLoadingDialog.dismiss());
+            User.getInstance().setPasswordMd5(mContext, SecretAESOperator.getInstance().encrypt(password));
+            switchActivityFinish(AccountLightningActivity.class);
         }else{
             String checkSetPassWrongString = "";
             if(strongerPwd<0){
@@ -328,9 +274,9 @@ public class CreateWalletStepThreeActivity extends AppBaseActivity {
         }
 
     }
-    
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-        public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
+    public void onCloseUselessActivityEvent(CloseUselessActivityEvent event) {
             finish();
         }
 }

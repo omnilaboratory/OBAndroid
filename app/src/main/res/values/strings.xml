@@ -296,6 +296,8 @@
     <string name="channel_reserve">Channel Reserve</string>
     <string name="create_channel_upper">CREATE CHANNEL</string>
     <string name="updates_first_upper">Updates</string>
+    <string name="data_status_upper">DATA STATUS</string>
+    <string name="refresh_upper">REFRESH</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>
@@ -335,11 +337,11 @@
     <string name="welcome_upper">WELCOME</string>
     <string name="deposite_upper">FUND YOUR WALLET</string>
     <string name="sync_block">Syncing Chain Data:</string>
-    <string name="download_db">Downloading neutrino.db:</string>
-    <string name="download_header">Downloading block_header.bin:</string>
-    <string name="download_manifest">Downloading manifest.txt:</string>
-    <string name="download_peers">Downloading peers.json:</string>
-    <string name="download_filter_header">Downloading filter_block_header.bin:</string>
+    <string name="download_db">Neutrino.db:</string>
+    <string name="download_header">Block_header.bin:</string>
+    <string name="download_manifest">Manifest.txt:</string>
+    <string name="download_peers">Peers.json:</string>
+    <string name="download_filter_header">Filter_block_header.bin:</string>
     <string name="sync_block_percent">0%</string>
     <string name="block">Block</string>
     <string name="size">Size</string>

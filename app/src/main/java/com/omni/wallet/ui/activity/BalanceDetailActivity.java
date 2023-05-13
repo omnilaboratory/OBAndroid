@@ -72,7 +72,6 @@ import com.omni.wallet.view.popupwindow.TransactionsDetailsChainPopupWindow;
 import com.omni.wallet.view.popupwindow.TransactionsDetailsPopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
 import com.omni.wallet.view.popupwindow.createinvoice.CreateLuckyPacketPopupWindow;
-import com.omni.wallet.view.popupwindow.payinvoice.PayInvoiceStepOnePopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -237,7 +236,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
     private List<String> txidList;
     String filterTime;
 
-    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow;
     SendDialog mSendDialog;
     CreateInvoiceStepOnePopupWindow mCreateInvoiceStepOnePopupWindow;
     CreateLuckyPacketPopupWindow mCreateLuckyPacketPopupWindow;
@@ -1675,8 +1673,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
     public void clickPayInvoice() {
         mPayInvoiceDialog = new PayInvoiceDialog(mContext);
         mPayInvoiceDialog.show(pubkey, assetId, "");
-//        mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-//        mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, "");
     }
 
     /**
@@ -1933,8 +1929,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
             if (event.getType().equals("payInvoice")) {
                 mPayInvoiceDialog = new PayInvoiceDialog(mContext);
                 mPayInvoiceDialog.show(pubkey, assetId, event.getData());
-//                mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-//                mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, assetId, event.getData());
             } else if (event.getType().equals("receiveLuckyPacket")) {
                 LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + event.getData());
                 ReceiveLuckyPacketDialog mReceiveLuckyPacketDialog = new ReceiveLuckyPacketDialog(mContext);
@@ -1942,8 +1936,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
             } else if (event.getType().equals("openChannel")) {
                 mCreateChannelDialog = new CreateChannelDialog(mContext);
                 mCreateChannelDialog.show(balanceAmount, walletAddress, event.getData());
-//                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-//                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, event.getData());
             } else if (event.getType().equals("send")) {
                 mSendDialog = new SendDialog(mContext);
                 mSendDialog.show(event.getData());
@@ -2064,9 +2056,6 @@ public class BalanceDetailActivity extends AppBaseActivity {
         EventBus.getDefault().unregister(this);
         if (mMenuPopupWindow != null) {
             mMenuPopupWindow.release();
-        }
-        if (mPayInvoiceStepOnePopupWindow != null) {
-            mPayInvoiceStepOnePopupWindow.release();
         }
         if (mSendDialog != null) {
             mSendDialog.release();

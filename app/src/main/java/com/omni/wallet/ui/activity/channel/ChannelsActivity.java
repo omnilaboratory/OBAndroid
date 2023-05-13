@@ -384,8 +384,6 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     public void clickcCreateChannel() {
         mCreateChannelDialog = new CreateChannelDialog(mContext);
         mCreateChannelDialog.show(balanceAmount, walletAddress, "");
-//        mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-//        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, "");
     }
 
     /**
@@ -444,8 +442,6 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
                                     LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
                                     mPayInvoiceDialog = new PayInvoiceDialog(mContext);
                                     mPayInvoiceDialog.show(pubkey, resp.getAssetId(), event.getData());
-//                                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-//                                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, resp.getAssetId(), event.getData());
                                 } catch (InvalidProtocolBufferException e) {
                                     e.printStackTrace();
                                 }
@@ -456,8 +452,6 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
             } else if (event.getType().equals("openChannel")) {
                 mCreateChannelDialog = new CreateChannelDialog(mContext);
                 mCreateChannelDialog.show(balanceAmount, walletAddress, event.getData());
-//                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-//                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, walletAddress, event.getData());
             } else if (event.getType().equals("send")) {
                 mSendDialog = new SendDialog(mContext);
                 mSendDialog.show(event.getData());

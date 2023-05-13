@@ -17,23 +17,23 @@ import android.widget.TextView;
 
 import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
-import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.base.PermissionConfig;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.DisplayUtil;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
+import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
 import com.omni.wallet.common.NetworkType;
-import com.omni.wallet.framelibrary.common.Constants;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.obdMethods.NodeStart;
+import com.omni.wallet.obdMethods.WalletState;
 import com.omni.wallet.utils.AppVersionUtils;
 import com.omni.wallet.utils.FilesUtils;
 import com.omni.wallet.utils.NetworkChangeReceiver;
 import com.omni.wallet.utils.PreFilesUtils;
-import com.omni.wallet.obdMethods.WalletState;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -199,14 +199,19 @@ public class SplashActivity extends AppBaseActivity {
                         if (mGuideDialog != null && mGuideDialog.isShowing()) {
                             mGuideDialog.dismiss();
                         }
-                        /*
-                         * To home page after 3s
-                         * 延时3秒跳转主页
-                         */
-                        if (!isDownloading) {
-//                            getManifestFile();
-                            actionAfterPromise();
-                        }
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(StringUtils.isEmpty(User.getInstance().getPasswordMd5(mContext))){
+                                    switchActivityFinish(InitWalletMenuActivity.class);
+                                }else {
+                                    switchActivityFinish(UnlockActivity.class);
+                                }
+                            }
+                        }, 2000);
+//                        if (!isDownloading) {
+//                            actionAfterPromise();
+//                        }
                     }
 
                     @Override
@@ -532,23 +537,23 @@ public class SplashActivity extends AppBaseActivity {
             Log.d(TAG, "walletState:" + walletState);
             switch (walletState) {
                 case 4:
-                    handler.postDelayed(() -> {
-                        switchActivityFinish(AccountLightningActivity.class);
-                    }, Constants.SPLASH_SLEEP_TIME);
-                    break;
+//                    handler.postDelayed(() -> {
+//                        switchActivityFinish(AccountLightningActivity.class);
+//                    }, Constants.SPLASH_SLEEP_TIME);
+//                    break;
                 case 255:
-                    startNode();
+//                    startNode();
                     break;
                 case 1:
                 case -1:
-                    handler.postDelayed(() -> {
-                        if (walletInitType.equals("initialed")) {
-                            switchActivityFinish(UnlockActivity.class);
-                        } else {
-                            switchActivityFinish(InitWalletMenuActivity.class);
-                        }
-                    }, Constants.SPLASH_SLEEP_TIME);
-                    break;
+//                    handler.postDelayed(() -> {
+//                        if (walletInitType.equals("initialed")) {
+//                            switchActivityFinish(UnlockActivity.class);
+//                        } else {
+//                            switchActivityFinish(InitWalletMenuActivity.class);
+//                        }
+//                    }, Constants.SPLASH_SLEEP_TIME);
+//                    break;
                 default:
                     break;
             }

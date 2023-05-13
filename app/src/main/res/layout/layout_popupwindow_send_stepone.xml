@@ -62,8 +62,7 @@
                     android:id="@+id/iv_scan"
                     android:layout_width="@dimen/main_32"
                     android:layout_height="@dimen/main_32"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/main_7"
                     android:src="@mipmap/icon_scan_gray" />
             </LinearLayout>
 

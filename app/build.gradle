@@ -175,4 +175,5 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxandroid:3.0.0"
     implementation 'com.mindorks.android:prdownloader:0.5.0'
     implementation 'com.contrarywind:Android-PickerView:3.2.7'
+    implementation 'org.apache.commons:commons-compress:1.18'
 }

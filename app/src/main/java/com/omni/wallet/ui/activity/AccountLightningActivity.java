@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -22,6 +24,7 @@ import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
@@ -39,6 +42,7 @@ import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
+import com.omni.wallet.entity.event.DownloadEvent;
 import com.omni.wallet.entity.event.InitChartEvent;
 import com.omni.wallet.entity.event.LockEvent;
 import com.omni.wallet.entity.event.LoginOutEvent;
@@ -48,10 +52,12 @@ import com.omni.wallet.entity.event.RebootEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
 import com.omni.wallet.entity.event.SelectAccountEvent;
 import com.omni.wallet.entity.event.SendSuccessEvent;
+import com.omni.wallet.entity.event.StartNodeEvent;
 import com.omni.wallet.entity.event.UpdateAssetsDataEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.framelibrary.view.refreshlayout.LayoutRefreshView;
+import com.omni.wallet.obdMethods.WalletState;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.GetResourceUtil;
@@ -60,6 +66,7 @@ import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.AssetTrendChartView;
 import com.omni.wallet.view.MyScrollView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
+import com.omni.wallet.view.dialog.DataStatusDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.dialog.ReceiveLuckyPacketDialog;
@@ -81,10 +88,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import lnrpc.LightningOuterClass;
-import lnrpc.Stateservice;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
-import obdmobile.RecvStream;
 
 public class AccountLightningActivity extends AppBaseActivity {
     private static final String TAG = AccountLightningActivity.class.getSimpleName();
@@ -115,6 +120,10 @@ public class AccountLightningActivity extends AppBaseActivity {
     public RecyclerView mRecyclerViewBlock;// 资产列表的RecyclerViewBlock(The Recycler View Block for Assets List)
     @BindView(R.id.iv_percent_change)
     ImageView mPercentChangeView;
+    @BindView(R.id.sync_percent)
+    TextView syncPercentView;
+    @BindView(R.id.progressbar)
+    ProgressBar mProgressBar;
     private List<ListAssetItemEntity> chainData = new ArrayList<>();
     private List<ListAssetItemEntity> blockData = new ArrayList<>();
     private List<ListAssetItemEntity> lightningData = new ArrayList<>();
@@ -171,7 +180,6 @@ public class AccountLightningActivity extends AppBaseActivity {
         });
         EventBus.getDefault().post(new CloseUselessActivityEvent());
         mLoadingDialog = new LoadingDialog(mContext);
-        mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
         initRecyclerView();
     }
 
@@ -182,40 +190,40 @@ public class AccountLightningActivity extends AppBaseActivity {
     private class MyRefreshListener implements RefreshLayout.OnRefreshListener {
         @Override
         public void onRefresh() {
-            getAssetAndBtcData();
+            if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
+                WalletState.getInstance().subscribeWalletState(mContext);
+                subscribeWalletState(1);
+            } else {
+                getAssetAndBtcData();
+            }
         }
     }
 
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-        getInfo();
-        setDefaultAddress();
-        runOnUiThread(this::setAssetTrendChartViewShow);
+        WalletState.getInstance().subscribeWalletState(mContext);
+        subscribeWalletState(2);
+//        getInfo();
+//        setDefaultAddress();
+//        runOnUiThread(this::setAssetTrendChartViewShow);
+        if (User.getInstance().isNeutrinoDbChecked(mContext)) {
+            double percent = (100 / 100 * 100);
+            String percentString = String.format("%.2f", percent) + "%";
+            syncPercentView.setText(percentString);
+            mProgressBar.setProgress((int) percent);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getAssetAndBtcData();
-        Stateservice.SubscribeStateRequest subscribeStateRequest = Stateservice.SubscribeStateRequest.newBuilder().build();
-        Obdmobile.subscribeState(subscribeStateRequest.toByteArray(), new RecvStream() {
-            @Override
-            public void onError(Exception e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                try {
-                    Stateservice.SubscribeStateResponse subscribeStateResponse = Stateservice.SubscribeStateResponse.parseFrom(bytes);
-                    int stateValue = subscribeStateResponse.getStateValue();
-                    LogUtils.e("state value", Integer.toString(stateValue));
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
+            WalletState.getInstance().subscribeWalletState(mContext);
+            subscribeWalletState(1);
+        } else {
+            getAssetAndBtcData();
+        }
     }
 
     private void initRecyclerView() {
@@ -823,8 +831,16 @@ public class AccountLightningActivity extends AppBaseActivity {
     public void clickCreateChannel() {
         mCreateChannelDialog = new CreateChannelDialog(mContext);
         mCreateChannelDialog.show(balanceAmount, User.getInstance().getWalletAddress(mContext), "");
-//        mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-//        mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, User.getInstance().getWalletAddress(mContext), "");
+    }
+
+    /**
+     * Click progress bar
+     * 点击进度条
+     */
+    @OnClick(R.id.download_view)
+    public void clickDownloadView() {
+        DataStatusDialog mDataStatusDialog = new DataStatusDialog(mContext);
+        mDataStatusDialog.show();
     }
 
     /**
@@ -857,8 +873,6 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
                                     mPayInvoiceDialog = new PayInvoiceDialog(mContext);
                                     mPayInvoiceDialog.show(pubkey, resp.getAssetId(), event.getData());
-//                                    PayInvoiceStepOnePopupWindow mPayInvoiceStepOnePopupWindow = new PayInvoiceStepOnePopupWindow(mContext);
-//                                    mPayInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, resp.getAssetId(), event.getData());
                                 } catch (InvalidProtocolBufferException e) {
                                     e.printStackTrace();
                                 }
@@ -873,8 +887,6 @@ public class AccountLightningActivity extends AppBaseActivity {
             } else if (event.getType().equals("openChannel")) {
                 mCreateChannelDialog = new CreateChannelDialog(mContext);
                 mCreateChannelDialog.show(balanceAmount, User.getInstance().getWalletAddress(mContext), event.getData());
-//                mCreateChannelStepOnePopupWindow = new CreateChannelStepOnePopupWindow(mContext);
-//                mCreateChannelStepOnePopupWindow.show(mParentLayout, balanceAmount, User.getInstance().getWalletAddress(mContext), event.getData());
             } else if (event.getType().equals("send")) {
                 mSendDialog = new SendDialog(mContext);
                 mSendDialog.show(event.getData());
@@ -987,6 +999,94 @@ public class AccountLightningActivity extends AppBaseActivity {
         finish();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateAssetsDataOver(UpdateAssetsDataEvent event) {
+        Runnable runnable = () -> AssetsActions.initOrUpdateAction(mContext);
+        handler.postDelayed(runnable, 60000);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onInitChartOver(InitChartEvent event) {
+        setAssetTrendChartViewShow();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDownloadEvent(DownloadEvent event) {
+        double percent = (event.getCurrent() / event.getTotal() * 100);
+        String percentString = String.format("%.2f", percent) + "%";
+        syncPercentView.setText(percentString);
+        mProgressBar.setProgress((int) percent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStartNodeEvent(StartNodeEvent event) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                mLoadingDialog.show();
+                WalletState.getInstance().subscribeWalletState(mContext);
+                subscribeWalletState(1);
+            }
+        });
+    }
+
+    public void subscribeWalletState(int key) {
+        WalletState.WalletStateCallback walletStateCallback = (int walletState) -> {
+            LogUtils.e("---------------", String.valueOf(walletState));
+            if (walletState == 4) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLoadingDialog.dismiss();
+                    }
+                });
+                if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
+                    LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
+                    Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
+                            try {
+                                LightningOuterClass.NewAddressResponse newAddressResponse = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
+                                String address = newAddressResponse.getAddress();
+                                runOnUiThread(() -> {
+                                    // 保存地址到本地(save wallet address to local)
+                                    User.getInstance().setWalletAddress(mContext, address);
+                                    mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
+                                    getAssetAndBtcData();
+                                    getInfo();
+                                    setDefaultAddress();
+                                    setAssetTrendChartViewShow();
+                                });
+                            } catch (InvalidProtocolBufferException e) {
+                                e.printStackTrace();
+
+                            }
+                        }
+                    });
+                } else {
+                    runOnUiThread(() -> {
+                        mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
+                        if (key == 1) {
+                            getAssetAndBtcData();
+                        }
+                        getInfo();
+                        setDefaultAddress();
+                        setAssetTrendChartViewShow();
+                    });
+                }
+            }
+        };
+        WalletState.getInstance().setWalletStateCallback(walletStateCallback);
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return super.onDoubleClickExit(keyCode, event);
@@ -1017,17 +1117,5 @@ public class AccountLightningActivity extends AppBaseActivity {
         if (mCreateChannelDialog != null) {
             mCreateChannelDialog.release();
         }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateAssetsDataOver(UpdateAssetsDataEvent event) {
-        Runnable runnable = () -> AssetsActions.initOrUpdateAction(mContext);
-        handler.postDelayed(runnable, 60000);
-
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onInitChartOver(InitChartEvent event) {
-        setAssetTrendChartViewShow();
     }
 }
