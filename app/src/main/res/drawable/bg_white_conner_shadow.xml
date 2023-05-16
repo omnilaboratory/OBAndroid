@@ -10,18 +10,18 @@
                 android:startColor="@color/color_white"
                 android:centerColor="#FFABAADD"
                 android:endColor="#40ABAADD"/>
-            <corners android:radius="10dp" />
+            <corners android:radius="@dimen/main_25" />
         </shape>
     </item>
     <!--前景-->
     <item
-        android:bottom="5dp"
-        android:left="1dp"
-        android:right="6dp"
-        android:top="1dp">
+        android:bottom="@dimen/main_6"
+        android:left="@dimen/main_1"
+        android:right="@dimen/main_6"
+        android:top="@dimen/main_1">
         <shape android:shape="rectangle">
             <solid android:color="@android:color/white"/>
-            <corners android:radius="10dp" />
+            <corners android:radius="@dimen/main_25" />
         </shape>
     </item>
 </layer-list>

@@ -12,7 +12,7 @@
     <string name="here">Here</string>
     <string name="unlock_description">设置进入钱包的密码！</string>
     <string name="unlock_uppre">解锁</string>
-    <string name="create_uppre">创建</string>
+    <string name="create_uppre">NEW WALLET</string>
     <string name="recover_uppre">恢复</string>
     <string name="forgot_pass">忘记密码？</string>
     <!-- ForgetPwd页面 -->

@@ -83,7 +83,7 @@
                         android:text="@string/pwd_upper"
                         android:textAllCaps="false"
                         android:textSize="@dimen/text_18"
-                        android:letterSpacing="0.1"
+                        android:letterSpacing="0.15"
                         android:layout_marginEnd="10dp"
                         android:textColor="@color/color_key"/>
 
@@ -116,8 +116,8 @@
                         android:hint="@string/create_pass_input_hit"
                         android:background="@null"
                         android:layout_marginEnd="10dp"
-                        android:textSize="@dimen/text_14"
-                        android:letterSpacing="0.05"
+                        android:textSize="@dimen/text_18"
+                        android:letterSpacing="0.25"
                         android:textColor="@color/color_description_blue"
                         android:textColorHint="@color/color_description_blue"
                         android:maxLines="1"
@@ -218,7 +218,7 @@
                         android:text="@string/pwd_upper_repeat"
                         android:textAllCaps="false"
                         android:textSize="@dimen/text_18"
-                        android:letterSpacing="0.1"
+                        android:letterSpacing="0.15"
                         android:layout_marginEnd="10dp"
                         android:textColor="@color/color_key"
                         android:textAlignment="center"/>
@@ -247,8 +247,8 @@
                         android:hint="@string/create_pass_input_hit"
                         android:background="@null"
                         android:layout_marginEnd="10dp"
-                        android:textSize="@dimen/text_14"
-                        android:letterSpacing="0.05"
+                        android:textSize="@dimen/text_18"
+                        android:letterSpacing="0.25"
                         android:textColor="@color/color_description_blue"
                         android:textColorHint="@color/color_description_blue"
                         android:maxLines="1"
@@ -309,15 +309,17 @@
                         android:id="@+id/imageView"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
+                        android:layout_marginBottom="@dimen/main_10"
                         app:srcCompat="@mipmap/arrow_left" />
 
                     <TextView
                         android:id="@+id/textView4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:letterSpacing="0.25"
                         android:text="@string/back_upper"
                         android:textColor="@color/color_black"
-                        android:textSize="@dimen/text_18" />
+                        android:textSize="@dimen/text_16" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -338,15 +340,17 @@
                         android:id="@+id/imageView1"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
+                        android:layout_marginBottom="@dimen/main_10"
                         app:srcCompat="@mipmap/arrow_right" />
 
                     <TextView
                         android:id="@+id/textView5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:letterSpacing="0.25"
                         android:text="@string/next_upper"
                         android:textColor="@color/color_black"
-                        android:textSize="@dimen/text_18" />
+                        android:textSize="@dimen/text_16" />
                 </LinearLayout>
 
             </LinearLayout>

@@ -39,7 +39,7 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="63dp">
+                android:layout_marginTop="@dimen/main_45">
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                         android:textSize="18sp"
                         android:text="@string/pwd_upper"
                         android:layout_marginRight="10dp"
-                        android:letterSpacing="0.1"
+                        android:letterSpacing="0.25"
                         />
                     <ImageView
                         android:id="@+id/pass_info"
@@ -66,7 +66,7 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp">
+                android:layout_marginTop="@dimen/main_35">
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -81,8 +81,8 @@
                         android:hint="@string/create_pass_input_hit"
                         android:background="@null"
                         android:layout_marginRight="10dp"
-                        android:textSize="@dimen/text_14"
-                        android:letterSpacing="0.05"
+                        android:textSize="@dimen/text_18"
+                        android:letterSpacing="0.25"
                         android:textColor="@color/color_description_blue"
                         android:textColorHint="@color/color_description_blue"
                         android:inputType="textVisiblePassword"
@@ -101,7 +101,7 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="39dp"
+                android:layout_marginTop="@dimen/main_22"
                 >
                 <LinearLayout
                     android:id="@+id/btn_unlock"
@@ -117,9 +117,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
                         android:text="@string/unlock_uppre"
-                        android:letterSpacing="0.1"
+                        android:letterSpacing="0.25"
                         android:textSize="18sp"
                         android:textColor="@color/color_black"/>
                 </LinearLayout>
@@ -129,12 +128,13 @@
                 android:id="@+id/btv_forget_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="30dp">
+                android:layout_marginTop="@dimen/main_25"
+                android:layout_marginBottom="@dimen/main_37">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/forgot_pass"
+                    android:textSize="@dimen/text_16"
                     android:textColor="@color/color_0066ff"/>
             </LinearLayout>
         </LinearLayout>

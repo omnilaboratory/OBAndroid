@@ -11,7 +11,7 @@
     <string name="here">Here</string>
     <string name="unlock_description">Set a password to encrypt your wallet!</string>
     <string name="unlock_uppre">UNLOCK</string>
-    <string name="create_uppre">CREATE</string>
+    <string name="create_uppre">NEW WALLET</string>
     <string name="recover_uppre">RECOVER</string>
     <string name="forgot_pass">Forgot password?</string>
     <!-- ForgetPwd页面 -->

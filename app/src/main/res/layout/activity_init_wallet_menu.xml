@@ -32,55 +32,20 @@
         android:elevation="@dimen/main_10">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/main_280"
+            android:layout_height="@dimen/main_300"
             android:orientation="vertical"
             android:gravity="center">
-            <RelativeLayout
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                >
-                <LinearLayout
-                    android:id="@+id/welcome_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="WELCOME"
-                        android:textSize="@dimen/main_20"
-                        android:textColor="@color/color_4A92FF"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/continue_to_create_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:visibility="gone">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CONTINUE TO CREATE"
-                        android:textSize="@dimen/main_20"
-                        android:textColor="@color/color_4A92FF"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/continue_to_recovery_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:visibility="gone">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CONTINUE TO RECOVER"
-                        android:textSize="@dimen/main_20"
-                        android:textColor="@color/color_4A92FF"/>
-                </LinearLayout>
-            </RelativeLayout>
+                android:layout_marginLeft="@dimen/main_27"
+                android:layout_marginRight="@dimen/main_27"
+                android:gravity="center"
+                android:letterSpacing="0.25"
+                android:text="Please select to create a new wallet or recover from storage"
+                android:textSize="@dimen/text_18"
+                android:textColor="@color/color_4A92FF"/>
         </LinearLayout>
     </RelativeLayout>
 
@@ -88,9 +53,9 @@
         android:id="@+id/bottom_btn_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/main_40"
+        android:layout_marginLeft="@dimen/main_30"
         android:layout_marginRight="@dimen/main_40"
-        android:layout_marginTop="@dimen/main_70">
+        android:layout_marginTop="@dimen/main_80">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -109,14 +74,13 @@
                         android:layout_width="@dimen/main_36"
                         android:layout_height="@dimen/main_36"
                         android:src="@mipmap/icon_add_green"
-                        android:layout_marginBottom="@dimen/main_5"/>
+                        android:layout_marginBottom="@dimen/main_10"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/main_1"
                         android:text="@string/create_uppre"
-                        android:letterSpacing="0.1"
-                        android:textSize="@dimen/main_18"
+                        android:letterSpacing="0.25"
+                        android:textSize="@dimen/text_16"
                         android:textColor="@color/color_black"/>
                 </LinearLayout>
             </RelativeLayout>
@@ -135,14 +99,13 @@
                         android:layout_width="@dimen/main_36"
                         android:layout_height="@dimen/main_36"
                         android:src="@mipmap/icon_download_cloud"
-                        android:layout_marginBottom="@dimen/main_5"/>
+                        android:layout_marginBottom="@dimen/main_10"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/main_1"
                         android:text="@string/recover_uppre"
-                        android:letterSpacing="0.1"
-                        android:textSize="@dimen/main_18"
+                        android:letterSpacing="0.25"
+                        android:textSize="@dimen/text_16"
                         android:textColor="@color/color_black"/>
                 </LinearLayout>
             </RelativeLayout>
