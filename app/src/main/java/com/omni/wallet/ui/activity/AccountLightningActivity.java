@@ -143,6 +143,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     long balanceAmount;
     private String pubkey;
+    boolean isRequest = false;
 
     Handler handler = new Handler();
 
@@ -191,8 +192,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         @Override
         public void onRefresh() {
             if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
-                WalletState.getInstance().subscribeWalletState(mContext);
-                subscribeWalletState(1);
+                showPageData();
             } else {
                 getAssetAndBtcData();
             }
@@ -202,11 +202,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-        WalletState.getInstance().subscribeWalletState(mContext);
-        subscribeWalletState(2);
-//        getInfo();
-//        setDefaultAddress();
-//        runOnUiThread(this::setAssetTrendChartViewShow);
+        showPageData();
         if (User.getInstance().isNeutrinoDbChecked(mContext)) {
             double percent = (100 / 100 * 100);
             String percentString = String.format("%.2f", percent) + "%";
@@ -218,10 +214,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
-            WalletState.getInstance().subscribeWalletState(mContext);
-            subscribeWalletState(1);
-        } else {
+        if (isRequest == true) {
             getAssetAndBtcData();
         }
     }
@@ -1023,14 +1016,18 @@ public class AccountLightningActivity extends AppBaseActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                mLoadingDialog.show();
-                WalletState.getInstance().subscribeWalletState(mContext);
-                subscribeWalletState(1);
+                showPageData();
             }
         });
     }
 
-    public void subscribeWalletState(int key) {
+    private void showPageData() {
+        mLoadingDialog.show();
+        WalletState.getInstance().subscribeWalletState(mContext);
+        subscribeWalletState();
+    }
+
+    public void subscribeWalletState() {
         WalletState.WalletStateCallback walletStateCallback = (int walletState) -> {
             LogUtils.e("---------------", String.valueOf(walletState));
             if (walletState == 4) {
@@ -1038,6 +1035,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     @Override
                     public void run() {
                         mLoadingDialog.dismiss();
+                        isRequest = true;
                     }
                 });
                 if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
@@ -1074,9 +1072,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                 } else {
                     runOnUiThread(() -> {
                         mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
-                        if (key == 1) {
-                            getAssetAndBtcData();
-                        }
+                        getAssetAndBtcData();
                         getInfo();
                         setDefaultAddress();
                         setAssetTrendChartViewShow();
