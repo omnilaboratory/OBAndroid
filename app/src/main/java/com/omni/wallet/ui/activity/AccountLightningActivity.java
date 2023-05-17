@@ -1016,13 +1016,13 @@ public class AccountLightningActivity extends AppBaseActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
+                mLoadingDialog.show();
                 showPageData();
             }
         });
     }
 
     private void showPageData() {
-        mLoadingDialog.show();
         WalletState.getInstance().subscribeWalletState(mContext);
         subscribeWalletState();
     }
