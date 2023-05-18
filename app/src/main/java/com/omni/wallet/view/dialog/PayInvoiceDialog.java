@@ -2,7 +2,9 @@ package com.omni.wallet.view.dialog;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
@@ -19,6 +21,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
 import com.omni.wallet.baselibrary.dialog.AlertDialog;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.utils.image.ImageUtils;
@@ -27,6 +30,7 @@ import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.event.PayInvoiceFailedEvent;
 import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
+import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.utils.RefConstants;
 import com.omni.wallet.utils.ShareUtil;
 import com.omni.wallet.utils.UriUtil;
@@ -126,13 +130,32 @@ public class PayInvoiceDialog {
         }
         fromNodeAddressTv.setText(StringUtils.encodePubkey(mAddress));
         /**
-         * @备注： 点击back关闭pay invoice 窗口
-         * @description: Close pay invoice popup window when click back
+         * @备注： 点击二维码扫描按钮跳转扫码页面
+         * @description: Click the two-dimensional code scanning button to jump to the scanning code page
          */
-        mAlertDialog.findViewById(R.id.layout_back).setOnClickListener(new View.OnClickListener() {
+        mAlertDialog.findViewById(R.id.layout_scan).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAlertDialog.dismiss();
+                PermissionUtils.launchCamera((Activity) mContext, new PermissionUtils.PermissionCallback() {
+                    @Override
+                    public void onRequestPermissionSuccess() {
+                        mAlertDialog.dismiss();
+                        Intent intent = new Intent(mContext, ScanActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(ScanActivity.KEY_SCAN_CODE, 2);
+                        mContext.startActivity(intent, bundle);
+                    }
+
+                    @Override
+                    public void onRequestPermissionFailure(List<String> permissions) {
+                        LogUtils.e(TAG, "扫码页面摄像头权限拒绝");
+                    }
+
+                    @Override
+                    public void onRequestPermissionFailureWithAskNeverAgain(List<String> permissions) {
+                        LogUtils.e(TAG, "扫码页面摄像头权限拒绝并且勾选不再提示");
+                    }
+                });
             }
         });
         /**

@@ -298,6 +298,7 @@
     <string name="updates_first_upper">Updates</string>
     <string name="data_status_upper">DATA STATUS</string>
     <string name="refresh_upper">REFRESH</string>
+    <string name="scan_upper">SCAN</string>
 
     <plurals name="duration_second">
         <item quantity="one">%d Second</item>

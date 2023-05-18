@@ -176,4 +176,14 @@ dependencies {
     implementation 'com.mindorks.android:prdownloader:0.5.0'
     implementation 'com.contrarywind:Android-PickerView:3.2.7'
     implementation 'org.apache.commons:commons-compress:1.18'
+    // Google drive
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'pub.devrel:easypermissions:0.3.0'
+    implementation 'com.google.http-client:google-http-client-gson:1.26.0'
+    implementation('com.google.api-client:google-api-client-android:1.26.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    implementation('com.google.apis:google-api-services-drive:v3-rev136-1.25.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
 }
