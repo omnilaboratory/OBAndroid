@@ -77,7 +77,7 @@
     <string name="profile">Profile</string>
     <string name="preference">Preference</string>
     <string name="node_info">Node Info</string>
-    <string name="backup_directory">Backup Directory</string>
+    <string name="backup_directory">Backup Now</string>
     <string name="disconnect">Disconnect</string>
     <string name="lock">Lock</string>
     <string name="settings">SETTINGS</string>
@@ -94,7 +94,7 @@
     <string name="open_a_channel">OPEN A CHANNEL</string>
     <string name="open_a_channel_txt">Establish a channel with a liquidity node and start using the Lightning Network</string>
     <string name="scan_qrcode">Scan QRCode</string>
-    <string name="fill_in_mannually">Fill in mannually</string>
+    <string name="fill_in_mannually">Fill in manually</string>
     <string name="valid_pubkey">Valid Pubkey</string>
     <string name="back_big">BACK</string>
     <string name="create">CREATE</string>
