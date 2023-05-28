@@ -112,6 +112,8 @@ public class User {
 
     private boolean isSeedStringSecreted;
 
+    private boolean isBackUp;
+
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
         return token;
@@ -597,5 +599,15 @@ public class User {
     public boolean getSeedSecreted(Context context) {
         isSeedStringSecreted = PreferencesUtils.getSeedStringSecreted(context);
         return isSeedStringSecreted;
+    }
+
+    public boolean isBackUp(Context context){
+        isBackUp = PreferencesUtils.getBackUp(context);
+        return isBackUp;
+    }
+
+    public void setBackUp(Context context, boolean isBackUp) {
+        PreferencesUtils.saveBackUp(context, isBackUp);
+        this.isBackUp = isBackUp;
     }
 }

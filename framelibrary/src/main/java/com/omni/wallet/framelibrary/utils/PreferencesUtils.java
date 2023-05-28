@@ -62,7 +62,7 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String KEY_NEUTRINO_DB_CHECKED = "neutrinoDbChecked";
     private static final String WALLET_INFO_MOVED = "walletInfoMoved";
     private static final String SEED_STRING_SECRETED = "seedStringSecreted";
-
+    private static final String KEY_BACKUP = "backupKey";
 
     /**
      * 版本信息本地化
@@ -559,5 +559,13 @@ public class PreferencesUtils extends BasePreferencesUtils {
 
     public static boolean getSeedStringSecreted(Context context) {
         return getBoolean(SETTINGS,context,SEED_STRING_SECRETED);
+    }
+
+    public static void saveBackUp(Context context, boolean value) {
+        putBoolean(SETTINGS,context,KEY_BACKUP,value);
+    }
+
+    public static boolean getBackUp(Context context) {
+        return getBoolean(SETTINGS,context,KEY_BACKUP);
     }
 }

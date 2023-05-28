@@ -160,7 +160,7 @@ public class SplashActivity extends AppBaseActivity {
 
         };
         networkChangeReceiver.setCallBackNetWork(callBackNetWork);
-        subscribeWalletState();
+//        subscribeWalletState();
         runOnUiThread(() -> registerReceiver(networkChangeReceiver, intentFilter));
 
         /*

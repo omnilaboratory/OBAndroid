@@ -1,11 +1,14 @@
 package com.omni.wallet.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +20,18 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.FileList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -31,6 +46,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.refreshView.RefreshLayout;
 import com.omni.wallet.common.ConstantInOB;
+import com.omni.wallet.common.ConstantWithNetwork;
 import com.omni.wallet.data.AssetsActions;
 import com.omni.wallet.data.AssetsValueDataItem;
 import com.omni.wallet.data.ChangeData;
@@ -38,6 +54,7 @@ import com.omni.wallet.data.ChartData;
 import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.AssetTrendEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
+import com.omni.wallet.entity.event.BackUpEvent;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
@@ -60,6 +77,8 @@ import com.omni.wallet.framelibrary.view.refreshlayout.LayoutRefreshView;
 import com.omni.wallet.obdMethods.WalletState;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.DecompressUtil;
+import com.omni.wallet.utils.DriveServiceHelper;
 import com.omni.wallet.utils.GetResourceUtil;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UriUtil;
@@ -80,10 +99,18 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -146,6 +173,9 @@ public class AccountLightningActivity extends AppBaseActivity {
     boolean isRequest = false;
 
     Handler handler = new Handler();
+
+    private static final int REQUEST_CODE_SIGN_IN = 1;
+    private DriveServiceHelper mDriveServiceHelper;
 
     @Override
     protected View getStatusBarTopView() {
@@ -407,13 +437,17 @@ public class AccountLightningActivity extends AppBaseActivity {
                         @Override
                         public void onError(Exception e) {
                             LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
-                            setDefaultData();
+                            if (!StringUtils.isEmpty(User.getInstance().getNetwork(mContext))) {
+                                setDefaultData();
+                            }
                         }
 
                         @Override
                         public void onResponse(byte[] bytes) {
                             if (bytes == null) {
-                                setDefaultData();
+                                if (!StringUtils.isEmpty(User.getInstance().getNetwork(mContext))) {
+                                    setDefaultData();
+                                }
                                 return;
                             }
                             try {
@@ -1038,49 +1072,317 @@ public class AccountLightningActivity extends AppBaseActivity {
                         isRequest = true;
                     }
                 });
-                if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
-                    LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
-                    Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
-                        @Override
-                        public void onError(Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onResponse(byte[] bytes) {
-                            if (bytes == null) {
-                                return;
-                            }
-                            try {
-                                LightningOuterClass.NewAddressResponse newAddressResponse = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
-                                String address = newAddressResponse.getAddress();
-                                runOnUiThread(() -> {
-                                    // 保存地址到本地(save wallet address to local)
-                                    User.getInstance().setWalletAddress(mContext, address);
-                                    mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
-                                    getAssetAndBtcData();
-                                    getInfo();
-                                    setDefaultAddress();
-                                    setAssetTrendChartViewShow();
-                                });
-                            } catch (InvalidProtocolBufferException e) {
-                                e.printStackTrace();
-
-                            }
-                        }
-                    });
+                if (User.getInstance().isBackUp(mContext) == true) {
+                    requestSignIn();
                 } else {
-                    runOnUiThread(() -> {
-                        mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
-                        getAssetAndBtcData();
-                        getInfo();
-                        setDefaultAddress();
-                        setAssetTrendChartViewShow();
-                    });
+                    if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
+                        LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
+                        Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
+                            @Override
+                            public void onError(Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            @Override
+                            public void onResponse(byte[] bytes) {
+                                if (bytes == null) {
+                                    return;
+                                }
+                                try {
+                                    LightningOuterClass.NewAddressResponse newAddressResponse = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
+                                    String address = newAddressResponse.getAddress();
+                                    runOnUiThread(() -> {
+                                        // 保存地址到本地(save wallet address to local)
+                                        User.getInstance().setWalletAddress(mContext, address);
+                                        mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
+                                        getAssetAndBtcData();
+                                        getInfo();
+                                        setDefaultAddress();
+                                        setAssetTrendChartViewShow();
+                                    });
+                                } catch (InvalidProtocolBufferException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    } else {
+                        runOnUiThread(() -> {
+                            mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
+                            getAssetAndBtcData();
+                            getInfo();
+                            setDefaultAddress();
+                            setAssetTrendChartViewShow();
+                        });
+                    }
                 }
             }
         };
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBackUpEventEvent(BackUpEvent event) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (event.getCode() == 1) {
+                    File walletPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db");
+                    File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "channel.backup");
+                    if (walletPath.exists() && channelPath.exists()) {
+                        // Authenticate the user. For most apps, this should be done when the user performs an
+                        // action that requires Drive access rather than in onCreate.
+                        requestSignIn();
+                    } else {
+                        ToastUtils.showToast(mContext, "The backup file does not exist");
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Starts a sign-in activity using {@link #REQUEST_CODE_SIGN_IN}.
+     */
+    private void requestSignIn() {
+        LogUtils.e(TAG, "Requesting sign-in");
+
+        GoogleSignInOptions signInOptions =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
+                        .build();
+        GoogleSignInClient client = GoogleSignIn.getClient(this, signInOptions);
+
+        // The result of the sign-in Intent is handled in onActivityResult.
+        startActivityForResult(client.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        switch (requestCode) {
+            case REQUEST_CODE_SIGN_IN:
+                if (resultCode == Activity.RESULT_OK && resultData != null) {
+                    handleSignInResult(resultData);
+                }
+                break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, resultData);
+    }
+
+    /**
+     * Handles the {@code result} of a completed sign-in activity initiated from {@link
+     * #requestSignIn()}.
+     */
+    private void handleSignInResult(Intent result) {
+        GoogleSignIn.getSignedInAccountFromIntent(result)
+                .addOnSuccessListener(googleAccount -> {
+                    LogUtils.e(TAG, "Signed in as " + googleAccount.getEmail());
+
+                    // Use the authenticated account to sign in to the Drive service.
+                    GoogleAccountCredential credential =
+                            GoogleAccountCredential.usingOAuth2(
+                                    this, Collections.singleton(DriveScopes.DRIVE_FILE));
+                    credential.setSelectedAccount(googleAccount.getAccount());
+                    Drive googleDriveService =
+                            new Drive.Builder(
+                                    AndroidHttp.newCompatibleTransport(),
+                                    new GsonFactory(),
+                                    credential)
+                                    .setApplicationName("OB Wallet")
+                                    .build();
+
+                    // The DriveServiceHelper encapsulates all REST API and SAF functionality.
+                    // Its instantiation is required before handling any onClick actions.
+                    mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+                    if (User.getInstance().isBackUp(mContext) == true) {
+                        query();
+                    } else {
+                        createAddressFile();
+                    }
+                })
+                .addOnFailureListener(exception -> LogUtils.e(TAG, "Unable to sign in.", exception));
+    }
+
+    /**
+     * Creates a new file via the Drive REST API.
+     */
+    private void createAddressFile() {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Creating a address file.");
+            mLoadingDialog.show();
+            mDriveServiceHelper.createFile(User.getInstance().getWalletAddress(mContext))
+                    .addOnSuccessListener(fileId -> createWalletFile())
+                    .addOnFailureListener(exception ->
+                            LogUtils.e(TAG, "Couldn't create address file.", exception));
+        }
+    }
+
+    private void createWalletFile() {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Creating wallet file.");
+            String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db";
+            LogUtils.e(TAG, filePath);
+            mDriveServiceHelper.createFile(filePath, "wallet.db").addOnSuccessListener(new OnSuccessListener<String>() {
+                @Override
+                public void onSuccess(String s) {
+                    createChannelFile();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    LogUtils.e(TAG, "Couldn't create wallet file.", e);
+                }
+            });
+        }
+    }
+
+    private void createChannelFile() {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Creating channel zip file.");
+
+            String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "channel.backup";
+            String zipFilePath = mContext.getExternalFilesDir(null) + "/channel.zip";
+            LogUtils.e(TAG, filePath);
+            LogUtils.e(TAG, zipFilePath);
+            DecompressUtil.ZipFolder(filePath, zipFilePath);
+            mDriveServiceHelper.createZipFile(zipFilePath, "channel.zip").addOnSuccessListener(new OnSuccessListener<String>() {
+                @Override
+                public void onSuccess(String s) {
+                    mLoadingDialog.dismiss();
+                    File file = new File(zipFilePath);
+                    file.delete();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    LogUtils.e(TAG, "Couldn't create channel zip file.", e);
+                }
+            });
+        }
+    }
+
+    /**
+     * Queries the Drive REST API for files visible to this app and lists them in the content view.
+     */
+    private void query() {
+        if (mDriveServiceHelper != null) {
+            Log.d(TAG, "Querying for files.");
+
+            mDriveServiceHelper.queryFiles().addOnSuccessListener(new OnSuccessListener<FileList>() {
+                @Override
+                public void onSuccess(FileList fileList) {
+                    readAddressFile(fileList.getFiles().get(fileList.getFiles().size() - 1).getId(), fileList.getFiles().get(fileList.getFiles().size() - 2).getId(), fileList.getFiles().get(fileList.getFiles().size() - 3).getId());
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    LogUtils.e(TAG, "Unable to query files.", e);
+                }
+            });
+        }
+    }
+
+    /**
+     * Retrieves the title and content of a file identified by {@code fileId} and populates the UI.
+     */
+    private void readAddressFile(String walletFileId, String channelFileId, String addressFileId) {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Reading address file " + addressFileId);
+
+            mDriveServiceHelper.readFile(addressFileId)
+                    .addOnSuccessListener(nameAndContent -> {
+                        String address = nameAndContent.first;
+                        User.getInstance().setWalletAddress(mContext, address);
+                        readWalletFile(walletFileId, channelFileId);
+                    })
+                    .addOnFailureListener(exception ->
+                            LogUtils.e(TAG, "Couldn't read addreess file.", exception));
+        }
+    }
+
+    /**
+     * Retrieves the title and content of a file identified by {@code fileId} and populates the UI.
+     */
+    private void readWalletFile(String walletFileId, String channelFileId) {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Reading wallet file " + walletFileId);
+
+            mDriveServiceHelper.downloadFile(walletFileId)
+                    .addOnSuccessListener(walletFileContent -> {
+                        String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db";
+//                        String filePath = mContext.getExternalFilesDir(null) + "/wallet.db";
+                        binaryToFile(walletFileContent.toByteArray(), filePath);
+                        readChannelFile(channelFileId);
+                    })
+                    .addOnFailureListener(exception ->
+                            LogUtils.e(TAG, "Couldn't read wallet file.", exception));
+        }
+    }
+
+    private void readChannelFile(String channelFileId) {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Reading channel zip file " + channelFileId);
+
+            mDriveServiceHelper.downloadFile(channelFileId)
+                    .addOnSuccessListener(channelFileContent -> {
+                        String filePath = mContext.getExternalFilesDir(null) + "/channel.zip";
+                        try {
+                            convertToZip(channelFileContent, filePath);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    })
+                    .addOnFailureListener(exception ->
+                            LogUtils.e(TAG, "Couldn't read channel zip file.", exception));
+        }
+    }
+
+    // 二进制数据转成文件
+    public void binaryToFile(byte[] bytes, String filePath) {
+        FileOutputStream fos = null;
+        BufferedOutputStream bos = null;
+        try {
+            fos = new FileOutputStream(filePath);
+            bos = new BufferedOutputStream(fos);
+            bos.write(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (bos != null) {
+                        bos.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void convertToZip(ByteArrayOutputStream data, String fileName) throws IOException {
+        //创建ZipOutputStream对象
+        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(fileName));
+        //将ByteArrayOutputStream写入ZipOutputStream
+        zos.putNextEntry(new ZipEntry("channel.backup"));
+        zos.write(data.toByteArray());
+        zos.closeEntry();
+        //关闭ZipOutputStream和ByteArrayOutputStream
+        zos.close();
+        DecompressUtil.unzipFile(fileName, mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory());
+        User.getInstance().setBackUp(mContext, false);
+        mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
+        getAssetAndBtcData();
+        getInfo();
+        setDefaultAddress();
+        setAssetTrendChartViewShow();
     }
 
     @Override

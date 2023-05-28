@@ -2,12 +2,14 @@ package com.omni.wallet.ui.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +21,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.TimePickerView;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import com.google.gson.Gson;
@@ -31,16 +44,20 @@ import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout;
 import com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuStateListener;
+import com.omni.wallet.common.ConstantInOB;
+import com.omni.wallet.common.ConstantWithNetwork;
 import com.omni.wallet.entity.InvoiceEntity;
 import com.omni.wallet.entity.PaymentEntity;
 import com.omni.wallet.entity.TransactionAssetEntity;
 import com.omni.wallet.entity.TransactionChainEntity;
 import com.omni.wallet.entity.TransactionLightingEntity;
+import com.omni.wallet.entity.event.BackUpEvent;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.entity.event.LoginOutEvent;
@@ -52,6 +69,8 @@ import com.omni.wallet.entity.event.SendSuccessEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
+import com.omni.wallet.utils.DecompressUtil;
+import com.omni.wallet.utils.DriveServiceHelper;
 import com.omni.wallet.utils.PaymentRequestUtil;
 import com.omni.wallet.utils.PreventContinuousClicksUtil;
 import com.omni.wallet.utils.UriUtil;
@@ -60,6 +79,7 @@ import com.omni.wallet.view.TransactionsChainView;
 import com.omni.wallet.view.TransactionsLightingView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.CreateChannelTipDialog;
+import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.PayInvoiceDialog;
 import com.omni.wallet.view.dialog.ReceiveLuckyPacketDialog;
 import com.omni.wallet.view.dialog.SendDialog;
@@ -77,6 +97,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -250,6 +271,10 @@ public class BalanceDetailActivity extends AppBaseActivity {
     CreateChannelTipDialog mCreateChannelTipDialog;
     TimePickerView mTimePickerView;
 
+    private static final int REQUEST_CODE_SIGN_IN = 1;
+    private DriveServiceHelper mDriveServiceHelper;
+    private LoadingDialog mLoadingDialog;
+
     @Override
     protected void getBundleData(Bundle bundle) {
         balanceAmount = bundle.getLong(KEY_BALANCE_AMOUNT);
@@ -279,6 +304,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
+        mLoadingDialog = new LoadingDialog(mContext);
         if (network.equals("lightning")) {
             mNetworkIv.setImageResource(R.mipmap.icon_network_vector);
             mNetworkTypeTv.setText(name + " lightning network");
@@ -2048,6 +2074,144 @@ public class BalanceDetailActivity extends AppBaseActivity {
             }
         }
         System.out.println(list);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBackUpEventEvent(BackUpEvent event) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (event.getCode() == 2) {
+                    File walletPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db");
+                    File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "channel.backup");
+                    if (walletPath.exists() && channelPath.exists()) {
+                        // Authenticate the user. For most apps, this should be done when the user performs an
+                        // action that requires Drive access rather than in onCreate.
+                        requestSignIn();
+                    } else {
+                        ToastUtils.showToast(mContext, "The backup file does not exist");
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Starts a sign-in activity using {@link #REQUEST_CODE_SIGN_IN}.
+     */
+    private void requestSignIn() {
+        LogUtils.e(TAG, "Requesting sign-in");
+
+        GoogleSignInOptions signInOptions =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
+                        .build();
+        GoogleSignInClient client = GoogleSignIn.getClient(this, signInOptions);
+
+        // The result of the sign-in Intent is handled in onActivityResult.
+        startActivityForResult(client.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        switch (requestCode) {
+            case REQUEST_CODE_SIGN_IN:
+                if (resultCode == Activity.RESULT_OK && resultData != null) {
+                    handleSignInResult(resultData);
+                }
+                break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, resultData);
+    }
+
+    /**
+     * Handles the {@code result} of a completed sign-in activity initiated from {@link
+     * #requestSignIn()}.
+     */
+    private void handleSignInResult(Intent result) {
+        GoogleSignIn.getSignedInAccountFromIntent(result)
+                .addOnSuccessListener(googleAccount -> {
+                    LogUtils.e(TAG, "Signed in as " + googleAccount.getEmail());
+
+                    // Use the authenticated account to sign in to the Drive service.
+                    GoogleAccountCredential credential =
+                            GoogleAccountCredential.usingOAuth2(
+                                    this, Collections.singleton(DriveScopes.DRIVE_FILE));
+                    credential.setSelectedAccount(googleAccount.getAccount());
+                    Drive googleDriveService =
+                            new Drive.Builder(
+                                    AndroidHttp.newCompatibleTransport(),
+                                    new GsonFactory(),
+                                    credential)
+                                    .setApplicationName("OB Wallet")
+                                    .build();
+
+                    // The DriveServiceHelper encapsulates all REST API and SAF functionality.
+                    // Its instantiation is required before handling any onClick actions.
+                    mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+                    createAddressFile();
+                })
+                .addOnFailureListener(exception -> LogUtils.e(TAG, "Unable to sign in.", exception));
+    }
+
+    /**
+     * Creates a new file via the Drive REST API.
+     */
+    private void createAddressFile() {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Creating a address file.");
+            mLoadingDialog.show();
+            mDriveServiceHelper.createFile(User.getInstance().getWalletAddress(mContext))
+                    .addOnSuccessListener(fileId -> createWalletFile())
+                    .addOnFailureListener(exception ->
+                            LogUtils.e(TAG, "Couldn't create address file.", exception));
+        }
+    }
+
+    private void createWalletFile() {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Creating wallet file.");
+            String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db";
+            LogUtils.e(TAG, filePath);
+            mDriveServiceHelper.createFile(filePath, "wallet.db").addOnSuccessListener(new OnSuccessListener<String>() {
+                @Override
+                public void onSuccess(String s) {
+                    createChannelFile();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    LogUtils.e(TAG, "Couldn't create wallet file.", e);
+                }
+            });
+        }
+    }
+
+    private void createChannelFile() {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Creating channel zip file.");
+
+            String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "channel.backup";
+            String zipFilePath = mContext.getExternalFilesDir(null) + "/channel.zip";
+            LogUtils.e(TAG, filePath);
+            LogUtils.e(TAG, zipFilePath);
+            DecompressUtil.ZipFolder(filePath, zipFilePath);
+            mDriveServiceHelper.createZipFile(zipFilePath, "channel.zip").addOnSuccessListener(new OnSuccessListener<String>() {
+                @Override
+                public void onSuccess(String s) {
+                    mLoadingDialog.dismiss();
+                    File file = new File(zipFilePath);
+                    file.delete();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    LogUtils.e(TAG, "Couldn't create channel zip file.", e);
+                }
+            });
+        }
     }
 
     @Override

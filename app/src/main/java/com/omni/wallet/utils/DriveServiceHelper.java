@@ -24,15 +24,19 @@ import android.support.v4.util.Pair;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -52,14 +56,46 @@ public class DriveServiceHelper {
     /**
      * Creates a text file in the user's My Drive folder and returns its file ID.
      */
-    public Task<String> createFile() {
+    public Task<String> createFile(String address) {
         return Tasks.call(mExecutor, () -> {
             File metadata = new File()
                     .setParents(Collections.singletonList("root"))
                     .setMimeType("text/plain")
-                    .setName("Untitled file");
+                    .setName(address);
 
             File googleFile = mDriveService.files().create(metadata).execute();
+            if (googleFile == null) {
+                throw new IOException("Null result when requesting file creation.");
+            }
+
+            return googleFile.getId();
+        });
+    }
+
+    public Task<String> createFile(String filePath, String fileName) {
+        return Tasks.call(mExecutor, () -> {
+            File metadata = new File()
+                    .setName(fileName);
+
+            java.io.File file = new java.io.File(filePath);
+            FileContent mediaContent = new FileContent("application/octet-stream", file);
+            File googleFile = mDriveService.files().create(metadata, mediaContent).execute();
+            if (googleFile == null) {
+                throw new IOException("Null result when requesting file creation.");
+            }
+
+            return googleFile.getId();
+        });
+    }
+
+    public Task<String> createZipFile(String filePath, String fileName) {
+        return Tasks.call(mExecutor, () -> {
+            File metadata = new File()
+                    .setName(fileName);
+
+            java.io.File file = new java.io.File(filePath);
+            FileContent mediaContent = new FileContent("application/zip", file);
+            File googleFile = mDriveService.files().create(metadata, mediaContent).execute();
             if (googleFile == null) {
                 throw new IOException("Null result when requesting file creation.");
             }
@@ -90,6 +126,23 @@ public class DriveServiceHelper {
                 String contents = stringBuilder.toString();
 
                 return Pair.create(name, contents);
+            }
+        });
+    }
+
+    public Task<ByteArrayOutputStream> downloadFile(String fileId) {
+        return Tasks.call(mExecutor, () -> {
+            try {
+                OutputStream outputStream = new ByteArrayOutputStream();
+
+                mDriveService.files().get(fileId)
+                        .executeMediaAndDownloadTo(outputStream);
+
+                return (ByteArrayOutputStream) outputStream;
+            } catch (GoogleJsonResponseException e) {
+                // TODO(developer) - handle error appropriately
+                System.err.println("Unable to move file: " + e.getDetails());
+                throw e;
             }
         });
     }

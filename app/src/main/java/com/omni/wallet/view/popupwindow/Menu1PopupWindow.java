@@ -20,13 +20,14 @@ import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.entity.event.BackUpEvent;
 import com.omni.wallet.framelibrary.entity.User;
-import com.omni.wallet.ui.activity.backup.BackupChannelActivity;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.NewVersionDialog;
 import com.omni.wallet.view.dialog.UnlockDialog;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -159,8 +160,9 @@ public class Menu1PopupWindow {
                 @Override
                 public void onClick(View v) {
                     mMenuPopWindow.dismiss();
-                    Intent intent = new Intent(mContext, BackupChannelActivity.class);
-                    mContext.startActivity(intent);
+                    BackUpEvent event = new BackUpEvent();
+                    event.setCode(2);
+                    EventBus.getDefault().post(event);
                 }
             });
             // disconnect
