@@ -20,10 +20,12 @@ import com.omni.wallet.baselibrary.http.interceptor.LogInterceptor;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
 import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.entity.event.BtcAndUsdtEvent;
+import com.omni.wallet.entity.event.LaunchEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.base.DefaultExceptionCrashHandler;
 import com.omni.wallet.framelibrary.entity.User;
@@ -226,7 +228,11 @@ public class AppApplication extends BaseApplication {
                         Log.d(TAG, "actionAfterPromise: is7Days" + (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS));
                         getManifest();
                     } else {
-                        startNode();
+                        if (StringUtils.isEmpty(User.getInstance().getUserId(mContext))) {
+                            EventBus.getDefault().post(new LaunchEvent());
+                        } else {
+                            startNode();
+                        }
                     }
                 } else {
                     preFilesUtils.readManifestFile();
@@ -361,7 +367,8 @@ public class AppApplication extends BaseApplication {
             String filePath = downloadDirectoryPath + ConstantInOB.neutrinoDB;
             if (preFilesUtils.checkNeutrinoMd5Matched()) {
                 User.getInstance().setNeutrinoDbChecked(mContext, true);
-                startNode();
+//                startNode();
+                EventBus.getDefault().post(new LaunchEvent());
             } else {
                 File file = new File(filePath);
                 file.deleteOnExit();
@@ -373,7 +380,8 @@ public class AppApplication extends BaseApplication {
         if (!(isExist && isMatched)) {
             preFilesUtils.downloadNeutrino(null, downloadCallback);
         } else {
-            startNode();
+//            startNode();
+            EventBus.getDefault().post(new LaunchEvent());
         }
     }
 

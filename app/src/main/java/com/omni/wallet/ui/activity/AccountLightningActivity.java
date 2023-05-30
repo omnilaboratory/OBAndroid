@@ -47,6 +47,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.baselibrary.view.refreshView.RefreshLayout;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.data.AssetsActions;
 import com.omni.wallet.data.AssetsValueDataItem;
 import com.omni.wallet.data.ChangeData;
@@ -61,6 +62,7 @@ import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.entity.event.CreateInvoiceEvent;
 import com.omni.wallet.entity.event.DownloadEvent;
 import com.omni.wallet.entity.event.InitChartEvent;
+import com.omni.wallet.entity.event.LaunchEvent;
 import com.omni.wallet.entity.event.LockEvent;
 import com.omni.wallet.entity.event.LoginOutEvent;
 import com.omni.wallet.entity.event.OpenChannelEvent;
@@ -74,10 +76,10 @@ import com.omni.wallet.entity.event.UpdateAssetsDataEvent;
 import com.omni.wallet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.framelibrary.view.refreshlayout.LayoutRefreshView;
+import com.omni.wallet.obdMethods.NodeStart;
 import com.omni.wallet.obdMethods.WalletState;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
-import com.omni.wallet.utils.DecompressUtil;
 import com.omni.wallet.utils.DriveServiceHelper;
 import com.omni.wallet.utils.GetResourceUtil;
 import com.omni.wallet.utils.TimeFormatUtil;
@@ -100,7 +102,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -109,8 +110,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -174,7 +173,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     Handler handler = new Handler();
 
-    private static final int REQUEST_CODE_SIGN_IN = 1;
+    private static final int REQUEST_CODE_SIGN_IN = 3;
     private DriveServiceHelper mDriveServiceHelper;
 
     @Override
@@ -231,6 +230,13 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Override
     protected void initData() {
+        if (ConstantInOB.networkType == NetworkType.TEST) {
+            mNetworkTypeTv.setText("testnet");
+        } else if (ConstantInOB.networkType == NetworkType.REG) {
+            mNetworkTypeTv.setText("regtest");
+        } else if (ConstantInOB.networkType == NetworkType.MAIN) {
+            mNetworkTypeTv.setText("mainnet");
+        }
         EventBus.getDefault().register(this);
         showPageData();
         if (User.getInstance().isNeutrinoDbChecked(mContext)) {
@@ -361,7 +367,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     LogUtils.e(TAG, "------------------getInfoOnResponse-----------------" + resp);
                     runOnUiThread(() -> {
                         pubkey = resp.getIdentityPubkey();
-                        mNetworkTypeTv.setText(resp.getChains(0).getNetwork());
+//                        mNetworkTypeTv.setText(resp.getChains(0).getNetwork());
                         User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
                         User.getInstance().setNodeVersion(mContext, resp.getVersion());
                         User.getInstance().setFromPubKey(mContext, resp.getIdentityPubkey());
@@ -437,17 +443,13 @@ public class AccountLightningActivity extends AppBaseActivity {
                         @Override
                         public void onError(Exception e) {
                             LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
-                            if (!StringUtils.isEmpty(User.getInstance().getNetwork(mContext))) {
-                                setDefaultData();
-                            }
+                            setDefaultData();
                         }
 
                         @Override
                         public void onResponse(byte[] bytes) {
                             if (bytes == null) {
-                                if (!StringUtils.isEmpty(User.getInstance().getNetwork(mContext))) {
-                                    setDefaultData();
-                                }
+                                setDefaultData();
                                 return;
                             }
                             try {
@@ -482,9 +484,9 @@ public class AccountLightningActivity extends AppBaseActivity {
         blockData.clear();
         ListAssetItemEntity entity = new ListAssetItemEntity();
         entity.setAmount(0);
-        if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+        if (ConstantInOB.networkType == NetworkType.TEST) {
             entity.setPropertyid(Long.parseLong("2147485160"));
-        } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+        } else if (ConstantInOB.networkType == NetworkType.REG) {
             entity.setPropertyid(Long.parseLong("2147483651"));
         } else { //mainnet
             entity.setPropertyid(Long.parseLong("31"));
@@ -495,9 +497,9 @@ public class AccountLightningActivity extends AppBaseActivity {
         allData.addAll(blockData);
         runOnUiThread(() -> mAdapter.notifyDataSetChanged());
         getBtcChannelBalance(0);
-        if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+        if (ConstantInOB.networkType == NetworkType.TEST) {
             getChannelBalance(Long.parseLong("2147485160"));
-        } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+        } else if (ConstantInOB.networkType == NetworkType.REG) {
             getChannelBalance(Long.parseLong("2147483651"));
         } else { //mainnet
             getChannelBalance(Long.parseLong("31"));
@@ -741,6 +743,10 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @OnClick(R.id.iv_copy)
     public void clickCopy() {
+        if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
+            ToastUtils.showToast(mContext, "Please waiting for a while");
+            return;
+        }
         //接收需要复制到粘贴板的地址
         //Get the address which will copy to clipboard
         String toCopyAddress = mWalletAddressTv.getText().toString();
@@ -768,6 +774,10 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     @OnClick(R.id.iv_fund)
     public void clickFund() {
+        if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
+            ToastUtils.showToast(mContext, "Please waiting for a while");
+            return;
+        }
         mFundPopupWindow = new FundPopupWindow(mContext);
         mFundPopupWindow.show(mParentLayout, User.getInstance().getWalletAddress(mContext));
     }
@@ -1046,6 +1056,16 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLaunchEvent(LaunchEvent event) {
+        if (User.getInstance().isBackUp(mContext) == true) {
+            mLoadingDialog.show();
+            requestSignIn();
+        } else {
+            startNode();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStartNodeEvent(StartNodeEvent event) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
@@ -1070,50 +1090,47 @@ public class AccountLightningActivity extends AppBaseActivity {
                     public void run() {
                         mLoadingDialog.dismiss();
                         isRequest = true;
+                        User.getInstance().setUserId(mContext, "1");
                     }
                 });
-                if (User.getInstance().isBackUp(mContext) == true) {
-                    requestSignIn();
-                } else {
-                    if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
-                        LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
-                        Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
-                            @Override
-                            public void onError(Exception e) {
+                if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
+                    LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
+                    Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
+                        @Override
+                        public void onError(Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(byte[] bytes) {
+                            if (bytes == null) {
+                                return;
+                            }
+                            try {
+                                LightningOuterClass.NewAddressResponse newAddressResponse = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
+                                String address = newAddressResponse.getAddress();
+                                runOnUiThread(() -> {
+                                    // 保存地址到本地(save wallet address to local)
+                                    User.getInstance().setWalletAddress(mContext, address);
+                                    mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
+                                    getAssetAndBtcData();
+                                    getInfo();
+                                    setDefaultAddress();
+                                    setAssetTrendChartViewShow();
+                                });
+                            } catch (InvalidProtocolBufferException e) {
                                 e.printStackTrace();
                             }
-
-                            @Override
-                            public void onResponse(byte[] bytes) {
-                                if (bytes == null) {
-                                    return;
-                                }
-                                try {
-                                    LightningOuterClass.NewAddressResponse newAddressResponse = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
-                                    String address = newAddressResponse.getAddress();
-                                    runOnUiThread(() -> {
-                                        // 保存地址到本地(save wallet address to local)
-                                        User.getInstance().setWalletAddress(mContext, address);
-                                        mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
-                                        getAssetAndBtcData();
-                                        getInfo();
-                                        setDefaultAddress();
-                                        setAssetTrendChartViewShow();
-                                    });
-                                } catch (InvalidProtocolBufferException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                    } else {
-                        runOnUiThread(() -> {
-                            mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
-                            getAssetAndBtcData();
-                            getInfo();
-                            setDefaultAddress();
-                            setAssetTrendChartViewShow();
-                        });
-                    }
+                        }
+                    });
+                } else {
+                    runOnUiThread(() -> {
+                        mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
+                        getAssetAndBtcData();
+                        getInfo();
+                        setDefaultAddress();
+                        setAssetTrendChartViewShow();
+                    });
                 }
             }
         };
@@ -1127,7 +1144,7 @@ public class AccountLightningActivity extends AppBaseActivity {
             public void run() {
                 if (event.getCode() == 1) {
                     File walletPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db");
-                    File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "channel.backup");
+                    File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db");
                     if (walletPath.exists() && channelPath.exists()) {
                         // Authenticate the user. For most apps, this should be done when the user performs an
                         // action that requires Drive access rather than in onCreate.
@@ -1213,8 +1230,10 @@ public class AccountLightningActivity extends AppBaseActivity {
             mLoadingDialog.show();
             mDriveServiceHelper.createFile(User.getInstance().getWalletAddress(mContext))
                     .addOnSuccessListener(fileId -> createWalletFile())
-                    .addOnFailureListener(exception ->
-                            LogUtils.e(TAG, "Couldn't create address file.", exception));
+                    .addOnFailureListener(exception -> {
+                        mLoadingDialog.dismiss();
+                        LogUtils.e(TAG, "Couldn't create address file.", exception);
+                    });
         }
     }
 
@@ -1239,24 +1258,20 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     private void createChannelFile() {
         if (mDriveServiceHelper != null) {
-            LogUtils.e(TAG, "Creating channel zip file.");
-
-            String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "channel.backup";
-            String zipFilePath = mContext.getExternalFilesDir(null) + "/channel.zip";
+            LogUtils.e(TAG, "Creating channel file.");
+            String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db";
             LogUtils.e(TAG, filePath);
-            LogUtils.e(TAG, zipFilePath);
-            DecompressUtil.ZipFolder(filePath, zipFilePath);
-            mDriveServiceHelper.createZipFile(zipFilePath, "channel.zip").addOnSuccessListener(new OnSuccessListener<String>() {
+            mDriveServiceHelper.createFile(filePath, "channel.db").addOnSuccessListener(new OnSuccessListener<String>() {
                 @Override
                 public void onSuccess(String s) {
+                    LogUtils.e(TAG, "Channel fileId" + s);
                     mLoadingDialog.dismiss();
-                    File file = new File(zipFilePath);
-                    file.delete();
+                    ToastUtils.showToast(mContext, "Backup Successfully");
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    LogUtils.e(TAG, "Couldn't create channel zip file.", e);
+                    LogUtils.e(TAG, "Couldn't create channel file.", e);
                 }
             });
         }
@@ -1267,16 +1282,17 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     private void query() {
         if (mDriveServiceHelper != null) {
-            Log.d(TAG, "Querying for files.");
+            LogUtils.e(TAG, "Querying for files.");
 
             mDriveServiceHelper.queryFiles().addOnSuccessListener(new OnSuccessListener<FileList>() {
                 @Override
                 public void onSuccess(FileList fileList) {
-                    readAddressFile(fileList.getFiles().get(fileList.getFiles().size() - 1).getId(), fileList.getFiles().get(fileList.getFiles().size() - 2).getId(), fileList.getFiles().get(fileList.getFiles().size() - 3).getId());
+                    readAddressFile(fileList.getFiles().get(fileList.getFiles().size() - 2).getId(), fileList.getFiles().get(fileList.getFiles().size() - 3).getId(), fileList.getFiles().get(fileList.getFiles().size() - 1).getId());
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+                    mLoadingDialog.dismiss();
                     LogUtils.e(TAG, "Unable to query files.", e);
                 }
             });
@@ -1322,19 +1338,21 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     private void readChannelFile(String channelFileId) {
         if (mDriveServiceHelper != null) {
-            LogUtils.e(TAG, "Reading channel zip file " + channelFileId);
+            LogUtils.e(TAG, "Reading channel file " + channelFileId);
 
             mDriveServiceHelper.downloadFile(channelFileId)
                     .addOnSuccessListener(channelFileContent -> {
-                        String filePath = mContext.getExternalFilesDir(null) + "/channel.zip";
-                        try {
-                            convertToZip(channelFileContent, filePath);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        // 新建目标目录
+                        // Create new target directory
+                        (new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory())).mkdirs();
+                        String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db";
+                        binaryToFile(channelFileContent.toByteArray(), filePath);
+                        User.getInstance().setBackUp(mContext, false);
+                        mLoadingDialog.dismiss();
+                        startNode();
                     })
                     .addOnFailureListener(exception ->
-                            LogUtils.e(TAG, "Couldn't read channel zip file.", exception));
+                            LogUtils.e(TAG, "Couldn't read channel file.", exception));
         }
     }
 
@@ -1367,22 +1385,17 @@ public class AccountLightningActivity extends AppBaseActivity {
         }
     }
 
-    public void convertToZip(ByteArrayOutputStream data, String fileName) throws IOException {
-        //创建ZipOutputStream对象
-        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(fileName));
-        //将ByteArrayOutputStream写入ZipOutputStream
-        zos.putNextEntry(new ZipEntry("channel.backup"));
-        zos.write(data.toByteArray());
-        zos.closeEntry();
-        //关闭ZipOutputStream和ByteArrayOutputStream
-        zos.close();
-        DecompressUtil.unzipFile(fileName, mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory());
-        User.getInstance().setBackUp(mContext, false);
-        mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
-        getAssetAndBtcData();
-        getInfo();
-        setDefaultAddress();
-        setAssetTrendChartViewShow();
+    /**
+     * Start node
+     * 启动节点
+     */
+    public void startNode() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                NodeStart.getInstance().startWhenStopWithSubscribeState(mContext);
+            }
+        });
     }
 
     @Override

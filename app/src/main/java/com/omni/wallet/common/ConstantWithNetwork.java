@@ -4,6 +4,7 @@ public class ConstantWithNetwork {
     private static ConstantWithNetwork mInstance;
     private String logPath;
     private String downloadDirectory;
+    private String downloadChannelDirectory;
     private String downloadBaseUrl;
     private String OMNI_HOST_ADDRESS_PORT;
     private String BTC_HOST_ADDRESS;
@@ -17,6 +18,7 @@ public class ConstantWithNetwork {
             case REG:
                 this.logPath = ConstantInOB.regTestLogPath;
                 this.downloadDirectory = ConstantInOB.downloadDirectoryRegTest;
+                this.downloadChannelDirectory = ConstantInOB.downloadChannelDirectoryRegTest;
                 this.downloadBaseUrl = ConstantInOB.downloadBaseUrlReg;
                 this.OMNI_HOST_ADDRESS_PORT = params.getOMNI_HOST_ADDRESS_PORT();
                 this.BTC_HOST_ADDRESS = params.getBTC_HOST_ADDRESS();
@@ -27,6 +29,7 @@ public class ConstantWithNetwork {
             case TEST:
                 this.logPath = ConstantInOB.testLogPath;
                 this.downloadDirectory = ConstantInOB.downloadDirectoryTestNet;
+                this.downloadChannelDirectory = ConstantInOB.downloadChannelDirectoryTestNet;
                 this.downloadBaseUrl = ConstantInOB.downloadBaseUrlTestNet;
                 this.OMNI_HOST_ADDRESS_PORT = params.getOMNI_HOST_ADDRESS_PORT();
                 this.BTC_HOST_ADDRESS = params.getBTC_HOST_ADDRESS();
@@ -37,6 +40,7 @@ public class ConstantWithNetwork {
             case MAIN:
                 this.logPath = ConstantInOB.mainLogPath;
                 this.downloadDirectory = ConstantInOB.downloadDirectoryMainNet;
+                this.downloadChannelDirectory = ConstantInOB.downloadChannelDirectoryMainNet;
                 this.downloadBaseUrl = ConstantInOB.downloadBaseUrlMainNet;
                 this.OMNI_HOST_ADDRESS_PORT = params.getOMNI_HOST_ADDRESS_PORT();
                 this.BTC_HOST_ADDRESS = params.getBTC_HOST_ADDRESS();
@@ -65,6 +69,10 @@ public class ConstantWithNetwork {
 
     public String getDownloadDirectory() {
         return downloadDirectory;
+    }
+
+    public String getDownloadChannelDirectory() {
+        return downloadChannelDirectory;
     }
 
     public String getDownloadBaseUrl() {

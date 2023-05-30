@@ -22,6 +22,9 @@ public class ConstantInOB {
     static String downloadDirectoryRegTest = "/data/chain/bitcoin/regtest/";
     static String downloadDirectoryTestNet = "/data/chain/bitcoin/testnet/";
     static String downloadDirectoryMainNet = "/data/chain/bitcoin/mainnet/";
+    static String downloadChannelDirectoryRegTest = "/data/graph/regtest/";
+    static String downloadChannelDirectoryTestNet = "/data/graph/testnet/";
+    static String downloadChannelDirectoryMainNet = "/data/graph/mainnet/";
 
     static String downloadBaseUrlReg = "https://cache.oblnd.top/neutrino-regtest/";
     static String downloadBaseUrlTestNet = "https://cache.oblnd.top/neutrino-testnet/";

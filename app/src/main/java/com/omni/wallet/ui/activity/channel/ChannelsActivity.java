@@ -35,9 +35,11 @@ import com.omni.wallet.R;
 import com.omni.wallet.base.AppBaseActivity;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.PermissionUtils;
+import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.entity.event.BackUpEvent;
 import com.omni.wallet.entity.event.CloseChannelEvent;
 import com.omni.wallet.entity.event.RebootEvent;
@@ -46,7 +48,6 @@ import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.ui.activity.UnlockActivity;
 import com.omni.wallet.utils.CopyUtil;
-import com.omni.wallet.utils.DecompressUtil;
 import com.omni.wallet.utils.DriveServiceHelper;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.utils.Wallet;
@@ -118,7 +119,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     PayInvoiceDialog mPayInvoiceDialog;
     CreateChannelDialog mCreateChannelDialog;
 
-    private static final int REQUEST_CODE_SIGN_IN = 1;
+    private static final int REQUEST_CODE_SIGN_IN = 3;
     private DriveServiceHelper mDriveServiceHelper;
     private LoadingDialog mLoadingDialog;
 
@@ -150,7 +151,13 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     @Override
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
-        mNetworkTypeTv.setText(User.getInstance().getNetwork(mContext));
+        if (ConstantInOB.networkType == NetworkType.TEST) {
+            mNetworkTypeTv.setText("testnet");
+        } else if (ConstantInOB.networkType == NetworkType.REG) {
+            mNetworkTypeTv.setText("regtest");
+        } else if (ConstantInOB.networkType == NetworkType.MAIN) {
+            mNetworkTypeTv.setText("mainnet");
+        }
         if (balanceAmount == 0) {
             DecimalFormat df = new DecimalFormat("0.00");
             mBalanceAmountTv.setText("My account " + df.format(Double.parseDouble(String.valueOf(balanceAmount)) / 100000000));
@@ -426,6 +433,10 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
      */
     @OnClick(R.id.iv_copy)
     public void copyAddress() {
+        if (StringUtils.isEmpty(walletAddress)) {
+            ToastUtils.showToast(mContext, "Please waiting for a while");
+            return;
+        }
         //接收需要复制到粘贴板的地址
         //Get the address which will copy to clipboard
         String toCopyAddress = walletAddress;
@@ -596,8 +607,10 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
             mLoadingDialog.show();
             mDriveServiceHelper.createFile(User.getInstance().getWalletAddress(mContext))
                     .addOnSuccessListener(fileId -> createWalletFile())
-                    .addOnFailureListener(exception ->
-                            LogUtils.e(TAG, "Couldn't create address file.", exception));
+                    .addOnFailureListener(exception -> {
+                        mLoadingDialog.dismiss();
+                        LogUtils.e(TAG, "Couldn't create address file.", exception);
+                    });
         }
     }
 
@@ -622,24 +635,20 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
 
     private void createChannelFile() {
         if (mDriveServiceHelper != null) {
-            LogUtils.e(TAG, "Creating channel zip file.");
-
-            String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "channel.backup";
-            String zipFilePath = mContext.getExternalFilesDir(null) + "/channel.zip";
+            LogUtils.e(TAG, "Creating channel file.");
+            String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db";
             LogUtils.e(TAG, filePath);
-            LogUtils.e(TAG, zipFilePath);
-            DecompressUtil.ZipFolder(filePath, zipFilePath);
-            mDriveServiceHelper.createZipFile(zipFilePath, "channel.zip").addOnSuccessListener(new OnSuccessListener<String>() {
+            mDriveServiceHelper.createFile(filePath, "channel.db").addOnSuccessListener(new OnSuccessListener<String>() {
                 @Override
                 public void onSuccess(String s) {
+                    LogUtils.e(TAG, "Channel fileId" + s);
                     mLoadingDialog.dismiss();
-                    File file = new File(zipFilePath);
-                    file.delete();
+                    ToastUtils.showToast(mContext, "Backup Successfully");
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    LogUtils.e(TAG, "Couldn't create channel zip file.", e);
+                    LogUtils.e(TAG, "Couldn't create channel file.", e);
                 }
             });
         }

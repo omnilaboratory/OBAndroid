@@ -3,7 +3,6 @@ package com.omni.wallet.ui.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -25,7 +24,7 @@ import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
 import com.omni.wallet.utils.DriveServiceHelper;
-import com.omni.wallet.view.dialog.LoginLoadingDialog;
+import com.omni.wallet.view.dialog.LoadingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,9 +36,9 @@ import butterknife.OnClick;
 
 public class InitWalletMenuActivity extends AppBaseActivity {
     String TAG = InitWalletMenuActivity.class.getSimpleName();
-    private static final int REQUEST_CODE_SIGN_IN = 1;
+    private static final int REQUEST_CODE_SIGN_IN = 3;
     private DriveServiceHelper mDriveServiceHelper;
-    LoginLoadingDialog mLoadingDialog;
+    LoadingDialog mLoadingDialog;
 
     @Override
     protected int getContentView() {
@@ -48,7 +47,7 @@ public class InitWalletMenuActivity extends AppBaseActivity {
 
     @Override
     protected void initView() {
-        mLoadingDialog = new LoginLoadingDialog(mContext);
+        mLoadingDialog = new LoadingDialog(mContext);
         EventBus.getDefault().register(this);
     }
 
@@ -65,6 +64,7 @@ public class InitWalletMenuActivity extends AppBaseActivity {
 
     @OnClick({R.id.btn_create})
     public void clickCreate() {
+        User.getInstance().setBackUp(mContext, false);
         switchActivity(CreateWalletStepThreeActivity.class);
     }
 
@@ -97,6 +97,7 @@ public class InitWalletMenuActivity extends AppBaseActivity {
         switch (requestCode) {
             case REQUEST_CODE_SIGN_IN:
                 if (resultCode == Activity.RESULT_OK && resultData != null) {
+                    mLoadingDialog.show();
                     handleSignInResult(resultData);
                 }
                 break;
@@ -132,7 +133,10 @@ public class InitWalletMenuActivity extends AppBaseActivity {
                     mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
                     query();
                 })
-                .addOnFailureListener(exception -> LogUtils.e(TAG, "Unable to sign in.", exception));
+                .addOnFailureListener(exception -> {
+                    mLoadingDialog.dismiss();
+                    LogUtils.e(TAG, "Unable to sign in.", exception);
+                });
     }
 
     /**
@@ -140,22 +144,24 @@ public class InitWalletMenuActivity extends AppBaseActivity {
      */
     private void query() {
         if (mDriveServiceHelper != null) {
-            Log.d(TAG, "Querying for files.");
+            LogUtils.e(TAG, "Querying for files.");
 
             mDriveServiceHelper.queryFiles().addOnSuccessListener(new OnSuccessListener<FileList>() {
                 @Override
                 public void onSuccess(FileList fileList) {
+                    mLoadingDialog.dismiss();
                     if (fileList.getFiles().size() == 0) {
-                        ToastUtils.showToast(mContext, "no files can can restore");
+                        ToastUtils.showToast(mContext, "No backup files found.");
                     } else {
                         User.getInstance().setBackUp(mContext, true);
-                        LogUtils.e("=============================",User.getInstance().isBackUp(mContext) + "");
+                        LogUtils.e("=============================", User.getInstance().isBackUp(mContext) + "");
                         switchActivity(CreateWalletStepThreeActivity.class);
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+                    mLoadingDialog.dismiss();
                     LogUtils.e(TAG, "Unable to query files.", e);
                 }
             });

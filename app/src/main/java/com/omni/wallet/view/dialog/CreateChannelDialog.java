@@ -608,12 +608,15 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         LightningOuterClass.OpenChannelRequest openChannelRequest;
         if (assetId == 0) {
             LogUtils.e(TAG, "==========33333==========");
+            if ((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000)) < 100000) {
+                ToastUtils.showToast(mContext, "The amount is not less than 100000");
+                return;
+            }
             openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
                     .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
                     .setTargetConf(time)
                     .setPrivate(false)
                     .setLocalFundingBtcAmount((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)))
-                    .setPushBtcSat((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000) / 2))
                     .setAssetId((int) assetId)
                     .build();
         } else {
@@ -624,7 +627,6 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     .setPrivate(false)
                     .setLocalFundingBtcAmount(20000)
                     .setLocalFundingAssetAmount((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)))
-                    .setPushAssetSat((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000) / 2))
                     .setAssetId((int) assetId)
                     .build();
         }

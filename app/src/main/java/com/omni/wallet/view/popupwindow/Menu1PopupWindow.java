@@ -20,6 +20,7 @@ import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.entity.event.BackUpEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
@@ -74,7 +75,7 @@ public class Menu1PopupWindow {
 
             // 网络类型
             // Network type
-            if (User.getInstance().getNetwork(mContext).equals("testnet")) {
+            if (ConstantInOB.networkType == NetworkType.TEST) {
                 vectorMainnetIv.setVisibility(View.INVISIBLE);
                 mainnetIv.setImageResource(R.drawable.bg_btn_round_d9d9d9_25);
                 vectorTestnetIv.setVisibility(View.VISIBLE);
@@ -84,7 +85,7 @@ public class Menu1PopupWindow {
                 mainnetLayout.setVisibility(View.GONE);
                 testnetLayout.setVisibility(View.VISIBLE);
                 regtestLayout.setVisibility(View.GONE);
-            } else if (User.getInstance().getNetwork(mContext).equals("regtest")) {
+            } else if (ConstantInOB.networkType == NetworkType.REG) {
                 vectorMainnetIv.setVisibility(View.INVISIBLE);
                 mainnetIv.setImageResource(R.drawable.bg_btn_round_d9d9d9_25);
                 vectorTestnetIv.setVisibility(View.INVISIBLE);
@@ -94,7 +95,7 @@ public class Menu1PopupWindow {
                 mainnetLayout.setVisibility(View.GONE);
                 testnetLayout.setVisibility(View.GONE);
                 regtestLayout.setVisibility(View.VISIBLE);
-            } else if (User.getInstance().getNetwork(mContext).equals("mainnet")) {
+            } else if (ConstantInOB.networkType == NetworkType.MAIN) {
                 vectorMainnetIv.setVisibility(View.VISIBLE);
                 mainnetIv.setImageResource(R.drawable.bg_btn_round_06d78f_25);
                 vectorTestnetIv.setVisibility(View.INVISIBLE);

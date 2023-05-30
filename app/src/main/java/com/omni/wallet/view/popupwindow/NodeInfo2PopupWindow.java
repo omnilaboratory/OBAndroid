@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
@@ -80,13 +81,23 @@ public class NodeInfo2PopupWindow {
             TextView portsTv = rootView.findViewById(R.id.tv_node_ports);
             TextView zmqpubrawblockTv = rootView.findViewById(R.id.tv_node_zmqpubrawblock);
             TextView zmqpubrawtxTv = rootView.findViewById(R.id.tv_node_zmqpubrawtx);
-            getNodeInfo(pubKey);
-            versionTv.setText(User.getInstance().getNodeVersion(mContext).substring(0, User.getInstance().getNodeVersion(mContext).indexOf(" ")));
+            if (!StringUtils.isEmpty(pubKey)) {
+                getNodeInfo(pubKey);
+            }
+            if (!StringUtils.isEmpty(User.getInstance().getNodeVersion(mContext))) {
+                versionTv.setText(User.getInstance().getNodeVersion(mContext).substring(0, User.getInstance().getNodeVersion(mContext).indexOf(" ")));
+            }
             backendTv.setText("omnicoreproxy");
-            modeTv.setText("SeedBackup");
-            netWorkTv.setText(User.getInstance().getNetwork(mContext));
+            modeTv.setText("noSeedBackup");
             // 网络类型
             // Network type
+            if (ConstantInOB.networkType == NetworkType.TEST) {
+                netWorkTv.setText("testnet");
+            } else if (ConstantInOB.networkType == NetworkType.REG) {
+                netWorkTv.setText("regtest");
+            } else if (ConstantInOB.networkType == NetworkType.MAIN) {
+                netWorkTv.setText("mainnet");
+            }
             rpchostTv.setText(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getOMNI_HOST_ADDRESS_PORT());
             portsTv.setText("9735:9735");
             zmqpubrawblockTv.setText("omnicoreproxy.zmqpubrawblock=tcp://43.138.107.248:28332");
@@ -95,9 +106,13 @@ public class NodeInfo2PopupWindow {
             rootView.findViewById(R.id.layout_copy).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
+                        ToastUtils.showToast(mContext, "Please waiting for a while");
+                        return;
+                    }
                     //接收需要复制到粘贴板的地址
                     //Get the address which will copy to clipboard
-                    String toCopyAddress = "address";
+                    String toCopyAddress = User.getInstance().getWalletAddress(mContext);
                     //接收需要复制成功的提示语
                     //Get the notice when you copy success
                     String toastString = mContext.getResources().getString(R.string.toast_copy_address);

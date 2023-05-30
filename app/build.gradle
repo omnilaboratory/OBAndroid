@@ -42,6 +42,12 @@ android {
         }
     }
 
+    //在此添加：
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     buildTypes {
         release {
             // 定义代码混淆文件 注意：proguard-rules.pro要放在主工程的目录下
