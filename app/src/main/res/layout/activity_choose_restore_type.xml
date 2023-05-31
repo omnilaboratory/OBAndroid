@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff9f9f9"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/main_50"
+    tools:context=".ui.activity.ChooseRestoreTypeActivity">
+
+    <View
+        android:id="@+id/view_top"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+
+    <ImageView
+        android:layout_width="@dimen/main_72"
+        android:layout_height="@dimen/main_72"
+        android:layout_marginTop="@dimen/main_35"
+        android:layout_gravity="center"
+        android:src="@mipmap/icon_logo" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/main_30"
+        android:layout_marginRight="@dimen/main_30"
+        android:layout_marginTop="@dimen/main_20"
+        android:letterSpacing="0.25"
+        android:text="Select from where to recover your wallet"
+        android:textAlignment="center"
+        android:textColor="@color/color_description_blue"
+        android:textSize="@dimen/text_18" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_390"
+        android:layout_marginTop="@dimen/main_60"
+        android:layout_marginLeft="@dimen/main_20"
+        android:layout_marginRight="@dimen/main_10"
+        android:background="@drawable/bg_white_conner_shadow"
+        android:elevation="10dp">
+
+        <LinearLayout
+            android:id="@+id/layout_restore_type_outside"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layout_google_drive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/main_35"
+                    android:layout_height="@dimen/main_32"
+                    android:src="@mipmap/icon_google_drive"/>
+
+                <TextView
+                    android:id="@+id/tv_google_drive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_17"
+                    android:letterSpacing="0.15"
+                    android:text="Google Drive"
+                    android:textColor="#40000000"
+                    android:textSize="@dimen/text_18"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_local_directory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_67"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/main_32"
+                    android:layout_height="@dimen/main_32"
+                    android:src="@mipmap/icon_database_big"/>
+
+                <TextView
+                    android:id="@+id/tv_local_directory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_17"
+                    android:letterSpacing="0.15"
+                    android:text="Local Directory"
+                    android:textColor="#40000000"
+                    android:textSize="@dimen/text_18"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_local_directory_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_5"
+            android:layout_below="@+id/layout_restore_type_outside"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:layout_width="@dimen/main_300"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="@dimen/main_24"
+                    android:layout_height="@dimen/main_24"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/main_7"
+                    android:src="@mipmap/icon_file"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical"
+                    android:gravity="right">
+
+                    <TextView
+                        android:id="@+id/tv_file_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Android"
+                        android:textSize="@dimen/text_14"
+                        android:textColor="@color/color_black"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="wallet.db"
+                        android:textSize="@dimen/text_14"
+                        android:textColor="@color/color_99_transparent"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="@dimen/main_300"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_5">
+
+                <ImageView
+                    android:layout_width="@dimen/main_24"
+                    android:layout_height="@dimen/main_24"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/main_7"
+                    android:src="@mipmap/icon_file"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical"
+                    android:gravity="right">
+
+                    <TextView
+                        android:id="@+id/tv_file_name_another"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Android"
+                        android:textSize="@dimen/text_14"
+                        android:textColor="@color/color_black"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="channel.db"
+                        android:textSize="@dimen/text_14"
+                        android:textColor="@color/color_99_transparent"/>
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_45"
+            android:layout_marginRight="@dimen/main_45"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true">
+
+            <LinearLayout
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="@dimen/main_36"
+                            android:layout_height="@dimen/main_36"
+                            android:src="@mipmap/icon_arrow_left_green" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0.25"
+                            android:text="@string/back_upper"
+                            android:textSize="@dimen/text_16"
+                            android:textColor="@color/color_black"/>
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btn_start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="@dimen/main_36"
+                            android:layout_height="@dimen/main_36"
+                            android:src="@mipmap/icon_arrow_right_green" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/main_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0.25"
+                            android:text="@string/start_upper"
+                            android:textSize="@dimen/text_16"
+                            android:textColor="@color/color_black"/>
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

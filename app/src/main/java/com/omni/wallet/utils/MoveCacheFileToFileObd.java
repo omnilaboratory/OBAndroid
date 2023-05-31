@@ -2,13 +2,22 @@ package com.omni.wallet.utils;
 
 import android.util.Log;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /*** 复制文件夹或文件夹*/
 public class MoveCacheFileToFileObd {
     // 复制文件
     // copy file
-    public static void copyFile(File sourceFile, File targetFile){
+    public static void copyFile(File sourceFile, File targetFile) {
         FileInputStream input = null;
         FileOutputStream output = null;
         try {
@@ -72,11 +81,12 @@ public class MoveCacheFileToFileObd {
         }
     }
 
-    /** 删除单个文件
+    /**
+     * 删除单个文件
      * delete single file
+     *
      * @param filePath$Name 要删除的文件的文件名
      * @param filePath$Name the file name that will delete
-     * @return 单个文件删除成功返回true，否则返回false
      * @return While delete single file successful return true,else return false
      */
     public static boolean deleteSingleFile(String filePath$Name) {
@@ -95,12 +105,14 @@ public class MoveCacheFileToFileObd {
         }
     }
 
-    /** 删除目录及目录下的文件
+    /**
+     * 删除目录及目录下的文件
+     *
      * @param filePath 要删除的目录的文件路径
      * @param filePath the directory path that will delete
      * @return 目录删除成功返回true，否则返回false
      */
-    public static boolean deleteDirectory (String filePath){
+    public static boolean deleteDirectory(String filePath) {
         // 如果dir不以文件分隔符结尾，自动添加文件分隔符
         // Automatically add a file separator if dir does not end with a file separator
         if (!filePath.endsWith(File.separator))
@@ -143,5 +155,170 @@ public class MoveCacheFileToFileObd {
         } else {
             return false;
         }
+    }
+
+    /**
+     * 创建文件夹(Create a folder)
+     */
+    public static boolean createDirs(String dirPath) {
+        File file = new File(dirPath);
+        if (!file.exists() || !file.isDirectory()) {
+            return file.mkdirs();
+        }
+        return true;
+    }
+
+    /**
+     * 文件的复制操作方法(File copy operation method)
+     *
+     * @param fromFile 准备复制的文件(Files to be copied)
+     * @param toFile   要复制的文件的目录(The directory of the file to be copied)
+     */
+    public static void copyfile(File fromFile, File toFile) {
+        if (!fromFile.exists()) {
+            return;
+        }
+        if (!fromFile.isFile()) {
+            return;
+        }
+        if (!fromFile.canRead()) {
+            return;
+        }
+        if (!toFile.getParentFile().exists()) {
+            toFile.getParentFile().mkdirs();
+        }
+        if (toFile.exists()) {
+            toFile.delete();
+        }
+        try {
+            FileInputStream fosfrom = new FileInputStream(fromFile);
+            FileOutputStream fosto = new FileOutputStream(toFile);
+            byte[] bt = new byte[1024];
+            int c;
+            while ((c = fosfrom.read(bt)) > 0) {
+                fosto.write(bt, 0, c);
+            }
+            //关闭输入、输出流(Close the input and output streams)
+            fosfrom.close();
+            fosto.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 删除文件夹(Delete folder)
+     *
+     * @return boolean
+     */
+    public static void delFolder(String folderPath) {
+        try {
+            delAllFile(folderPath); //删除完里面所有内容(Delete everything in it)
+            String filePath = folderPath;
+            filePath = filePath.toString();
+            File myFilePath = new File(filePath);
+            myFilePath.delete(); //删除空文件夹(Delete an empty folder)
+        } catch (Exception e) {
+            System.out.println("删除文件夹操作出错(An error occurred deleting the folder)");
+            e.printStackTrace();
+
+        }
+    }
+
+    /**
+     * 删除文件夹里面的所有文件(Delete all files in the folder)
+     *
+     * @param path String 文件夹路径 如 c:/fqf
+     */
+    public static void delAllFile(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            return;
+        }
+        if (!file.isDirectory()) {
+            return;
+        }
+        String[] tempList = file.list();
+        File temp = null;
+        for (int i = 0; i < tempList.length; i++) {
+            if (path.endsWith(File.separator)) {
+                temp = new File(path + tempList[i]);
+            } else {
+                temp = new File(path + File.separator + tempList[i]);
+            }
+            if (temp.isFile()) {
+                temp.delete();
+            }
+            if (temp.isDirectory()) {
+                delAllFile(path + "/" + tempList[i]);//先删除文件夹里面的文件(Delete the files in the folder first)
+                delFolder(path + "/" + tempList[i]);//再删除空文件夹(Delete the empty folder)
+            }
+        }
+    }
+
+    /**
+     * 创建txt文件
+     */
+    private void createFile(String mStrPath) {
+        //传入路径 + 文件名
+        File mFile = new File(mStrPath);
+        //判断文件是否存在，存在就删除
+        if (mFile.exists()) {
+            mFile.delete();
+        }
+        try {
+            //创建文件
+            mFile.createNewFile();
+            Log.i("文件创建", "文件创建成功");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 创建txt文件并写入
+     */
+    public static void createFile(String mStrPath, String content) {
+        //传入路径 + 文件名
+        File mFile = new File(mStrPath);
+        //判断文件是否存在，存在就删除
+        if (mFile.exists()) {
+            mFile.delete();
+        }
+        try {
+            //创建文件
+            mFile.createNewFile();
+            Log.i("文件创建", "文件创建成功");
+            FileWriter writer = new FileWriter(mStrPath, false);
+            writer.write(content);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String GetLogString(String logpath) {
+        System.out.println("----------------开始读取日志----------------");
+        File logfile = new File(logpath);
+        String totalstr = "";
+        if (logfile.exists()) {
+            try {
+                FileReader fr = new FileReader(logfile);
+                BufferedReader br = new BufferedReader(fr);
+                String line = "";
+                while ((line = br.readLine()) != null) {  //按行读取文件流的内容
+                    totalstr = line;
+                }
+                fr.close();
+                br.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("日志文件不存在");
+        }
+        return totalstr;
     }
 }

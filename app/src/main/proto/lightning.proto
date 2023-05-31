@@ -23,7 +23,7 @@ option go_package = "github.com/lightningnetwork/lnd/lnrpc";
  */
 
 message ListAddressesRequest {
-    //    AddressType address_type = 1;
+    AddressType address_type = 1;
     //    string account = 2;
 }
 message ListAddressesResponse {
@@ -164,6 +164,7 @@ service Lightning {
     NewAddress creates a new address under control of the local wallet.
     */
     rpc OB_NewAddress (NewAddressRequest) returns (NewAddressResponse);
+    rpc OB_DumpPrivkey (DumpPrivkeyRequest) returns (DumpPrivkeyResponse);
 
     /* lncli: `signmessage`
     SignMessage signs a message with this node's private key. The returned
@@ -1167,6 +1168,8 @@ message ObEstimateFeeRequest {
     string from = 7;
     int64 asset_amount = 8;
     uint32 asset_id = 9;
+    // for nft; if  inscription_id set, asset_id amountwill should not set
+    string inscription_id = 10;
 
     // The target number of blocks that this transaction should be confirmed
     // by.
@@ -1249,6 +1252,9 @@ message SendCoinsFromRequest {
     string from = 10;
     int64 asset_amount = 11;
     uint32 asset_id = 12;
+
+    // for nft; if  inscription_id set, asset_id amount will should not set
+    string inscription_id = 13;
 
     // The target number of blocks that this transaction should be confirmed
     // by.
@@ -1345,8 +1351,16 @@ enum AddressType {
     PUBKEY = 2;
     UNUSED_WITNESS_PUBKEY_HASH = 3;
     UNUSED_NESTED_PUBKEY_HASH = 4;
+    NFT_WITNESS_PUBKEY_HASH = 5;
+    TAPROOT_PUBKEY = 6;
 }
 
+message DumpPrivkeyRequest {
+    string address = 1;
+}
+message DumpPrivkeyResponse {
+    string key_wif = 1;
+}
 message NewAddressRequest {
     // The type of address to generate.
     AddressType type = 1;
@@ -1578,6 +1592,15 @@ message Channel {
     The total number of satoshis we've received within this channel.
     */
     int64 total_satoshis_received = 13;
+
+    /*
+    The total number of omni-unit we've received within this channel.
+    */
+    int64 total_asset_received = 37;
+    /*
+    The total number of omni-unit we've sent within this channel.
+    */
+    int64 total_asset_sent = 36;
 
     /*
     The total number of updates conducted within this channel.
@@ -1976,6 +1999,10 @@ message GetInfoResponse {
       dns srv key. used in dns srv record
     */
     string pubkey_bech32 = 21;
+    /*
+    obd wallet default address
+    */
+    string coin_address = 22;
 
     // If applicable, the alias of the current node, e.g. "bob"
     string alias = 2;
@@ -2732,7 +2759,9 @@ message ChannelEventUpdate {
         ChannelCloseSummary closed_channel = 2;
         ChannelPoint active_channel = 3;
         ChannelPoint inactive_channel = 4;
-        PendingUpdate pending_open_channel = 6;
+        /*obd update wxf:  "Channel" will have more info then "PendingUpdate"*/
+        //        PendingUpdate pending_open_channel = 6;
+        Channel pending_open_channel = 6;
         ChannelPoint fully_resolved_channel = 7;
     }
 
@@ -3593,6 +3622,7 @@ message Invoice {
     for added end-to-end security.
     */
     bytes payment_addr = 26;
+    bytes payer_addr = 30;
 
     /*
     Signals whether or not this is an AMP invoice.
@@ -3608,6 +3638,10 @@ message Invoice {
     given sub-invoice.
     */
     map<string, AMPInvoiceState> amp_invoice_state = 28;
+    /*obd update wxf
+    used for cloud serverInvoice
+    */
+    bool refundable = 29;
 }
 
 enum InvoiceHTLCState {
@@ -4762,4 +4796,17 @@ message InterceptFeedback {
     binary serialized gRPC response message in the protobuf format.
     */
     bytes replacement_serialized = 3;
+}
+
+message ASInvoice {
+    uint32 asset_id = 1;
+    // Number of omniAmount to send.msat only used for btc
+    int64 amt = 2;
+
+    // The hash to use within the payment's HTLC
+    bytes payment_hash = 3;
+
+    // An optional payment addr to be included within the last hop of the route.
+    bytes payment_addr = 4;
+    bytes Dest = 5;
 }

@@ -34,6 +34,7 @@ import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapt
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.LiquidityNodeEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
@@ -574,6 +575,23 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.credit_is_running_low));
                     return;
                 }
+                if (assetId == 0) {
+                    if ((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)) < 100000) {
+                        ToastUtils.showToast(mContext, "Should at least input 0.001 BTC");
+                        return;
+                    }
+                } else {
+                    if ((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)) < 3000000000L) {
+                        if (ConstantInOB.networkType == NetworkType.TEST) {
+                            ToastUtils.showToast(mContext, "Should at least input 30 dollar");
+                        } else if (ConstantInOB.networkType == NetworkType.REG) {
+                            ToastUtils.showToast(mContext, "Should at least input 30 dollar");
+                        } else if (ConstantInOB.networkType == NetworkType.MAIN) {
+                            ToastUtils.showToast(mContext, "Should at least input 30 USDT");
+                        }
+                        return;
+                    }
+                }
                 mLoadingDialog.show();
                 // 先链接后再开通通道
                 connectPeer(nodePubkey, mBalanceAmount, mWalletAddress);
@@ -608,10 +626,6 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         LightningOuterClass.OpenChannelRequest openChannelRequest;
         if (assetId == 0) {
             LogUtils.e(TAG, "==========33333==========");
-            if ((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000)) < 100000) {
-                ToastUtils.showToast(mContext, "The amount is not less than 100000");
-                return;
-            }
             openChannelRequest = LightningOuterClass.OpenChannelRequest.newBuilder()
                     .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
                     .setTargetConf(time)

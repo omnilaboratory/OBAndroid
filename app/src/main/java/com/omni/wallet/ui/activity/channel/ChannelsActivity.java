@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -49,6 +50,7 @@ import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.ui.activity.UnlockActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.DriveServiceHelper;
+import com.omni.wallet.utils.MoveCacheFileToFileObd;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.utils.Wallet;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
@@ -525,8 +527,16 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
             public void run() {
                 if (event.getCode() == 3) {
                     File walletPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db");
-                    File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "channel.backup");
+                    File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db");
+                    String storagePath = Environment.getExternalStorageDirectory() + "/OBBackupFiles";
+                    File toWalletPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/wallet.db");
+                    File toChannelPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/channel.db");
                     if (walletPath.exists() && channelPath.exists()) {
+                        // 本地备份(Local backup)
+                        MoveCacheFileToFileObd.createDirs(storagePath);
+                        MoveCacheFileToFileObd.copyFile(walletPath, toWalletPath);
+                        MoveCacheFileToFileObd.copyFile(channelPath, toChannelPath);
+                        MoveCacheFileToFileObd.createFile(storagePath + "/address.txt", User.getInstance().getWalletAddress(mContext));
                         // Authenticate the user. For most apps, this should be done when the user performs an
                         // action that requires Drive access rather than in onCreate.
                         requestSignIn();

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -31,7 +32,6 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import com.google.api.services.drive.model.FileList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -82,6 +82,7 @@ import com.omni.wallet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet.utils.CopyUtil;
 import com.omni.wallet.utils.DriveServiceHelper;
 import com.omni.wallet.utils.GetResourceUtil;
+import com.omni.wallet.utils.MoveCacheFileToFileObd;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.AssetTrendChartView;
@@ -101,10 +102,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -220,6 +218,10 @@ public class AccountLightningActivity extends AppBaseActivity {
     private class MyRefreshListener implements RefreshLayout.OnRefreshListener {
         @Override
         public void onRefresh() {
+            if (!User.getInstance().isNeutrinoDbChecked(mContext)) {
+                mRefreshLayout.stopRefresh();
+                return;
+            }
             if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
                 showPageData();
             } else {
@@ -1057,12 +1059,7 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaunchEvent(LaunchEvent event) {
-        if (User.getInstance().isBackUp(mContext) == true) {
-            mLoadingDialog.show();
-            requestSignIn();
-        } else {
-            startNode();
-        }
+        startNode();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1145,7 +1142,15 @@ public class AccountLightningActivity extends AppBaseActivity {
                 if (event.getCode() == 1) {
                     File walletPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db");
                     File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db");
+                    String storagePath = Environment.getExternalStorageDirectory() + "/OBBackupFiles";
+                    File toWalletPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/wallet.db");
+                    File toChannelPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/channel.db");
                     if (walletPath.exists() && channelPath.exists()) {
+                        // 本地备份(Local backup)
+                        MoveCacheFileToFileObd.createDirs(storagePath);
+                        MoveCacheFileToFileObd.copyFile(walletPath, toWalletPath);
+                        MoveCacheFileToFileObd.copyFile(channelPath, toChannelPath);
+                        MoveCacheFileToFileObd.createFile(storagePath + "/address.txt", User.getInstance().getWalletAddress(mContext));
                         // Authenticate the user. For most apps, this should be done when the user performs an
                         // action that requires Drive access rather than in onCreate.
                         requestSignIn();
@@ -1212,11 +1217,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                     // The DriveServiceHelper encapsulates all REST API and SAF functionality.
                     // Its instantiation is required before handling any onClick actions.
                     mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
-                    if (User.getInstance().isBackUp(mContext) == true) {
-                        query();
-                    } else {
-                        createAddressFile();
-                    }
+                    createAddressFile();
                 })
                 .addOnFailureListener(exception -> LogUtils.e(TAG, "Unable to sign in.", exception));
     }
@@ -1274,114 +1275,6 @@ public class AccountLightningActivity extends AppBaseActivity {
                     LogUtils.e(TAG, "Couldn't create channel file.", e);
                 }
             });
-        }
-    }
-
-    /**
-     * Queries the Drive REST API for files visible to this app and lists them in the content view.
-     */
-    private void query() {
-        if (mDriveServiceHelper != null) {
-            LogUtils.e(TAG, "Querying for files.");
-
-            mDriveServiceHelper.queryFiles().addOnSuccessListener(new OnSuccessListener<FileList>() {
-                @Override
-                public void onSuccess(FileList fileList) {
-                    readAddressFile(fileList.getFiles().get(fileList.getFiles().size() - 2).getId(), fileList.getFiles().get(fileList.getFiles().size() - 3).getId(), fileList.getFiles().get(fileList.getFiles().size() - 1).getId());
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    mLoadingDialog.dismiss();
-                    LogUtils.e(TAG, "Unable to query files.", e);
-                }
-            });
-        }
-    }
-
-    /**
-     * Retrieves the title and content of a file identified by {@code fileId} and populates the UI.
-     */
-    private void readAddressFile(String walletFileId, String channelFileId, String addressFileId) {
-        if (mDriveServiceHelper != null) {
-            LogUtils.e(TAG, "Reading address file " + addressFileId);
-
-            mDriveServiceHelper.readFile(addressFileId)
-                    .addOnSuccessListener(nameAndContent -> {
-                        String address = nameAndContent.first;
-                        User.getInstance().setWalletAddress(mContext, address);
-                        readWalletFile(walletFileId, channelFileId);
-                    })
-                    .addOnFailureListener(exception ->
-                            LogUtils.e(TAG, "Couldn't read addreess file.", exception));
-        }
-    }
-
-    /**
-     * Retrieves the title and content of a file identified by {@code fileId} and populates the UI.
-     */
-    private void readWalletFile(String walletFileId, String channelFileId) {
-        if (mDriveServiceHelper != null) {
-            LogUtils.e(TAG, "Reading wallet file " + walletFileId);
-
-            mDriveServiceHelper.downloadFile(walletFileId)
-                    .addOnSuccessListener(walletFileContent -> {
-                        String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db";
-//                        String filePath = mContext.getExternalFilesDir(null) + "/wallet.db";
-                        binaryToFile(walletFileContent.toByteArray(), filePath);
-                        readChannelFile(channelFileId);
-                    })
-                    .addOnFailureListener(exception ->
-                            LogUtils.e(TAG, "Couldn't read wallet file.", exception));
-        }
-    }
-
-    private void readChannelFile(String channelFileId) {
-        if (mDriveServiceHelper != null) {
-            LogUtils.e(TAG, "Reading channel file " + channelFileId);
-
-            mDriveServiceHelper.downloadFile(channelFileId)
-                    .addOnSuccessListener(channelFileContent -> {
-                        // 新建目标目录
-                        // Create new target directory
-                        (new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory())).mkdirs();
-                        String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db";
-                        binaryToFile(channelFileContent.toByteArray(), filePath);
-                        User.getInstance().setBackUp(mContext, false);
-                        mLoadingDialog.dismiss();
-                        startNode();
-                    })
-                    .addOnFailureListener(exception ->
-                            LogUtils.e(TAG, "Couldn't read channel file.", exception));
-        }
-    }
-
-    // 二进制数据转成文件
-    public void binaryToFile(byte[] bytes, String filePath) {
-        FileOutputStream fos = null;
-        BufferedOutputStream bos = null;
-        try {
-            fos = new FileOutputStream(filePath);
-            bos = new BufferedOutputStream(fos);
-            bos.write(bytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (fos != null) {
-                    fos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (bos != null) {
-                        bos.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
