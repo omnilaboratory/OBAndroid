@@ -240,7 +240,10 @@ public class AccountLightningActivity extends AppBaseActivity {
             mNetworkTypeTv.setText("mainnet");
         }
         EventBus.getDefault().register(this);
-        showPageData();
+        if (User.getInstance().isBackUp(mContext) == true) {
+            mLoadingDialog.show();
+            showPageData();
+        }
         if (User.getInstance().isNeutrinoDbChecked(mContext)) {
             double percent = (100 / 100 * 100);
             String percentString = String.format("%.2f", percent) + "%";
@@ -1088,6 +1091,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                         mLoadingDialog.dismiss();
                         isRequest = true;
                         User.getInstance().setUserId(mContext, "1");
+                        User.getInstance().setBackUp(mContext, true);
                     }
                 });
                 if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {

@@ -125,7 +125,9 @@ public class NewVersionDialog {
                             return;
                         }
                         String version = result.getVersion();
-                        if (AppUtils.getAppVersionName(mContext).compareTo(version) <= 0) {
+                        if (AppUtils.getAppVersionName(mContext).compareTo(version) < 0) {
+                            ToastUtils.showToast(mContext, "Download progress can be viewed in the notification bar.");
+                            mAlertDialog.dismiss();
                             mUpdateUtils.updateNewVersion(result);
                         } else {
                             ToastUtils.showToast(mContext, "Currently is the latest version");
