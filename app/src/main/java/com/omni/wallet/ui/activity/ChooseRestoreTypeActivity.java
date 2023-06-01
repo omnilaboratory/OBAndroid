@@ -243,7 +243,7 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
                     if (fileList.getFiles().size() == 0) {
                         ToastUtils.showToast(mContext, "No backup files found.");
                     } else {
-                        readAddressFile(fileList.getFiles().get(fileList.getFiles().size() - 2).getId(), fileList.getFiles().get(fileList.getFiles().size() - 3).getId(), fileList.getFiles().get(fileList.getFiles().size() - 1).getId());
+                        readAddressFile(fileList.getFiles().get(1).getId(), fileList.getFiles().get(0).getId(), fileList.getFiles().get(2).getId());
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {

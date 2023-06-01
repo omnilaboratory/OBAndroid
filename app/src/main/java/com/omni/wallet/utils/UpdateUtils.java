@@ -147,7 +147,7 @@ public class UpdateUtils {
      * Download tasks and send them to the notification bar
      */
     private void showDownLoadNotification() {
-        ToastUtils.showLongToast(mContext, "You have switched to background downloading, and the download progress can be viewed in the notification bar.");
+//        ToastUtils.showLongToast(mContext, "You have switched to background downloading, and the download progress can be viewed in the notification bar.");
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         // 安卓8.0发送等级为HIGH的通知默认会震动，控制8。0以上控制发送通知的时候不震动(Android 8.0 sends notifications with a level of HIGH that vibrate by default, controlling 8. The control above 0 does not vibrate when sending notifications)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -163,7 +163,7 @@ public class UpdateUtils {
             mBuilder = new NotificationCompat.Builder(mContext);
         }
         mBuilder.setOnlyAlertOnce(true);// 8.0之后有bug，会一直响，这里设置通知如果设置为响铃或者震动，只提醒一次("After 8.0, there are bugs that will continue to ring. If the notification is set to ring or vibrate, it will only be prompted once.)
-        mBuilder.setContentTitle(AppUtils.getAppName(mContext) + "Version Update") //设置通知标题(Set alert title)
+        mBuilder.setContentTitle(AppUtils.getAppName(mContext) + " Version Update") //设置通知标题(Set alert title)
                 .setSmallIcon(com.omni.wallet.framelibrary.R.drawable.ic_launcher) //设置通知的小图标(Set small icons for notifications)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), com.omni.wallet.framelibrary.R.drawable.ic_launcher)) //设置通知的大图标(Set large icons for notifications)
                 .setDefaults(NotificationCompat.DEFAULT_LIGHTS) //设置通知的提醒方式： 只灯光(Set the reminder method for notifications: only lights)

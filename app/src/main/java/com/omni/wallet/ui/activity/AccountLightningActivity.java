@@ -245,6 +245,11 @@ public class AccountLightningActivity extends AppBaseActivity {
             showPageData();
         }
         if (User.getInstance().isNeutrinoDbChecked(mContext)) {
+            // TODO: 2023/5/31 暂定
+            if (StringUtils.isEmpty(User.getInstance().getFirstLogin(mContext))) {
+                startNode();
+                User.getInstance().setFirstLogin(mContext, "first");
+            }
             double percent = (100 / 100 * 100);
             String percentString = String.format("%.2f", percent) + "%";
             syncPercentView.setText(percentString);

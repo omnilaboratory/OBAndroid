@@ -12,6 +12,7 @@ import com.downloader.OnDownloadListener;
 import com.downloader.PRDownloader;
 import com.downloader.request.DownloadRequest;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
@@ -23,7 +24,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,13 +53,7 @@ public class PreFilesUtils {
         if (manifestFileExist) {
             readManifestFile();
         } else {
-            int year = Calendar.getInstance().get(Calendar.YEAR);
-            int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
-            int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1;
-            Log.d(TAG, "PreFilesUtils year month day: " + year + month + (day + 1));
-            String monthStr = month >= 10 ? String.valueOf(month) : ("0" + month);
-            String dayStr = day >= 10 ? String.valueOf(day) : ("0" + day);
-            downloadVersion = "" + year + "-" + monthStr + "-" + dayStr;
+            downloadVersion = DateUtils.getYesterDate();
         }
     }
 
