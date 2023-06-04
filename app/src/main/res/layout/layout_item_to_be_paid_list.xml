@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout
+    <com.omni.wallet_mainnet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout
         android:id="@+id/layout_to_be_paid_list_swipe_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -86,7 +86,7 @@
             android:text="@string/delete"
             android:textColor="@color/color_white"
             android:textSize="@dimen/text_16"/>
-    </com.omni.wallet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout>
+    </com.omni.wallet_mainnet.baselibrary.view.recyclerView.swipeMenu.SwipeMenuLayout>
 
     <LinearLayout
         android:id="@+id/layout_to_be_paid_delete"

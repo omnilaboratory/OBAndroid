@@ -21,7 +21,7 @@
             android:id="@+id/logo_image"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            app:srcCompat="@mipmap/icon_logo"
+            app:srcCompat="@drawable/ic_launcher"
             />
     </RelativeLayout>
     <RelativeLayout

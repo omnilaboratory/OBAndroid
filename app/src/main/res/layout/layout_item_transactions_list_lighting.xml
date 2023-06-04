@@ -62,7 +62,7 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <com.omni.wallet.view.TransactionsLightingView
+    <com.omni.wallet_mainnet.view.TransactionsLightingView
         android:id="@+id/view_transactions_lighting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

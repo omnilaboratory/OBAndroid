@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <com.omni.wallet.thirdsupport.zxing.ViewfinderView
+    <com.omni.wallet_mainnet.thirdsupport.zxing.ViewfinderView
         android:id="@+id/view_scan_finder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

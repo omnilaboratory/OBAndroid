@@ -18,7 +18,7 @@
         <ImageView
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:src="@mipmap/icon_logo"/>
+            android:src="@drawable/ic_launcher"/>
     </RelativeLayout>
 
     <RelativeLayout

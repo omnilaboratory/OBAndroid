@@ -62,7 +62,7 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <com.omni.wallet.view.TransactionsChainView
+    <com.omni.wallet_mainnet.view.TransactionsChainView
         android:id="@+id/view_transactions_chain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

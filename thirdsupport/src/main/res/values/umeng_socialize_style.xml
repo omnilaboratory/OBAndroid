@@ -46,12 +46,6 @@
         <item name="android:backgroundDimAmount">0.6</item>
     </style>
 
-    <!--微信分享页面的主题-->
-    <style name="WXWXEntryActivityTheme" parent="@android:style/Theme.Translucent.NoTitleBar">
-        <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowDisablePreview">true</item>
-    </style>
-
     <!--<style name="Theme.UMDialog" parent="android:style/Theme.Dialog">-->
     <!--<item name="android:windowNoTitle">true</item>-->
     <!--<item name="android:windowBackground">@android:color/transparent</item>-->

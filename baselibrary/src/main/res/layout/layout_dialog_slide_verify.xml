@@ -6,7 +6,7 @@
     android:background="@color/color_white"
     android:orientation="vertical">
 
-    <com.omni.wallet.baselibrary.view.SlideVerifyImageView
+    <com.omni.wallet_mainnet.baselibrary.view.SlideVerifyImageView
         android:id="@+id/view_slide"
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_225"

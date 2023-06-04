@@ -1,17 +1,6 @@
-<manifest package="com.omni.wallet.thirdsupport"
+<manifest package="com.omni.wallet_mainnet.thirdsupport"
           xmlns:android="http://schemas.android.com/apk/res/android">
     <!--zxing扫码震动-->
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <application android:label="@string/app_name">
-        <!--微信分享相关，分享结果回调的Activity-->
-        <activity
-            android:name="com.omni.wallet.wxapi.WXEntryActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:taskAffinity="com.omni.wallet"
-            android:theme="@style/WXWXEntryActivityTheme" />
-    </application>
 </manifest>

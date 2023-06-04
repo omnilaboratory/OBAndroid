@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.omni.wallet"
+<manifest package="com.omni.wallet_mainnet"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -46,7 +46,7 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <!-- url唤醒App的Scheme和host -->
                 <data
-                    android:host="com.omni.wallet"
+                    android:host="com.omni.wallet_mainnet"
                     android:scheme="content"/>
             </intent-filter>
         </activity>
