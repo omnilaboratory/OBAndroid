@@ -127,7 +127,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/main_25"
-                android:layout_marginBottom="@dimen/main_37">
+                android:layout_marginBottom="@dimen/main_37"
+                android:visibility="invisible">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

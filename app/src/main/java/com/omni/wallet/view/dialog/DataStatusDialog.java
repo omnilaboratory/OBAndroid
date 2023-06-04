@@ -76,29 +76,33 @@ public class DataStatusDialog {
          * @描述： 点击刷新按钮
          * @desc: click refresh button
          */
-        mAlertDialog.findViewById(R.id.layout_refresh).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int downloadingId = preFilesUtils.downloadingId;
-                LogUtils.e(TAG, "clickRefreshBtn: " + downloadingId);
-                switch (downloadingId) {
-                    case 1:
-                        getManifest();
-                        break;
-                    case 2:
-                        getHeaderBinFile();
-                        break;
-                    case 3:
-                        getRegHeadersFile();
-                        break;
-                    case 4:
-                        getNeutrinoFile();
-                        break;
-                    default:
-                        break;
+        if(User.getInstance().isNeutrinoDbChecked(mContext)){
+            mAlertDialog.findViewById(R.id.layout_refresh).setOnClickListener(null);
+        } else {
+            mAlertDialog.findViewById(R.id.layout_refresh).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int downloadingId = preFilesUtils.downloadingId;
+                    LogUtils.e(TAG, "clickRefreshBtn: " + downloadingId);
+                    switch (downloadingId) {
+                        case 1:
+                            getManifest();
+                            break;
+                        case 2:
+                            getHeaderBinFile();
+                            break;
+                        case 3:
+                            getRegHeadersFile();
+                            break;
+                        case 4:
+                            getNeutrinoFile();
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
-        });
+            });
+        }
 
         /**
          * @描述： 点击关闭按钮

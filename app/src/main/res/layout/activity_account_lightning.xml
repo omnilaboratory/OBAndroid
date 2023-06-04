@@ -79,442 +79,472 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1000">
 
         <com.omni.wallet.baselibrary.view.refreshView.RefreshLayout
             android:id="@+id/refresh_layout_account_lightning"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.omni.wallet.view.MyScrollView
-                android:id="@+id/my_scrollview"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbars="none">
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_30"
+                    android:layout_marginRight="@dimen/main_32"
+                    android:layout_marginTop="@dimen/main_10">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_balance_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/main_7"
+                                android:shadowColor="#40000000"
+                                android:shadowDx="0"
+                                android:shadowDy="4"
+                                android:shadowRadius="4"
+                                android:text="$ 0"
+                                android:textColor="@color/color_black"
+                                android:textSize="@dimen/text_18"/>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/iv_percent_change"
+                                    android:layout_width="@dimen/main_32"
+                                    android:layout_height="@dimen/main_32"
+                                    android:layout_marginLeft="@dimen/main_10"
+                                    android:src="@mipmap/icon_arrow_up_green"/>
+
+                                <TextView
+                                    android:id="@+id/tv_price_change"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:shadowColor="#40000000"
+                                    android:text="0%"
+                                    android:textColor="@color/color_06d78f"
+                                    android:textSize="@dimen/text_24"/>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/main_5"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tv_balance_amount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="My account 0 balance"
+                                    android:textColor="@color/color_black"
+                                    android:textSize="@dimen/text_12"
+                                    android:textStyle="bold"/>
+
+                                <TextView
+                                    android:id="@+id/tv_wallet_address"
+                                    android:singleLine="true"
+                                    android:ellipsize="middle"
+                                    android:layout_width="@dimen/main_115"
+                                    android:layout_height="wrap_content"
+                                    android:text="**********"
+                                    android:textColor="@color/color_A6_transparent"
+                                    android:textSize="@dimen/text_12"/>
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/iv_copy"
+                                android:layout_width="@dimen/main_24"
+                                android:layout_height="@dimen/main_24"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginLeft="@dimen/main_15"
+                                android:src="@mipmap/icon_copy_black"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/iv_account_manage"
+                        android:layout_width="@dimen/main_18"
+                        android:layout_height="@dimen/main_18"
+                        android:layout_alignParentRight="true"
+                        android:src="@mipmap/icon_arrow_down_black"
+                        android:visibility="gone"/>
+
+                    <LinearLayout
+                        android:id="@+id/download_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/sync_percent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/main_8"
+                            android:text="@string/sync_block_percent"
+                            android:textSize="@dimen/text_16"
+                            android:textColor="#7F06D78F"/>
+
+                        <ProgressBar
+                            android:id="@+id/progressbar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="@dimen/main_36"
+                            android:layout_height="@dimen/main_8"
+                            android:progressDrawable="@drawable/download_progress_bar"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <com.omni.wallet.view.AssetTrendChartView
+                    android:id="@+id/layout_asset_trend_chart_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/main_32"
+                    android:layout_marginLeft="@dimen/main_30"
+                    android:layout_marginRight="@dimen/main_25"
+                    android:layout_marginTop="@dimen/main_12"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/iv_channel_list"
+                            android:layout_width="@dimen/main_32"
+                            android:layout_height="@dimen/main_32"
+                            android:src="@mipmap/icon_channel_list_gray"/>
+                    </LinearLayout>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1000"
+                    android:layout_marginLeft="@dimen/main_5"
+                    android:layout_marginTop="@dimen/main_12"
+                    android:background="@mipmap/img_rectangle_white_bg"
                     android:orientation="vertical">
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/main_30"
-                        android:layout_marginRight="@dimen/main_32"
-                        android:layout_marginTop="@dimen/main_10">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:id="@+id/tv_balance_value"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="@dimen/main_7"
-                                    android:shadowColor="#40000000"
-                                    android:shadowDx="0"
-                                    android:shadowDy="4"
-                                    android:shadowRadius="4"
-                                    android:text="$ 0"
-                                    android:textColor="@color/color_black"
-                                    android:textSize="@dimen/text_18"/>
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal">
-
-                                    <ImageView
-                                        android:id="@+id/iv_percent_change"
-                                        android:layout_width="@dimen/main_32"
-                                        android:layout_height="@dimen/main_32"
-                                        android:layout_marginLeft="@dimen/main_10"
-                                        android:src="@mipmap/icon_arrow_up_green"/>
-
-                                    <TextView
-                                        android:id="@+id/tv_price_change"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:shadowColor="#40000000"
-                                        android:text="0%"
-                                        android:textColor="@color/color_06d78f"
-                                        android:textSize="@dimen/text_24"/>
-                                </LinearLayout>
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/main_5"
-                                android:orientation="horizontal">
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:id="@+id/tv_balance_amount"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="My account 0 balance"
-                                        android:textColor="@color/color_black"
-                                        android:textSize="@dimen/text_12"
-                                        android:textStyle="bold"/>
-
-                                    <TextView
-                                        android:id="@+id/tv_wallet_address"
-                                        android:singleLine="true"
-                                        android:ellipsize="middle"
-                                        android:layout_width="@dimen/main_115"
-                                        android:layout_height="wrap_content"
-                                        android:text="**********"
-                                        android:textColor="@color/color_A6_transparent"
-                                        android:textSize="@dimen/text_12"/>
-                                </LinearLayout>
-
-                                <ImageView
-                                    android:id="@+id/iv_copy"
-                                    android:layout_width="@dimen/main_24"
-                                    android:layout_height="@dimen/main_24"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginLeft="@dimen/main_15"
-                                    android:src="@mipmap/icon_copy_black"/>
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <ImageView
-                            android:id="@+id/iv_account_manage"
-                            android:layout_width="@dimen/main_18"
-                            android:layout_height="@dimen/main_18"
-                            android:layout_alignParentRight="true"
-                            android:src="@mipmap/icon_arrow_down_black"
-                            android:visibility="gone"/>
-
-                        <LinearLayout
-                            android:id="@+id/download_view"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <TextView
-                                android:id="@+id/sync_percent"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/main_8"
-                                android:text="@string/sync_block_percent"
-                                android:textSize="@dimen/text_16"
-                                android:textColor="#7F06D78F"/>
-
-                            <ProgressBar
-                                android:id="@+id/progressbar"
-                                style="?android:attr/progressBarStyleHorizontal"
-                                android:layout_width="@dimen/main_36"
-                                android:layout_height="@dimen/main_8"
-                                android:progressDrawable="@drawable/download_progress_bar"/>
-                        </LinearLayout>
-                    </RelativeLayout>
-
-                    <com.omni.wallet.view.AssetTrendChartView
-                        android:id="@+id/layout_asset_trend_chart_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-
-                    <!-- Test Btn Group-->
-                    <!--<LinearLayout
-                        android:visibility="visible"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        >
-                        <TextView
-                            android:id="@+id/get_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="get init data "/>
-                        <TextView
-                            android:id="@+id/one_day_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to one day"/>
-                        <TextView
-                            android:id="@+id/four_day_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to four day"/>
-                        <TextView
-                            android:id="@+id/ten_day_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to ten day"/>
-                        <TextView
-                            android:id="@+id/thirteen_day_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to thirteen day"/>
-                        <TextView
-                            android:id="@+id/fourteen_day_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to fourteen day"/>
-                        <TextView
-                            android:id="@+id/fifteen_day_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to fifteen day"/>
-                        <TextView
-                            android:id="@+id/twenty_day_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to twenty day"/>
-                        <TextView
-                            android:id="@+id/twenty_one_day_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to twenty one day"/>
-                        <TextView
-                            android:id="@+id/twenty_two_day_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to twenty two day"/>
-                        <TextView
-                            android:id="@+id/four_week_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to four week"/>
-                        <TextView
-                            android:id="@+id/ten_week_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to ten weeks"/>
-                        <TextView
-                            android:id="@+id/thirty_weeks_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to thirty week"/>
-                        <TextView
-                            android:id="@+id/fifty_week_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Update data to fifty week"/>
-                        <TextView
-                            android:id="@+id/clean_data_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/main_10"
-                            android:layout_marginBottom="@dimen/main_10"
-                            android:text="Clear Data"/>
-                    </LinearLayout>-->
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/main_32"
-                        android:layout_marginLeft="@dimen/main_30"
-                        android:layout_marginRight="@dimen/main_25"
-                        android:layout_marginTop="@dimen/main_12">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:id="@+id/iv_fund"
-                                android:layout_width="@dimen/main_32"
-                                android:layout_height="@dimen/main_32"
-                                android:layout_marginRight="@dimen/main_17"
-                                android:src="@mipmap/icon_fund_gray"/>
-
-                            <ImageView
-                                android:id="@+id/iv_send"
-                                android:layout_width="@dimen/main_32"
-                                android:layout_height="@dimen/main_32"
-                                android:layout_marginRight="@dimen/main_17"
-                                android:src="@mipmap/icon_send_gray"/>
-
-                            <ImageView
-                                android:id="@+id/iv_search"
-                                android:layout_width="@dimen/main_32"
-                                android:layout_height="@dimen/main_32"
-                                android:layout_marginRight="@dimen/main_17"
-                                android:src="@mipmap/icon_search_gray"/>
-
-                            <ImageView
-                                android:id="@+id/iv_filter"
-                                android:layout_width="@dimen/main_32"
-                                android:layout_height="@dimen/main_32"
-                                android:layout_marginRight="@dimen/main_17"
-                                android:src="@mipmap/icon_filter_gray"/>
-
-                            <ImageView
-                                android:id="@+id/iv_channel_list"
-                                android:layout_width="@dimen/main_32"
-                                android:layout_height="@dimen/main_32"
-                                android:src="@mipmap/icon_channel_list_gray"/>
-                        </LinearLayout>
-                    </RelativeLayout>
+                        android:layout_marginLeft="@dimen/main_24"
+                        android:layout_marginTop="@dimen/main_20"
+                        android:letterSpacing="0.25"
+                        android:text="@string/assets"
+                        android:textColor="@color/color_4A92FF"
+                        android:textSize="@dimen/text_16"
+                        android:visibility="gone"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/main_400"
-                        android:layout_marginLeft="@dimen/main_5"
-                        android:layout_marginTop="@dimen/main_12"
-                        android:background="@mipmap/img_rectangle_white_bg"
-                        android:orientation="vertical">
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/main_24"
+                        android:layout_marginRight="@dimen/main_40"
+                        android:layout_marginTop="@dimen/main_30">
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/asset"
+                                android:textColor="@color/color_A6_transparent"
+                                android:textSize="@dimen/text_16"/>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:gravity="right"
+                                android:text="@string/amount_big"
+                                android:textColor="@color/color_A6_transparent"
+                                android:textSize="@dimen/text_16"/>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:gravity="right"
+                                android:text="@string/value"
+                                android:textColor="@color/color_A6_transparent"
+                                android:textSize="@dimen/text_16"/>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:gravity="right"
+                                android:text="@string/network"
+                                android:textColor="@color/color_A6_transparent"
+                                android:textSize="@dimen/text_16"/>
+                        </RelativeLayout>
+                    </LinearLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_assets_list_block"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/main_40"
+                        android:layout_marginLeft="@dimen/main_24"
+                        android:layout_marginRight="@dimen/main_40"
+                        android:layout_marginTop="@dimen/main_10"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/main_56"
+                    android:layout_marginTop="@dimen/main_20"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:id="@+id/layout_receive"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="@dimen/main_32"
+                                android:layout_height="@dimen/main_32"
+                                android:src="@mipmap/icon_fund_gray"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/main_5"
+                                android:letterSpacing="0.25"
+                                android:text="@string/receive_first_upper"
+                                android:textSize="@dimen/text_12"
+                                android:textColor="@color/color_black"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/view_receive_bottom"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_black"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/layout_send"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="@dimen/main_32"
+                                android:layout_height="@dimen/main_32"
+                                android:src="@mipmap/icon_send_gray"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/main_5"
+                                android:letterSpacing="0.25"
+                                android:text="@string/send_small"
+                                android:textSize="@dimen/text_12"
+                                android:textColor="@color/color_black"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/view_send_bottom"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_black"/>
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_create_channel"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="@dimen/main_32"
+                            android:layout_height="@dimen/main_32"
+                            android:src="@mipmap/icon_create_channel_gray"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/main_24"
-                            android:layout_marginTop="@dimen/main_20"
+                            android:layout_marginTop="@dimen/main_5"
                             android:letterSpacing="0.25"
-                            android:text="@string/assets"
-                            android:textColor="@color/color_4A92FF"
-                            android:textSize="@dimen/text_16"/>
+                            android:text="@string/channel_first_upper"
+                            android:textSize="@dimen/text_12"
+                            android:textColor="@color/color_black"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                    <LinearLayout
+                        android:id="@+id/layout_swap"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="@dimen/main_32"
+                            android:layout_height="@dimen/main_32"
+                            android:src="@mipmap/icon_swap_gray"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/main_24"
-                            android:layout_marginRight="@dimen/main_40"
-                            android:layout_marginTop="@dimen/main_10">
-
-                            <RelativeLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/asset"
-                                    android:textColor="@color/color_A6_transparent"
-                                    android:textSize="@dimen/text_16"/>
-
-                            </RelativeLayout>
-
-                            <RelativeLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerInParent="true"
-                                    android:text="@string/amount_big"
-                                    android:textColor="@color/color_A6_transparent"
-                                    android:textSize="@dimen/text_16"/>
-                            </RelativeLayout>
-
-                            <RelativeLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerInParent="true"
-                                    android:text="@string/value"
-                                    android:textColor="@color/color_A6_transparent"
-                                    android:textSize="@dimen/text_16"/>
-                            </RelativeLayout>
-
-                            <RelativeLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentRight="true"
-                                    android:text="@string/network"
-                                    android:textColor="@color/color_A6_transparent"
-                                    android:textSize="@dimen/text_16"/>
-                            </RelativeLayout>
-                        </LinearLayout>
-
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/recycler_assets_list_block"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/main_40"
-                            android:layout_marginLeft="@dimen/main_24"
-                            android:layout_marginRight="@dimen/main_40"
-                            android:layout_marginTop="@dimen/main_10"/>
+                            android:layout_marginTop="@dimen/main_5"
+                            android:letterSpacing="0.25"
+                            android:text="@string/swap_first_upper"
+                            android:textSize="@dimen/text_12"
+                            android:textColor="@color/color_black"
+                            android:textStyle="bold"/>
                     </LinearLayout>
                 </LinearLayout>
-            </com.omni.wallet.view.MyScrollView>
+            </LinearLayout>
         </com.omni.wallet.baselibrary.view.refreshView.RefreshLayout>
+    </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/layout_create_channel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:paddingBottom="@dimen/main_10"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:background="@color/color_transparent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_80"
+        android:orientation="horizontal"
+        android:background="@mipmap/bg_bottom_action_bar">
 
-            <ImageView
-                android:layout_width="@dimen/main_36"
-                android:layout_height="@dimen/main_36"
-                android:src="@mipmap/icon_add_green"/>
+        <RelativeLayout
+            android:id="@+id/layout_assets"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/main_60"
+            android:layout_weight="1"
+            android:background="@color/color_4A77B7"
+            android:layout_gravity="bottom">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/assets_last_lower"
                 android:letterSpacing="0.25"
-                android:text="@string/create_channel_upper"
-                android:textSize="@dimen/text_12"
-                android:textColor="@color/color_black"
-                android:textStyle="bold"/>
-        </LinearLayout>
-    </RelativeLayout>
+                android:textStyle="bold"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/text_12"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_nfts"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/main_60"
+            android:layout_weight="1"
+            android:background="@color/color_white"
+            android:layout_gravity="bottom">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/nfts_last_lower"
+                android:letterSpacing="0.25"
+                android:textStyle="bold"
+                android:textColor="@color/color_4A77B7"
+                android:textSize="@dimen/text_12"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="@dimen/main_2"
+            android:layout_height="@dimen/main_40"
+            android:layout_marginTop="@dimen/main_30"
+            android:background="@color/color_d9d9d9"/>
+
+        <RelativeLayout
+            android:id="@+id/layout_markets"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/main_60"
+            android:layout_weight="1"
+            android:background="@color/color_white"
+            android:layout_gravity="bottom">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/markets_last_lower"
+                android:letterSpacing="0.25"
+                android:textStyle="bold"
+                android:textColor="@color/color_4A77B7"
+                android:textSize="@dimen/text_12"/>
+        </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

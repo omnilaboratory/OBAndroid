@@ -243,6 +243,7 @@ public class PayInvoiceDialog {
                             }
                             // To Node
                             toNodeName = resp.getDescription();
+                            mAssetId = resp.getAssetId();
                             /**
                              * @备注： 存储未支付的发票
                              * @description: Store Unpaid Invoices

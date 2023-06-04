@@ -86,7 +86,6 @@ import com.omni.wallet.utils.MoveCacheFileToFileObd;
 import com.omni.wallet.utils.TimeFormatUtil;
 import com.omni.wallet.utils.UriUtil;
 import com.omni.wallet.view.AssetTrendChartView;
-import com.omni.wallet.view.MyScrollView;
 import com.omni.wallet.view.dialog.CreateChannelDialog;
 import com.omni.wallet.view.dialog.DataStatusDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
@@ -97,6 +96,8 @@ import com.omni.wallet.view.popupwindow.AccountManagePopupWindow;
 import com.omni.wallet.view.popupwindow.FundPopupWindow;
 import com.omni.wallet.view.popupwindow.MenuPopupWindow;
 import com.omni.wallet.view.popupwindow.SelectNodePopupWindow;
+import com.omni.wallet.view.popupwindow.SelectReceiveOrSendTypePopupWindow;
+import com.omni.wallet.view.popupwindow.createinvoice.CreateInvoiceStepOnePopupWindow;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -128,8 +129,6 @@ public class AccountLightningActivity extends AppBaseActivity {
     ImageView mMenuIv;
     @BindView(R.id.refresh_layout_account_lightning)
     public RefreshLayout mRefreshLayout;
-    @BindView(R.id.my_scrollview)
-    public MyScrollView myScrollView;
     @BindView(R.id.tv_balance_value)
     TextView mBalanceValueTv;
     @BindView(R.id.tv_price_change)
@@ -148,6 +147,10 @@ public class AccountLightningActivity extends AppBaseActivity {
     TextView syncPercentView;
     @BindView(R.id.progressbar)
     ProgressBar mProgressBar;
+    @BindView(R.id.view_receive_bottom)
+    View mReceiveBottomView;
+    @BindView(R.id.view_send_bottom)
+    View mSendBottomView;
     private List<ListAssetItemEntity> chainData = new ArrayList<>();
     private List<ListAssetItemEntity> blockData = new ArrayList<>();
     private List<ListAssetItemEntity> lightningData = new ArrayList<>();
@@ -196,16 +199,16 @@ public class AccountLightningActivity extends AppBaseActivity {
         mRefreshLayout.addRefreshHeader(new LayoutRefreshView());
 //        mRefreshLayout.autoRefresh();
         //解决RefreshLayout与ScrollView滑动冲突(Resolve sliding conflicts between RefreshLayout and ScrollView)
-        myScrollView.setScrollViewListener(new MyScrollView.ScrollViewListener() {
-            @Override
-            public void onScrollChanged(MyScrollView scrollView, int x, int y, int oldx, int oldy) {
-                if (y <= 0) {
-                    mRefreshLayout.setEnabled(true);
-                } else {
-                    mRefreshLayout.setEnabled(false);
-                }
-            }
-        });
+//        myScrollView.setScrollViewListener(new MyScrollView.ScrollViewListener() {
+//            @Override
+//            public void onScrollChanged(MyScrollView scrollView, int x, int y, int oldx, int oldy) {
+//                if (y <= 0) {
+//                    mRefreshLayout.setEnabled(true);
+//                } else {
+//                    mRefreshLayout.setEnabled(false);
+//                }
+//            }
+//        });
         EventBus.getDefault().post(new CloseUselessActivityEvent());
         mLoadingDialog = new LoadingDialog(mContext);
         initRecyclerView();
@@ -669,7 +672,7 @@ public class AccountLightningActivity extends AppBaseActivity {
         public void convert(ViewHolder holder, final int position, final ListAssetItemEntity item) {
             if (position == chainData.size() - 1 && item.getType() == 1) {
                 LinearLayout lvContent = holder.getView(R.id.lv_item_content);
-                lvContent.setPadding(0, 0, 0, 100);
+                lvContent.setPadding(0, 0, 0, 32);
             } else {
                 LinearLayout lvContent = holder.getView(R.id.lv_item_content);
                 lvContent.setPadding(0, 0, 0, 0);
@@ -699,7 +702,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                 }
             }
             if (item.getType() == 1) {
-                holder.setImageResource(R.id.iv_asset_net, R.mipmap.icon_network_link_black);
+                holder.setImageResource(R.id.iv_asset_net, R.mipmap.icon_network_link_black_small);
                 holder.setOnItemClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -779,62 +782,6 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
-     * click Fund button
-     * 点击Fund按钮
-     */
-    @OnClick(R.id.iv_fund)
-    public void clickFund() {
-        if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
-            ToastUtils.showToast(mContext, "Please waiting for a while");
-            return;
-        }
-        mFundPopupWindow = new FundPopupWindow(mContext);
-        mFundPopupWindow.show(mParentLayout, User.getInstance().getWalletAddress(mContext));
-    }
-
-    /**
-     * click send button
-     * 点击send按钮
-     */
-    @OnClick(R.id.iv_send)
-    public void clickSend() {
-        mSendDialog = new SendDialog(mContext);
-        mSendDialog.show("");
-    }
-
-    /**
-     * click search button
-     * 点击Search按钮
-     */
-    @OnClick(R.id.iv_search)
-    public void clickSearch() {
-        ToastUtils.showToast(mContext, "Not yet open, please wait");
-//        switchActivity(SearchActivity.class);
-    }
-
-    /**
-     * click filter button
-     * 点击Filter按钮
-     */
-    @OnClick(R.id.iv_filter)
-    public void clickFilter() {
-        ToastUtils.showToast(mContext, "Not yet open, please wait");
-    }
-
-    /**
-     * 点击channel List按钮
-     */
-    @OnClick(R.id.iv_channel_list)
-    public void clickChannelList() {
-        Bundle bundle = new Bundle();
-        bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
-        bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, User.getInstance().getWalletAddress(mContext));
-        bundle.putString(ChannelsActivity.KEY_PUBKEY, pubkey);
-        bundle.putString(ChannelsActivity.KEY_CHANNEL, "all");
-        switchActivity(ChannelsActivity.class, bundle);
-    }
-
-    /**
      * click scan button at the top-right in page
      * 点击右上角扫码按钮
      */
@@ -871,6 +818,93 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
+     * Click progress bar
+     * 点击进度条
+     */
+    @OnClick(R.id.download_view)
+    public void clickDownloadView() {
+        DataStatusDialog mDataStatusDialog = new DataStatusDialog(mContext);
+        mDataStatusDialog.show();
+    }
+
+    /**
+     * click Receive button
+     * 点击Receive按钮
+     */
+    @OnClick(R.id.layout_receive)
+    public void clickFund() {
+        SelectReceiveOrSendTypePopupWindow mTypePopupWindow = new SelectReceiveOrSendTypePopupWindow(mContext);
+        mTypePopupWindow.setOnItemClickCallback(new SelectReceiveOrSendTypePopupWindow.ItemCleckListener() {
+            @Override
+            public void onItemClick(View view) {
+                switch (view.getId()) {
+                    case R.id.tv_type_one:
+                        CreateInvoiceStepOnePopupWindow mCreateInvoiceStepOnePopupWindow = new CreateInvoiceStepOnePopupWindow(mContext);
+                        mCreateInvoiceStepOnePopupWindow.show(mParentLayout, pubkey, 0, 0);
+                        break;
+                    case R.id.tv_type_two:
+                        if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
+                            ToastUtils.showToast(mContext, "Please waiting for a while");
+                            return;
+                        }
+                        mFundPopupWindow = new FundPopupWindow(mContext);
+                        mFundPopupWindow.show(mParentLayout, User.getInstance().getWalletAddress(mContext));
+                        break;
+                }
+            }
+        });
+        mTypePopupWindow.show(mReceiveBottomView, 1);
+    }
+
+    /**
+     * click send button
+     * 点击send按钮
+     */
+    @OnClick(R.id.layout_send)
+    public void clickSend() {
+        SelectReceiveOrSendTypePopupWindow mTypePopupWindow = new SelectReceiveOrSendTypePopupWindow(mContext);
+        mTypePopupWindow.setOnItemClickCallback(new SelectReceiveOrSendTypePopupWindow.ItemCleckListener() {
+            @Override
+            public void onItemClick(View view) {
+                switch (view.getId()) {
+                    case R.id.tv_type_one:
+                        mPayInvoiceDialog = new PayInvoiceDialog(mContext);
+                        mPayInvoiceDialog.show(pubkey, 0, "");
+                        break;
+                    case R.id.tv_type_two:
+                        mSendDialog = new SendDialog(mContext);
+                        mSendDialog.show("");
+                        break;
+                }
+            }
+        });
+        mTypePopupWindow.show(mSendBottomView, 2);
+
+    }
+
+    /**
+     * 点击channel List按钮
+     */
+    @OnClick(R.id.iv_channel_list)
+    public void clickChannelList() {
+        Bundle bundle = new Bundle();
+        bundle.putLong(ChannelsActivity.KEY_BALANCE_AMOUNT, balanceAmount);
+        bundle.putString(ChannelsActivity.KEY_WALLET_ADDRESS, User.getInstance().getWalletAddress(mContext));
+        bundle.putString(ChannelsActivity.KEY_PUBKEY, pubkey);
+        bundle.putString(ChannelsActivity.KEY_CHANNEL, "all");
+        switchActivity(ChannelsActivity.class, bundle);
+    }
+
+    /**
+     * Click Swap channel
+     * 点击Swap按钮
+     */
+    @OnClick(R.id.layout_swap)
+    public void clickSwap() {
+        ToastUtils.showToast(mContext, "Not yet open, please wait");
+    }
+
+    /**
      * Click create channel
      * 点击创建通道
      */
@@ -881,13 +915,12 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
-     * Click progress bar
-     * 点击进度条
+     * Click bottom NFTs and MARKETs
+     * 点击底部NFTs和MARKETs
      */
-    @OnClick(R.id.download_view)
-    public void clickDownloadView() {
-        DataStatusDialog mDataStatusDialog = new DataStatusDialog(mContext);
-        mDataStatusDialog.show();
+    @OnClick({R.id.layout_nfts, R.id.layout_markets})
+    public void clickBottomNFTs() {
+        ToastUtils.showToast(mContext, "Not yet open, please wait");
     }
 
     /**

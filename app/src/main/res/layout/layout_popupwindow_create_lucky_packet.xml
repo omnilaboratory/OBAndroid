@@ -537,7 +537,7 @@
                                 android:layout_centerVertical="true"
                                 android:gravity="center_vertical|right"
                                 android:inputType="number"
-                                android:hint="0"
+                                android:text="24"
                                 android:textColorHint="@color/color_80p_transparent"
                                 android:background="@drawable/bg_black_rectangle_round_0_thin"
                                 android:textColor="@color/color_80p_transparent"
