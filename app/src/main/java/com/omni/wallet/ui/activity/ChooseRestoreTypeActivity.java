@@ -39,7 +39,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -241,9 +243,21 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
                 @Override
                 public void onSuccess(FileList fileList) {
                     if (fileList.getFiles().size() == 0) {
+                        mLoadingDialog.dismiss();
                         ToastUtils.showToast(mContext, "No backup files found.");
                     } else {
-                        readAddressFile(fileList.getFiles().get(1).getId(), fileList.getFiles().get(0).getId(), fileList.getFiles().get(2).getId());
+                        List<com.google.api.services.drive.model.File> list = new ArrayList<>();
+                        for (int i = 0; i < fileList.getFiles().size(); i++) {
+                            if (!fileList.getFiles().get(i).getName().contains("_mainnet")) {
+                                list.add(fileList.getFiles().get(i));
+                            }
+                        }
+                        if (list.size() == 0) {
+                            mLoadingDialog.dismiss();
+                            ToastUtils.showToast(mContext, "No backup files found.");
+                        } else {
+                            readAddressFile(list.get(1).getId(), list.get(0).getId(), list.get(2).getId());
+                        }
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
