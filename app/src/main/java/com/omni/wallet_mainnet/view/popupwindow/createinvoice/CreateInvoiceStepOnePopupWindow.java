@@ -362,7 +362,7 @@ public class CreateInvoiceStepOnePopupWindow {
                                         Log.e(TAG + " keyString", keyString);
                                         // Method of collecting invoices on behalf
                                         try {
-                                            LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 38332, mContext.getApplicationContext().getExternalFilesDir(null) + "/obd/tls.cert", mContext.getApplicationContext().getExternalFilesDir(null) + "/obd/tls.key.pcks8");
+                                            LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 58332, mContext.getApplicationContext().getExternalFilesDir(null) + "/obd/tls.cert", mContext.getApplicationContext().getExternalFilesDir(null) + "/obd/tls.key.pcks8");
                                             try {
                                                 LuckPkOuterClass.spay payRequest = LuckPkOuterClass.spay.newBuilder().setUserInvoice(resp.getPaymentRequest()).build();
                                                 try {

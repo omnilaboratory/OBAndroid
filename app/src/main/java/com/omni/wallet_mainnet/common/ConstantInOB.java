@@ -30,16 +30,16 @@ public class ConstantInOB {
     static String downloadBaseUrlTestNet = "https://cache.oblnd.top/neutrino-testnet/";
     static String downloadBaseUrlMainNet = "https://cache.oblnd.top/neutrino-mainnet/";
 
-    static String OMNIHostAddressPortRegTest = "43.138.107.248:18332";
+    static String OMNIHostAddressPortRegTest = "43.138.107.248:18443";
     static String BTCHostAddressRegTest = "43.138.107.248";
     static String TEST_NET_BTC_HOST_ADDRESS="192.144.199.67";
     static String TEST_NET_OMNI_HOST_ADDRESS_PORT="192.144.199.67:18332";
-    static String MAIN_NET_BTC_HOST_ADDRESS = "54.187.22.125";
-    static String MAIN_NET_OMNI_HOST_ADDRESS_PORT="54.187.22.125:18332";
+    static String MAIN_NET_BTC_HOST_ADDRESS = "110.40.210.253";
+    static String MAIN_NET_OMNI_HOST_ADDRESS_PORT="110.40.210.253:8332";
 
     static String testLiquidityNodePubkey="025af4448f55bf1e6de1ae0486d4d103427c4e559a62ed7f8035bb1ed1af734f61@192.144.199.67:9735";
     static String regLiquidityNodePubkey="0357702800d8926b9077a621bc04320b187b73bcecf381ae07d0a2b36defd1a715@43.138.107.248:9735";
-    static String mainLiquidityNodePubkey="03cd43d4ae622cff751564a093d9ba4d347a29cffadac9bddbf5d698646411c23e@54.187.22.125:9735";
+    static String mainLiquidityNodePubkey="03cd43d4ae622cff751564a093d9ba4d347a29cffadac9bddbf5d698646411c23e@110.40.210.253:9735";
 
 
     private static final long SECOND_MILLIS = 1000;

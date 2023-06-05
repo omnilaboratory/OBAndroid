@@ -23,7 +23,7 @@ public class ConstantWithNetwork {
                 this.OMNI_HOST_ADDRESS_PORT = params.getOMNI_HOST_ADDRESS_PORT();
                 this.BTC_HOST_ADDRESS = params.getBTC_HOST_ADDRESS();
                 this.liquidityNodePubKey = ConstantInOB.regLiquidityNodePubkey;
-                this.getBlockHeightUrl = "http://" + ConstantInOB.BTCHostAddressRegTest + ":18332";
+                this.getBlockHeightUrl = "http://" + ConstantInOB.BTCHostAddressRegTest + ":18443";
                 this.startParams = params.getStartParams();
                 break;
             case TEST:
