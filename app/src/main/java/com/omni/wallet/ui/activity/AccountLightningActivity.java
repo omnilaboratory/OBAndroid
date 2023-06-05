@@ -151,7 +151,6 @@ public class AccountLightningActivity extends AppBaseActivity {
     View mReceiveBottomView;
     @BindView(R.id.view_send_bottom)
     View mSendBottomView;
-    private List<ListAssetItemEntity> chainData = new ArrayList<>();
     private List<ListAssetItemEntity> blockData = new ArrayList<>();
     private List<ListAssetItemEntity> lightningData = new ArrayList<>();
     private MyAdapter mAdapter;
@@ -398,7 +397,6 @@ public class AccountLightningActivity extends AppBaseActivity {
      */
     private void getAssetAndBtcData() {
         allData.clear();
-        chainData.clear();
         LightningOuterClass.WalletBalanceByAddressRequest walletBalanceByAddressRequest = LightningOuterClass.WalletBalanceByAddressRequest.newBuilder()
                 .setAddress(User.getInstance().getWalletAddress(mContext))
                 .build();
@@ -438,85 +436,14 @@ public class AccountLightningActivity extends AppBaseActivity {
                         entity.setPropertyid(0);
                         entity.setType(1);
                         blockData.add(entity);
-                        chainData.addAll(blockData);
                         allData.addAll(blockData);
-                        runOnUiThread(() -> mAdapter.notifyDataSetChanged());
-                        if (mRefreshLayout != null) {
-                            mRefreshLayout.stopRefresh();
-                        }
-                    });
-                    /*
-                      request the interface of each asset balance list
-                      请求各资产余额列表的接口
-                     */
-                    LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
-                            .setAddress(User.getInstance().getWalletAddress(mContext))
-                            .build();
-                    Obdmobile.oB_AssetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
-                        @Override
-                        public void onError(Exception e) {
-                            LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
-                            setDefaultData();
-                        }
-
-                        @Override
-                        public void onResponse(byte[] bytes) {
-                            if (bytes == null) {
-                                setDefaultData();
-                                return;
-                            }
-                            try {
-                                LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
-                                LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
-                                blockData.clear();
-                                for (int i = 0; i < resp.getListList().size(); i++) {
-                                    ListAssetItemEntity entity = new ListAssetItemEntity();
-                                    entity.setAmount(resp.getListList().get(i).getBalance());
-                                    entity.setPropertyid(resp.getListList().get(i).getPropertyid());
-                                    entity.setType(1);
-                                    blockData.add(entity);
-                                    getChannelBalance(resp.getListList().get(i).getPropertyid());
-                                }
-                                chainData.addAll(blockData);
-                                allData.addAll(blockData);
-                                runOnUiThread(() -> mAdapter.notifyDataSetChanged());
-                                getBtcChannelBalance(0);
-                            } catch (InvalidProtocolBufferException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        getBtcChannelBalance(0);
                     });
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
             }
         });
-    }
-
-    private void setDefaultData() {
-        blockData.clear();
-        ListAssetItemEntity entity = new ListAssetItemEntity();
-        entity.setAmount(0);
-        if (ConstantInOB.networkType == NetworkType.TEST) {
-            entity.setPropertyid(Long.parseLong("2147485160"));
-        } else if (ConstantInOB.networkType == NetworkType.REG) {
-            entity.setPropertyid(Long.parseLong("2147483651"));
-        } else { //mainnet
-            entity.setPropertyid(Long.parseLong("31"));
-        }
-        entity.setType(1);
-        blockData.add(entity);
-        chainData.addAll(blockData);
-        allData.addAll(blockData);
-        runOnUiThread(() -> mAdapter.notifyDataSetChanged());
-        getBtcChannelBalance(0);
-        if (ConstantInOB.networkType == NetworkType.TEST) {
-            getChannelBalance(Long.parseLong("2147485160"));
-        } else if (ConstantInOB.networkType == NetworkType.REG) {
-            getChannelBalance(Long.parseLong("2147483651"));
-        } else { //mainnet
-            getChannelBalance(Long.parseLong("31"));
-        }
     }
 
     /**
@@ -532,7 +459,6 @@ public class AccountLightningActivity extends AppBaseActivity {
         Obdmobile.channelBalance(channelBalanceRequest.toByteArray(), new Callback() {
             @Override
             public void onError(Exception e) {
-
             }
 
             @Override
@@ -553,15 +479,11 @@ public class AccountLightningActivity extends AppBaseActivity {
                             entity.setType(2);
                             lightningData.add(entity);
                             allData.addAll(lightningData);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mAdapter.notifyDataSetChanged();
-                                }
-                            });
+                            runOnUiThread(() -> mAdapter.notifyDataSetChanged());
                             if (mRefreshLayout != null) {
                                 mRefreshLayout.stopRefresh();
                             }
+                            getAssetData();
                         }
                     });
                 } catch (InvalidProtocolBufferException e) {
@@ -569,6 +491,70 @@ public class AccountLightningActivity extends AppBaseActivity {
                 }
             }
         });
+    }
+
+    /**
+     * request the interface of each asset balance list
+     * 请求各资产余额列表的接口
+     */
+    private void getAssetData() {
+        LightningOuterClass.AssetsBalanceByAddressRequest asyncAssetsBalanceRequest = LightningOuterClass.AssetsBalanceByAddressRequest.newBuilder()
+                .setAddress(User.getInstance().getWalletAddress(mContext))
+                .build();
+        Obdmobile.oB_AssetsBalanceByAddress(asyncAssetsBalanceRequest.toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------assetsBalanceOnError------------------" + e.getMessage());
+                setDefaultData();
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    setDefaultData();
+                    return;
+                }
+                try {
+                    LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
+                    blockData.clear();
+                    for (int i = 0; i < resp.getListList().size(); i++) {
+                        ListAssetItemEntity entity = new ListAssetItemEntity();
+                        entity.setAmount(resp.getListList().get(i).getBalance());
+                        entity.setPropertyid(resp.getListList().get(i).getPropertyid());
+                        entity.setType(1);
+                        blockData.add(entity);
+                        getChannelBalance(resp.getListList().get(i).getPropertyid());
+                    }
+                    allData.addAll(blockData);
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void setDefaultData() {
+        blockData.clear();
+        ListAssetItemEntity entity = new ListAssetItemEntity();
+        entity.setAmount(0);
+        if (ConstantInOB.networkType == NetworkType.TEST) {
+            entity.setPropertyid(Long.parseLong("2147485160"));
+        } else if (ConstantInOB.networkType == NetworkType.REG) {
+            entity.setPropertyid(Long.parseLong("2147483651"));
+        } else { //mainnet
+            entity.setPropertyid(Long.parseLong("31"));
+        }
+        entity.setType(1);
+        blockData.add(entity);
+        allData.addAll(blockData);
+        if (ConstantInOB.networkType == NetworkType.TEST) {
+            getChannelBalance(Long.parseLong("2147485160"));
+        } else if (ConstantInOB.networkType == NetworkType.REG) {
+            getChannelBalance(Long.parseLong("2147483651"));
+        } else { //mainnet
+            getChannelBalance(Long.parseLong("31"));
+        }
     }
 
     /**
@@ -590,14 +576,6 @@ public class AccountLightningActivity extends AppBaseActivity {
             @Override
             public void onResponse(byte[] bytes) {
                 if (bytes == null) {
-//                    lightningData = null;
-//                    allData.addAll(lightningData);
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            mAdapter.notifyDataSetChanged();
-//                        }
-//                    });
                     return;
                 }
                 try {
@@ -613,12 +591,10 @@ public class AccountLightningActivity extends AppBaseActivity {
                             entity.setType(2);
                             lightningData.add(entity);
                             allData.addAll(lightningData);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mAdapter.notifyDataSetChanged();
-                                }
-                            });
+                            runOnUiThread(() -> mAdapter.notifyDataSetChanged());
+                            if (mRefreshLayout != null) {
+                                mRefreshLayout.stopRefresh();
+                            }
                         }
                     });
                 } catch (InvalidProtocolBufferException e) {
@@ -670,12 +646,14 @@ public class AccountLightningActivity extends AppBaseActivity {
 
         @Override
         public void convert(ViewHolder holder, final int position, final ListAssetItemEntity item) {
-            if (position == chainData.size() - 1 && item.getType() == 1) {
+            if ((position + 1) % 2 == 0) {
                 LinearLayout lvContent = holder.getView(R.id.lv_item_content);
                 lvContent.setPadding(0, 0, 0, 32);
+                holder.getView(R.id.iv_asset_logo).setVisibility(View.INVISIBLE);
             } else {
                 LinearLayout lvContent = holder.getView(R.id.lv_item_content);
                 lvContent.setPadding(0, 0, 0, 0);
+                holder.getView(R.id.iv_asset_logo).setVisibility(View.VISIBLE);
             }
             ImageView imageView = holder.getView(R.id.iv_asset_logo);
             mAssetData.clear();
