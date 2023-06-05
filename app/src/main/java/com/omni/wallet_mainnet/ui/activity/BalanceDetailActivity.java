@@ -2090,9 +2090,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 if (event.getCode() == 2) {
                     File walletPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db");
                     File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db");
-                    String storagePath = Environment.getExternalStorageDirectory() + "/OBBackupFiles";
-                    File toWalletPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/wallet.db");
-                    File toChannelPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/channel.db");
+                    String storagePath = Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles";
+                    File toWalletPath = new File(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/wallet.db");
+                    File toChannelPath = new File(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/channel.db");
                     if (walletPath.exists() && channelPath.exists()) {
                         // 本地备份(Local backup)
                         MoveCacheFileToFileObd.createDirs(storagePath);
@@ -2177,7 +2177,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         if (mDriveServiceHelper != null) {
             LogUtils.e(TAG, "Creating a address file.");
             mLoadingDialog.show();
-            mDriveServiceHelper.createFile(User.getInstance().getWalletAddress(mContext))
+            mDriveServiceHelper.createFile(User.getInstance().getWalletAddress(mContext) + "_mainnet")
                     .addOnSuccessListener(fileId -> createWalletFile())
                     .addOnFailureListener(exception -> {
                         mLoadingDialog.dismiss();
@@ -2191,7 +2191,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             LogUtils.e(TAG, "Creating wallet file.");
             String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db";
             LogUtils.e(TAG, filePath);
-            mDriveServiceHelper.createFile(filePath, "wallet.db").addOnSuccessListener(new OnSuccessListener<String>() {
+            mDriveServiceHelper.createFile(filePath, "wallet_mainnet.db").addOnSuccessListener(new OnSuccessListener<String>() {
                 @Override
                 public void onSuccess(String s) {
                     createChannelFile();
@@ -2210,7 +2210,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             LogUtils.e(TAG, "Creating channel file.");
             String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db";
             LogUtils.e(TAG, filePath);
-            mDriveServiceHelper.createFile(filePath, "channel.db").addOnSuccessListener(new OnSuccessListener<String>() {
+            mDriveServiceHelper.createFile(filePath, "channel_mainnet.db").addOnSuccessListener(new OnSuccessListener<String>() {
                 @Override
                 public void onSuccess(String s) {
                     LogUtils.e(TAG, "Channel fileId" + s);

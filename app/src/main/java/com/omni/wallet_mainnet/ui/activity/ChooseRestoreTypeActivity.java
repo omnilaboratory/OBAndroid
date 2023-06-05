@@ -39,7 +39,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -112,8 +114,8 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
         mGoogleDriveTv.setTextColor(Color.parseColor("#40000000"));
         mLocalDirectoryTv.setTextColor(Color.parseColor("#000000"));
         mLocalDirectoryFileLayout.setVisibility(View.VISIBLE);
-        mFileNameTv.setText(Environment.getExternalStorageDirectory() + "/OBBackupFiles/");
-        mFileNameAnotherTv.setText(Environment.getExternalStorageDirectory() + "/OBBackupFiles/");
+        mFileNameTv.setText(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/");
+        mFileNameAnotherTv.setText(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/");
     }
 
     /**
@@ -143,8 +145,8 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
             // 本地恢复(Local restore)
             String storageWalletPath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
             String storageChannelPath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory();
-            File fromWalletPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/wallet.db");
-            File fromChannelPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/channel.db");
+            File fromWalletPath = new File(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/wallet.db");
+            File fromChannelPath = new File(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/channel.db");
             File toWalletPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db");
             File toChannelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db");
             if (fromWalletPath.exists() && fromChannelPath.exists()) {
@@ -153,7 +155,7 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
                 MoveCacheFileToFileObd.copyFile(fromWalletPath, toWalletPath);
                 MoveCacheFileToFileObd.copyFile(fromChannelPath, toChannelPath);
                 try {
-                    BufferedReader bf = new BufferedReader(new FileReader(Environment.getExternalStorageDirectory() + "/OBBackupFiles/address.txt"));
+                    BufferedReader bf = new BufferedReader(new FileReader(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/address.txt"));
                     for (String line = bf.readLine(); line != null; line = bf.readLine()) {
                         User.getInstance().setWalletAddress(mContext, line);
                     }
@@ -241,9 +243,21 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
                 @Override
                 public void onSuccess(FileList fileList) {
                     if (fileList.getFiles().size() == 0) {
+                        mLoadingDialog.dismiss();
                         ToastUtils.showToast(mContext, "No backup files found.");
                     } else {
-                        readAddressFile(fileList.getFiles().get(1).getId(), fileList.getFiles().get(0).getId(), fileList.getFiles().get(2).getId());
+                        List<com.google.api.services.drive.model.File> list = new ArrayList<>();
+                        for (int i = 0; i < fileList.getFiles().size(); i++) {
+                            if (fileList.getFiles().get(i).getName().contains("_mainnet")) {
+                                list.add(fileList.getFiles().get(i));
+                            }
+                        }
+                        if (list.size() == 0) {
+                            mLoadingDialog.dismiss();
+                            ToastUtils.showToast(mContext, "No backup files found.");
+                        } else {
+                            readAddressFile(fileList.getFiles().get(1).getId(), fileList.getFiles().get(0).getId(), fileList.getFiles().get(2).getId());
+                        }
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -265,7 +279,7 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
 
             mDriveServiceHelper.readFile(addressFileId)
                     .addOnSuccessListener(nameAndContent -> {
-                        String address = nameAndContent.first;
+                        String address = nameAndContent.first.substring(0, nameAndContent.first.lastIndexOf("_"));
                         User.getInstance().setWalletAddress(mContext, address);
                         readWalletFile(walletFileId, channelFileId);
                     })
