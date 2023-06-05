@@ -256,7 +256,7 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
                             mLoadingDialog.dismiss();
                             ToastUtils.showToast(mContext, "No backup files found.");
                         } else {
-                            readAddressFile(fileList.getFiles().get(1).getId(), fileList.getFiles().get(0).getId(), fileList.getFiles().get(2).getId());
+                            readAddressFile(list.get(1).getId(), list.get(0).getId(), list.get(2).getId());
                         }
                     }
                 }
