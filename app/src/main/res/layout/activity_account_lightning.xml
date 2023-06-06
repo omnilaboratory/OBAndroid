@@ -45,35 +45,47 @@
                 android:gravity="center"/>
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/iv_scan"
-            android:layout_width="@dimen/main_24"
-            android:layout_height="@dimen/main_24"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/main_70"
-            android:src="@mipmap/icon_scan_black"/>
+        <RelativeLayout
+            android:id="@+id/layout_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/layout_menu">
+
+            <ImageView
+                android:id="@+id/iv_scan"
+                android:layout_width="@dimen/main_24"
+                android:layout_height="@dimen/main_24"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/icon_scan_black"/>
+        </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="@dimen/main_32"
-            android:layout_height="@dimen/main_32"
+            android:id="@+id/layout_menu"
+            android:layout_width="@dimen/main_48"
+            android:layout_height="@dimen/main_48"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/main_25">
+            android:layout_marginRight="@dimen/main_18">
 
-            <ImageView
-                android:id="@+id/iv_menu"
-                android:layout_width="@dimen/main_18"
-                android:layout_height="@dimen/main_18"
-                android:layout_centerInParent="true"
-                android:src="@mipmap/icon_menu_black"/>
+            <RelativeLayout
+                android:layout_width="@dimen/main_32"
+                android:layout_height="@dimen/main_32"
+                android:layout_centerInParent="true">
 
-            <ImageView
-                android:id="@+id/iv_green_point"
-                android:layout_width="@dimen/main_12"
-                android:layout_height="@dimen/main_12"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/bg_btn_round_06d78f_25"/>
+                <ImageView
+                    android:id="@+id/iv_menu"
+                    android:layout_width="@dimen/main_18"
+                    android:layout_height="@dimen/main_18"
+                    android:layout_centerInParent="true"
+                    android:src="@mipmap/icon_menu_black"/>
+
+                <ImageView
+                    android:id="@+id/iv_green_point"
+                    android:layout_width="@dimen/main_12"
+                    android:layout_height="@dimen/main_12"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/bg_btn_round_06d78f_25"/>
+            </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
 
@@ -96,7 +108,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/main_30"
-                    android:layout_marginRight="@dimen/main_32"
+                    android:layout_marginRight="@dimen/main_24"
                     android:layout_marginTop="@dimen/main_10">
 
                     <LinearLayout
