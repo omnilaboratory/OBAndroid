@@ -763,7 +763,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      * click scan button at the top-right in page
      * 点击右上角扫码按钮
      */
-    @OnClick(R.id.iv_scan)
+    @OnClick(R.id.layout_scan)
     public void clickScan() {
         PermissionUtils.launchCamera(this, new PermissionUtils.PermissionCallback() {
             @Override
@@ -789,7 +789,7 @@ public class AccountLightningActivity extends AppBaseActivity {
      * click top-right menu button
      * 点击右上角菜单按钮
      */
-    @OnClick(R.id.iv_menu)
+    @OnClick(R.id.layout_menu)
     public void clickMemu() {
         mMenuPopupWindow = new MenuPopupWindow(mContext);
         mMenuPopupWindow.show(mMenuIv, balanceAmount, User.getInstance().getWalletAddress(mContext), pubkey);

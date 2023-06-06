@@ -368,7 +368,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
      * click scan button at top-right in page
      * 点击右上角扫码按钮
      */
-    @OnClick(R.id.iv_scan)
+    @OnClick(R.id.layout_scan)
     public void clickScan() {
         PermissionUtils.launchCamera(this, new PermissionUtils.PermissionCallback() {
             @Override
@@ -394,7 +394,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
      * click the menu button at top-right in page
      * 点击右上角菜单按钮
      */
-    @OnClick(R.id.iv_menu)
+    @OnClick(R.id.layout_menu)
     public void clickMemu() {
         mMenuPopupWindow = new Menu2PopupWindow(mContext);
         mMenuPopupWindow.show(mMenuIv, balanceAmount, walletAddress, pubkey);
