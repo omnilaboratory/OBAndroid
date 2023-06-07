@@ -81,7 +81,7 @@ public class PayInvoiceDialog {
         this.mContext = context;
     }
 
-    public void show(String address, long assetId, String invoiceAddr) {
+    public void show(String address, long assetId, String invoiceAddr, int tag) {
         if (mAlertDialog == null) {
             mAlertDialog = new AlertDialog.Builder(mContext, R.style.dialog_translucent_theme)
                     .setContentView(R.layout.layout_popupwindow_pay_invoice_stepone)
@@ -93,7 +93,7 @@ public class PayInvoiceDialog {
         mLoadingDialog = new LoadingDialog(mContext);
         mAddress = address;
         mAssetId = assetId;
-        showStepOne(invoiceAddr);
+        showStepOne(invoiceAddr, tag);
         /**
          * @备注： 点击cancel 按钮
          * @description: Click cancel button
@@ -121,7 +121,7 @@ public class PayInvoiceDialog {
         mAlertDialog.show();
     }
 
-    private void showStepOne(String invoiceAddr) {
+    private void showStepOne(String invoiceAddr, int tag) {
         TextView fromNodeAddressTv = mAlertDialog.findViewById(R.id.tv_from_node_address);
         TextView fromNodeNameTv = mAlertDialog.findViewById(R.id.tv_from_node_name);
         EditText invoiceEdit = mAlertDialog.findViewById(R.id.edit_invoice);
@@ -142,8 +142,9 @@ public class PayInvoiceDialog {
                         mAlertDialog.dismiss();
                         Intent intent = new Intent(mContext, ScanActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putInt(ScanActivity.KEY_SCAN_CODE, 2);
-                        mContext.startActivity(intent, bundle);
+                        bundle.putInt(ScanActivity.KEY_SCAN_CODE, tag);
+                        intent.putExtras(bundle);
+                        mContext.startActivity(intent);
                     }
 
                     @Override

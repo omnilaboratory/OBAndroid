@@ -847,7 +847,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                 switch (view.getId()) {
                     case R.id.tv_type_one:
                         mPayInvoiceDialog = new PayInvoiceDialog(mContext);
-                        mPayInvoiceDialog.show(pubkey, 0, "");
+                        mPayInvoiceDialog.show(pubkey, 0, "", 1);
                         break;
                     case R.id.tv_type_two:
                         mSendDialog = new SendDialog(mContext);
@@ -930,7 +930,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                                     LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
                                     LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
                                     mPayInvoiceDialog = new PayInvoiceDialog(mContext);
-                                    mPayInvoiceDialog.show(pubkey, resp.getAssetId(), event.getData());
+                                    mPayInvoiceDialog.show(pubkey, resp.getAssetId(), event.getData(), 1);
                                 } catch (InvalidProtocolBufferException e) {
                                     e.printStackTrace();
                                 }

@@ -1224,7 +1224,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                     public void onClick(View v) {
                         if (PreventContinuousClicksUtil.isNotFastClick()) {
                             mPayInvoiceDialog = new PayInvoiceDialog(mContext);
-                            mPayInvoiceDialog.show(pubkey, assetId, UriUtil.generateLightningUri(item.getInvoice()));
+                            mPayInvoiceDialog.show(pubkey, assetId, UriUtil.generateLightningUri(item.getInvoice()), 2);
                         }
                     }
                 });
@@ -1704,7 +1704,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
     @OnClick(R.id.layout_pay_invoice)
     public void clickPayInvoice() {
         mPayInvoiceDialog = new PayInvoiceDialog(mContext);
-        mPayInvoiceDialog.show(pubkey, assetId, "");
+        mPayInvoiceDialog.show(pubkey, assetId, "", 2);
     }
 
     /**
@@ -1960,7 +1960,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         if (event.getCode() == 2) {
             if (event.getType().equals("payInvoice")) {
                 mPayInvoiceDialog = new PayInvoiceDialog(mContext);
-                mPayInvoiceDialog.show(pubkey, assetId, event.getData());
+                mPayInvoiceDialog.show(pubkey, assetId, event.getData(), 2);
             } else if (event.getType().equals("receiveLuckyPacket")) {
                 LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + event.getData());
                 ReceiveLuckyPacketDialog mReceiveLuckyPacketDialog = new ReceiveLuckyPacketDialog(mContext);
