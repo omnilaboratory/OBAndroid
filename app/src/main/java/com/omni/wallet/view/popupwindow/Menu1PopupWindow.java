@@ -243,14 +243,22 @@ public class Menu1PopupWindow {
                                         JSONObject jsonObject = new JSONObject(result);
                                         new Handler(Looper.getMainLooper()).post(() -> {
                                             try {
-                                                if (AppUtils.getAppVersionName(mContext).equals(jsonObject.getString("version"))) {
+                                                JSONObject netObject = null;
+                                                if (ConstantInOB.networkType == NetworkType.TEST) {
+                                                    netObject = jsonObject.getJSONObject("testnet");
+                                                } else if (ConstantInOB.networkType == NetworkType.REG) {
+                                                    netObject = jsonObject.getJSONObject("regtest");
+                                                } else if (ConstantInOB.networkType == NetworkType.MAIN) {
+                                                    netObject = jsonObject.getJSONObject("mainnet");
+                                                }
+                                                if (AppUtils.getAppVersionName(mContext).equals(netObject.getString("version"))) {
                                                     mLoadingDialog.dismiss();
                                                     mMenuPopWindow.dismiss();
                                                     ToastUtils.showToast(mContext, "It is currently the latest version.");
                                                 } else {
                                                     mLoadingDialog.dismiss();
                                                     mMenuPopWindow.dismiss();
-                                                    boolean force = jsonObject.getBoolean("force");
+                                                    boolean force = netObject.getBoolean("force");
                                                     NewVersionDialog mNewVersionDialog = new NewVersionDialog(mContext);
                                                     mNewVersionDialog.show(force);
                                                 }

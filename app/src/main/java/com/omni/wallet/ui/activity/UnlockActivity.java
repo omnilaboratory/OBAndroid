@@ -25,6 +25,8 @@ import com.omni.wallet.baselibrary.http.callback.EngineCallback;
 import com.omni.wallet.baselibrary.http.progress.entity.Progress;
 import com.omni.wallet.baselibrary.utils.AppUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
+import com.omni.wallet.common.ConstantInOB;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.entity.event.CloseUselessActivityEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
@@ -121,8 +123,16 @@ public class UnlockActivity extends AppBaseActivity {
                             JSONObject jsonObject = new JSONObject(result);
                             new Handler(Looper.getMainLooper()).post(() -> {
                                 try {
-                                    if (!AppUtils.getAppVersionName(mContext).equals(jsonObject.getString("version"))) {
-                                        boolean force = jsonObject.getBoolean("force");
+                                    JSONObject netObject = null;
+                                    if (ConstantInOB.networkType == NetworkType.TEST) {
+                                        netObject = jsonObject.getJSONObject("testnet");
+                                    } else if (ConstantInOB.networkType == NetworkType.REG) {
+                                        netObject = jsonObject.getJSONObject("regtest");
+                                    } else if (ConstantInOB.networkType == NetworkType.MAIN) {
+                                        netObject = jsonObject.getJSONObject("mainnet");
+                                    }
+                                    if (!AppUtils.getAppVersionName(mContext).equals(netObject.getString("version"))) {
+                                        boolean force = netObject.getBoolean("force");
                                         if (force) {
                                             NewVersionDialog mNewVersionDialog = new NewVersionDialog(mContext);
                                             mNewVersionDialog.show(force);

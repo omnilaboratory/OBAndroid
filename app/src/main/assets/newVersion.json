@@ -1,10 +1,12 @@
 {
-  "version": "0.1.0",
-  "force": false,
-  "newFeature": "Lucky Packet\\nDelegate invoice collection",
-  "optimization": "Issue 101\\nIssue 102\\nIssue 103",
-  "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0/OBAndroid_testnet_0.1.0_beta.10_release.apk",
   "testnet": {
+    "version": "0.1.0",
+    "force": false,
+    "newFeature": "Lucky Packet\\nDelegate invoice collection",
+    "optimization": "Issue 101\\nIssue 102\\nIssue 103",
+    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0/OBAndroid_testnet_0.1.0_beta.10_release.apk"
+  },
+  "regtest": {
     "version": "0.1.0",
     "force": false,
     "newFeature": "Lucky Packet\\nDelegate invoice collection",
