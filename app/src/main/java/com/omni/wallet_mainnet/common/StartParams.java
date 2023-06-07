@@ -65,7 +65,6 @@ public class StartParams {
                         "--neutrino.feeurl=https://nodes.lightning.computer/fees/v1/btc-fee-estimates.json " +
                         "--nobootstrap" +
                         " --neutrino.connect=bb1.breez.technology" +
-                        " --neutrino.connect=bb2.breez.technology" +
                         " --omnicoreproxy.rpchost=" + OMNI_HOST_ADDRESS_PORT +
                         " --alias=";
                 break;
