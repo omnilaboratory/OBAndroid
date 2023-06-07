@@ -19,6 +19,8 @@ import com.omni.wallet_mainnet.baselibrary.utils.AppUtils;
 import com.omni.wallet_mainnet.baselibrary.utils.LogUtils;
 import com.omni.wallet_mainnet.baselibrary.utils.StringUtils;
 import com.omni.wallet_mainnet.baselibrary.utils.ToastUtils;
+import com.omni.wallet_mainnet.common.ConstantInOB;
+import com.omni.wallet_mainnet.common.NetworkType;
 import com.omni.wallet_mainnet.entity.UpdateEntity;
 import com.omni.wallet_mainnet.framelibrary.common.Constants;
 import com.omni.wallet_mainnet.framelibrary.http.callback.DefaultHttpCallback;
@@ -283,9 +285,17 @@ public class UpdateUtils {
                             JSONObject jsonObject = new JSONObject(result);
                             new Handler(Looper.getMainLooper()).post(() -> {
                                 try {
+                                    JSONObject netObject = null;
+                                    if (ConstantInOB.networkType == NetworkType.TEST) {
+                                        netObject = jsonObject.getJSONObject("testnet");
+                                    } else if (ConstantInOB.networkType == NetworkType.REG) {
+                                        netObject = jsonObject.getJSONObject("regtest");
+                                    } else if (ConstantInOB.networkType == NetworkType.MAIN) {
+                                        netObject = jsonObject.getJSONObject("mainnet");
+                                    }
                                     UpdateEntity entity = new UpdateEntity();
-                                    entity.setUrl(jsonObject.getString("url"));
-                                    entity.setVersion(jsonObject.getString("version"));
+                                    entity.setUrl(netObject.getString("url"));
+                                    entity.setVersion(netObject.getString("version"));
                                     if (callback != null) {
                                         callback.onCheckSuccess(entity);
                                     }

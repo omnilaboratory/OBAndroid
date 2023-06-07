@@ -255,7 +255,8 @@ public class AppApplication extends BaseApplication {
         PreFilesUtils.DownloadCallback downloadCallback = () -> {
             preFilesUtils.readManifestFile();
             if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
-                getPeerFile();
+//                getPeerFile();
+                getHeaderBinFile();
             }else {
                 getHeaderBinFile();
             }
@@ -274,7 +275,8 @@ public class AppApplication extends BaseApplication {
             }else{
                 preFilesUtils.readManifestFile();
                 if (ConstantInOB.networkType.equals(NetworkType.MAIN)){
-                    getPeerFile();
+//                    getPeerFile();
+                    getHeaderBinFile();
                 }else {
                     getHeaderBinFile();
                 }

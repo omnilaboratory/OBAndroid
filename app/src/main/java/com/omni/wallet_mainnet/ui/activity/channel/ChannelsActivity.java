@@ -483,7 +483,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
                                     LightningOuterClass.PayReq resp = LightningOuterClass.PayReq.parseFrom(bytes);
                                     LogUtils.e(TAG, "------------------decodePaymentOnResponse-----------------" + resp);
                                     mPayInvoiceDialog = new PayInvoiceDialog(mContext);
-                                    mPayInvoiceDialog.show(pubkey, resp.getAssetId(), event.getData());
+                                    mPayInvoiceDialog.show(pubkey, resp.getAssetId(), event.getData(), 3);
                                 } catch (InvalidProtocolBufferException e) {
                                     e.printStackTrace();
                                 }
