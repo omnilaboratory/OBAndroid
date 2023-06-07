@@ -14,10 +14,10 @@
     "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0/OBAndroid_testnet_0.1.0_beta.10_release.apk"
   },
   "mainnet": {
-    "version": "0.1.0",
+    "version": "0.1.1",
     "force": false,
-    "newFeature": "Lucky Packet\\nDelegate invoice collection",
-    "optimization": "Issue 101\\nIssue 102\\nIssue 103",
-    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0/OBAndroid_testnet_0.1.0_beta.10_release.apk"
+    "newFeature": "1、New version update function\\n2、Add a new test coin",
+    "optimization": "1、optimization one\\n2、optimization two\\n3、optimization three",
+    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0/OBAndroid_mainnet_0.1.1_beta.10_release.apk"
   }
 }
