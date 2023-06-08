@@ -483,7 +483,7 @@ public class SendDialog implements Wallet.ScanSendListener {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.create_invoice_amount));
                     return;
                 }
-                if (assetBalance.equals("0")) {
+                if (Double.parseDouble(assetBalance) == 0) {
                     ToastUtils.showToast(mContext, mContext.getString(R.string.amount_greater_than_0));
                     return;
                 }

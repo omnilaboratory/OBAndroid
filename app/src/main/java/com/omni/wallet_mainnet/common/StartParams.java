@@ -11,7 +11,7 @@ public class StartParams {
             case REG:
                 this.OMNI_HOST_ADDRESS_PORT = ConstantInOB.OMNIHostAddressPortRegTest;
                 this.BTC_HOST_ADDRESS = ConstantInOB.BTCHostAddressRegTest;
-                this.startParams = "--noseedbackup --nolisten --trickledelay=5000 " +
+                this.startParams = "--noseedbackup --nolisten --protocol.no-anchors --trickledelay=5000 " +
                         "--debuglevel=debug \n" +
                         "--autopilot.active " +
                         "--maxpendingchannels=100 " +
@@ -31,7 +31,7 @@ public class StartParams {
             case TEST:
                 this.OMNI_HOST_ADDRESS_PORT = ConstantInOB.TEST_NET_OMNI_HOST_ADDRESS_PORT;
                 this.BTC_HOST_ADDRESS = ConstantInOB.TEST_NET_BTC_HOST_ADDRESS;
-                this.startParams = "--noseedbackup --nolisten --trickledelay=5000 " +
+                this.startParams = "--noseedbackup --nolisten --protocol.no-anchors --trickledelay=5000 " +
                         "--debuglevel=debug \n" +
                         "--autopilot.active " +
                         "--maxpendingchannels=100 " +
@@ -50,7 +50,7 @@ public class StartParams {
             case MAIN:
                 this.OMNI_HOST_ADDRESS_PORT = ConstantInOB.MAIN_NET_OMNI_HOST_ADDRESS_PORT;
                 this.BTC_HOST_ADDRESS = ConstantInOB.MAIN_NET_BTC_HOST_ADDRESS;
-                this.startParams = "--noseedbackup --nolisten --trickledelay=5000 " +
+                this.startParams = "--noseedbackup --nolisten --protocol.no-anchors --trickledelay=5000 " +
                         "--debuglevel=debug \n" +
                         "--autopilot.active " +
                         "--maxpendingchannels=100 " +
@@ -64,7 +64,7 @@ public class StartParams {
                         "--spay-url=110.40.210.253:58332 "+
                         "--neutrino.feeurl=https://nodes.lightning.computer/fees/v1/btc-fee-estimates.json " +
                         "--nobootstrap" +
-                        " --neutrino.connect=bb1.breez.technology" +
+                        " --neutrino.addpeer=bb1.breez.technology" +
                         " --omnicoreproxy.rpchost=" + OMNI_HOST_ADDRESS_PORT +
                         " --alias=";
                 break;
