@@ -18,6 +18,8 @@ import com.omni.wallet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet.baselibrary.view.BasePopWindow;
 import com.omni.wallet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
 import com.omni.wallet.baselibrary.view.recyclerView.holder.ViewHolder;
+import com.omni.wallet.common.ConstantInOB;
+import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.entity.AssetEntity;
 import com.omni.wallet.entity.ListAssetItemEntity;
 import com.omni.wallet.framelibrary.entity.User;
@@ -144,6 +146,25 @@ public class SelectAssetPopupWindow {
                 try {
                     LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
+                    if (ConstantInOB.networkType == NetworkType.TEST) {
+                        for (int i = 0; i < resp.getListList().size(); i++) {
+                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("2147485160")) {
+                                setDefaultData();
+                            }
+                        }
+                    } else if (ConstantInOB.networkType == NetworkType.REG) {
+                        for (int i = 0; i < resp.getListList().size(); i++) {
+                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("2147483651")) {
+                                setDefaultData();
+                            }
+                        }
+                    } else { //mainnet
+                        for (int i = 0; i < resp.getListList().size(); i++) {
+                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("31")) {
+                                setDefaultData();
+                            }
+                        }
+                    }
                     lightningData.clear();
                     for (int i = 0; i < resp.getListList().size(); i++) {
                         ListAssetItemEntity entity = new ListAssetItemEntity();

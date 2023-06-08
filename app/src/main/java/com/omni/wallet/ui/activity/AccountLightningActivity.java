@@ -437,6 +437,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                         entity.setType(1);
                         blockData.add(entity);
                         allData.addAll(blockData);
+                        runOnUiThread(() -> mAdapter.notifyDataSetChanged());
                         getBtcChannelBalance(0);
                     });
                 } catch (InvalidProtocolBufferException e) {
@@ -517,6 +518,25 @@ public class AccountLightningActivity extends AppBaseActivity {
                 try {
                     LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
+                    if (ConstantInOB.networkType == NetworkType.TEST) {
+                        for (int i = 0; i < resp.getListList().size(); i++) {
+                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("2147485160")) {
+                                setDefaultData();
+                            }
+                        }
+                    } else if (ConstantInOB.networkType == NetworkType.REG) {
+                        for (int i = 0; i < resp.getListList().size(); i++) {
+                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("2147483651")) {
+                                setDefaultData();
+                            }
+                        }
+                    } else { //mainnet
+                        for (int i = 0; i < resp.getListList().size(); i++) {
+                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("31")) {
+                                setDefaultData();
+                            }
+                        }
+                    }
                     blockData.clear();
                     for (int i = 0; i < resp.getListList().size(); i++) {
                         ListAssetItemEntity entity = new ListAssetItemEntity();
@@ -527,6 +547,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                         getChannelBalance(resp.getListList().get(i).getPropertyid());
                     }
                     allData.addAll(blockData);
+                    runOnUiThread(() -> mAdapter.notifyDataSetChanged());
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
@@ -548,13 +569,29 @@ public class AccountLightningActivity extends AppBaseActivity {
         entity.setType(1);
         blockData.add(entity);
         allData.addAll(blockData);
+
+        lightningData.clear();
+        ListAssetItemEntity entity1 = new ListAssetItemEntity();
+        entity1.setAmount(0);
         if (ConstantInOB.networkType == NetworkType.TEST) {
-            getChannelBalance(Long.parseLong("2147485160"));
+            entity1.setPropertyid(Long.parseLong("2147485160"));
         } else if (ConstantInOB.networkType == NetworkType.REG) {
-            getChannelBalance(Long.parseLong("2147483651"));
+            entity1.setPropertyid(Long.parseLong("2147483651"));
         } else { //mainnet
-            getChannelBalance(Long.parseLong("31"));
+            entity1.setPropertyid(Long.parseLong("31"));
         }
+        entity1.setType(2);
+        lightningData.add(entity1);
+        allData.addAll(lightningData);
+        runOnUiThread(() -> mAdapter.notifyDataSetChanged());
+
+//        if (ConstantInOB.networkType == NetworkType.TEST) {
+//            getChannelBalance(Long.parseLong("2147485160"));
+//        } else if (ConstantInOB.networkType == NetworkType.REG) {
+//            getChannelBalance(Long.parseLong("2147483651"));
+//        } else { //mainnet
+//            getChannelBalance(Long.parseLong("31"));
+//        }
     }
 
     /**
