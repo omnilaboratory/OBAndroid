@@ -20,7 +20,7 @@ OBAndroid is a self-custodial [OmniBOLT](https://github.com/omnilaboratory/obd) 
 - [x] Management liquidity   
 - [x] Create, manage invoices( [OmniBOLT 7](https://github.com/omnilaboratory/OmniBOLT-spec/blob/master/OmniBOLT-07-Hierarchical-Deterministic-(HD)-wallet.md#invoice-encoding))  
 - [x] Pay invoices ( [OmniBOLT 7](https://github.com/omnilaboratory/OmniBOLT-spec/blob/master/OmniBOLT-07-Hierarchical-Deterministic-(HD)-wallet.md#invoice-encoding)) 
-- [x] Cloud and local backup for channels  
+- [x] Cloud(google drive) and local backup for wallet and channels  
 
 - [ ] DEX in wallet
 - [ ] Marketplace
