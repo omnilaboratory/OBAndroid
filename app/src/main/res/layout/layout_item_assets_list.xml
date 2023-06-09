@@ -1,78 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/main_8"
+    android:layout_marginBottom="@dimen/main_8">
 
     <LinearLayout
-        android:id="@+id/lv_item_content"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/main_4"
-        android:layout_marginTop="@dimen/main_4"
-        android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <RelativeLayout
-            android:id="@+id/rv_token_content"
-            android:layout_width="0dp"
+        <ImageView
+            android:id="@+id/iv_asset_logo"
+            android:layout_width="@dimen/main_24"
+            android:layout_height="@dimen/main_24"
+            android:src="@mipmap/icon_usdt_logo_small"/>
+
+        <TextView
+            android:id="@+id/tv_asset_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/iv_asset_logo"
-                android:layout_width="@dimen/main_24"
-                android:layout_height="@dimen/main_24"
-                android:layout_marginLeft="@dimen/main_10"
-                android:src="@mipmap/icon_usdt_logo_small"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rv_amount_content"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_asset_amount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:gravity="right"
-                android:text="0.025"
-                android:textColor="@color/color_black"
-                android:textSize="@dimen/text_16"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rv_value_content"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_asset_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:gravity="right"
-                android:text="100.00"
-                android:textColor="@color/color_black"
-                android:textSize="@dimen/text_16"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rv_network_content"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.1">
-
-            <ImageView
-                android:id="@+id/iv_asset_net"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:src="@mipmap/icon_network_link_black_small"/>
-        </RelativeLayout>
+            android:layout_marginLeft="@dimen/main_5"
+            android:textStyle="bold"
+            android:text="BTC"
+            android:textColor="@color/color_A6_transparent"
+            android:textSize="@dimen/text_16"/>
     </LinearLayout>
-</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/layout_asset_net"
+        android:layout_marginRight="@dimen/main_15"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_asset_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textStyle="bold"
+            android:textColor="@color/color_black"
+            android:textSize="@dimen/text_16"/>
+
+        <TextView
+            android:id="@+id/tv_asset_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/main_5"
+            android:text="0"
+            android:textStyle="bold"
+            android:textColor="@color/color_80p_transparent"
+            android:textSize="@dimen/text_12"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_asset_net"
+        android:layout_width="@dimen/main_28"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true">
+
+        <ImageView
+            android:id="@+id/iv_asset_net"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/icon_network_link_black_small"/>
+    </RelativeLayout>
+</RelativeLayout>

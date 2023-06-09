@@ -271,91 +271,14 @@
                     android:background="@mipmap/img_rectangle_white_bg"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/main_24"
-                        android:layout_marginTop="@dimen/main_20"
-                        android:letterSpacing="0.25"
-                        android:text="@string/assets"
-                        android:textColor="@color/color_4A92FF"
-                        android:textSize="@dimen/text_16"
-                        android:visibility="gone"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/main_24"
-                        android:layout_marginRight="@dimen/main_40"
-                        android:layout_marginTop="@dimen/main_30">
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/asset"
-                                android:textColor="@color/color_A6_transparent"
-                                android:textSize="@dimen/text_15"/>
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:gravity="right"
-                                android:text="@string/amount_big"
-                                android:textColor="@color/color_A6_transparent"
-                                android:textSize="@dimen/text_15"/>
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:gravity="right"
-                                android:text="@string/value"
-                                android:textColor="@color/color_A6_transparent"
-                                android:textSize="@dimen/text_15"/>
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1.1">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:gravity="right"
-                                android:text="@string/network"
-                                android:textColor="@color/color_A6_transparent"
-                                android:textSize="@dimen/text_15"/>
-                        </RelativeLayout>
-                    </LinearLayout>
-
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/recycler_assets_list_block"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/main_40"
-                        android:layout_marginLeft="@dimen/main_24"
+                        android:layout_marginLeft="@dimen/main_32"
                         android:layout_marginRight="@dimen/main_40"
-                        android:layout_marginTop="@dimen/main_10"/>
+                        android:layout_marginTop="@dimen/main_25"/>
                 </LinearLayout>
 
                 <LinearLayout

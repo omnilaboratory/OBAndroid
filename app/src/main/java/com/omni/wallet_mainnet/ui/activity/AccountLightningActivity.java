@@ -684,13 +684,11 @@ public class AccountLightningActivity extends AppBaseActivity {
         @Override
         public void convert(ViewHolder holder, final int position, final ListAssetItemEntity item) {
             if ((position + 1) % 2 == 0) {
-                LinearLayout lvContent = holder.getView(R.id.lv_item_content);
-                lvContent.setPadding(0, 0, 0, 32);
                 holder.getView(R.id.iv_asset_logo).setVisibility(View.INVISIBLE);
+                holder.getView(R.id.tv_asset_name).setVisibility(View.INVISIBLE);
             } else {
-                LinearLayout lvContent = holder.getView(R.id.lv_item_content);
-                lvContent.setPadding(0, 0, 0, 0);
                 holder.getView(R.id.iv_asset_logo).setVisibility(View.VISIBLE);
+                holder.getView(R.id.tv_asset_name).setVisibility(View.VISIBLE);
             }
             ImageView imageView = holder.getView(R.id.iv_asset_logo);
             mAssetData.clear();
@@ -700,20 +698,21 @@ public class AccountLightningActivity extends AppBaseActivity {
             for (AssetEntity entity : mAssetData) {
                 if (Long.parseLong(entity.getAssetId()) == item.getPropertyid()) {
                     ImageUtils.showImage(mContext, entity.getImgUrl(), imageView);
+                    holder.setText(R.id.tv_asset_name, entity.getName().toUpperCase());
                 }
             }
             if (item.getAmount() == 0) {
                 holder.setText(R.id.tv_asset_amount, "0.00");
-                holder.setText(R.id.tv_asset_value, "0.00");
+                holder.setText(R.id.tv_asset_value, "$0.00");
             } else {
                 DecimalFormat df = new DecimalFormat("0.00######");
                 DecimalFormat df1 = new DecimalFormat("0.00");
                 if (item.getPropertyid() == 0) {
                     holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-                    holder.setText(R.id.tv_asset_value, df1.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
+                    holder.setText(R.id.tv_asset_value, "$" + df1.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
                 } else {
                     holder.setText(R.id.tv_asset_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-                    holder.setText(R.id.tv_asset_value, df1.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
+                    holder.setText(R.id.tv_asset_value, "$" + df1.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000 * Double.parseDouble(User.getInstance().getUsdtPrice(mContext))));
                 }
             }
             if (item.getType() == 1) {

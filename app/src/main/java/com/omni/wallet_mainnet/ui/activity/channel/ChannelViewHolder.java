@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.omni.wallet_mainnet.R;
+import com.omni.wallet_mainnet.baselibrary.utils.DateUtils;
 import com.omni.wallet_mainnet.baselibrary.utils.image.ImageUtils;
 import com.omni.wallet_mainnet.entity.AssetEntity;
 import com.omni.wallet_mainnet.framelibrary.entity.User;
@@ -31,6 +32,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
     private ImageView mAssetLogo;
     private TextView mAssetUnit;
     private TextView mRemotePubkey;
+    private TextView mCreateTime;
     private TextView mLocalBalance;
     private TextView mRemoteBalance;
     private ProgressBar mProgressBar;
@@ -46,6 +48,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
         mAssetLogo = itemView.findViewById(R.id.im_token_type);
         mAssetUnit = itemView.findViewById(R.id.tv_token_type);
         mRemotePubkey = itemView.findViewById(R.id.tv_pubkey_value);
+        mCreateTime = itemView.findViewById(R.id.tv_create_time);
         mLocalBalance = itemView.findViewById(R.id.tv_local_amount);
         mRemoteBalance = itemView.findViewById(R.id.tv_remote_amount);
         mProgressBar = itemView.findViewById(R.id.pv_amount_percent);
@@ -69,6 +72,10 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
                 mAssetUnit.setText(entity.getName());
             }
         }
+    }
+
+    public void setTime(long time) {
+        mCreateTime.setText(DateUtils.dateFormat(time, DateUtils.YYYY_MM_DD_HH_MM_SS));
     }
 
     void setBalances(long local, long remote, long capacity) {
