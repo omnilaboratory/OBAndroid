@@ -34,6 +34,7 @@ import java.util.Random;
 
 import javax.net.ssl.SSLException;
 
+import invoicesrpc.InvoicesOuterClass;
 import io.grpc.StatusRuntimeException;
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
@@ -197,6 +198,25 @@ public class ReceiveLuckyPacketDialog {
                                         mAlertDialog.findViewById(R.id.lv_lucky_packet_collected).setVisibility(View.VISIBLE);
                                         mAlertDialog.findViewById(R.id.layout_close).setVisibility(View.VISIBLE);
                                         showStepDesc(e.getMessage());
+                                        /**
+                                         * Used to delete a invoice.
+                                         * 删除发票
+                                         */
+                                        InvoicesOuterClass.CancelInvoiceMsg cancelInvoiceMsg = InvoicesOuterClass.CancelInvoiceMsg.newBuilder()
+                                                .setPaymentHash(resp.getRHash())
+                                                .build();
+                                        Obdmobile.invoicesCancelInvoice(cancelInvoiceMsg.toByteArray(), new Callback() {
+                                            @Override
+                                            public void onError(Exception e) {
+                                                LogUtils.e(TAG, "------------------invoicesCancelInvoiceOnError------------------" + e.getMessage());
+                                            }
+
+                                            @Override
+                                            public void onResponse(byte[] bytes) {
+                                                LogUtils.e(TAG, "------------------invoicesCancelInvoiceOnResponse------------------");
+                                                EventBus.getDefault().post(new CreateInvoiceEvent());
+                                            }
+                                        });
                                     }
                                 } finally {
                                     client.shutdown();

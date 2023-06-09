@@ -37,6 +37,9 @@ public class OpenChannelViewHolder extends ChannelViewHolder {
         // Set Logo
         setLogo(openChannelItem.getChannel().getAssetId());
 
+        // Set time
+        setTime(openChannelItem.getChannel().getCreateTime());
+
         setOnRootViewClickListener(openChannelItem, ChannelListItem.TYPE_OPEN_CHANNEL);
     }
 }

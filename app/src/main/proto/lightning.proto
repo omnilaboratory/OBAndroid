@@ -1561,6 +1561,7 @@ message Channel {
     // The counterparty's current asset balance in this channel
     int64 remote_asset_balance = 32;
     uint32 asset_id = 33;
+    uint32 create_time = 38;
 
     /*
     The amount calculated to be paid in fees for the current set of commitment
@@ -2588,7 +2589,7 @@ message PendingChannelsResponse {
         int64 btc_capacity = 3;
         int64 asset_capacity = 12;
         uint32 asset_id = 13;
-
+        uint32 create_time = 14;
         int64 local_balance = 4;
         int64 remote_balance = 5;
 

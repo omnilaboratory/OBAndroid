@@ -2,10 +2,10 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
         <shape>
-            <corners android:topLeftRadius="10dp"
-                android:topRightRadius="10dp"
-                android:bottomLeftRadius="10dp"
-                android:bottomRightRadius="10dp" />
+            <corners android:topLeftRadius="2dp"
+                android:topRightRadius="2dp"
+                android:bottomLeftRadius="2dp"
+                android:bottomRightRadius="2dp" />
             <gradient
                 android:startColor="#ff9d9e9d"
                 android:centerColor="#ff5a5d5a"
@@ -19,10 +19,10 @@
     <item android:id="@android:id/secondaryProgress">
         <clip>
             <shape>
-                <corners android:topLeftRadius="10dp"
-                    android:topRightRadius="10dp"
-                    android:bottomLeftRadius="10dp"
-                    android:bottomRightRadius="10dp" />
+                <corners android:topLeftRadius="2dp"
+                    android:topRightRadius="2dp"
+                    android:bottomLeftRadius="2dp"
+                    android:bottomRightRadius="2dp" />
                 <gradient
                     android:startColor="#FF4C49F4"
                     android:centerColor="#FF4C49F4"
@@ -38,10 +38,10 @@
         <clip>
             <shape>
                 <corners
-                    android:topLeftRadius="10dp"
-                    android:topRightRadius="10dp"
-                    android:bottomLeftRadius="10dp"
-                    android:bottomRightRadius="10dp"/>
+                    android:topLeftRadius="2dp"
+                    android:topRightRadius="2dp"
+                    android:bottomLeftRadius="2dp"
+                    android:bottomRightRadius="2dp"/>
                 <gradient
                     android:startColor="#FF06D78F"
                     android:centerColor="#FF06D78F"

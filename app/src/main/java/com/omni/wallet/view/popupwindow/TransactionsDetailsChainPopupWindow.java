@@ -66,7 +66,7 @@ public class TransactionsDetailsChainPopupWindow {
 
             DecimalFormat df = new DecimalFormat("0.00######");
             DecimalFormat df1 = new DecimalFormat("0.00");
-            if (item.getAmount() < 0) {
+            if (item.getAmount() <= 0) {
                 amountTv.setText(df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getAmount()).replace("-", ""))) + item.getTotalFees() + "";
                 totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
@@ -80,10 +80,14 @@ public class TransactionsDetailsChainPopupWindow {
                     statusTv.setText("Confirmed");
                 }
                 fromAddressTv.setText(User.getInstance().getWalletAddress(mContext));
-                if (item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & !item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
-                    toAddressTv.setText(item.getDestAddresses(1));
-                } else if (!item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                if (item.getDestAddressesCount() == 1) {
                     toAddressTv.setText(item.getDestAddresses(0));
+                } else {
+                    if (item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & !item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                        toAddressTv.setText(item.getDestAddresses(1));
+                    } else if (!item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                        toAddressTv.setText(item.getDestAddresses(0));
+                    }
                 }
             } else if (item.getAmount() > 0) {
                 amountTv.setText(df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
@@ -98,10 +102,14 @@ public class TransactionsDetailsChainPopupWindow {
                     typeIv.setImageResource(R.mipmap.icon_failed_green);
                     statusTv.setText("Confirmed");
                 }
-                if (item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & !item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
-                    fromAddressTv.setText(item.getDestAddresses(1));
-                } else if (!item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                if (item.getDestAddressesCount() == 1) {
                     fromAddressTv.setText(item.getDestAddresses(0));
+                } else {
+                    if (item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & !item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                        fromAddressTv.setText(item.getDestAddresses(1));
+                    } else if (!item.getDestAddresses(0).equals(User.getInstance().getWalletAddress(mContext)) & item.getDestAddresses(1).equals(User.getInstance().getWalletAddress(mContext))) {
+                        fromAddressTv.setText(item.getDestAddresses(0));
+                    }
                 }
                 toAddressTv.setText(User.getInstance().getWalletAddress(mContext));
             }

@@ -38,5 +38,8 @@ public abstract class PendingChannelViewHolder extends ChannelViewHolder {
 
         // Set logo
         setLogo(pendingChannel.getAssetId());
+
+        // Set time
+        setTime(pendingChannel.getCreateTime());
     }
 }

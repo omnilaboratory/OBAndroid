@@ -20,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.omni.wallet.R;
+import com.omni.wallet.baselibrary.utils.DateUtils;
 import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.StringUtils;
 import com.omni.wallet.baselibrary.utils.image.ImageUtils;
@@ -69,6 +70,7 @@ public class ChannelDetailsPopupWindow {
     private TextView mRemoteBalance;
     private TextView mRemoteBalanceUnit;
     private TextView mFundingTransaction;
+    private TextView mCreateTime;
     private TextView mNumberOfUpdates;
     private TextView mTimeLock;
     private TextView mActivity;
@@ -117,6 +119,7 @@ public class ChannelDetailsPopupWindow {
             mRemoteBalance = rootView.findViewById(R.id.tv_remote_amount);
             mRemoteBalanceUnit = rootView.findViewById(R.id.tv_remote_amount_unit);
             mFundingTransaction = rootView.findViewById(R.id.tv_funding_transaction);
+            mCreateTime = rootView.findViewById(R.id.tv_create_time);
             mNumberOfUpdates = rootView.findViewById(R.id.tv_number_of_updates);
             mTimeLock = rootView.findViewById(R.id.tv_time_lock);
             mActivity = rootView.findViewById(R.id.tv_activity);
@@ -232,6 +235,7 @@ public class ChannelDetailsPopupWindow {
         } else {
             mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_99000000_25);
         }
+        mCreateTime.setText(DateUtils.dateFormat(channel.getCreateTime(), DateUtils.YYYY_MM_DD_HH_MM_SS));
         mAnotherInfo.setVisibility(View.VISIBLE);
         // time lock
         long timeLockInSeconds = channel.getLocalConstraints().getCsvDelay() * 10 * 60;
@@ -243,7 +247,8 @@ public class ChannelDetailsPopupWindow {
         LightningOuterClass.PendingChannelsResponse.PendingOpenChannel pendingOpenChannel = LightningOuterClass.PendingChannelsResponse.PendingOpenChannel.parseFrom(channelString);
         setBasicInformation(pendingOpenChannel.getChannel().getAssetId(), pendingOpenChannel.getChannel().getRemoteNodePub(),
                 pendingOpenChannel.getChannel().getRemoteNodePub(),
-                pendingOpenChannel.getChannel().getChannelPoint());
+                pendingOpenChannel.getChannel().getChannelPoint(),
+                pendingOpenChannel.getChannel().getCreateTime());
         mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ec9a1e_25);
         if (pendingOpenChannel.getChannel().getAssetId() == 0) {
             setBalances(pendingOpenChannel.getChannel().getLocalBalance() / 1000, pendingOpenChannel.getChannel().getRemoteBalance() / 1000, pendingOpenChannel.getChannel().getBtcCapacity());
@@ -257,7 +262,8 @@ public class ChannelDetailsPopupWindow {
         LightningOuterClass.PendingChannelsResponse.WaitingCloseChannel waitingCloseChannel = LightningOuterClass.PendingChannelsResponse.WaitingCloseChannel.parseFrom(channelString);
         setBasicInformation(waitingCloseChannel.getChannel().getAssetId(), waitingCloseChannel.getChannel().getRemoteNodePub(),
                 waitingCloseChannel.getChannel().getRemoteNodePub(),
-                waitingCloseChannel.getChannel().getChannelPoint());
+                waitingCloseChannel.getChannel().getChannelPoint(),
+                waitingCloseChannel.getChannel().getCreateTime());
         mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ff0000_25);
         if (waitingCloseChannel.getChannel().getAssetId() == 0) {
             setBalances(waitingCloseChannel.getChannel().getLocalBalance() / 1000, waitingCloseChannel.getChannel().getRemoteBalance() / 1000, waitingCloseChannel.getChannel().getBtcCapacity());
@@ -271,7 +277,8 @@ public class ChannelDetailsPopupWindow {
         LightningOuterClass.PendingChannelsResponse.ClosedChannel pendingCloseChannel = LightningOuterClass.PendingChannelsResponse.ClosedChannel.parseFrom(channelString);
         setBasicInformation(pendingCloseChannel.getChannel().getAssetId(), pendingCloseChannel.getChannel().getRemoteNodePub(),
                 pendingCloseChannel.getChannel().getRemoteNodePub(),
-                pendingCloseChannel.getChannel().getChannelPoint());
+                pendingCloseChannel.getChannel().getChannelPoint(),
+                pendingCloseChannel.getChannel().getCreateTime());
         mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ff0000_25);
         if (pendingCloseChannel.getChannel().getAssetId() == 0) {
             setBalances(pendingCloseChannel.getChannel().getLocalBalance() / 1000, pendingCloseChannel.getChannel().getRemoteBalance() / 1000, pendingCloseChannel.getChannel().getBtcCapacity());
@@ -286,7 +293,8 @@ public class ChannelDetailsPopupWindow {
 
         setBasicInformation(forceClosedChannel.getChannel().getAssetId(), forceClosedChannel.getChannel().getRemoteNodePub(),
                 forceClosedChannel.getChannel().getRemoteNodePub(),
-                forceClosedChannel.getChannel().getChannelPoint());
+                forceClosedChannel.getChannel().getChannelPoint(),
+                forceClosedChannel.getChannel().getCreateTime());
         mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_ff0000_25);
         if (forceClosedChannel.getChannel().getAssetId() == 0) {
             setBalances(forceClosedChannel.getChannel().getLocalBalance() / 1000, forceClosedChannel.getChannel().getRemoteBalance() / 1000, forceClosedChannel.getChannel().getBtcCapacity());
@@ -296,7 +304,7 @@ public class ChannelDetailsPopupWindow {
         mAnotherInfo.setVisibility(View.GONE);
     }
 
-    private void setBasicInformation(@NonNull int assetId, @NonNull String remoteNodePublicKey, @NonNull String remotePubKey, @NonNull String channelPoint) {
+    private void setBasicInformation(@NonNull int assetId, @NonNull String remoteNodePublicKey, @NonNull String remotePubKey, @NonNull String channelPoint, @NonNull long createTime) {
         mRemoteName.setText(Wallet.getInstance().getNodeAliasFromPubKey(remoteNodePublicKey, mContext));
         mRemotePubkey.setText(remotePubKey);
         long mAssetId = assetId & 0xffffffffL;
@@ -313,6 +321,7 @@ public class ChannelDetailsPopupWindow {
             }
         }
         mFundingTransaction.setText(channelPoint.substring(0, channelPoint.indexOf(':')));
+        mCreateTime.setText(DateUtils.dateFormat(createTime, DateUtils.YYYY_MM_DD_HH_MM_SS));
     }
 
     private void setBalances(long local, long remote, long capacity) {

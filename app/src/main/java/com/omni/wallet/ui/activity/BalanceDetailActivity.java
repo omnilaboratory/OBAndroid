@@ -1317,7 +1317,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
         public void convert(ViewHolder holder, final int position, final LightningOuterClass.Transaction item) {
             holder.setText(R.id.tv_time, DateUtils.MonthDay(item.getTimeStamp() + ""));
             DecimalFormat df = new DecimalFormat("0.00######");
-            if (item.getAmount() < 0) {
+            if (item.getAmount() <= 0) {
                 holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
                 if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
                     holder.setText(R.id.tv_receiver, "PENDING");
