@@ -567,6 +567,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             List<LightningOuterClass.AssetTx> mData = new ArrayList<>();
                             mData.add(resp);
                             for (int i = 0; i < mData.size(); i++) {
+                                if (mData.get(i).getPropertyid() != assetId) {
+                                    return;
+                                }
                                 TransactionAssetEntity entity = new TransactionAssetEntity();
                                 entity.setBlockTime(mData.get(i).getBlocktime());
                                 entity.setList(Collections.singletonList(mData.get(i)));
@@ -955,6 +958,9 @@ public class BalanceDetailActivity extends AppBaseActivity {
                                     LightningOuterClass.AssetTx resp = LightningOuterClass.AssetTx.parseFrom(bytes);
                                     LogUtils.e(TAG, "------------------oB_GetOmniTransactionOnPendingResponse-----------------" + resp);
                                     if (StringUtils.isEmpty(String.valueOf(resp.getConfirmations())) || resp.getConfirmations() < 3) {
+                                        if (resp.getPropertyid() != assetId) {
+                                            return;
+                                        }
                                         mPendingTxsAssetData.add(resp);
                                     }
                                     mToBePaidNumTv.setText(mPendingTxsAssetData.size() + "");

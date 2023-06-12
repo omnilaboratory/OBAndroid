@@ -235,7 +235,7 @@ public class ChannelDetailsPopupWindow {
         } else {
             mStatusDot.setBackgroundResource(R.drawable.bg_btn_round_99000000_25);
         }
-        mCreateTime.setText(DateUtils.dateFormat(channel.getCreateTime(), DateUtils.YYYY_MM_DD_HH_MM_SS));
+        mCreateTime.setText(DateUtils.yearMonthDayHourMinSec(String.valueOf(channel.getCreateTime())));
         mAnotherInfo.setVisibility(View.VISIBLE);
         // time lock
         long timeLockInSeconds = channel.getLocalConstraints().getCsvDelay() * 10 * 60;
@@ -321,7 +321,7 @@ public class ChannelDetailsPopupWindow {
             }
         }
         mFundingTransaction.setText(channelPoint.substring(0, channelPoint.indexOf(':')));
-        mCreateTime.setText(DateUtils.dateFormat(createTime, DateUtils.YYYY_MM_DD_HH_MM_SS));
+        mCreateTime.setText(DateUtils.yearMonthDayHourMinSec(String.valueOf(createTime)));
     }
 
     private void setBalances(long local, long remote, long capacity) {
@@ -374,6 +374,7 @@ public class ChannelDetailsPopupWindow {
 
         LightningOuterClass.CloseChannelRequest closeChannelRequest = LightningOuterClass.CloseChannelRequest.newBuilder()
                 .setChannelPoint(point)
+                .setTargetConf(3)
                 .build();
         if (assetId == 0) {
             Obdmobile.closeChannel(closeChannelRequest.toByteArray(), new RecvStream() {
