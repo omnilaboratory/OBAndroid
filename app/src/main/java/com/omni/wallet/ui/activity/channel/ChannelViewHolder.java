@@ -75,7 +75,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setTime(long time) {
-        mCreateTime.setText(DateUtils.dateFormat(time, DateUtils.YYYY_MM_DD_HH_MM_SS));
+        mCreateTime.setText(DateUtils.yearMonthDayHourMinSec(String.valueOf(time)));
     }
 
     void setBalances(long local, long remote, long capacity) {

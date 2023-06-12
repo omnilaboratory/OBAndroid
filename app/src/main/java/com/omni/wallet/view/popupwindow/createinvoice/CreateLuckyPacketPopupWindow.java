@@ -111,6 +111,7 @@ public class CreateLuckyPacketPopupWindow {
     String qrCodeUrl;
     String qrCodeCotent;
     LoadingDialog mLoadingDialog;
+    long expiryTime = System.currentTimeMillis() / 1000 + 86400;
     // pay
     String lnInvoice;
     long payAmount;
@@ -332,6 +333,13 @@ public class CreateLuckyPacketPopupWindow {
                         ToastUtils.showToast(mContext, mContext.getString(R.string.enter_the_time));
                         return;
                     }
+                    if (timeType.equals("Minutes")) {
+                        expiryTime = System.currentTimeMillis() / 1000 + Integer.parseInt(timeInput) * 60;
+                    } else if (timeType.equals("Hours")) {
+                        expiryTime = System.currentTimeMillis() / 1000 + Integer.parseInt(timeInput) * 3600;
+                    } else if (timeType.equals("Days")) {
+                        expiryTime = System.currentTimeMillis() / 1000 + Integer.parseInt(timeInput) * 86400;
+                    }
                     mLoadingDialog.show();
                     try {
                         LuckPkClient client = new LuckPkClient(ConstantWithNetwork.getInstance(ConstantInOB.networkType).getBTC_HOST_ADDRESS(), 38332, mContext.getApplicationContext().getExternalFilesDir(null) + "/obd/tls.cert", mContext.getApplicationContext().getExternalFilesDir(null) + "/obd" + "/tls.key.pcks8");
@@ -343,6 +351,7 @@ public class CreateLuckyPacketPopupWindow {
                                         .setAmt((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000)))
                                         .setParts(Long.parseLong(numberInput))
                                         .setErrorCreateMsg(addressTv.getText().toString())
+                                        .setExpiredTimeSec(expiryTime)
                                         .build();
                             } else {
                                 payRequest = LuckPkOuterClass.LuckPk.newBuilder()
@@ -350,6 +359,7 @@ public class CreateLuckyPacketPopupWindow {
                                         .setAmt((long) (CalculateUtil.mul(Double.parseDouble(amountEdit.getText().toString()), 100000000)))
                                         .setParts(Long.parseLong(numberInput))
                                         .setErrorCreateMsg(addressTv.getText().toString())
+                                        .setExpiredTimeSec(expiryTime)
                                         .build();
                             }
                             try {

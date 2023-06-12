@@ -19,6 +19,8 @@ import com.omni.wallet.utils.PreventContinuousClicksUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -77,6 +79,12 @@ public class TransactionsAssetView extends LinearLayout {
         }
         setVisibility(VISIBLE);
         // 设置右边数据显示
+        Collections.sort(list, new Comparator<LightningOuterClass.AssetTx>() {
+            @Override
+            public int compare(LightningOuterClass.AssetTx o1, LightningOuterClass.AssetTx o2) {
+                return (int) (o2.getBlocktime() - o1.getBlocktime());
+            }
+        });
         mShowData.clear();
         mShowData.addAll(list);
         mAdapter.notifyDataSetChanged();

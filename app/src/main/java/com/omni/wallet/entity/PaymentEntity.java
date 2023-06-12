@@ -6,7 +6,7 @@ package com.omni.wallet.entity;
  * author: guoyalei
  * date: 2023/1/13
  */
-public class PaymentEntity {
+public class PaymentEntity implements Comparable<PaymentEntity> {
     private long assetId;
     private long date;
     private long amount;
@@ -42,5 +42,10 @@ public class PaymentEntity {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    @Override
+    public int compareTo(PaymentEntity o) {
+        return (int) (o.getDate() - this.getDate());
     }
 }

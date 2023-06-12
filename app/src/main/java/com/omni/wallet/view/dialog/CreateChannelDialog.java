@@ -872,7 +872,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            feeStr = resp.getFeeSat();
+                            feeStr = resp.getSatPerVbyte();
                             channelFeeTv.setText(feeStr + "");
                         }
                     });

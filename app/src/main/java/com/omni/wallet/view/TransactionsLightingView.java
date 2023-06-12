@@ -17,6 +17,7 @@ import com.omni.wallet.entity.PaymentEntity;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -74,6 +75,7 @@ public class TransactionsLightingView extends LinearLayout {
         }
         setVisibility(VISIBLE);
         // 设置右边数据显示
+        Collections.sort(list);
         mShowData.clear();
         mShowData.addAll(list);
         mAdapter.notifyDataSetChanged();
