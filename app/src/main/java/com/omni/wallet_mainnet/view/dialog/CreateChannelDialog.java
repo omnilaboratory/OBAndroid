@@ -80,6 +80,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
     private AlertDialog mAlertDialog;
     TextView localEdit;
     TextView channelAmountTv;
+    TextView maxAmountTv;
     TextView channelFeeTv;
     TextView feePerByteTv;
     SelectSpeedPopupWindow mSelectSpeedPopupWindow;
@@ -336,6 +337,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
         EditText channelAmountEdit = mAlertDialog.findViewById(R.id.edit_channel_amount);
         channelAmountEdit.addTextChangedListener(new DecimalInputTextWatcher(DecimalInputTextWatcher.Type.decimal, 8));
         channelAmountTv = mAlertDialog.findViewById(R.id.tv_channel_amount);
+        maxAmountTv = mAlertDialog.findViewById(R.id.tv_amount_max);
         channelFeeTv = mAlertDialog.findViewById(R.id.tv_channel_fee);
         feePerByteTv = mAlertDialog.findViewById(R.id.tv_fee_per_byte);
         Button amountUnitButton = mAlertDialog.findViewById(R.id.btn_amount_unit);
@@ -504,6 +506,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                             DecimalFormat df = new DecimalFormat("0.00######");
                             assetBalanceMax = df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000);
                         }
+                        maxAmountTv.setText(assetBalanceMax);
                         channelAmountEdit.setText("");
                         channelAmountTv.setText("0");
                         if (!StringUtils.isEmpty(channelAmountEdit.getText().toString())) {
@@ -516,6 +519,17 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     }
                 });
                 mSelectAssetUnitPopupWindow.show(v);
+            }
+        });
+        /**
+         * @描述: 增加MAX按钮的点击事件，点击将balance的值填入amount输入框中
+         * @Description: Add the click event of MAX button, click to fill the balance value into the amount input box
+         */
+        TextView maxTv = mAlertDialog.findViewById(R.id.tv_channel_max);
+        maxTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                channelAmountEdit.setText(assetBalanceMax);
             }
         });
         /**
@@ -915,6 +929,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                                 DecimalFormat df = new DecimalFormat("0.00######");
                                 assetBalanceMax = df.format(Double.parseDouble(String.valueOf(resp.getConfirmedBalance())) / 100000000);
                             }
+                            maxAmountTv.setText(assetBalanceMax);
                         }
                     });
                 } catch (InvalidProtocolBufferException e) {

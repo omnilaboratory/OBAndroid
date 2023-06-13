@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@color/color_D1123A50"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="@dimen/main_330"
+        android:layout_height="@dimen/main_370"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_white_rectangle_round_25">
+
+        <LinearLayout
+            android:id="@+id/layout_unlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:visibility="visible">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_pass_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_key"
+                        android:textSize="@dimen/text_18"
+                        android:text="@string/pwd_upper"
+                        android:layout_marginRight="@dimen/main_10"
+                        android:letterSpacing="0.25"/>
+
+                    <ImageView
+                        android:id="@+id/pass_info"
+                        android:layout_width="@dimen/main_24"
+                        android:layout_height="@dimen/main_24"
+                        android:src="@mipmap/icon_info_green"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_35">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <EditText
+                        android:id="@+id/password_input"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/main_30"
+                        android:hint="@string/create_pass_input_hit"
+                        android:background="@null"
+                        android:layout_marginRight="@dimen/main_10"
+                        android:textSize="@dimen/text_18"
+                        android:letterSpacing="0.25"
+                        android:textColor="@color/color_description_blue"
+                        android:textColorHint="@color/color_description_blue"
+                        android:inputType="textVisiblePassword"
+                        android:maxLines="1"
+                        android:imeOptions="actionDone"
+                        android:textAlignment="center"/>
+
+                    <ImageView
+                        android:id="@+id/pass_switch"
+                        android:layout_width="@dimen/main_24"
+                        android:layout_height="@dimen/main_24"
+                        android:src="@mipmap/icon_eye_close"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_30">
+
+                <LinearLayout
+                    android:id="@+id/btn_unlock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="@dimen/main_56"
+                        android:layout_height="@dimen/main_56"
+                        android:src="@mipmap/icon_chevron_up"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/unlock_uppre"
+                        android:letterSpacing="0.25"
+                        android:textSize="@dimen/text_18"
+                        android:textColor="@color/color_black"/>
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_wif"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_key"
+                android:textSize="@dimen/text_18"
+                android:text="WIF"
+                android:letterSpacing="0.25"/>
+
+            <TextView
+                android:id="@+id/tv_wif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_30"
+                android:layout_marginLeft="@dimen/main_30"
+                android:layout_marginRight="@dimen/main_30"
+                android:gravity="center"
+                android:letterSpacing="0.05"
+                android:text="unknown"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/text_16" />
+
+            <LinearLayout
+                android:id="@+id/iv_copy_wif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_50"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/main_36"
+                    android:layout_height="@dimen/main_36"
+                    android:src="@mipmap/icon_copy_green" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/main_5"
+                    android:letterSpacing="0.1"
+                    android:text="COPY WIF"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/text_16" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_30"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/main_56"
+            android:layout_height="@dimen/main_56"
+            android:src="@mipmap/icon_close_x_white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.25"
+            android:text="@string/close"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/text_16" />
+    </LinearLayout>
+</LinearLayout>
