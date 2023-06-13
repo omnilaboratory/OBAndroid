@@ -13,7 +13,8 @@ public class ToastUtils {
 
     //
     public static void showToast(Context context, CharSequence msg) {
-        CustomToast.showCenterShortToast(context, msg, 0);
+//        CustomToast.showCenterShortToast(context, msg, 0);
+        CustomToast.showCenterLongToast(context, msg, 0);
     }
 
     public static void showToast(Context context, int res) {

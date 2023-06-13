@@ -24,6 +24,7 @@ import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.entity.event.BackUpEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.channel.ChannelsActivity;
+import com.omni.wallet.view.dialog.ExportWifDialog;
 import com.omni.wallet.view.dialog.LoadingDialog;
 import com.omni.wallet.view.dialog.NewVersionDialog;
 import com.omni.wallet.view.dialog.UnlockDialog;
@@ -145,6 +146,15 @@ public class MenuPopupWindow {
                     ToastUtils.showToast(mContext, "Not yet open, please wait");
                 }
             });
+            // Export WIF
+            rootView.findViewById(R.id.layout_export_wif).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mMenuPopWindow.dismiss();
+                    ExportWifDialog mExportWifDialog = new ExportWifDialog(mContext);
+                    mExportWifDialog.show();
+                }
+            });
             // node_info
             rootView.findViewById(R.id.layout_node_info).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -154,7 +164,7 @@ public class MenuPopupWindow {
                     mNodeInfoPopupWindow.show(view, pubKey);
                 }
             });
-//            select directory
+            // select directory
             rootView.findViewById(R.id.backup_directory_select).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
