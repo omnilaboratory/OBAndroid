@@ -9,15 +9,15 @@
   "regtest": {
     "version": "0.1.0",
     "force": false,
-    "newFeature": "Lucky Packet\nDelegate invoice collection",
-    "optimization": "Issue 101\nIssue 102\nIssue 103",
-    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0/OBAndroid_testnet_0.1.0_beta.10_release.apk"
+    "newFeature": "First publish",
+    "optimization": "Not yet",
+    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0-testnet/OBAndroid_testnet_0.1.0_beta.10_release.apk"
   },
   "mainnet": {
-    "version": "0.1.2",
+    "version": "0.1.0",
     "force": false,
-    "newFeature": "1、New version update function again\n2、Add a new test coin again",
-    "optimization": "1、optimization one again\n2、optimization two again\n3、optimization three again",
-    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0/OBAndroid_mainnet_v0.1.2.apk"
+    "newFeature": "First publish",
+    "optimization": "Not yet",
+    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0-mainnet/OBAndroid_mainnet_v0.1.0.apk"
   }
 }
