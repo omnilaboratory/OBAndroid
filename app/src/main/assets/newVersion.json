@@ -1,10 +1,10 @@
 {
   "testnet": {
-    "version": "0.1.0",
+    "version": "0.1.1",
     "force": false,
-    "newFeature": "First publish",
-    "optimization": "Not yet",
-    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0-testnet/OBAndroid_testnet_0.1.0_beta.10_release.apk"
+    "newFeature": "Second publish",
+    "optimization": "Optimize the calculation of channel commitFee",
+    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.1-testnet/OBAndroid_testnet_v0.1.1.apk"
   },
   "regtest": {
     "version": "0.1.0",
@@ -14,10 +14,10 @@
     "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0-testnet/OBAndroid_testnet_0.1.0_beta.10_release.apk"
   },
   "mainnet": {
-    "version": "0.1.0",
+    "version": "0.1.1",
     "force": false,
-    "newFeature": "First publish",
-    "optimization": "Not yet",
-    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0-mainnet/OBAndroid_mainnet_v0.1.0.apk"
+    "newFeature": "Second publish",
+    "optimization": "Optimize the calculation of channel commitFee",
+    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.1-mainnet/OBAndroid_mainnet_v0.1.1.apk"
   }
 }
