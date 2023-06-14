@@ -6,8 +6,8 @@ ext {
             targetSdkVersion: 28,
             compileVersion  : 28,
             buildToolVersion: "28.0.3",
-            versionCode     : 1,
-            versionName     : "0.1.0"
+            versionCode     : 2,
+            versionName     : "0.1.1"
     ]
     // 依赖相关版本控制
     depVersion = [
