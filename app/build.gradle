@@ -63,9 +63,9 @@ android {
                 variant.outputs.all {
                     if (outputFileName.endsWith('.apk')) {
                         if ("debug".equalsIgnoreCase(variant.buildType.name)) {
-                            outputFileName = "OBAndroid_testnet_${defaultConfig.versionName}_beta.10_test.apk"
+                            outputFileName = "OBAndroid_testnet_v${defaultConfig.versionName}_test.apk"
                         } else if ("release".equalsIgnoreCase(variant.buildType.name)) {
-                            outputFileName = "OBAndroid_testnet_${defaultConfig.versionName}_beta.10_release.apk"
+                            outputFileName = "OBAndroid_testnet_v${defaultConfig.versionName}.apk"
                         }
                     }
                 }
@@ -82,9 +82,9 @@ android {
                 variant.outputs.all {
                     if (outputFileName.endsWith('.apk')) {
                         if ("debug".equalsIgnoreCase(variant.buildType.name)) {
-                            outputFileName = "OBAndroid_testnet_${defaultConfig.versionName}_beta.10_test.apk"
+                            outputFileName = "OBAndroid_testnet_v${defaultConfig.versionName}_test.apk"
                         } else if ("release".equalsIgnoreCase(variant.buildType.name)) {
-                            outputFileName = "OBAndroid_testnet_${defaultConfig.versionName}_beta.10_release.apk"
+                            outputFileName = "OBAndroid_testnet_v${defaultConfig.versionName}.apk"
                         }
                     }
                 }
