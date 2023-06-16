@@ -8,7 +8,7 @@ import com.omni.wallet_mainnet.framelibrary.entity.BaseListEntity;
  * author: guoyalei
  * date: 2022/11/2
  */
-public class ListAssetItemEntity extends BaseListEntity {
+public class ListAssetItemEntity extends BaseListEntity implements Comparable<ListAssetItemEntity> {
     private long amount;
     private long propertyid;
     private int type;
@@ -35,5 +35,10 @@ public class ListAssetItemEntity extends BaseListEntity {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    @Override
+    public int compareTo(ListAssetItemEntity o) {
+        return (int) (o.getPropertyid() - this.getPropertyid());
     }
 }
