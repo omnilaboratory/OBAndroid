@@ -1,10 +1,10 @@
 {
   "testnet": {
-    "version": "0.1.1",
+    "version": "0.1.2",
     "force": false,
-    "newFeature": "Second publish",
-    "optimization": "Optimize the calculation of channel commitFee",
-    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.1-testnet/OBAndroid_testnet_v0.1.1.apk"
+    "newFeature": "Third publish",
+    "optimization": "Fix the problem that the asset list display is garbled.",
+    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.2-testnet/OBAndroid_testnet_v0.1.2.apk"
   },
   "regtest": {
     "version": "0.1.0",
@@ -14,10 +14,10 @@
     "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0-testnet/OBAndroid_testnet_0.1.0_beta.10_release.apk"
   },
   "mainnet": {
-    "version": "0.1.1",
+    "version": "0.1.2",
     "force": false,
-    "newFeature": "Second publish",
-    "optimization": "Optimize the calculation of channel commitFee",
-    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.1-mainnet/OBAndroid_mainnet_v0.1.1.apk"
+    "newFeature": "Third publish",
+    "optimization": "Fix the problem that the asset list display is garbled.",
+    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.2-mainnet/OBAndroid_mainnet_v0.1.2.apk"
   }
 }
