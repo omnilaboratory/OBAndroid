@@ -519,20 +519,26 @@ public class AccountLightningActivity extends AppBaseActivity {
                     LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
                     if (ConstantInOB.networkType == NetworkType.TEST) {
-                        for (int i = 0; i < resp.getListList().size(); i++) {
-                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("2147485160")) {
+                        List list = new ArrayList();
+                        for (lnrpc.LightningOuterClass.AssetBalanceByAddressResponse response : resp.getListList()) {
+                            list.add(response.getPropertyid());
+                            if (!list.contains(Long.parseLong("2147485160"))) {
                                 setDefaultData();
                             }
                         }
                     } else if (ConstantInOB.networkType == NetworkType.REG) {
-                        for (int i = 0; i < resp.getListList().size(); i++) {
-                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("2147483651")) {
+                        List list = new ArrayList();
+                        for (lnrpc.LightningOuterClass.AssetBalanceByAddressResponse response : resp.getListList()) {
+                            list.add(response.getPropertyid());
+                            if (!list.contains(Long.parseLong("2147483651"))) {
                                 setDefaultData();
                             }
                         }
                     } else { //mainnet
-                        for (int i = 0; i < resp.getListList().size(); i++) {
-                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("31")) {
+                        List list = new ArrayList();
+                        for (lnrpc.LightningOuterClass.AssetBalanceByAddressResponse response : resp.getListList()) {
+                            list.add(response.getPropertyid());
+                            if (!list.contains(Long.parseLong("31"))) {
                                 setDefaultData();
                             }
                         }
@@ -546,7 +552,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                         blockData.add(entity);
                         getChannelBalance(resp.getListList().get(i).getPropertyid());
                     }
-                    allData.addAll(blockData);
+//                    allData.addAll(blockData);
                     runOnUiThread(() -> mAdapter.notifyDataSetChanged());
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
@@ -627,7 +633,16 @@ public class AccountLightningActivity extends AppBaseActivity {
                             entity.setPropertyid(propertyid);
                             entity.setType(2);
                             lightningData.add(entity);
-                            allData.addAll(lightningData);
+                            for (int i = 0; i < blockData.size(); i++) {
+                                for (int j = 0; j < lightningData.size(); j++) {
+                                    if (blockData.get(i).getPropertyid() == lightningData.get(j).getPropertyid()) {
+                                        allData.add(blockData.get(i));
+                                        allData.add(lightningData.get(j));
+                                    }
+                                }
+                            }
+                            Collections.sort(allData.subList(2, allData.size()));
+//                            allData.addAll(lightningData);
                             runOnUiThread(() -> mAdapter.notifyDataSetChanged());
                             if (mRefreshLayout != null) {
                                 mRefreshLayout.stopRefresh();

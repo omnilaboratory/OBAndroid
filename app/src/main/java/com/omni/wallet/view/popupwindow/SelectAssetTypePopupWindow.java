@@ -146,20 +146,26 @@ public class SelectAssetTypePopupWindow {
                     LightningOuterClass.AssetsBalanceByAddressResponse resp = LightningOuterClass.AssetsBalanceByAddressResponse.parseFrom(bytes);
                     LogUtils.e(TAG, "------------------assetsBalanceOnResponse------------------" + resp.getListList().toString());
                     if (ConstantInOB.networkType == NetworkType.TEST) {
-                        for (int i = 0; i < resp.getListList().size(); i++) {
-                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("2147485160")) {
+                        List list = new ArrayList();
+                        for (lnrpc.LightningOuterClass.AssetBalanceByAddressResponse response : resp.getListList()) {
+                            list.add(response.getPropertyid());
+                            if (!list.contains(Long.parseLong("2147485160"))) {
                                 setDefaultData();
                             }
                         }
                     } else if (ConstantInOB.networkType == NetworkType.REG) {
-                        for (int i = 0; i < resp.getListList().size(); i++) {
-                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("2147483651")) {
+                        List list = new ArrayList();
+                        for (lnrpc.LightningOuterClass.AssetBalanceByAddressResponse response : resp.getListList()) {
+                            list.add(response.getPropertyid());
+                            if (!list.contains(Long.parseLong("2147483651"))) {
                                 setDefaultData();
                             }
                         }
                     } else { //mainnet
-                        for (int i = 0; i < resp.getListList().size(); i++) {
-                            if (resp.getListList().get(i).getPropertyid() != Long.parseLong("31")) {
+                        List list = new ArrayList();
+                        for (lnrpc.LightningOuterClass.AssetBalanceByAddressResponse response : resp.getListList()) {
+                            list.add(response.getPropertyid());
+                            if (!list.contains(Long.parseLong("31"))) {
                                 setDefaultData();
                             }
                         }
