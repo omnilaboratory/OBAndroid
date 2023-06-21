@@ -138,7 +138,7 @@ public abstract class BaseWebViewActivity extends AppBaseActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 //        // 友盟QQ分享的回调
 //        UMUtils.with(this).onActivityResult(requestCode, resultCode, data);

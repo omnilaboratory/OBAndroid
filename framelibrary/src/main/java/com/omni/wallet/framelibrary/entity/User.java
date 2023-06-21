@@ -114,6 +114,12 @@ public class User {
 
     private boolean isBackUp;
 
+    private boolean isAutoBackUp;
+
+    private String googleAccountName;
+
+    private String googleAccountType;
+
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
         return token;
@@ -609,5 +615,34 @@ public class User {
     public void setBackUp(Context context, boolean isBackUp) {
         PreferencesUtils.saveBackUp(context, isBackUp);
         this.isBackUp = isBackUp;
+    }
+    public boolean isAutoBackUp(Context context){
+        isAutoBackUp = PreferencesUtils.getAutoBackUp(context);
+        return isAutoBackUp;
+    }
+
+    public void setAutoBackUp(Context context, boolean isAutoBackUp) {
+        PreferencesUtils.saveAutoBackUp(context, isAutoBackUp);
+        this.isAutoBackUp = isAutoBackUp;
+    }
+
+    public String getGoogleAccountName(Context context) {
+        googleAccountName = PreferencesUtils.getGoogleAccountNameFromLocal(context);
+        return googleAccountName;
+    }
+
+    public void setGoogleAccountName(Context context, String googleAccountName) {
+        PreferencesUtils.saveGoogleAccountNameToLocal(context, googleAccountName);
+        this.googleAccountName = googleAccountName;
+    }
+
+    public String getGoogleAccountType(Context context) {
+        googleAccountType = PreferencesUtils.getGoogleAccountTypeFromLocal(context);
+        return googleAccountType;
+    }
+
+    public void setGoogleAccountType(Context context, String googleAccountType) {
+        PreferencesUtils.saveGoogleAccountTypeToLocal(context, googleAccountType);
+        this.googleAccountType = googleAccountType;
     }
 }

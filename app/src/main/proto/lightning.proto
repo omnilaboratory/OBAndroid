@@ -135,6 +135,7 @@ service Lightning {
     rpc SendCoins (SendCoinsRequest) returns (SendCoinsResponse);
 
     rpc OB_SendCoinsFrom (SendCoinsFromRequest) returns (SendCoinsResponse);
+    rpc OB_MintNft (MintNftRequest) returns (SendCoinsResponse);
 
     /* lncli: `listunspent`
     Deprecated, use walletrpc.ListUnspent instead.
@@ -582,6 +583,9 @@ service Lightning {
     */
     rpc SubscribeChannelBackups (ChannelBackupSubscription)
         returns (stream ChanBackupSnapshot);
+
+    rpc SubscribeChannelChange (ChannelBackupSubscription)
+        returns (stream SubscribeChannelChangeRes);
 
     /* lncli: `bakemacaroon`
     BakeMacaroon allows the creation of a new macaroon with custom read and
@@ -1278,6 +1282,36 @@ message SendCoinsFromRequest {
 
     // Whether unconfirmed outputs should be used as inputs for the transaction.
     bool spend_unconfirmed = 9;
+}
+
+message MintNftRequest {
+    // The address to send nft to
+    string addr = 1;
+
+    // The target number of blocks that this transaction should be confirmed
+    // by.
+    int32 target_conf = 3;
+
+    // A manual fee rate set in sat/vbyte that should be used when crafting the
+    // transaction.
+    uint64 sat_per_vbyte = 4;
+
+    // Deprecated, use sat_per_vbyte.
+    // A manual fee rate set in sat/vbyte that should be used when crafting the
+    // transaction.
+    int64 sat_per_byte = 5 [deprecated = true];
+
+    // An optional label for the transaction, limited to 500 characters.
+    string label = 7;
+
+    // The minimum number of confirmations each one of your outputs used for
+    // the transaction must satisfy.
+    int32 min_confs = 8;
+
+    // Whether unconfirmed outputs should be used as inputs for the transaction.
+    bool spend_unconfirmed = 9;
+
+    string nftFilePath = 10;
 }
 
 message SendCoinsRequest {
@@ -4329,6 +4363,9 @@ message ChanBackupSnapshot {
     lnd.
     */
     MultiChanBackup multi_chan_backup = 2;
+}
+message SubscribeChannelChangeRes {
+    string Res = 1;
 }
 
 message ChannelBackups {

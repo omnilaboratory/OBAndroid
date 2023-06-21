@@ -64,6 +64,7 @@ public class PayInvoiceDialog {
     private AlertDialog mAlertDialog;
     String mAddress;
     long mAssetId;
+    int mTag;
     String toNodeAddress;
     long payAmount;
     String lnInvoice;
@@ -93,6 +94,7 @@ public class PayInvoiceDialog {
         mLoadingDialog = new LoadingDialog(mContext);
         mAddress = address;
         mAssetId = assetId;
+        mTag = tag;
         showStepOne(invoiceAddr, tag);
         /**
          * @备注： 点击cancel 按钮
@@ -538,7 +540,9 @@ public class PayInvoiceDialog {
                                             @Override
                                             public void run() {
                                                 updateInvoiceList();
-                                                EventBus.getDefault().post(new PayInvoiceSuccessEvent());
+                                                PayInvoiceSuccessEvent event = new PayInvoiceSuccessEvent();
+                                                event.setTag(mTag);
+                                                EventBus.getDefault().post(event);
                                                 mLoadingDialog.dismiss();
                                                 // updated the history, so it is shown the next time the user views it
                                                 mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
@@ -596,7 +600,9 @@ public class PayInvoiceDialog {
                                                                     LogUtils.e(TAG, "------------------routerOB_SendPaymentV2OnResponse-----------------" + resp);
                                                                     if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.SUCCEEDED) {
                                                                         updateInvoiceList();
-                                                                        EventBus.getDefault().post(new PayInvoiceSuccessEvent());
+                                                                        PayInvoiceSuccessEvent event = new PayInvoiceSuccessEvent();
+                                                                        event.setTag(mTag);
+                                                                        EventBus.getDefault().post(event);
                                                                         mLoadingDialog.dismiss();
                                                                         mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
                                                                         mAlertDialog.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);
@@ -691,7 +697,9 @@ public class PayInvoiceDialog {
                                         LogUtils.e(TAG, "------------------noRouterOB_SendPaymentV2OnResponse-----------------" + resp);
                                         if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.SUCCEEDED) {
                                             updateInvoiceList();
-                                            EventBus.getDefault().post(new PayInvoiceSuccessEvent());
+                                            PayInvoiceSuccessEvent event = new PayInvoiceSuccessEvent();
+                                            event.setTag(mTag);
+                                            EventBus.getDefault().post(event);
                                             mLoadingDialog.dismiss();
                                             mAlertDialog.findViewById(R.id.lv_pay_invoice_step_two).setVisibility(View.GONE);
                                             mAlertDialog.findViewById(R.id.lv_pay_invoice_step_three).setVisibility(View.VISIBLE);

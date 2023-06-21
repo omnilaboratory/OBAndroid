@@ -43,8 +43,10 @@ import com.omni.wallet.common.ConstantWithNetwork;
 import com.omni.wallet.common.NetworkType;
 import com.omni.wallet.entity.event.BackUpEvent;
 import com.omni.wallet.entity.event.CloseChannelEvent;
+import com.omni.wallet.entity.event.PayInvoiceSuccessEvent;
 import com.omni.wallet.entity.event.RebootEvent;
 import com.omni.wallet.entity.event.ScanResultEvent;
+import com.omni.wallet.entity.event.SubscribeChannelChangeEvent;
 import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.ScanActivity;
 import com.omni.wallet.ui.activity.UnlockActivity;
@@ -502,6 +504,22 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     }
 
     /**
+     * 支付发票成功的消息通知监听
+     * Message notification monitoring after pay invoice success
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPayInvoiceSuccessEvent(PayInvoiceSuccessEvent event) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (event.getTag() == 3) {
+                    autoBackupFiles();
+                }
+            }
+        });
+    }
+
+    /**
      * 关闭通道后的消息通知监听
      * Message notification monitoring after open channel
      */
@@ -521,31 +539,56 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSubscribeChannelChangeEvent(SubscribeChannelChangeEvent event) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                String runningActivityName = getRunningActivityName();
+                String[] runningActivityNameArr = runningActivityName.split("\\.");
+                String name = runningActivityNameArr[5];
+                switch (name) {
+                    case "channel":
+                        if (User.getInstance().isAutoBackUp(mContext) == false) {
+                            autoBackupFiles();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBackUpEventEvent(BackUpEvent event) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 if (event.getCode() == 3) {
-                    File walletPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db");
-                    File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db");
-                    String storagePath = Environment.getExternalStorageDirectory() + "/OBBackupFiles";
-                    File toWalletPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/wallet.db");
-                    File toChannelPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/channel.db");
-                    if (walletPath.exists() && channelPath.exists()) {
-                        // 本地备份(Local backup)
-                        MoveCacheFileToFileObd.createDirs(storagePath);
-                        MoveCacheFileToFileObd.copyFile(walletPath, toWalletPath);
-                        MoveCacheFileToFileObd.copyFile(channelPath, toChannelPath);
-                        MoveCacheFileToFileObd.createFile(storagePath + "/address.txt", User.getInstance().getWalletAddress(mContext));
-                        // Authenticate the user. For most apps, this should be done when the user performs an
-                        // action that requires Drive access rather than in onCreate.
-                        requestSignIn();
-                    } else {
-                        ToastUtils.showToast(mContext, "The backup file does not exist");
-                    }
+                    backupFiles();
                 }
             }
         });
+    }
+
+    private void backupFiles() {
+        File walletPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db");
+        File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db");
+        String storagePath = Environment.getExternalStorageDirectory() + "/OBBackupFiles";
+        File toWalletPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/wallet.db");
+        File toChannelPath = new File(Environment.getExternalStorageDirectory() + "/OBBackupFiles/channel.db");
+        if (walletPath.exists() && channelPath.exists()) {
+            // 本地备份(Local backup)
+            MoveCacheFileToFileObd.createDirs(storagePath);
+            MoveCacheFileToFileObd.copyFile(walletPath, toWalletPath);
+            MoveCacheFileToFileObd.copyFile(channelPath, toChannelPath);
+            MoveCacheFileToFileObd.createFile(storagePath + "/address.txt", User.getInstance().getWalletAddress(mContext));
+            // Authenticate the user. For most apps, this should be done when the user performs an
+            // action that requires Drive access rather than in onCreate.
+            requestSignIn();
+        } else {
+            ToastUtils.showToast(mContext, "The backup file does not exist");
+        }
     }
 
     /**
@@ -579,8 +622,7 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
     }
 
     /**
-     * Handles the {@code result} of a completed sign-in activity initiated from {@link
-     * #requestSignIn()}.
+     * Handles the {@code result} of a completed sign-in activity initiated from requestSignIn.
      */
     private void handleSignInResult(Intent result) {
         GoogleSignIn.getSignedInAccountFromIntent(result)
@@ -592,6 +634,8 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
                             GoogleAccountCredential.usingOAuth2(
                                     this, Collections.singleton(DriveScopes.DRIVE_FILE));
                     credential.setSelectedAccount(googleAccount.getAccount());
+                    User.getInstance().setGoogleAccountName(mContext, googleAccount.getAccount().name);
+                    User.getInstance().setGoogleAccountType(mContext, googleAccount.getAccount().type);
                     Drive googleDriveService =
                             new Drive.Builder(
                                     AndroidHttp.newCompatibleTransport(),
