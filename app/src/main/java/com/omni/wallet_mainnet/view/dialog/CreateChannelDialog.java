@@ -653,7 +653,7 @@ public class CreateChannelDialog implements Wallet.ScanChannelListener {
                     .setNodePubkey(ByteString.copyFrom(nodeKeyBytes))
                     .setTargetConf(time)
                     .setPrivate(false)
-                    .setLocalFundingBtcAmount(20000)
+                    .setLocalFundingBtcAmount(40000)
                     .setLocalFundingAssetAmount((long) (CalculateUtil.mul(Double.parseDouble(assetBalance), 100000000)))
                     .setAssetId((int) assetId)
                     .build();

@@ -72,6 +72,7 @@ import com.omni.wallet_mainnet.entity.event.ScanResultEvent;
 import com.omni.wallet_mainnet.entity.event.SelectAccountEvent;
 import com.omni.wallet_mainnet.entity.event.SendSuccessEvent;
 import com.omni.wallet_mainnet.entity.event.StartNodeEvent;
+import com.omni.wallet_mainnet.entity.event.SubscribeChannelChangeEvent;
 import com.omni.wallet_mainnet.entity.event.UpdateAssetsDataEvent;
 import com.omni.wallet_mainnet.entity.event.UpdateBalanceEvent;
 import com.omni.wallet_mainnet.framelibrary.entity.User;
@@ -115,6 +116,7 @@ import butterknife.OnClick;
 import lnrpc.LightningOuterClass;
 import obdmobile.Callback;
 import obdmobile.Obdmobile;
+import obdmobile.RecvStream;
 
 public class AccountLightningActivity extends AppBaseActivity {
     private static final String TAG = AccountLightningActivity.class.getSimpleName();
@@ -1070,6 +1072,14 @@ public class AccountLightningActivity extends AppBaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPayInvoiceSuccessEvent(PayInvoiceSuccessEvent event) {
         getAssetAndBtcData();
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (event.getTag() == 1) {
+                    autoBackupFiles();
+                }
+            }
+        });
     }
 
     /**
@@ -1159,6 +1169,7 @@ public class AccountLightningActivity extends AppBaseActivity {
                         isRequest = true;
                         User.getInstance().setUserId(mContext, "1");
                         User.getInstance().setBackUp(mContext, true);
+                        subscribeChannelChange();
                     }
                 });
                 if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
@@ -1205,32 +1216,77 @@ public class AccountLightningActivity extends AppBaseActivity {
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
     }
 
+    private void subscribeChannelChange() {
+        LightningOuterClass.ChannelBackupSubscription channelBackupSubscription = LightningOuterClass.ChannelBackupSubscription.newBuilder().build();
+        Obdmobile.subscribeChannelChange(channelBackupSubscription.toByteArray(), new RecvStream() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                LogUtils.e(TAG, "subscribeChannelChange");
+                User.getInstance().setAutoBackUp(mContext, false);
+                EventBus.getDefault().post(new SubscribeChannelChangeEvent());
+            }
+        });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSubscribeChannelChangeEvent(SubscribeChannelChangeEvent event) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                String runningActivityName = getRunningActivityName();
+                String[] runningActivityNameArr = runningActivityName.split("\\.");
+                String name = runningActivityNameArr[5];
+                switch (name) {
+                    case "AccountLightningActivity":
+                        if (User.getInstance().isAutoBackUp(mContext) == false) {
+                            autoBackupFiles();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBackUpEventEvent(BackUpEvent event) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 if (event.getCode() == 1) {
-                    File walletPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db");
-                    File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db");
-                    String storagePath = Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles";
-                    File toWalletPath = new File(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/wallet.db");
-                    File toChannelPath = new File(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/channel.db");
-                    if (walletPath.exists() && channelPath.exists()) {
-                        // 本地备份(Local backup)
-                        MoveCacheFileToFileObd.createDirs(storagePath);
-                        MoveCacheFileToFileObd.copyFile(walletPath, toWalletPath);
-                        MoveCacheFileToFileObd.copyFile(channelPath, toChannelPath);
-                        MoveCacheFileToFileObd.createFile(storagePath + "/address.txt", User.getInstance().getWalletAddress(mContext));
-                        // Authenticate the user. For most apps, this should be done when the user performs an
-                        // action that requires Drive access rather than in onCreate.
-                        requestSignIn();
-                    } else {
-                        ToastUtils.showToast(mContext, "The backup file does not exist");
-                    }
+                    backupFiles();
                 }
             }
         });
+    }
+
+    private void backupFiles() {
+        File walletPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db");
+        File channelPath = new File(mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db");
+        String storagePath = Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles";
+        File toWalletPath = new File(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/wallet.db");
+        File toChannelPath = new File(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/channel.db");
+        if (walletPath.exists() && channelPath.exists()) {
+            // 本地备份(Local backup)
+            MoveCacheFileToFileObd.createDirs(storagePath);
+            MoveCacheFileToFileObd.copyFile(walletPath, toWalletPath);
+            MoveCacheFileToFileObd.copyFile(channelPath, toChannelPath);
+            MoveCacheFileToFileObd.createFile(storagePath + "/address.txt", User.getInstance().getWalletAddress(mContext));
+            // Authenticate the user. For most apps, this should be done when the user performs an
+            // action that requires Drive access rather than in onCreate.
+            requestSignIn();
+        } else {
+            ToastUtils.showToast(mContext, "The backup file does not exist");
+        }
     }
 
     /**
@@ -1264,8 +1320,7 @@ public class AccountLightningActivity extends AppBaseActivity {
     }
 
     /**
-     * Handles the {@code result} of a completed sign-in activity initiated from {@link
-     * #requestSignIn()}.
+     * Handles the {@code result} of a completed sign-in activity initiated from requestSignIn.
      */
     private void handleSignInResult(Intent result) {
         GoogleSignIn.getSignedInAccountFromIntent(result)
@@ -1277,6 +1332,8 @@ public class AccountLightningActivity extends AppBaseActivity {
                             GoogleAccountCredential.usingOAuth2(
                                     this, Collections.singleton(DriveScopes.DRIVE_FILE));
                     credential.setSelectedAccount(googleAccount.getAccount());
+                    User.getInstance().setGoogleAccountName(mContext, googleAccount.getAccount().name);
+                    User.getInstance().setGoogleAccountType(mContext, googleAccount.getAccount().type);
                     Drive googleDriveService =
                             new Drive.Builder(
                                     AndroidHttp.newCompatibleTransport(),

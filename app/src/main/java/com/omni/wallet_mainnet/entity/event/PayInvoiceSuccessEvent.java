@@ -7,4 +7,13 @@ package com.omni.wallet_mainnet.entity.event;
  * date: 2022/11/27
  */
 public class PayInvoiceSuccessEvent {
+    private int tag;
+
+    public int getTag() {
+        return tag;
+    }
+
+    public void setTag(int tag) {
+        this.tag = tag;
+    }
 }

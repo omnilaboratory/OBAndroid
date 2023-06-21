@@ -114,6 +114,12 @@ public class User {
 
     private boolean isBackUp;
 
+    private boolean isAutoBackUp;
+
+    private String googleAccountName;
+
+    private String googleAccountType;
+
     public String getToken(Context context) {
         token = PreferencesUtils.getTokenFromLocal(context);
         return token;
@@ -497,7 +503,7 @@ public class User {
         this.balanceAmount = balanceAmount;
     }
 
-    public String getNewPasswordMd5(Context context){
+    public String getNewPasswordMd5(Context context) {
         newPassMd5String = PreferencesUtils.getNewPassMd5String(context);
         if (newPassMd5String == null) {
             newPassMd5String = "";
@@ -510,7 +516,7 @@ public class User {
         this.newPassMd5String = newPassMd5String;
     }
 
-    public boolean isHeaderBinChecked(Context context){
+    public boolean isHeaderBinChecked(Context context) {
         headerBinChecked = PreferencesUtils.getHeaderBinChecked(context);
         return headerBinChecked;
     }
@@ -520,7 +526,7 @@ public class User {
         this.headerBinChecked = headerBinChecked;
     }
 
-    public boolean isFilterHeaderBinChecked(Context context){
+    public boolean isFilterHeaderBinChecked(Context context) {
         filterHeaderBinChecked = PreferencesUtils.getFilterHeaderBinChecked(context);
         return filterHeaderBinChecked;
     }
@@ -530,7 +536,7 @@ public class User {
         this.filterHeaderBinChecked = filterHeaderBinChecked;
     }
 
-    public boolean isNeutrinoDbChecked(Context context){
+    public boolean isNeutrinoDbChecked(Context context) {
         neutrinoDbChecked = PreferencesUtils.getNeutrinoDbChecked(context);
         return neutrinoDbChecked;
     }
@@ -601,7 +607,7 @@ public class User {
         return isSeedStringSecreted;
     }
 
-    public boolean isBackUp(Context context){
+    public boolean isBackUp(Context context) {
         isBackUp = PreferencesUtils.getBackUp(context);
         return isBackUp;
     }
@@ -609,5 +615,35 @@ public class User {
     public void setBackUp(Context context, boolean isBackUp) {
         PreferencesUtils.saveBackUp(context, isBackUp);
         this.isBackUp = isBackUp;
+    }
+
+    public boolean isAutoBackUp(Context context) {
+        isAutoBackUp = PreferencesUtils.getAutoBackUp(context);
+        return isAutoBackUp;
+    }
+
+    public void setAutoBackUp(Context context, boolean isAutoBackUp) {
+        PreferencesUtils.saveAutoBackUp(context, isAutoBackUp);
+        this.isAutoBackUp = isAutoBackUp;
+    }
+
+    public String getGoogleAccountName(Context context) {
+        googleAccountName = PreferencesUtils.getGoogleAccountNameFromLocal(context);
+        return googleAccountName;
+    }
+
+    public void setGoogleAccountName(Context context, String googleAccountName) {
+        PreferencesUtils.saveGoogleAccountNameToLocal(context, googleAccountName);
+        this.googleAccountName = googleAccountName;
+    }
+
+    public String getGoogleAccountType(Context context) {
+        googleAccountType = PreferencesUtils.getGoogleAccountTypeFromLocal(context);
+        return googleAccountType;
+    }
+
+    public void setGoogleAccountType(Context context, String googleAccountType) {
+        PreferencesUtils.saveGoogleAccountTypeToLocal(context, googleAccountType);
+        this.googleAccountType = googleAccountType;
     }
 }

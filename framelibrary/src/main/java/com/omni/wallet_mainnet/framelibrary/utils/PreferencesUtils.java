@@ -63,6 +63,9 @@ public class PreferencesUtils extends BasePreferencesUtils {
     private static final String WALLET_INFO_MOVED = "walletInfoMoved";
     private static final String SEED_STRING_SECRETED = "seedStringSecreted";
     private static final String KEY_BACKUP = "backupKey";
+    private static final String KEY_AUTO_BACKUP = "autoBackupKey";
+    private static final String KEY_GOOGLE_ACCOUNT_NAME = "googleAccountNameKey";
+    private static final String KEY_GOOGLE_ACCOUNT_TYPE = "googleAccountTypeKey";
 
     /**
      * 版本信息本地化
@@ -567,5 +570,29 @@ public class PreferencesUtils extends BasePreferencesUtils {
 
     public static boolean getBackUp(Context context) {
         return getBoolean(SETTINGS,context,KEY_BACKUP);
+    }
+
+    public static void saveAutoBackUp(Context context, boolean value) {
+        putBoolean(SETTINGS, context, KEY_AUTO_BACKUP, value);
+    }
+
+    public static boolean getAutoBackUp(Context context) {
+        return getBoolean(SETTINGS, context, KEY_AUTO_BACKUP);
+    }
+
+    public static String getGoogleAccountNameFromLocal(Context context) {
+        return getString(SETTINGS, context, KEY_GOOGLE_ACCOUNT_NAME);
+    }
+
+    public static void saveGoogleAccountNameToLocal(Context context, String value) {
+        putString(SETTINGS, context, KEY_GOOGLE_ACCOUNT_NAME, value);
+    }
+
+    public static String getGoogleAccountTypeFromLocal(Context context) {
+        return getString(SETTINGS, context, KEY_GOOGLE_ACCOUNT_TYPE);
+    }
+
+    public static void saveGoogleAccountTypeToLocal(Context context, String value) {
+        putString(SETTINGS, context, KEY_GOOGLE_ACCOUNT_TYPE, value);
     }
 }

@@ -553,7 +553,9 @@ public class CreateLuckyPacketPopupWindow {
                                     @Override
                                     public void run() {
                                         updateInvoiceList();
-                                        EventBus.getDefault().post(new PayInvoiceSuccessEvent());
+                                        PayInvoiceSuccessEvent event = new PayInvoiceSuccessEvent();
+                                        event.setTag(2);
+                                        EventBus.getDefault().post(event);
                                         mLoadingDialog.dismiss();
                                         // updated the history, so it is shown the next time the user views it
                                         rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
@@ -607,7 +609,9 @@ public class CreateLuckyPacketPopupWindow {
                                                             LogUtils.e(TAG, "------------------routerOB_SendPaymentV2OnResponse-----------------" + resp);
                                                             if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.SUCCEEDED) {
                                                                 updateInvoiceList();
-                                                                EventBus.getDefault().post(new PayInvoiceSuccessEvent());
+                                                                PayInvoiceSuccessEvent event = new PayInvoiceSuccessEvent();
+                                                                event.setTag(2);
+                                                                EventBus.getDefault().post(event);
                                                                 mLoadingDialog.dismiss();
                                                                 rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
                                                                 rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.VISIBLE);
@@ -694,7 +698,9 @@ public class CreateLuckyPacketPopupWindow {
                                 LogUtils.e(TAG, "------------------noRouterOB_SendPaymentV2OnResponse-----------------" + resp);
                                 if (resp.getStatus() == LightningOuterClass.Payment.PaymentStatus.SUCCEEDED) {
                                     updateInvoiceList();
-                                    EventBus.getDefault().post(new PayInvoiceSuccessEvent());
+                                    PayInvoiceSuccessEvent event = new PayInvoiceSuccessEvent();
+                                    event.setTag(2);
+                                    EventBus.getDefault().post(event);
                                     mLoadingDialog.dismiss();
                                     rootView.findViewById(R.id.lv_lucky_packet_step_one).setVisibility(View.GONE);
                                     rootView.findViewById(R.id.lv_lucky_packet_success).setVisibility(View.VISIBLE);

@@ -200,8 +200,7 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
     }
 
     /**
-     * Handles the {@code result} of a completed sign-in activity initiated from {@link
-     * #requestSignIn()}.
+     * Handles the {@code result} of a completed sign-in activity initiated from requestSignIn.
      */
     private void handleSignInResult(Intent result) {
         GoogleSignIn.getSignedInAccountFromIntent(result)
