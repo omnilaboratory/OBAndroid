@@ -32,6 +32,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.FileList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -1345,9 +1346,44 @@ public class AccountLightningActivity extends AppBaseActivity {
                     // The DriveServiceHelper encapsulates all REST API and SAF functionality.
                     // Its instantiation is required before handling any onClick actions.
                     mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
-                    createAddressFile();
+                    query();
                 })
                 .addOnFailureListener(exception -> LogUtils.e(TAG, "Unable to sign in.", exception));
+    }
+
+    /**
+     * Queries the Drive REST API for files visible to this app and lists them in the content view.
+     */
+    private void query() {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Querying for files.");
+
+            mDriveServiceHelper.queryFiles().addOnSuccessListener(new OnSuccessListener<FileList>() {
+                @Override
+                public void onSuccess(FileList fileList) {
+                    if (fileList.getFiles().size() == 0) {
+                        createAddressFile();
+                    } else {
+                        List<com.google.api.services.drive.model.File> list = new ArrayList<>();
+                        for (int i = 0; i < fileList.getFiles().size(); i++) {
+                            if (!fileList.getFiles().get(i).getName().contains("_mainnet")) {
+                                list.add(fileList.getFiles().get(i));
+                            }
+                        }
+                        if (list.size() == 0) {
+                            createAddressFile();
+                        } else {
+                            saveAddressFile(list.get(1).getId(), list.get(0).getId(), list.get(2).getId());
+                        }
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    LogUtils.e(TAG, "Unable to query files.", e);
+                }
+            });
+        }
     }
 
     /**
@@ -1403,6 +1439,60 @@ public class AccountLightningActivity extends AppBaseActivity {
                     LogUtils.e(TAG, "Couldn't create channel file.", e);
                 }
             });
+        }
+    }
+
+    private void saveAddressFile(String walletFileId, String channelFileId, String addressFileId) {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Save address file " + addressFileId);
+            mLoadingDialog.show();
+            mDriveServiceHelper.saveAddressFile(addressFileId, User.getInstance().getWalletAddress(mContext))
+                    .addOnSuccessListener(new OnSuccessListener<String>() {
+                        @Override
+                        public void onSuccess(String s) {
+                            saveWalletFile(walletFileId, channelFileId);
+                        }
+                    })
+                    .addOnFailureListener(exception -> {
+                        mLoadingDialog.dismiss();
+                        LogUtils.e(TAG, "Couldn't Save address file.", exception);
+                    });
+        }
+    }
+
+    private void saveWalletFile(String walletFileId, String channelFileId) {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Save wallet file " + walletFileId);
+
+            String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db";
+            mDriveServiceHelper.saveDbFile(walletFileId, filePath, "wallet.db")
+                    .addOnSuccessListener(new OnSuccessListener<String>() {
+                        @Override
+                        public void onSuccess(String s) {
+                            saveChannelFile(channelFileId);
+                        }
+                    })
+                    .addOnFailureListener(exception ->
+                            LogUtils.e(TAG, "Couldn't Save wallet file.", exception));
+        }
+    }
+
+    private void saveChannelFile(String channelFileId) {
+        if (mDriveServiceHelper != null) {
+            LogUtils.e(TAG, "Save channel file " + channelFileId);
+
+            String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db";
+            mDriveServiceHelper.saveDbFile(channelFileId, filePath, "channel.db")
+                    .addOnSuccessListener(new OnSuccessListener<String>() {
+                        @Override
+                        public void onSuccess(String s) {
+                            LogUtils.e(TAG, "Channel fileId" + s);
+                            mLoadingDialog.dismiss();
+                            ToastUtils.showToast(mContext, "Backup Successfully");
+                        }
+                    })
+                    .addOnFailureListener(exception ->
+                            LogUtils.e(TAG, "Couldn't Save channel file.", exception));
         }
     }
 
