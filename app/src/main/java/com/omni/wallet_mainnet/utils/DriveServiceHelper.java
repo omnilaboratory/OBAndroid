@@ -165,6 +165,38 @@ public class DriveServiceHelper {
         });
     }
 
+    public Task<String> saveAddressFile(String fileId, String address) {
+        return Tasks.call(mExecutor, () -> {
+            // Create a File containing any metadata changes.
+            File metadata = new File().setName(address);
+
+            // Update the metadata and contents.
+            File googleFile = mDriveService.files().update(fileId, metadata).execute();
+            if (googleFile == null) {
+                throw new IOException("Null result when requesting file creation.");
+            }
+
+            return googleFile.getId();
+        });
+    }
+
+    public Task<String> saveDbFile(String fileId, String filePath, String fileName) {
+        return Tasks.call(mExecutor, () -> {
+            // Create a File containing any metadata changes.
+            File metadata = new File().setName(fileName);
+
+            java.io.File file = new java.io.File(filePath);
+            FileContent mediaContent = new FileContent("application/octet-stream", file);
+            // Update the metadata and contents.
+            File googleFile = mDriveService.files().update(fileId, metadata, mediaContent).execute();
+            if (googleFile == null) {
+                throw new IOException("Null result when requesting file creation.");
+            }
+
+            return googleFile.getId();
+        });
+    }
+
     /**
      * Returns a {@link FileList} containing all the visible files in the user's My Drive.
      *
