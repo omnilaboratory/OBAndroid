@@ -360,40 +360,6 @@ public class AccountLightningActivity extends AppBaseActivity {
 
     }
 
-
-    /**
-     * Get wallet related information
-     * 获取钱包相关信息
-     */
-    private void getInfo() {
-        Obdmobile.oB_GetInfo(LightningOuterClass.GetInfoRequest.newBuilder().build().toByteArray(), new Callback() {
-            @Override
-            public void onError(Exception e) {
-                LogUtils.e(TAG, "------------------getInfoOnError------------------" + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(byte[] bytes) {
-                if (bytes == null) {
-                    return;
-                }
-                try {
-                    LightningOuterClass.GetInfoResponse resp = LightningOuterClass.GetInfoResponse.parseFrom(bytes);
-                    LogUtils.e(TAG, "------------------getInfoOnResponse-----------------" + resp);
-                    runOnUiThread(() -> {
-                        pubkey = resp.getIdentityPubkey();
-//                        mNetworkTypeTv.setText(resp.getChains(0).getNetwork());
-                        User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
-                        User.getInstance().setNodeVersion(mContext, resp.getVersion());
-                        User.getInstance().setFromPubKey(mContext, resp.getIdentityPubkey());
-                    });
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
     /**
      * Create a new wallet address first, and then request the interface of each asset balance list
      * 先创建新的钱包地址后再去请求各资产余额列表的接口
@@ -704,9 +670,11 @@ public class AccountLightningActivity extends AppBaseActivity {
             if ((position + 1) % 2 == 0) {
                 holder.getView(R.id.iv_asset_logo).setVisibility(View.INVISIBLE);
                 holder.getView(R.id.tv_asset_name).setVisibility(View.INVISIBLE);
+                holder.getView(R.id.view_space).setVisibility(View.VISIBLE);
             } else {
                 holder.getView(R.id.iv_asset_logo).setVisibility(View.VISIBLE);
                 holder.getView(R.id.tv_asset_name).setVisibility(View.VISIBLE);
+                holder.getView(R.id.view_space).setVisibility(View.GONE);
             }
             ImageView imageView = holder.getView(R.id.iv_asset_logo);
             mAssetData.clear();
@@ -1171,50 +1139,80 @@ public class AccountLightningActivity extends AppBaseActivity {
                         User.getInstance().setUserId(mContext, "1");
                         User.getInstance().setBackUp(mContext, true);
                         subscribeChannelChange();
+                        getInfo();
                     }
                 });
-                if (StringUtils.isEmpty(User.getInstance().getWalletAddress(mContext))) {
-                    LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
-                    Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
-                        @Override
-                        public void onError(Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onResponse(byte[] bytes) {
-                            if (bytes == null) {
-                                return;
-                            }
-                            try {
-                                LightningOuterClass.NewAddressResponse newAddressResponse = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
-                                String address = newAddressResponse.getAddress();
-                                runOnUiThread(() -> {
-                                    // 保存地址到本地(save wallet address to local)
-                                    User.getInstance().setWalletAddress(mContext, address);
-                                    mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
-                                    getAssetAndBtcData();
-                                    getInfo();
-                                    setDefaultAddress();
-                                    setAssetTrendChartViewShow();
-                                });
-                            } catch (InvalidProtocolBufferException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                } else {
-                    runOnUiThread(() -> {
-                        mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
-                        getAssetAndBtcData();
-                        getInfo();
-                        setDefaultAddress();
-                        setAssetTrendChartViewShow();
-                    });
-                }
             }
         };
         WalletState.getInstance().setWalletStateCallback(walletStateCallback);
+    }
+
+    /**
+     * Get wallet related information
+     * 获取钱包相关信息
+     */
+    private void getInfo() {
+        Obdmobile.oB_GetInfo(LightningOuterClass.GetInfoRequest.newBuilder().build().toByteArray(), new Callback() {
+            @Override
+            public void onError(Exception e) {
+                LogUtils.e(TAG, "------------------getInfoOnError------------------" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(byte[] bytes) {
+                if (bytes == null) {
+                    return;
+                }
+                try {
+                    LightningOuterClass.GetInfoResponse resp = LightningOuterClass.GetInfoResponse.parseFrom(bytes);
+                    LogUtils.e(TAG, "------------------getInfoOnResponse-----------------" + resp);
+                    runOnUiThread(() -> {
+                        pubkey = resp.getIdentityPubkey();
+                        User.getInstance().setNetwork(mContext, resp.getChains(0).getNetwork());
+                        User.getInstance().setNodeVersion(mContext, resp.getVersion());
+                        User.getInstance().setFromPubKey(mContext, resp.getIdentityPubkey());
+                        if (StringUtils.isEmpty(resp.getCoinAddress())) {
+                            LightningOuterClass.NewAddressRequest newAddressRequest = LightningOuterClass.NewAddressRequest.newBuilder().setTypeValue(2).build();
+                            Obdmobile.oB_NewAddress(newAddressRequest.toByteArray(), new Callback() {
+                                @Override
+                                public void onError(Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                @Override
+                                public void onResponse(byte[] bytes) {
+                                    if (bytes == null) {
+                                        return;
+                                    }
+                                    try {
+                                        LightningOuterClass.NewAddressResponse newAddressResponse = LightningOuterClass.NewAddressResponse.parseFrom(bytes);
+                                        String address = newAddressResponse.getAddress();
+                                        runOnUiThread(() -> {
+                                            // 保存地址到本地(save wallet address to local)
+                                            User.getInstance().setWalletAddress(mContext, address);
+                                            mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
+                                            getAssetAndBtcData();
+                                            setDefaultAddress();
+                                            setAssetTrendChartViewShow();
+                                        });
+                                    } catch (InvalidProtocolBufferException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        } else {
+                            User.getInstance().setWalletAddress(mContext, resp.getCoinAddress());
+                            mWalletAddressTv.setText(User.getInstance().getWalletAddress(mContext));
+                            getAssetAndBtcData();
+                            setDefaultAddress();
+                            setAssetTrendChartViewShow();
+                        }
+                    });
+                } catch (InvalidProtocolBufferException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void subscribeChannelChange() {

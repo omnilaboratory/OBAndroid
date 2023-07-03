@@ -27,17 +27,14 @@ import com.omni.wallet.baselibrary.utils.LogUtils;
 import com.omni.wallet.baselibrary.utils.ToastUtils;
 import com.omni.wallet.common.ConstantInOB;
 import com.omni.wallet.common.ConstantWithNetwork;
-import com.omni.wallet.framelibrary.entity.User;
 import com.omni.wallet.ui.activity.createwallet.CreateWalletStepThreeActivity;
 import com.omni.wallet.utils.DriveServiceHelper;
 import com.omni.wallet.utils.MoveCacheFileToFileObd;
 import com.omni.wallet.view.dialog.LoadingDialog;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -154,14 +151,14 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
                 MoveCacheFileToFileObd.createDirs(storageChannelPath);
                 MoveCacheFileToFileObd.copyFile(fromWalletPath, toWalletPath);
                 MoveCacheFileToFileObd.copyFile(fromChannelPath, toChannelPath);
-                try {
-                    BufferedReader bf = new BufferedReader(new FileReader(Environment.getExternalStorageDirectory() + "/OBBackupFiles/address.txt"));
-                    for (String line = bf.readLine(); line != null; line = bf.readLine()) {
-                        User.getInstance().setWalletAddress(mContext, line);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    BufferedReader bf = new BufferedReader(new FileReader(Environment.getExternalStorageDirectory() + "/OBBackupFiles/address.txt"));
+//                    for (String line = bf.readLine(); line != null; line = bf.readLine()) {
+//                        User.getInstance().setWalletAddress(mContext, line);
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 switchActivity(CreateWalletStepThreeActivity.class);
             } else {
                 ToastUtils.showToast(mContext, "The backup file does not exist");
@@ -278,8 +275,8 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
 
             mDriveServiceHelper.readFile(addressFileId)
                     .addOnSuccessListener(nameAndContent -> {
-                        String address = nameAndContent.first;
-                        User.getInstance().setWalletAddress(mContext, address);
+//                        String address = nameAndContent.first;
+//                        User.getInstance().setWalletAddress(mContext, address);
                         readWalletFile(walletFileId, channelFileId);
                     })
                     .addOnFailureListener(exception ->
