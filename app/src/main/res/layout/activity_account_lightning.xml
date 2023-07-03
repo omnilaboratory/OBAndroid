@@ -278,7 +278,7 @@
                         android:layout_marginBottom="@dimen/main_40"
                         android:layout_marginLeft="@dimen/main_32"
                         android:layout_marginRight="@dimen/main_40"
-                        android:layout_marginTop="@dimen/main_25"/>
+                        android:layout_marginTop="@dimen/main_30"/>
                 </LinearLayout>
 
                 <LinearLayout
