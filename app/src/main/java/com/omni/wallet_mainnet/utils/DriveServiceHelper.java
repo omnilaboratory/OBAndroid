@@ -207,7 +207,7 @@ public class DriveServiceHelper {
      */
     public Task<FileList> queryFiles() {
         return Tasks.call(mExecutor, () ->
-                mDriveService.files().list().setSpaces("drive").execute());
+                mDriveService.files().list().setSpaces("drive").setQ("trashed = false").execute());
     }
 
     /**

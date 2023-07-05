@@ -1,12 +1,16 @@
 package com.omni.wallet_mainnet.ui.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -24,7 +28,10 @@ import com.google.api.services.drive.model.FileList;
 import com.omni.wallet_mainnet.R;
 import com.omni.wallet_mainnet.base.AppBaseActivity;
 import com.omni.wallet_mainnet.baselibrary.utils.LogUtils;
+import com.omni.wallet_mainnet.baselibrary.utils.StringUtils;
 import com.omni.wallet_mainnet.baselibrary.utils.ToastUtils;
+import com.omni.wallet_mainnet.baselibrary.view.recyclerView.adapter.CommonRecyclerAdapter;
+import com.omni.wallet_mainnet.baselibrary.view.recyclerView.holder.ViewHolder;
 import com.omni.wallet_mainnet.common.ConstantInOB;
 import com.omni.wallet_mainnet.common.ConstantWithNetwork;
 import com.omni.wallet_mainnet.ui.activity.createwallet.CreateWalletStepThreeActivity;
@@ -53,6 +60,10 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
     private static final String TAG = ChooseRestoreTypeActivity.class.getSimpleName();
     @BindView(R.id.view_top)
     View mTopView;
+    @BindView(R.id.layout_google_drive_file)
+    RelativeLayout mGoogleDriveFileLayout;
+    @BindView(R.id.recycle_google_drive_file)
+    RecyclerView mGoogleDriveFileRecycle;
     @BindView(R.id.layout_local_directory_file)
     LinearLayout mLocalDirectoryFileLayout;
     @BindView(R.id.tv_google_drive)
@@ -63,6 +74,11 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
     TextView mFileNameTv;
     @BindView(R.id.tv_file_name_another)
     TextView mFileNameAnotherTv;
+    private List<String> mData = new ArrayList<>();
+    private MyAdapter mAdapter;
+    private int checkedPosition = -1;
+    private String checkAddress;
+    private List<com.google.api.services.drive.model.File> list = new ArrayList<>();
 
     private static final int REQUEST_CODE_SIGN_IN = 3;
     private DriveServiceHelper mDriveServiceHelper;
@@ -82,11 +98,64 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
     @Override
     protected void initView() {
         mLoadingDialog = new LoadingDialog(mContext);
+        initRecyclerView();
+    }
+
+    private void initRecyclerView() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mGoogleDriveFileRecycle.setLayoutManager(new LinearLayoutManager(mContext));
+        mAdapter = new MyAdapter(mContext, mData, R.layout.layout_item_google_drive_file);
+        mGoogleDriveFileRecycle.setAdapter(mAdapter);
+        mGoogleDriveFileRecycle.setHasFixedSize(true);
+        mGoogleDriveFileRecycle.setNestedScrollingEnabled(false);
     }
 
     @Override
     protected void initData() {
 
+    }
+
+    /**
+     * Google drive file列表适配器
+     * The adapter for google drive file list
+     */
+    private class MyAdapter extends CommonRecyclerAdapter<String> {
+
+        public MyAdapter(Context context, List<String> data, int layoutId) {
+            super(context, data, layoutId);
+        }
+
+
+        @Override
+        public void convert(ViewHolder holder, final int position, final String item) {
+            holder.setText(R.id.tv_address, item);
+            holder.setOnItemClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    checkAddress = item;
+                    checkedPosition = holder.getAdapterPosition();
+                    holder.setTextColor(R.id.tv_address, Color.parseColor("#4A92FF"));
+                    notifyDataSetChanged();
+                }
+            });
+            if (position == checkedPosition) {
+                holder.setTextColor(R.id.tv_address, Color.parseColor("#4A92FF"));
+            } else {
+                holder.setTextColor(R.id.tv_address, Color.parseColor("#99000000"));
+            }
+        }
+    }
+
+    @OnClick(R.id.view_parent)
+    public void clickParent() {
+        tag = 0;
+        checkedPosition = -1;
+        checkAddress = "";
+        mGoogleDriveTv.setTextColor(Color.parseColor("#40000000"));
+        mLocalDirectoryTv.setTextColor(Color.parseColor("#40000000"));
+        mGoogleDriveFileLayout.setVisibility(View.GONE);
+        mLocalDirectoryFileLayout.setVisibility(View.GONE);
     }
 
     /**
@@ -96,9 +165,13 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
     @OnClick(R.id.layout_google_drive)
     public void clickGoogleDrive() {
         tag = 1;
+        checkedPosition = -1;
+        checkAddress = "";
         mGoogleDriveTv.setTextColor(Color.parseColor("#000000"));
         mLocalDirectoryTv.setTextColor(Color.parseColor("#40000000"));
-        mLocalDirectoryFileLayout.setVisibility(View.GONE);
+        // Authenticate the user. For most apps, this should be done when the user performs an
+        // action that requires Drive access rather than in onCreate.
+        requestSignIn();
     }
 
     /**
@@ -108,8 +181,11 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
     @OnClick(R.id.layout_local_directory)
     public void clickLocalDirectory() {
         tag = 2;
+        checkedPosition = -1;
+        checkAddress = "";
         mGoogleDriveTv.setTextColor(Color.parseColor("#40000000"));
         mLocalDirectoryTv.setTextColor(Color.parseColor("#000000"));
+        mGoogleDriveFileLayout.setVisibility(View.GONE);
         mLocalDirectoryFileLayout.setVisibility(View.VISIBLE);
         mFileNameTv.setText(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/");
         mFileNameAnotherTv.setText(Environment.getExternalStorageDirectory() + "/OBMainnetBackupFiles/");
@@ -135,9 +211,24 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
             return;
         }
         if (tag == 1) {
-            // Authenticate the user. For most apps, this should be done when the user performs an
-            // action that requires Drive access rather than in onCreate.
-            requestSignIn();
+            if (StringUtils.isEmpty(checkAddress)) {
+                ToastUtils.showToast(mContext, "Please select an address to recover your wallet");
+                return;
+            }
+            LogUtils.e("==========list=========", list.toString());
+            List<com.google.api.services.drive.model.File> backupList = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getName().contains(checkAddress)) {
+                    backupList.add(list.get(i));
+                }
+            }
+            LogUtils.e("==========backupList=========", backupList.toString());
+            if (backupList.size() == 0) {
+                ToastUtils.showToast(mContext, "No backup files found.");
+            } else {
+                mLoadingDialog.show();
+                readAddressFile(backupList.get(1).getId(), backupList.get(0).getId(), backupList.get(2).getId());
+            }
         } else if (tag == 2) {
             // 本地恢复(Local restore)
             String storageWalletPath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
@@ -238,22 +329,26 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
             mDriveServiceHelper.queryFiles().addOnSuccessListener(new OnSuccessListener<FileList>() {
                 @Override
                 public void onSuccess(FileList fileList) {
+                    LogUtils.e("===================", fileList.getFiles().toString());
+                    mLoadingDialog.dismiss();
                     if (fileList.getFiles().size() == 0) {
-                        mLoadingDialog.dismiss();
                         ToastUtils.showToast(mContext, "No backup files found.");
+                        mGoogleDriveFileLayout.setVisibility(View.GONE);
+                        mLocalDirectoryFileLayout.setVisibility(View.GONE);
                     } else {
-                        List<com.google.api.services.drive.model.File> list = new ArrayList<>();
+                        list.clear();
+                        mData.clear();
                         for (int i = 0; i < fileList.getFiles().size(); i++) {
                             if (fileList.getFiles().get(i).getName().contains("_mainnet")) {
                                 list.add(fileList.getFiles().get(i));
+                                if (fileList.getFiles().get(i).getMimeType().equals("text/plain")) {
+                                    mData.add(fileList.getFiles().get(i).getName().substring(0, fileList.getFiles().get(i).getName().lastIndexOf("_")));
+                                }
                             }
                         }
-                        if (list.size() == 0) {
-                            mLoadingDialog.dismiss();
-                            ToastUtils.showToast(mContext, "No backup files found.");
-                        } else {
-                            readAddressFile(list.get(1).getId(), list.get(0).getId(), list.get(2).getId());
-                        }
+                        mAdapter.notifyDataSetChanged();
+                        mGoogleDriveFileLayout.setVisibility(View.VISIBLE);
+                        mLocalDirectoryFileLayout.setVisibility(View.GONE);
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {

@@ -1363,15 +1363,21 @@ public class AccountLightningActivity extends AppBaseActivity {
                         createAddressFile();
                     } else {
                         List<com.google.api.services.drive.model.File> list = new ArrayList<>();
+                        List<com.google.api.services.drive.model.File> backupList = new ArrayList<>();
                         for (int i = 0; i < fileList.getFiles().size(); i++) {
                             if (fileList.getFiles().get(i).getName().contains("_mainnet")) {
                                 list.add(fileList.getFiles().get(i));
                             }
                         }
-                        if (list.size() == 0) {
+                        for (int j = 0; j < list.size(); j++) {
+                            if (list.get(j).getName().contains(User.getInstance().getWalletAddress(mContext))) {
+                                backupList.add(list.get(j));
+                            }
+                        }
+                        if (backupList.size() == 0) {
                             createAddressFile();
                         } else {
-                            saveAddressFile(list.get(1).getId(), list.get(0).getId(), list.get(2).getId());
+                            saveAddressFile(backupList.get(1).getId(), backupList.get(0).getId(), backupList.get(2).getId());
                         }
                     }
                 }
@@ -1405,7 +1411,7 @@ public class AccountLightningActivity extends AppBaseActivity {
             LogUtils.e(TAG, "Creating wallet file.");
             String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db";
             LogUtils.e(TAG, filePath);
-            mDriveServiceHelper.createFile(filePath, "wallet_mainnet.db").addOnSuccessListener(new OnSuccessListener<String>() {
+            mDriveServiceHelper.createFile(filePath, User.getInstance().getWalletAddress(mContext) + "@wallet_mainnet.db").addOnSuccessListener(new OnSuccessListener<String>() {
                 @Override
                 public void onSuccess(String s) {
                     createChannelFile();
@@ -1424,7 +1430,7 @@ public class AccountLightningActivity extends AppBaseActivity {
             LogUtils.e(TAG, "Creating channel file.");
             String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db";
             LogUtils.e(TAG, filePath);
-            mDriveServiceHelper.createFile(filePath, "channel_mainnet.db").addOnSuccessListener(new OnSuccessListener<String>() {
+            mDriveServiceHelper.createFile(filePath, User.getInstance().getWalletAddress(mContext) + "@channel_mainnet.db").addOnSuccessListener(new OnSuccessListener<String>() {
                 @Override
                 public void onSuccess(String s) {
                     LogUtils.e(TAG, "Channel fileId" + s);
@@ -1463,7 +1469,7 @@ public class AccountLightningActivity extends AppBaseActivity {
             LogUtils.e(TAG, "Save wallet file " + walletFileId);
 
             String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory() + "wallet.db";
-            mDriveServiceHelper.saveDbFile(walletFileId, filePath, "wallet_mainnet.db")
+            mDriveServiceHelper.saveDbFile(walletFileId, filePath, User.getInstance().getWalletAddress(mContext) + "@wallet_mainnet.db")
                     .addOnSuccessListener(new OnSuccessListener<String>() {
                         @Override
                         public void onSuccess(String s) {
@@ -1480,7 +1486,7 @@ public class AccountLightningActivity extends AppBaseActivity {
             LogUtils.e(TAG, "Save channel file " + channelFileId);
 
             String filePath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadChannelDirectory() + "channel.db";
-            mDriveServiceHelper.saveDbFile(channelFileId, filePath, "channel_mainnet.db")
+            mDriveServiceHelper.saveDbFile(channelFileId, filePath, User.getInstance().getWalletAddress(mContext) + "@channel_mainnet.db")
                     .addOnSuccessListener(new OnSuccessListener<String>() {
                         @Override
                         public void onSuccess(String s) {
