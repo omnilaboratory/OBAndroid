@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/view_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff9f9f9"
@@ -44,66 +45,80 @@
         android:elevation="10dp">
 
         <LinearLayout
-            android:id="@+id/layout_restore_type_outside"
+            android:id="@+id/layout_google_drive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/main_100"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:id="@+id/layout_google_drive"
+            <ImageView
+                android:layout_width="@dimen/main_35"
+                android:layout_height="@dimen/main_32"
+                android:src="@mipmap/icon_google_drive"/>
+
+            <TextView
+                android:id="@+id/tv_google_drive"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="@dimen/main_35"
-                    android:layout_height="@dimen/main_32"
-                    android:src="@mipmap/icon_google_drive"/>
-
-                <TextView
-                    android:id="@+id/tv_google_drive"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_17"
-                    android:letterSpacing="0.15"
-                    android:text="Google Drive"
-                    android:textColor="#40000000"
-                    android:textSize="@dimen/text_18"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout_local_directory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/main_67"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="@dimen/main_32"
-                    android:layout_height="@dimen/main_32"
-                    android:src="@mipmap/icon_database_big"/>
-
-                <TextView
-                    android:id="@+id/tv_local_directory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_17"
-                    android:letterSpacing="0.15"
-                    android:text="Local Directory"
-                    android:textColor="#40000000"
-                    android:textSize="@dimen/text_18"/>
-            </LinearLayout>
+                android:layout_marginLeft="@dimen/main_17"
+                android:letterSpacing="0.15"
+                android:text="Google Drive"
+                android:textColor="#40000000"
+                android:textSize="@dimen/text_18"/>
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_local_directory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_google_drive"
+            android:layout_marginTop="@dimen/main_67"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/main_32"
+                android:layout_height="@dimen/main_32"
+                android:src="@mipmap/icon_database_big"/>
+
+            <TextView
+                android:id="@+id/tv_local_directory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_17"
+                android:letterSpacing="0.15"
+                android:text="Local Directory"
+                android:textColor="#40000000"
+                android:textSize="@dimen/text_18"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_google_drive_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_google_drive"
+            android:visibility="gone">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycle_google_drive_file"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/main_5"
+                android:layout_marginLeft="@dimen/main_10"
+                android:layout_marginRight="@dimen/main_20"
+                android:layout_marginBottom="@dimen/main_20"
+                android:background="@color/color_white"/>
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/layout_local_directory_file"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/main_5"
-            android:layout_below="@+id/layout_restore_type_outside"
+            android:layout_below="@+id/layout_local_directory"
             android:layout_centerHorizontal="true"
             android:orientation="vertical"
             android:visibility="gone">
@@ -235,7 +250,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/btn_start"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -243,6 +257,7 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/btn_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
