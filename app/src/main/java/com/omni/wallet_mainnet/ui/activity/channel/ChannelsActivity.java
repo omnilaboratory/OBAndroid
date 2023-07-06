@@ -673,12 +673,24 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
                                 list.add(fileList.getFiles().get(i));
                             }
                         }
+                        removeDuplicate(list);
                         for (int j = 0; j < list.size(); j++) {
-                            if (list.get(j).getName().contains(User.getInstance().getWalletAddress(mContext))) {
-                                backupList.add(list.get(j));
+                            if (!list.get(j).getName().startsWith("1")) {
+                                mDriveServiceHelper.deleteFile(list.get(j).getId());
+                            } else {
+                                if (list.get(j).getName().contains(User.getInstance().getWalletAddress(mContext))) {
+                                    backupList.add(list.get(j));
+                                }
                             }
                         }
                         if (backupList.size() == 0) {
+                            createAddressFile();
+                        } else if (backupList.size() == 1) {
+                            mDriveServiceHelper.deleteFile(backupList.get(0).getId());
+                            createAddressFile();
+                        } else if (backupList.size() == 2) {
+                            mDriveServiceHelper.deleteFile(backupList.get(0).getId());
+                            mDriveServiceHelper.deleteFile(backupList.get(1).getId());
                             createAddressFile();
                         } else {
                             saveAddressFile(backupList.get(1).getId(), backupList.get(0).getId(), backupList.get(2).getId());
@@ -802,6 +814,21 @@ public class ChannelsActivity extends AppBaseActivity implements ChannelSelectLi
                     .addOnFailureListener(exception ->
                             LogUtils.e(TAG, "Couldn't Save channel file.", exception));
         }
+    }
+
+    /**
+     * @备注： 循环删除重复数据
+     * @description: Circular deletion of duplicate data
+     */
+    public static void removeDuplicate(List<com.google.api.services.drive.model.File> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = list.size() - 1; j > i; j--) {
+                if (list.get(j).getName().equals(list.get(i).getName())) {
+                    list.remove(j);
+                }
+            }
+        }
+        System.out.println(list);
     }
 
     @Override

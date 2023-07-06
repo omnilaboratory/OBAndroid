@@ -197,6 +197,11 @@ public class DriveServiceHelper {
         });
     }
 
+    public Task<Void> deleteFile(String fileId) {
+        return Tasks.call(mExecutor, () ->
+                mDriveService.files().delete(fileId).execute());
+    }
+
     /**
      * Returns a {@link FileList} containing all the visible files in the user's My Drive.
      *

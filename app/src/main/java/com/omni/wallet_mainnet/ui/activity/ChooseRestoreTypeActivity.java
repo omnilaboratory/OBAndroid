@@ -216,18 +216,27 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
                 return;
             }
             LogUtils.e("==========list=========", list.toString());
-            List<com.google.api.services.drive.model.File> backupList = new ArrayList<>();
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getName().contains(checkAddress)) {
-                    backupList.add(list.get(i));
-                }
-            }
-            LogUtils.e("==========backupList=========", backupList.toString());
-            if (backupList.size() == 0) {
+            if (list.size() == 0) {
                 ToastUtils.showToast(mContext, "No backup files found.");
             } else {
-                mLoadingDialog.show();
-                readAddressFile(backupList.get(1).getId(), backupList.get(0).getId(), backupList.get(2).getId());
+                removeDuplicateFile(list);
+                List<com.google.api.services.drive.model.File> backupList = new ArrayList<>();
+                for (int i = 0; i < list.size(); i++) {
+                    if (!list.get(i).getName().contains(checkAddress)) {
+                        mLoadingDialog.show();
+                        readAddressFile(list.get(1).getId(), list.get(0).getId(), list.get(2).getId());
+                        return;
+                    } else {
+                        backupList.add(list.get(i));
+                    }
+                }
+                LogUtils.e("==========backupList=========", backupList.toString());
+                if (backupList.size() == 0) {
+                    ToastUtils.showToast(mContext, "No backup files found.");
+                } else {
+                    mLoadingDialog.show();
+                    readAddressFile(backupList.get(1).getId(), backupList.get(0).getId(), backupList.get(2).getId());
+                }
             }
         } else if (tag == 2) {
             // 本地恢复(Local restore)
@@ -346,6 +355,7 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
                                 }
                             }
                         }
+                        removeDuplicate(mData);
                         mAdapter.notifyDataSetChanged();
                         mGoogleDriveFileLayout.setVisibility(View.VISIBLE);
                         mLocalDirectoryFileLayout.setVisibility(View.GONE);
@@ -444,5 +454,35 @@ public class ChooseRestoreTypeActivity extends AppBaseActivity {
                 }
             }
         }
+    }
+
+    /**
+     * @备注： 循环删除重复数据
+     * @description: Circular deletion of duplicate data
+     */
+    public static void removeDuplicate(List list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = list.size() - 1; j > i; j--) {
+                if (list.get(j).equals(list.get(i))) {
+                    list.remove(j);
+                }
+            }
+        }
+        System.out.println(list);
+    }
+
+    /**
+     * @备注： 循环删除重复数据
+     * @description: Circular deletion of duplicate data
+     */
+    public static void removeDuplicateFile(List<com.google.api.services.drive.model.File> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = list.size() - 1; j > i; j--) {
+                if (list.get(j).getName().equals(list.get(i).getName())) {
+                    list.remove(j);
+                }
+            }
+        }
+        System.out.println(list);
     }
 }

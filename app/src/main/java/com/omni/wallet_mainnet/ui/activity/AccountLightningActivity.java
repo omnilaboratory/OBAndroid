@@ -83,6 +83,7 @@ import com.omni.wallet_mainnet.obdMethods.WalletState;
 import com.omni.wallet_mainnet.ui.activity.channel.ChannelsActivity;
 import com.omni.wallet_mainnet.utils.CopyUtil;
 import com.omni.wallet_mainnet.utils.DriveServiceHelper;
+import com.omni.wallet_mainnet.utils.FilesUtils;
 import com.omni.wallet_mainnet.utils.GetResourceUtil;
 import com.omni.wallet_mainnet.utils.MoveCacheFileToFileObd;
 import com.omni.wallet_mainnet.utils.TimeFormatUtil;
@@ -109,6 +110,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -246,8 +248,16 @@ public class AccountLightningActivity extends AppBaseActivity {
         }
         EventBus.getDefault().register(this);
         if (User.getInstance().isBackUp(mContext) == true) {
-            mLoadingDialog.show();
-            showPageData();
+            String downloadDirectoryPath = mContext.getExternalFilesDir(null) + "/obd" + ConstantWithNetwork.getInstance(ConstantInOB.networkType).getDownloadDirectory();
+            long nowMillis = Calendar.getInstance().getTimeInMillis();
+            long fileHeaderLastEdit = FilesUtils.fileLastUpdate(downloadDirectoryPath + ConstantInOB.blockHeaderBin);
+            if (nowMillis - fileHeaderLastEdit > ConstantInOB.WEEK_MILLIS) {
+                DataStatusDialog mDataStatusDialog = new DataStatusDialog(mContext);
+                mDataStatusDialog.show();
+            } else {
+                mLoadingDialog.show();
+                showPageData();
+            }
         }
         if (User.getInstance().isNeutrinoDbChecked(mContext)) {
             // TODO: 2023/5/31 暂定
@@ -1369,12 +1379,24 @@ public class AccountLightningActivity extends AppBaseActivity {
                                 list.add(fileList.getFiles().get(i));
                             }
                         }
+                        removeDuplicate(list);
                         for (int j = 0; j < list.size(); j++) {
-                            if (list.get(j).getName().contains(User.getInstance().getWalletAddress(mContext))) {
-                                backupList.add(list.get(j));
+                            if (!list.get(j).getName().startsWith("1")) {
+                                mDriveServiceHelper.deleteFile(list.get(j).getId());
+                            } else {
+                                if (list.get(j).getName().contains(User.getInstance().getWalletAddress(mContext))) {
+                                    backupList.add(list.get(j));
+                                }
                             }
                         }
                         if (backupList.size() == 0) {
+                            createAddressFile();
+                        } else if (backupList.size() == 1) {
+                            mDriveServiceHelper.deleteFile(backupList.get(0).getId());
+                            createAddressFile();
+                        } else if (backupList.size() == 2) {
+                            mDriveServiceHelper.deleteFile(backupList.get(0).getId());
+                            mDriveServiceHelper.deleteFile(backupList.get(1).getId());
                             createAddressFile();
                         } else {
                             saveAddressFile(backupList.get(1).getId(), backupList.get(0).getId(), backupList.get(2).getId());
@@ -1498,6 +1520,21 @@ public class AccountLightningActivity extends AppBaseActivity {
                     .addOnFailureListener(exception ->
                             LogUtils.e(TAG, "Couldn't Save channel file.", exception));
         }
+    }
+
+    /**
+     * @备注： 循环删除重复数据
+     * @description: Circular deletion of duplicate data
+     */
+    public static void removeDuplicate(List<com.google.api.services.drive.model.File> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = list.size() - 1; j > i; j--) {
+                if (list.get(j).getName().equals(list.get(i).getName())) {
+                    list.remove(j);
+                }
+            }
+        }
+        System.out.println(list);
     }
 
     /**

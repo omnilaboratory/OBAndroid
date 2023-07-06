@@ -51,6 +51,8 @@ public class DataStatusDialog {
             mAlertDialog = new AlertDialog.Builder(mContext, R.style.dialog_translucent_theme)
                     .setContentView(R.layout.layout_dialog_data_status)
                     .setAnimation(R.style.popup_anim_style)
+                    .setCanceledOnTouchOutside(false)
+                    .setCancelable(false)
                     .fullWidth()
                     .fullHeight()
                     .create();
@@ -65,7 +67,7 @@ public class DataStatusDialog {
         mProgressBar = mAlertDialog.findViewById(R.id.progressbar);
 
         if (User.getInstance().isNeutrinoDbChecked(mContext)) {
-            doExplainTv.setText(R.string.download_db);
+            doExplainTv.setText("(3/3)" + mContext.getString(R.string.download_db));
             double percent = (100 / 100 * 100);
             String percentString = String.format("%.2f", percent) + "%";
             syncPercentView.setText(percentString);
@@ -238,7 +240,15 @@ public class DataStatusDialog {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDownloadEvent(DownloadEvent event) {
-        doExplainTv.setText(event.getFileName());
+        if (event.getFileName().equals(mContext.getString(R.string.download_header))){
+            doExplainTv.setText("(1/3)" + event.getFileName());
+        } else if (event.getFileName().equals(mContext.getString(R.string.download_filter_header))) {
+            doExplainTv.setText("(2/3)" + event.getFileName());
+        } else if (event.getFileName().equals(mContext.getString(R.string.download_db))) {
+            doExplainTv.setText("(3/3)" + event.getFileName());
+        } else {
+            doExplainTv.setText(event.getFileName());
+        }
         double percent = (event.getCurrent() / event.getTotal() * 100);
         String percentString = String.format("%.2f", percent) + "%";
         syncPercentView.setText(percentString);
