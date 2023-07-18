@@ -108,6 +108,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -873,11 +874,21 @@ public class BalanceDetailActivity extends AppBaseActivity {
                             LightningOuterClass.TransactionDetails resp = LightningOuterClass.TransactionDetails.parseFrom(bytes);
                             LogUtils.e(TAG, "------------------getPendingTxsChainOnResponse-----------------" + resp);
                             for (LightningOuterClass.Transaction transaction : resp.getTransactionsList()) {
-                                if (StringUtils.isEmpty(String.valueOf(transaction.getNumConfirmations())) || transaction.getNumConfirmations() < 3) {
+                                if (StringUtils.isEmpty(String.valueOf(transaction.getNumConfirmations())) || transaction.getNumConfirmations() < 1) {
                                     mPendingTxsChainData.add(transaction);
                                 }
                             }
-                            mToBePaidNumTv.setText(mPendingTxsChainData.size() + "");
+                            Collections.sort(mPendingTxsChainData, new Comparator<LightningOuterClass.Transaction>() {
+                                @Override
+                                public int compare(LightningOuterClass.Transaction o1, LightningOuterClass.Transaction o2) {
+                                    return (int) (o2.getTimeStamp() - o1.getTimeStamp());
+                                }
+                            });
+                            try {
+                                mToBePaidNumTv.setText(mPendingTxsChainData.size() + "");
+                            } catch (Exception e) {
+                                LogUtils.e(TAG, "Error: " + e.getMessage());
+                            }
                             mPendingTxsChainAdapter.notifyDataSetChanged();
                         } catch (InvalidProtocolBufferException e) {
                             e.printStackTrace();
@@ -965,7 +976,17 @@ public class BalanceDetailActivity extends AppBaseActivity {
                                         }
                                         mPendingTxsAssetData.add(resp);
                                     }
-                                    mToBePaidNumTv.setText(mPendingTxsAssetData.size() + "");
+                                    Collections.sort(mPendingTxsAssetData, new Comparator<LightningOuterClass.AssetTx>() {
+                                        @Override
+                                        public int compare(LightningOuterClass.AssetTx o1, LightningOuterClass.AssetTx o2) {
+                                            return (int) (o2.getBlocktime() - o1.getBlocktime());
+                                        }
+                                    });
+                                    try {
+                                        mToBePaidNumTv.setText(mPendingTxsAssetData.size() + "");
+                                    } catch (Exception e) {
+                                        LogUtils.e(TAG, "Error: " + e.getMessage());
+                                    }
                                     mPendingTxsAssetAdapter.notifyDataSetChanged();
                                 } catch (InvalidProtocolBufferException e) {
                                     e.printStackTrace();
@@ -1327,7 +1348,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
             DecimalFormat df = new DecimalFormat("0.00######");
             if (item.getAmount() <= 0) {
                 holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
-                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
+                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 1) {
                     holder.setText(R.id.tv_receiver, "PENDING");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
                 } else {
@@ -1336,7 +1357,7 @@ public class BalanceDetailActivity extends AppBaseActivity {
                 }
             } else if (item.getAmount() > 0) {
                 holder.setText(R.id.tv_amount, df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
+                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 1) {
                     holder.setText(R.id.tv_receiver, "PENDING");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
                 } else {

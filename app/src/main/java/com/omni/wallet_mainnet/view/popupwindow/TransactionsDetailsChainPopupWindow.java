@@ -70,7 +70,7 @@ public class TransactionsDetailsChainPopupWindow {
                 amountTv.setText(df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getAmount()).replace("-", ""))) + item.getTotalFees() + "";
                 totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
-                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
+                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 1) {
                     typeTv.setText("PENDING");
                     typeIv.setImageResource(R.mipmap.icon_failed_red);
                     statusTv.setText("Pending");
@@ -93,7 +93,7 @@ public class TransactionsDetailsChainPopupWindow {
                 amountTv.setText(df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
                 String totalValue = (long) (Double.parseDouble(String.valueOf(item.getAmount()))) + item.getTotalFees() + "";
                 totalAmountTv.setText(df1.format(Double.parseDouble(totalValue) / 100000000 * Double.parseDouble(User.getInstance().getBtcPrice(mContext))));
-                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
+                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 1) {
                     typeTv.setText("PENDING");
                     typeIv.setImageResource(R.mipmap.icon_failed_red);
                     statusTv.setText("Pending");
