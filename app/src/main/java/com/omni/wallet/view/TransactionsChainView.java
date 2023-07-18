@@ -101,7 +101,7 @@ public class TransactionsChainView extends LinearLayout {
             DecimalFormat df = new DecimalFormat("0.00######");
             if (item.getAmount() <= 0) {
                 holder.setText(R.id.tv_amount, "- " + df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000).replace("-", ""));
-                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
+                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 1) {
                     holder.setText(R.id.tv_state, "Unnamed");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
                 } else {
@@ -110,7 +110,7 @@ public class TransactionsChainView extends LinearLayout {
                 }
             } else if (item.getAmount() > 0) {
                 holder.setText(R.id.tv_amount, "+ " + df.format(Double.parseDouble(String.valueOf(item.getAmount())) / 100000000));
-                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 3) {
+                if (StringUtils.isEmpty(String.valueOf(item.getNumConfirmations())) || item.getNumConfirmations() < 1) {
                     holder.setText(R.id.tv_state, "Unnamed");
                     holder.setImageResource(R.id.iv_state, R.mipmap.icon_alarm_clock_blue);
                 } else {
