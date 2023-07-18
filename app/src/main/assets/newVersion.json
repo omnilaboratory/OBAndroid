@@ -1,10 +1,10 @@
 {
   "testnet": {
-    "version": "0.1.4",
+    "version": "0.1.5",
     "force": false,
-    "newFeature": "Support MPP(multi path payment) of obd.",
-    "optimization": "1.Optimize the backup function of Google Drive.\n2.Optimize some functions.",
-    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.4-testnet/OBAndroid_testnet_v0.1.4.apk"
+    "newFeature": "Supports transactions after creating channels with multiple nodes.",
+    "optimization": "1.Add a new cloud node address under the testnet.\n2.Optimize some functions.",
+    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.5-testnet/OBAndroid_testnet_v0.1.5.apk"
   },
   "regtest": {
     "version": "0.1.0",
@@ -14,10 +14,10 @@
     "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.0-testnet/OBAndroid_testnet_0.1.0_beta.10_release.apk"
   },
   "mainnet": {
-    "version": "0.1.4",
+    "version": "0.1.5",
     "force": false,
-    "newFeature": "Support MPP(multi path payment) of obd.",
-    "optimization": "1.Optimize the backup function of Google Drive.\n2.Optimize some functions.",
-    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.4-mainnet/OBAndroid_mainnet_v0.1.4.apk"
+    "newFeature": "Supports transactions after creating channels with multiple nodes.",
+    "optimization": "1.Add a new cloud node address under the mainnet.\n2.Optimize some functions.",
+    "url": "https://github.com/omnilaboratory/OBAndroid/releases/download/v0.1.5-mainnet/OBAndroid_mainnet_v0.1.5.apk"
   }
 }
