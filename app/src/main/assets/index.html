@@ -15,7 +15,19 @@ var channelPort2 = channel.port2;
 channelPort1.channel = 'close';
 
 // 向Flutter页面发送消息
-channelPort2.postMessage({ key: '10' });
+channelPort1.postMessage({ key: '10' });
+
+var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+var isiOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+var isAndroid = /Android/.test(userAgent);
+
+if (isiOS) {
+// 是iOS设备
+window.webkit.messageHandlers.close.postMessage("close");
+} else if (isAndroid) {
+// 是Android设备
+close.postMessage("close");
+}
 </script>
 </body>
 </html>
