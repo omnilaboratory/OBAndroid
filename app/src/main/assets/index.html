@@ -5,18 +5,7 @@
     <title>H5页面</title>
 </head>
 <body>
-<script type="text/javascript">
-// 创建JavaScriptChannel
-var channel = new MessageChannel();
-var channelPort1 = channel.port1;
-var channelPort2 = channel.port2;
-
-// 设置通道名称
-channelPort1.channel = 'close';
-
-// 向Flutter页面发送消息
-channelPort1.postMessage({ key: '10' });
-
+<script>
 var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 var isiOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 var isAndroid = /Android/.test(userAgent);
